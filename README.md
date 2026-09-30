@@ -1,6 +1,6 @@
 # Polaris Cooktop Precision Cooking Prototype
 
-Interactive prototype for the **October 2026 Polaris Cooktop Precision Cooking User Testing**. Designed for the **ROUX 6.75" appliance display** (1024 × 384 px) with dedicated researcher controls docked outside the appliance canvas.
+Interactive prototype for the **October 2026 Polaris Cooktop Precision Cooking User Testing**. Designed specifically for the **ROUX 6.75" appliance touchscreen** (1024 × 384 px) with dedicated researcher controls docked outside the appliance canvas.
 
 ---
 
@@ -12,37 +12,49 @@ Click below to open and test the prototype directly:
   *(If prompted for a tunnel password, enter: `4.53.66.82`)*
 
 * **Local iPad / Lab Wi-Fi Link**: `http://10.35.122.114:8080`  
-  *(Fastest with zero latency when on the same Wi-Fi network as the host)*
+  *(Recommended for zero latency when on the same Wi-Fi network as the host machine)*
 
-* **Offline / Direct Browser**:  
+* **Direct Browser**:  
   Clone or download this repository, and double-click `index.html` in Safari, Chrome, or Edge.
 
 ---
 
-## 📱 iPad Setup for Testing
+## 📱 iPad Setup for User Testing
 
-For the most realistic appliance feel during user research:
+To achieve the authentic, borderless appliance feel during user research:
 1. Open the prototype link in **Safari** on the iPad.
-2. Tap the **Share** button (box with upward arrow).
+2. Tap the **Share** button (square with upward arrow).
 3. Select **"Add to Home Screen"**.
-4. Launch the app from the home screen icon — it will run full-screen without any browser address bars!
+4. Launch the app from the home screen icon — it runs full-screen without browser URL bars or navigation tabs!
 
 ---
 
-## 📋 User Test Plan Structure
+## 📋 User Test Plan & Status
 
-The prototype includes an external researcher bar positioned above the appliance screen:
+The prototype includes an external researcher toolbar positioned above the appliance screen:
 
-| Task | Purpose | Controls Available |
-| :--- | :--- | :--- |
-| **Task 1: Awareness Test** | Test whether participants notice active heating burners and precision cooking states. | **0.5s / 1s / 2s glance reveal buttons**. Automatically conceals the screen back to dark standby after duration. |
-| **Task 2: Concept Evaluation** | Evaluate participant comprehension of Precision Cooking pillars. | Explains **Temperature**, **Food**, and **Technique** modes. |
-| **Task 3: Usability Flow** | Interactive task flow (Tasks A – E). | Interactive burner selection, temperature stepper (375°F / 500°F), food modes (Steak), and technique modes (Caramelize). |
+| Task | Status | Focus / Objectives | Controls Available |
+| :--- | :---: | :--- | :--- |
+| **Task 1: Awareness Test** | **COMPLETE** | Test whether participants notice active heating burners and precision cooking states during quick glance exposures. | • **0.5s / 1s / 2s glance reveal buttons**<br>• **Silent execution** (zero sound cues to prevent audio bias)<br>• **1024 × 12px running activity bar** (magenta ⇄ blue left-to-right)<br>• **Stable 140px status pill** (`Hidden`, `Revealed`, `Preview`) |
+| **Task 2: Concept Evaluation** | *Up Next* | Evaluate participant comprehension of Precision Cooking pillars (Temperature, Food, Technique). | Focus cards and interactive concept walkthrough. |
+| **Task 3: Usability Flow** | *Planned* | Interactive burner flow (Tasks A – E):<br>• Task A: Rear left 375°F<br>• Task B: Set 500°F<br>• Task C: Front left Steak mode<br>• Task D: Turn OFF precision<br>• Task E: Front right Caramelize mode | Interactive burners, drawer stepper, food selection cards, technique mode options, and native audio feedback. |
 
 ---
 
-## 🛠 Specifications
+## 🔬 Task 1 Details (Awareness Test)
 
-* **Appliance Display Canvas**: Strict 1024 × 384 pixels (ROUX 6.75" display aspect ratio).
-* **Design System**: Official Profile Display and Profile Text typography, SVG vector iconography, and dark appliance glass styling.
-* **Audio Feedback**: Native sound feedback for touches, increments, decrements, and confirms.
+* **Silent Operation**: All sounds are intentionally disabled for Task 1 to ensure participant responses are purely driven by visual recognition.
+* **Standby Shield**: Screen remains hidden under a dark standby cover until the researcher triggers an exposure.
+* **Timed Auto-Re-cover**: Clicking `0.5s`, `1s`, or `2s` reveals the screen for that exact duration before automatically returning to standby.
+* **Preview Mode**: Clicking `Preview` toggles the screen continuously on/off for inspection.
+* **Layout Stability**: The status indicator is locked at a fixed 140px width to ensure surrounding buttons never shift during state transitions.
+* **Running Activity Bar**: A full-width (1024px × 12px) seamless gradient animation runs along the bottom edge, cycling continuously from magenta to blue to magenta.
+
+---
+
+## 🛠 Technical Specifications
+
+* **Appliance Display Canvas**: Exact 1024 × 384 pixels (ROUX 6.75" display aspect ratio).
+* **Typography**: GE Appliances Profile Display and Profile Text font families.
+* **Iconography**: Clean SVG vector assets matching Polaris production design.
+* **Architecture**: Vanilla HTML5, CSS3, and JavaScript — zero external dependencies, no build steps required.
