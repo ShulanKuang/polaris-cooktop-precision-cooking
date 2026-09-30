@@ -190,9 +190,8 @@
     closeDrawer();
   }
 
-  // TASK 1: GLANCE FLASH CONTROLS (0.5s / 1s / 2s)
+  // TASK 1: GLANCE FLASH CONTROLS (0.5s / 1s / 2s) - SILENT FOR USER STUDY
   function flashGlance(durationMs) {
-    playSound("toggleOn");
     if (state.shutterTimer) clearTimeout(state.shutterTimer);
 
     // Uncover immediately
@@ -209,7 +208,6 @@
     // Automatically re-cover after exact duration
     state.shutterTimer = setTimeout(() => {
       coverTask1Screen();
-      playSound("toggleOff");
     }, durationMs);
   }
 
@@ -228,7 +226,6 @@
   }
 
   function togglePreview() {
-    playSound("touch");
     const isCurrentlyRevealed = els.task1StandbyCover && (
       els.task1StandbyCover.style.display === "none" ||
       els.task1StandbyCover.classList.contains("is-revealed")
