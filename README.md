@@ -8,7 +8,7 @@ Interactive prototype for the **October 2026 Polaris Cooktop Precision Cooking U
 
 Click below to open and test the prototype directly:
 
-* **[Live Web Prototype Link](https://nine-mails-kneel.loca.lt)**  
+* **[Live Web Prototype Link](https://gold-boats-admire.loca.lt)**  
   *(If prompted for a tunnel password, enter: `4.53.66.82`)*
 
 * **Local iPad / Lab Wi-Fi Link**: `http://10.35.122.114:8080`  
