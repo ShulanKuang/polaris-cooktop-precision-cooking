@@ -213,24 +213,49 @@ html, body {
   color: var(--orange-accent);
 }
 
-.task-action-btn {
-  background: rgba(239, 68, 68, 0.15);
-  border: 1px solid rgba(239, 68, 68, 0.4);
-  color: #ff8888;
-  padding: 8px 14px;
-  border-radius: 8px;
-  font-size: 12px;
-  font-weight: 600;
+/* SCALE SWITCHER IN TOOLBAR */
+.scale-switcher {
   display: flex;
-  align-items: center;
-  gap: 6px;
-  cursor: pointer;
-  transition: all 0.2s ease;
+  background: #111215;
+  border-radius: 10px;
+  padding: 4px;
+  gap: 4px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
 }
 
-.task-action-btn:hover, .task-action-btn:active {
-  background: rgba(239, 68, 68, 0.3);
-  color: #ffffff;
+.scale-btn {
+  background: transparent;
+  border: 1px solid transparent;
+  color: var(--text-muted);
+  padding: 6px 12px;
+  border-radius: 7px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 11px;
+  font-weight: 600;
+  transition: all 0.15s ease;
+}
+
+.scale-btn:hover {
+  color: var(--text-primary);
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.scale-btn.is-active {
+  background: #252830;
+  border-color: rgba(255, 255, 255, 0.2);
+  color: #00e0d0;
+}
+
+.scale-dim {
+  font-size: 9px;
+  font-family: var(--font-display);
+  color: var(--text-subtle);
+  background: rgba(255, 255, 255, 0.05);
+  padding: 2px 4px;
+  border-radius: 3px;
 }
 
 /* ============================================== */
@@ -369,11 +394,18 @@ html, body {
 /* ============================================== */
 /* MAIN COOKTOP APPLIANCE FRAME */
 /* ============================================== */
+:root {
+  --app-scale: 0.8146; /* Exact 160.512 mm physical scale on iPad Pro 13" */
+}
+
 .cooktop-wrapper {
   display: flex;
   justify-content: center;
-  align-items: center;
-  margin-top: 4px;
+  align-items: flex-start;
+  margin-top: 6px;
+  width: 100%;
+  height: calc(414px * var(--app-scale, 0.8146));
+  transition: height 0.25s cubic-bezier(0.2, 0, 0, 1);
 }
 
 .appliance-bezel {
@@ -382,6 +414,9 @@ html, body {
   border-radius: 18px;
   box-shadow: 0 24px 50px rgba(0, 0, 0, 0.75), inset 0 1px 1px rgba(255, 255, 255, 0.2);
   border: 1px solid rgba(255, 255, 255, 0.08);
+  transform: scale(var(--app-scale, 0.8146));
+  transform-origin: top center;
+  transition: transform 0.25s cubic-bezier(0.2, 0, 0, 1);
 }
 
 /* EXACT 1024 x 384 SCREEN CONTAINER */

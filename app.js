@@ -55,6 +55,10 @@
     glanceStatusPill: document.getElementById("glanceStatusPill"),
     pillStatusText: document.getElementById("pillStatusText"),
 
+    btnScalePhysical: document.getElementById("btnScalePhysical"),
+    btnScaleNative: document.getElementById("btnScaleNative"),
+    deviceSpec: document.querySelector(".device-spec"),
+
     task1FullScreen: document.getElementById("task1FullScreen"),
     task1StandbyCover: document.getElementById("task1StandbyCover"),
     screenRail: document.querySelector(".screen-rail"),
@@ -246,6 +250,25 @@
         els.btnShutterToggle.textContent = "Hide Screen";
       }
     }
+  }
+
+  // SCALE CONTROL (PHYSICAL 1:1 ON IPAD PRO 13" vs 100% CANVAS)
+  function setAppScale(scaleFactor, mode) {
+    document.documentElement.style.setProperty("--app-scale", scaleFactor);
+    if (els.btnScalePhysical && els.btnScaleNative) {
+      if (mode === "physical") {
+        els.btnScalePhysical.classList.add("is-active");
+        els.btnScaleNative.classList.remove("is-active");
+        if (els.deviceSpec) els.deviceSpec.textContent = 'Physical 1:1 (160.5 × 60.2 mm on iPad Pro 13")';
+      } else {
+        els.btnScalePhysical.classList.remove("is-active");
+        els.btnScaleNative.classList.add("is-active");
+        if (els.deviceSpec) els.deviceSpec.textContent = '100% Native Canvas [1024 × 384 px]';
+      }
+    }
+    try {
+      localStorage.setItem("polaris_app_scale_mode", mode);
+    } catch (e) {}
   }
 
   // TASK 3: DRAWER & CONFIGURATION
@@ -473,9 +496,23 @@
         closeDrawer();
       });
     }
+
+    // Scale Switcher (Physical 1:1 for iPad Pro 13" vs 100% Canvas)
+    if (els.btnScalePhysical) {
+      els.btnScalePhysical.addEventListener("click", () => setAppScale(0.8146, "physical"));
+    }
+    if (els.btnScaleNative) {
+      els.btnScaleNative.addEventListener("click", () => setAppScale(1.0, "native"));
+    }
   }
 
   // INIT
+  const savedScaleMode = localStorage.getItem("polaris_app_scale_mode") || "physical";
+  if (savedScaleMode === "native") {
+    setAppScale(1.0, "native");
+  } else {
+    setAppScale(0.8146, "physical");
+  }
   setupListeners();
   setTask(1);
 })();

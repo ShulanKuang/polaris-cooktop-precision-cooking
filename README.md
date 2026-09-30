@@ -29,6 +29,17 @@ To achieve the authentic, borderless appliance feel during user research:
 
 ---
 
+## 📏 Physical 1:1 Hardware Scale (iPad Pro 13" Calibration)
+
+To ensure true-to-life ergonomics, reachability, and touch target sizing during in-person testing, the prototype accurately scales the 1024 × 384 px digital canvas to match the physical ROUX 6.75" appliance hardware:
+
+* **Real Physical Dimensions**: **160.512 mm** wide × **60.192 mm** tall
+* **iPad Pro 13-inch (M5) Retina**: 264 physical PPI (132 CSS points/in)
+* **Calibrated Scale Ratio**: **0.8146×** (`834.16 CSS px ÷ 1024 px`)
+* **Researcher Controls**: Tap **`📏 Physical 1:1 (160.5mm)`** or **`100% Canvas`** in the top right corner of the toolbar to instantly switch between physical size and full-width presentation.
+
+---
+
 ## 📋 User Test Plan & Status
 
 The prototype includes an external researcher toolbar positioned above the appliance screen:
