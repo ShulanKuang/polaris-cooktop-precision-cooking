@@ -63,14 +63,7 @@
     glanceStatusPill: document.getElementById("glanceStatusPill"),
     pillStatusText: document.getElementById("pillStatusText"),
 
-    // Task 2 Researcher Controls
-    task2Controls: document.getElementById("task2Controls"),
-    btnT2NavExplore: document.getElementById("btnT2NavExplore"),
-    btnT2NavSpotlight: document.getElementById("btnT2NavSpotlight"),
-    btnT2NavTechnique: document.getElementById("btnT2NavTechnique"),
-    btnT2NavFood: document.getElementById("btnT2NavFood"),
-    btnT2NavTempPicker: document.getElementById("btnT2NavTempPicker"),
-    btnT2NavTempDigipad: document.getElementById("btnT2NavTempDigipad"),
+    // Toolbar & Physical Scale
 
     btnScalePhysical: document.getElementById("btnScalePhysical"),
     btnScaleNative: document.getElementById("btnScaleNative"),
@@ -200,34 +193,10 @@
       if (els.taskPrompt) els.taskPrompt.textContent = TASK_INFO[taskId].prompt;
     }
 
-    // Toggle subbar controls
-    if (taskId === 1) {
-      if (els.glanceControls) {
-        els.glanceControls.hidden = false;
-        els.glanceControls.style.display = "flex";
-      }
-      if (els.task2Controls) {
-        els.task2Controls.hidden = true;
-        els.task2Controls.style.display = "none";
-      }
-    } else if (taskId === 2) {
-      if (els.glanceControls) {
-        els.glanceControls.hidden = true;
-        els.glanceControls.style.display = "none";
-      }
-      if (els.task2Controls) {
-        els.task2Controls.hidden = false;
-        els.task2Controls.style.display = "flex";
-      }
-    } else {
-      if (els.glanceControls) {
-        els.glanceControls.hidden = true;
-        els.glanceControls.style.display = "none";
-      }
-      if (els.task2Controls) {
-        els.task2Controls.hidden = true;
-        els.task2Controls.style.display = "none";
-      }
+    // Toggle subbar controls (Task 1 glance controls only)
+    if (els.glanceControls) {
+      els.glanceControls.hidden = taskId !== 1;
+      els.glanceControls.style.display = taskId === 1 ? "flex" : "none";
     }
 
     // Switch screen view
@@ -269,40 +238,11 @@
   // ==============================================
   // TASK 2: PRECISION COOKING CONCEPT LOGIC
   // ==============================================
-  function updateT2ToolbarButtons() {
-    const navBtns = [
-      els.btnT2NavExplore,
-      els.btnT2NavSpotlight,
-      els.btnT2NavTechnique,
-      els.btnT2NavFood,
-      els.btnT2NavTempPicker,
-      els.btnT2NavTempDigipad
-    ];
-    navBtns.forEach(b => { if (b) b.classList.remove("is-active"); });
-
-    if (state.task2.screen === "explore") {
-      if (els.btnT2NavExplore) els.btnT2NavExplore.classList.add("is-active");
-    } else if (state.task2.tab === "spotlight") {
-      if (els.btnT2NavSpotlight) els.btnT2NavSpotlight.classList.add("is-active");
-    } else if (state.task2.tab === "technique") {
-      if (els.btnT2NavTechnique) els.btnT2NavTechnique.classList.add("is-active");
-    } else if (state.task2.tab === "food") {
-      if (els.btnT2NavFood) els.btnT2NavFood.classList.add("is-active");
-    } else if (state.task2.tab === "temperature") {
-      if (state.task2.tempMode === "picker") {
-        if (els.btnT2NavTempPicker) els.btnT2NavTempPicker.classList.add("is-active");
-      } else {
-        if (els.btnT2NavTempDigipad) els.btnT2NavTempDigipad.classList.add("is-active");
-      }
-    }
-  }
-
   function showT2Explore(silent = false) {
     if (!silent) playSound("touch");
     state.task2.screen = "explore";
     if (els.t2ScreenExplore) els.t2ScreenExplore.hidden = false;
     if (els.t2ScreenPrecision) els.t2ScreenPrecision.hidden = true;
-    updateT2ToolbarButtons();
   }
 
   function showT2Precision(tabName = "spotlight", tempMode = "picker", silent = false) {
@@ -344,8 +284,6 @@
     if (tabName === "temperature") {
       setT2TempMode(state.task2.tempMode, true);
     }
-
-    updateT2ToolbarButtons();
   }
 
   function setT2TempMode(mode, silent = false) {
@@ -358,7 +296,6 @@
       if (els.t2TempModePicker) els.t2TempModePicker.hidden = true;
       if (els.t2TempModeDigipad) els.t2TempModeDigipad.hidden = false;
     }
-    updateT2ToolbarButtons();
   }
 
   function handleDigipadInput(key) {
@@ -679,26 +616,6 @@
         playSound("touch");
       });
     });
-
-    // Task 2 Researcher Quick-Jump Toolbar
-    if (els.btnT2NavExplore) {
-      els.btnT2NavExplore.addEventListener("click", () => showT2Explore());
-    }
-    if (els.btnT2NavSpotlight) {
-      els.btnT2NavSpotlight.addEventListener("click", () => showT2Precision("spotlight"));
-    }
-    if (els.btnT2NavTechnique) {
-      els.btnT2NavTechnique.addEventListener("click", () => showT2Precision("technique"));
-    }
-    if (els.btnT2NavFood) {
-      els.btnT2NavFood.addEventListener("click", () => showT2Precision("food"));
-    }
-    if (els.btnT2NavTempPicker) {
-      els.btnT2NavTempPicker.addEventListener("click", () => showT2Precision("temperature", "picker"));
-    }
-    if (els.btnT2NavTempDigipad) {
-      els.btnT2NavTempDigipad.addEventListener("click", () => showT2Precision("temperature", "digipad"));
-    }
 
     // T3 Interactive Burner Clicks
     els.t3RearLeft.addEventListener("click", () => openDrawer("rear-left", "temp"));

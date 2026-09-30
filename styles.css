@@ -264,10 +264,14 @@ html, body {
 .researcher-subbar {
   width: 100%;
   max-width: 1100px;
+  height: 52px;
+  min-height: 52px;
+  max-height: 52px;
+  box-sizing: border-box;
   background: #18191d;
   border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 10px;
-  padding: 8px 16px;
+  padding: 0 16px;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -1267,12 +1271,6 @@ html, body {
 /* ============================================== */
 /* TASK 2: PRECISION COOKING CONCEPT EVALUATION   */
 /* ============================================== */
-.task2-controls {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
 .task2-full-screen {
   position: absolute;
   inset: 0;
