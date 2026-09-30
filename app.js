@@ -196,7 +196,10 @@
     if (state.shutterTimer) clearTimeout(state.shutterTimer);
 
     // Uncover immediately
-    if (els.task1StandbyCover) els.task1StandbyCover.classList.add("is-revealed");
+    if (els.task1StandbyCover) {
+      els.task1StandbyCover.classList.add("is-revealed");
+      els.task1StandbyCover.style.display = "none";
+    }
     if (els.glanceStatusPill) els.glanceStatusPill.classList.add("is-active");
     if (els.pillStatusText) {
       const sec = durationMs >= 1000 ? (durationMs / 1000) + "s" : (durationMs / 1000) + "s";
@@ -212,7 +215,10 @@
 
   function coverTask1Screen() {
     if (state.shutterTimer) clearTimeout(state.shutterTimer);
-    if (els.task1StandbyCover) els.task1StandbyCover.classList.remove("is-revealed");
+    if (els.task1StandbyCover) {
+      els.task1StandbyCover.classList.remove("is-revealed");
+      els.task1StandbyCover.style.display = "flex";
+    }
     if (els.glanceStatusPill) els.glanceStatusPill.classList.remove("is-active");
     if (els.pillStatusText) els.pillStatusText.textContent = "Hidden";
     if (els.btnShutterToggle) {
@@ -223,11 +229,19 @@
 
   function togglePreview() {
     playSound("touch");
-    if (els.task1StandbyCover && els.task1StandbyCover.classList.contains("is-revealed")) {
+    const isCurrentlyRevealed = els.task1StandbyCover && (
+      els.task1StandbyCover.style.display === "none" ||
+      els.task1StandbyCover.classList.contains("is-revealed")
+    );
+
+    if (isCurrentlyRevealed) {
       coverTask1Screen();
     } else {
       if (state.shutterTimer) clearTimeout(state.shutterTimer);
-      if (els.task1StandbyCover) els.task1StandbyCover.classList.add("is-revealed");
+      if (els.task1StandbyCover) {
+        els.task1StandbyCover.classList.add("is-revealed");
+        els.task1StandbyCover.style.display = "none";
+      }
       if (els.glanceStatusPill) els.glanceStatusPill.classList.add("is-active");
       if (els.pillStatusText) els.pillStatusText.textContent = "Preview (On)";
       if (els.btnShutterToggle) {
