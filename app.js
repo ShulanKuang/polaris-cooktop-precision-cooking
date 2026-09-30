@@ -617,6 +617,21 @@
       });
     });
 
+    // Task 2 Option Tiles Click / Selection
+    document.querySelectorAll(".buttontile").forEach(tile => {
+      tile.addEventListener("click", () => {
+        playSound("touch");
+        const wasSelected = tile.classList.contains("is-selected");
+        const parentGrid = tile.closest(".t2-tiles-grid");
+        if (parentGrid) {
+          parentGrid.querySelectorAll(".buttontile").forEach(t => t.classList.remove("is-selected"));
+        }
+        if (!wasSelected) {
+          tile.classList.add("is-selected");
+        }
+      });
+    });
+
     // T3 Interactive Burner Clicks
     els.t3RearLeft.addEventListener("click", () => openDrawer("rear-left", "temp"));
     els.t3FrontLeft.addEventListener("click", () => openDrawer("front-left", "food"));
