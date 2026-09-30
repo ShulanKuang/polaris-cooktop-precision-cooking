@@ -1,0 +1,370 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <title>Polaris Cooktop Precision Cooking Prototype</title>
+  <link rel="stylesheet" href="./styles.css">
+</head>
+<body>
+  <div class="test-environment">
+    <!-- RESEARCHER CONTROLS (OUTSIDE 1024x384 MAIN SCREEN) -->
+    <header class="researcher-toolbar" aria-label="Researcher testing control bar">
+      <div class="toolbar-left">
+        <span class="researcher-tag">RESEARCHER CONTROLS</span>
+        <span class="device-spec">Polaris ROUX 6.75" Screen [1024 × 384]</span>
+      </div>
+
+      <div class="toolbar-center">
+        <!-- 3 MAIN TASK SWITCHER BUTTONS -->
+        <div class="task-switcher" role="group" aria-label="Switch test task">
+          <button type="button" class="task-btn is-active" id="btnTask1" data-task="1">
+            <span class="task-num">Task 1</span>
+            <span class="task-label">Awareness Test</span>
+          </button>
+          <button type="button" class="task-btn" id="btnTask2" data-task="2">
+            <span class="task-num">Task 2</span>
+            <span class="task-label">Concept Evaluation</span>
+          </button>
+          <button type="button" class="task-btn" id="btnTask3" data-task="3">
+            <span class="task-num">Task 3</span>
+            <span class="task-label">Usability Flow</span>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <!-- RESEARCHER CHEAT SHEET & TASK 1 GLANCE BAR -->
+    <section class="researcher-subbar" id="researcherSubbar">
+      <div class="subbar-info">
+        <strong id="taskTitle">Task 1: Awareness Test</strong>
+        <span id="taskPrompt">Screen is hidden by default. Click 0.5s, 1s, or 2s to flash the screen to the participant.</span>
+      </div>
+
+      <!-- TASK 1 ONLY: GLANCE TIMEOUT BUTTONS (0.5s / 1s / 2s) -->
+      <div class="glance-controls" id="glanceControls">
+        <span class="glance-label">Glance Reveal:</span>
+        <button type="button" class="glance-btn glance-btn-primary" id="btnFlash05" data-duration="500">
+          <span class="bolt">⚡</span> 0.5s
+        </button>
+        <button type="button" class="glance-btn glance-btn-primary" id="btnFlash10" data-duration="1000">
+          <span class="bolt">⚡</span> 1s
+        </button>
+        <button type="button" class="glance-btn glance-btn-primary" id="btnFlash20" data-duration="2000">
+          <span class="bolt">⚡</span> 2s
+        </button>
+        <button type="button" class="glance-btn glance-btn-subtle" id="btnShutterToggle" data-duration="toggle">
+          Preview
+        </button>
+        <div class="glance-status-pill" id="glanceStatusPill">
+          <span class="pill-dot" id="pillDot"></span>
+          <span id="pillStatusText">Hidden</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- MAIN COOKTOP CONTAINER (CENTERED ON IPAD) -->
+    <main class="cooktop-wrapper">
+      <div class="appliance-bezel">
+        <!-- EXACT 1024 x 384 APPLIANCE TOUCH SCREEN -->
+        <div class="cooktop-screen" id="cooktopScreen" aria-label="Cooktop control screen">
+          
+          <!-- TASK 1 FULL AWARENESS SCREEN (EXACT FIGMA ASSET) -->
+          <div class="task1-full-screen" id="task1FullScreen">
+            <img class="awareness-screen-img" src="./assets/task1-awareness-screen.png" alt="Cooktop Awareness Test Screen">
+            <!-- STANDBY COVER THAT ONLY REVEALS FOR 0.5s / 1s / 2s -->
+            <div class="task1-standby-cover" id="task1StandbyCover">
+              <div class="standby-glass">
+                <span class="standby-badge">STANDBY</span>
+                <span class="standby-text">Screen Hidden for Testing</span>
+                <span class="standby-hint">Tap 0.5s / 1s / 2s above to reveal to participant</span>
+              </div>
+            </div>
+          </div>
+          
+          <!-- LEFT NAVIGATION RAIL -->
+          <aside class="screen-rail" aria-hidden="true">
+            <div class="nav-icon nav-summary">
+              <img src="./figma-assets/nav-summary-top.svg" alt="">
+            </div>
+            <div class="rail-apps">
+              <div class="nav-icon nav-app nav-cooktop is-selected">
+                <span class="cooktop-icon-active">
+                  <img class="cooktop-active-img" src="./figma-assets/cooktop-selected-active.svg" alt="Cooktop">
+                </span>
+              </div>
+              <div class="nav-icon nav-app">
+                <img src="./figma-assets/nav-oven-upper.svg" alt="Upper Oven">
+              </div>
+              <div class="nav-icon nav-app">
+                <img src="./figma-assets/nav-oven-lower.svg" alt="Lower Oven">
+              </div>
+            </div>
+            <div class="nav-icon nav-home" id="navHomeBtn">
+              <img src="./figma-assets/nav-home-bottom.svg" alt="Home">
+            </div>
+          </aside>
+
+          <!-- TOP STATUS BAR -->
+          <div class="top-status" aria-hidden="true">
+            <div class="status-pull"></div>
+            <div class="status-right">
+              <span class="beta-tag">BETA</span>
+              <img class="status-icon wifi-icon" src="./figma-assets/wifi-on.svg" alt="WiFi">
+              <span class="time-readout" id="clockReadout">10:32 AM</span>
+            </div>
+          </div>
+
+          <!-- SCREEN CONTENT CANVAS -->
+          <div class="screen-canvas" id="screenCanvas" hidden>
+
+            <!-- ============================================== -->
+            <!-- VIEW: TASK 2 (CONCEPT EVALUATION) -->
+            <!-- ============================================== -->
+            <section class="screen-view" id="viewTask2" hidden>
+              <div class="concept-screen">
+                <div class="concept-header">
+                  <div class="concept-badge">ROUX PRECISION COOKING</div>
+                  <h1 class="concept-title">Smart Temperature & Technique Control</h1>
+                  <p class="concept-desc">
+                    Cook with chef-level consistency. Control pans and probes directly from your cooktop screen with three precision methods:
+                  </p>
+                </div>
+
+                <div class="concept-pillars">
+                  <!-- Pillar 1: Temperature -->
+                  <div class="pillar-card" data-mode="temp">
+                    <div class="pillar-icon">🌡️</div>
+                    <div class="pillar-title">Temperature</div>
+                    <div class="pillar-subtitle">Exact °F Target</div>
+                    <div class="pillar-detail">Set exact pan/probe target temp (100°F – 500°F). Great for delicate sauces and frying.</div>
+                    <div class="pillar-example">Example: 375°F Oil</div>
+                  </div>
+
+                  <!-- Pillar 2: Food Guided -->
+                  <div class="pillar-card is-highlight" data-mode="food">
+                    <div class="pillar-icon">🥩</div>
+                    <div class="pillar-title">Food</div>
+                    <div class="pillar-subtitle">Ingredient Profiles</div>
+                    <div class="pillar-detail">Targeted doneness and heat curve for specific proteins, vegetables, and dishes.</div>
+                    <div class="pillar-example">Example: Steak, Salmon, Eggs</div>
+                  </div>
+
+                  <!-- Pillar 3: Technique -->
+                  <div class="pillar-card" data-mode="technique">
+                    <div class="pillar-icon">🍳</div>
+                    <div class="pillar-title">Technique</div>
+                    <div class="pillar-subtitle">Culinary Methods</div>
+                    <div class="pillar-detail">Preset thermal regulation for specific culinary operations without guessing heat.</div>
+                    <div class="pillar-example">Example: Caramelize, Simmer, Sear</div>
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            <!-- ============================================== -->
+            <!-- VIEW: TASK 3 (USABILITY FLOW) -->
+            <!-- ============================================== -->
+            <section class="screen-view" id="viewTask3" hidden>
+              <!-- TASK 3 COOKTOP HOME / BURNER SELECTION -->
+              <div class="t3-stage" id="t3CooktopStage">
+                <div class="canvas-header">
+                  <h2 class="view-title">Cooktop Precision</h2>
+                  <div class="t3-instruction-badge" id="t3InstructionBadge">
+                    Tap a burner to configure Precision Cooking
+                  </div>
+                </div>
+
+                <div class="burners-layout t3-burners">
+                  <!-- Rear Left -->
+                  <button type="button" class="burner-card burner-rear-left interactive-burner" id="t3RearLeft" data-burner="rear-left">
+                    <div class="burner-position-icon">
+                      <span class="dot-pos active-pos"></span>
+                      <span class="pos-name">Rear Left</span>
+                    </div>
+                    <div class="burner-body">
+                      <div class="burner-state-label" id="t3RearLeftState">OFF</div>
+                    </div>
+                  </button>
+
+                  <!-- Front Left -->
+                  <button type="button" class="burner-card burner-front-left interactive-burner" id="t3FrontLeft" data-burner="front-left">
+                    <div class="burner-position-icon">
+                      <span class="dot-pos"></span>
+                      <span class="pos-name">Front Left</span>
+                    </div>
+                    <div class="burner-body">
+                      <div class="burner-state-label" id="t3FrontLeftState">OFF</div>
+                    </div>
+                  </button>
+
+                  <!-- Top Center -->
+                  <button type="button" class="burner-card burner-center interactive-burner" id="t3Center" data-burner="center">
+                    <div class="burner-position-icon">
+                      <span class="dot-pos"></span>
+                      <span class="pos-name">Center</span>
+                    </div>
+                    <div class="burner-body">
+                      <div class="burner-state-label">OFF</div>
+                    </div>
+                  </button>
+
+                  <!-- Top Right -->
+                  <button type="button" class="burner-card burner-top-right interactive-burner" id="t3TopRight" data-burner="top-right">
+                    <div class="burner-position-icon">
+                      <span class="dot-pos"></span>
+                      <span class="pos-name">Rear Right</span>
+                    </div>
+                    <div class="burner-body">
+                      <div class="burner-state-label">OFF</div>
+                    </div>
+                  </button>
+
+                  <!-- Front Right -->
+                  <button type="button" class="burner-card burner-front-right interactive-burner" id="t3FrontRight" data-burner="front-right">
+                    <div class="burner-position-icon">
+                      <span class="dot-pos"></span>
+                      <span class="pos-name">Front Right</span>
+                    </div>
+                    <div class="burner-body">
+                      <div class="burner-state-label" id="t3FrontRightState">OFF</div>
+                    </div>
+                  </button>
+                </div>
+              </div>
+
+              <!-- PRECISION CONFIGURATION OVERLAY / MODAL -->
+              <div class="precision-drawer" id="precisionDrawer" hidden>
+                <div class="drawer-header">
+                  <div class="drawer-title-group">
+                    <span class="drawer-target-burner" id="drawerBurnerLabel">Rear Left Burner</span>
+                    <h2 class="drawer-heading">Precision Cooking Mode</h2>
+                  </div>
+                  <!-- MODE TABS: Temperature | Food | Technique -->
+                  <div class="mode-tabs" role="tablist">
+                    <button type="button" class="mode-tab is-active" id="tabTemp" data-mode="temp">Temperature</button>
+                    <button type="button" class="mode-tab" id="tabFood" data-mode="food">Food</button>
+                    <button type="button" class="mode-tab" id="tabTechnique" data-mode="technique">Technique</button>
+                  </div>
+                  <button type="button" class="drawer-close-btn" id="drawerCloseBtn" aria-label="Close">✕</button>
+                </div>
+
+                <div class="drawer-content">
+                  <!-- PANEL: TEMPERATURE MODE -->
+                  <div class="mode-panel" id="panelTemp">
+                    <div class="temp-stepper-box">
+                      <button type="button" class="stepper-btn" id="tempMinusBtn">−</button>
+                      <div class="stepper-readout">
+                        <span class="stepper-num" id="tempNum">375</span>
+                        <span class="stepper-deg">°F</span>
+                        <span class="stepper-caption">Target Pan Temperature</span>
+                      </div>
+                      <button type="button" class="stepper-btn" id="tempPlusBtn">+</button>
+                    </div>
+
+                    <div class="temp-quick-pills">
+                      <button type="button" class="quick-pill is-selected" data-val="375">375°F (Task A)</button>
+                      <button type="button" class="quick-pill" data-val="500">500°F (Task B)</button>
+                      <button type="button" class="quick-pill" data-val="250">250°F</button>
+                      <button type="button" class="quick-pill" data-val="425">425°F</button>
+                    </div>
+
+                    <div class="drawer-actions">
+                      <button type="button" class="action-btn-primary" id="btnConfirmTemp">Start Heating at 375°F</button>
+                      <button type="button" class="action-btn-danger" id="btnTurnOffPrecision">Turn OFF Precision Mode</button>
+                    </div>
+                  </div>
+
+                  <!-- PANEL: FOOD MODE -->
+                  <div class="mode-panel" id="panelFood" hidden>
+                    <div class="food-grid">
+                      <button type="button" class="food-card is-highlight" id="foodSteak" data-food="Steak">
+                        <span class="food-emoji">🥩</span>
+                        <span class="food-name">Steak</span>
+                        <span class="food-hint">Task C (Sear & Baste)</span>
+                      </button>
+                      <button type="button" class="food-card" data-food="Salmon">
+                        <span class="food-emoji">🐟</span>
+                        <span class="food-name">Salmon</span>
+                        <span class="food-hint">Crisp Skin</span>
+                      </button>
+                      <button type="button" class="food-card" data-food="Eggs">
+                        <span class="food-emoji">🍳</span>
+                        <span class="food-name">Eggs</span>
+                        <span class="food-hint">Gentle Heat</span>
+                      </button>
+                      <button type="button" class="food-card" data-food="Vegetables">
+                        <span class="food-emoji">🥦</span>
+                        <span class="food-name">Vegetables</span>
+                        <span class="food-hint">Saute</span>
+                      </button>
+                      <button type="button" class="food-card" data-food="Soup">
+                        <span class="food-emoji">🍲</span>
+                        <span class="food-name">Soup</span>
+                        <span class="food-hint">Controlled Simmer</span>
+                      </button>
+                    </div>
+                    <div class="drawer-actions">
+                      <button type="button" class="action-btn-primary" id="btnConfirmFood">Set Steak Mode</button>
+                    </div>
+                  </div>
+
+                  <!-- PANEL: TECHNIQUE MODE -->
+                  <div class="mode-panel" id="panelTechnique" hidden>
+                    <div class="tech-grid">
+                      <button type="button" class="tech-card is-highlight" id="techCaramelize" data-tech="Caramelize">
+                        <span class="tech-icon">🧅</span>
+                        <span class="tech-name">Caramelize</span>
+                        <span class="tech-hint">Task E (Low & Slow Onion/Sugar)</span>
+                      </button>
+                      <button type="button" class="tech-card" data-tech="Sear">
+                        <span class="tech-icon">🔥</span>
+                        <span class="tech-name">High Sear</span>
+                        <span class="tech-hint">Maximum Browning</span>
+                      </button>
+                      <button type="button" class="tech-card" data-tech="Simmer">
+                        <span class="tech-icon">🫧</span>
+                        <span class="tech-name">Gentle Simmer</span>
+                        <span class="tech-hint">Steady Bubble</span>
+                      </button>
+                      <button type="button" class="tech-card" data-tech="Sous-Vide">
+                        <span class="tech-icon">💧</span>
+                        <span class="tech-name">Sous-Vide Water</span>
+                        <span class="tech-hint">Probe Precision</span>
+                      </button>
+                    </div>
+                    <div class="drawer-actions">
+                      <button type="button" class="action-btn-primary" id="btnConfirmTech">Set Caramelize Mode</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </section>
+
+          </div> <!-- /.screen-canvas -->
+
+          <!-- SHUTTER SCRIM (FOR TASK 1 GLANCE / TIMED REVEAL) -->
+          <div class="shutter-scrim" id="shutterScrim" hidden>
+            <div class="shutter-content">
+              <span class="shutter-logo">POLARIS</span>
+              <span class="shutter-prompt">Screen hidden. Tap flash button above to show to tester.</span>
+            </div>
+          </div>
+
+          <!-- BOTTOM STATUS COLOR STRIP -->
+          <div class="screen-bottom-strip" id="screenBottomStrip"></div>
+        </div> <!-- /.cooktop-screen (1024x384) -->
+      </div> <!-- /.appliance-bezel -->
+    </main>
+
+    <!-- FOOTER HELPER -->
+    <footer class="ipad-footer">
+      <span>Polaris Roux Prototype • GE Appliances Cooktop User Study</span>
+    </footer>
+  </div>
+
+  <script src="./app.js"></script>
+</body>
+</html>
