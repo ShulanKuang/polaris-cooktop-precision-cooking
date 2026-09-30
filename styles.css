@@ -1314,14 +1314,10 @@ html, body {
   cursor: pointer;
   z-index: 20;
   outline: none;
-  transition: transform 0.12s cubic-bezier(0.2, 0, 0, 1), background-color 0.15s ease;
-}
-.t2-explore-btn:hover {
-  background: rgba(255, 255, 255, 0.08);
+  transition: transform 0.12s cubic-bezier(0.2, 0, 0, 1);
 }
 .t2-explore-btn:active {
   transform: scale(0.96);
-  background: rgba(255, 255, 255, 0.2);
 }
 
 /* Back Button (< Cooktop) */
@@ -1337,14 +1333,10 @@ html, body {
   cursor: pointer;
   z-index: 30;
   outline: none;
-  transition: background-color 0.15s ease;
-}
-.t2-back-btn:hover {
-  background: rgba(255, 255, 255, 0.08);
+  transition: transform 0.12s ease;
 }
 .t2-back-btn:active {
   transform: scale(0.97);
-  background: rgba(255, 255, 255, 0.16);
 }
 
 /* Tab Group Navigation */
@@ -1371,14 +1363,11 @@ html, body {
   align-items: center;
   justify-content: center;
   position: relative;
-  transition: background-color 0.15s ease, opacity 0.15s ease;
+  transition: opacity 0.15s ease;
   border-radius: 6px;
 }
-.t2-tab-btn:hover {
-  background: rgba(255, 255, 255, 0.06);
-}
 .t2-tab-btn:active {
-  transform: scale(0.97);
+  opacity: 0.7;
 }
 
 .t2-tab-btn[data-t2tab="spotlight"] {
@@ -1420,15 +1409,11 @@ html, body {
   cursor: pointer;
   outline: none;
   border-radius: 14px;
-  transition: transform 0.12s ease, background-color 0.15s ease;
+  transition: transform 0.12s ease;
   z-index: 20;
-}
-.t2-hotspot:hover {
-  background: rgba(255, 255, 255, 0.08);
 }
 .t2-hotspot:active {
   transform: scale(0.97);
-  background: rgba(255, 255, 255, 0.18);
 }
 .t2-spotlight-steak {
   left: 154px;
@@ -1525,14 +1510,10 @@ html, body {
   outline: none;
   border-radius: 34px;
   z-index: 25;
-  transition: transform 0.12s ease, background-color 0.15s ease;
-}
-.t2-temp-start-btn:hover {
-  background: rgba(255, 255, 255, 0.1);
+  transition: transform 0.12s ease;
 }
 .t2-temp-start-btn:active {
   transform: scale(0.96);
-  background: rgba(255, 255, 255, 0.22);
 }
 .t2-picker-start {
   left: 490px;
@@ -1555,14 +1536,10 @@ html, body {
   outline: none;
   border-radius: 50%;
   z-index: 25;
-  transition: transform 0.12s ease, background-color 0.15s ease;
-}
-.t2-temp-switch-btn:hover {
-  background: rgba(255, 255, 255, 0.1);
+  transition: transform 0.12s ease;
 }
 .t2-temp-switch-btn:active {
   transform: scale(0.92);
-  background: rgba(255, 255, 255, 0.25);
 }
 .t2-switch-to-digipad {
   left: 658px;
@@ -1588,10 +1565,7 @@ html, body {
   outline: none;
   border-radius: 12px;
   z-index: 25;
-  transition: transform 0.12s ease, background-color 0.15s ease;
-}
-.t2-picker-val:hover {
-  background: rgba(255, 255, 255, 0.08);
+  transition: transform 0.12s ease;
 }
 .t2-picker-val:active {
   transform: scale(0.96);
@@ -1621,39 +1595,9 @@ html, body {
   cursor: pointer;
   outline: none;
   border-radius: 18px;
-  transition: background-color 0.1s ease, transform 0.1s ease;
-}
-.t2-key-btn:hover {
-  background: rgba(255, 255, 255, 0.08);
+  transition: transform 0.1s ease, opacity 0.1s ease;
 }
 .t2-key-btn:active {
-  background: rgba(255, 255, 255, 0.22);
+  opacity: 0.6;
   transform: scale(0.94);
-}
-
-.t2-digipad-readout {
-  position: absolute;
-  left: 200px;
-  top: 160px;
-  width: 230px;
-  height: 90px;
-  display: flex;
-  align-items: baseline;
-  justify-content: center;
-  font-family: "Profile Display", system-ui, sans-serif;
-  font-size: 78px;
-  font-weight: 600;
-  color: #ffffff;
-  letter-spacing: -1px;
-  z-index: 20;
-  pointer-events: none;
-  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
-  background: #191a1e;
-  border-radius: 16px;
-}
-.t2-digipad-readout .deg-unit {
-  font-size: 28px;
-  font-weight: 400;
-  margin-left: 4px;
-  color: #b0b3bc;
 }
