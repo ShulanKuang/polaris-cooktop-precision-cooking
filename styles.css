@@ -251,19 +251,14 @@ html, body {
 
 .subbar-info {
   display: flex;
-  flex-direction: column;
-  gap: 2px;
+  align-items: center;
 }
 
 .subbar-info strong {
   font-size: 13px;
   color: #ffffff;
   font-family: var(--font-display);
-}
-
-.subbar-info span {
-  font-size: 11px;
-  color: var(--text-muted);
+  letter-spacing: 0.2px;
 }
 
 .glance-controls, .task3-steps {
@@ -334,15 +329,23 @@ html, body {
 .glance-status-pill {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
+  justify-content: center;
+  gap: 7px;
   font-size: 11px;
   font-weight: 600;
   color: var(--text-muted);
-  background: rgba(0, 0, 0, 0.35);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  padding: 5px 10px;
+  background: rgba(0, 0, 0, 0.45);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 6px 12px;
   border-radius: 12px;
-  margin-left: 6px;
+  margin-left: 8px;
+  width: 140px; /* 2x enlarged consistent stable width */
+  box-sizing: border-box;
+  text-align: center;
+}
+
+#pillStatusText {
+  white-space: nowrap;
 }
 
 .pill-dot {

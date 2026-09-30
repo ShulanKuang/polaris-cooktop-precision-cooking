@@ -146,10 +146,10 @@
     if (taskId === 2 && els.btnTask2) els.btnTask2.classList.add("is-active");
     if (taskId === 3 && els.btnTask3) els.btnTask3.classList.add("is-active");
 
-    // Update cheat sheet
+    // Update cheat sheet title
     if (TASK_INFO[taskId]) {
-      els.taskTitle.textContent = TASK_INFO[taskId].title;
-      els.taskPrompt.textContent = TASK_INFO[taskId].prompt;
+      if (els.taskTitle) els.taskTitle.textContent = TASK_INFO[taskId].title;
+      if (els.taskPrompt) els.taskPrompt.textContent = TASK_INFO[taskId].prompt;
     }
 
     // Toggle subbar controls (ONLY show for Task 1, hide for Task 2 and 3)
