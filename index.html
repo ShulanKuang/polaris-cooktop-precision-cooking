@@ -75,6 +75,17 @@
           <span id="pillStatusText">Hidden</span>
         </div>
       </div>
+
+      <!-- TASK 2 RESEARCHER QUICK-JUMP CONTROLS -->
+      <div class="task2-controls" id="task2Controls" hidden>
+        <span class="glance-label">View Jump:</span>
+        <button type="button" class="glance-btn glance-btn-primary is-active" id="btnT2NavExplore">Explore</button>
+        <button type="button" class="glance-btn glance-btn-primary" id="btnT2NavSpotlight">Spotlight</button>
+        <button type="button" class="glance-btn glance-btn-primary" id="btnT2NavTechnique">Technique</button>
+        <button type="button" class="glance-btn glance-btn-primary" id="btnT2NavFood">Food</button>
+        <button type="button" class="glance-btn glance-btn-primary" id="btnT2NavTempPicker">Temp (Dial)</button>
+        <button type="button" class="glance-btn glance-btn-primary" id="btnT2NavTempDigipad">Temp (Keypad)</button>
+      </div>
     </section>
 
     <!-- MAIN COOKTOP CONTAINER (CENTERED ON IPAD) -->
@@ -94,6 +105,110 @@
                 <span class="standby-badge">STANDBY</span>
                 <span class="standby-text">Screen Hidden for Testing</span>
                 <span class="standby-hint">Tap 0.5s / 1s / 2s above to reveal to participant</span>
+              </div>
+            </div>
+          </div>
+          
+          <!-- ============================================== -->
+          <!-- TASK 2 FULL SCREEN (CONCEPT EVALUATION)        -->
+          <!-- ============================================== -->
+          <div class="task2-full-screen" id="viewTask2" hidden>
+            <!-- 1. SCREEN: PC-EXPLORE -->
+            <div class="t2-screen" id="t2ScreenExplore">
+              <img class="t2-screen-bg" src="./assets/pc-explore.png" alt="Cooktop Explore">
+              <!-- Clickable Explore Button -->
+              <button type="button" class="t2-explore-btn" id="t2BtnExplore" aria-label="Explore Precision Cooking"></button>
+            </div>
+
+            <!-- 2. SCREEN: PRECISION COOKING (TABS + PANELS) -->
+            <div class="t2-screen" id="t2ScreenPrecision" hidden>
+              <!-- Base background canvas with side rail, top status, and breakfast artwork -->
+              <img class="t2-screen-bg" src="./assets/pc-bg.png" alt="Precision Cooking Background">
+
+              <!-- Back button (< Cooktop) -->
+              <button type="button" class="t2-back-btn" id="t2BtnBack" aria-label="Back to Cooktop"></button>
+
+              <!-- TAB GROUP: Spotlight / Technique / Food / Temperature -->
+              <nav class="t2-tab-group" id="t2TabGroup">
+                <button type="button" class="t2-tab-btn" data-t2tab="spotlight" id="t2TabSpotlight" aria-label="Spotlight Tab"></button>
+                <button type="button" class="t2-tab-btn" data-t2tab="technique" id="t2TabTechnique" aria-label="Technique Tab"></button>
+                <button type="button" class="t2-tab-btn" data-t2tab="food" id="t2TabFood" aria-label="Food Tab"></button>
+                <button type="button" class="t2-tab-btn" data-t2tab="temperature" id="t2TabTemperature" aria-label="Temperature Tab"></button>
+              </nav>
+
+              <!-- PANEL 1: SPOTLIGHT -->
+              <div class="t2-panel" id="t2PanelSpotlight">
+                <img class="t2-panel-bg" src="./assets/pc-spotlight.png" alt="Spotlight Screen">
+                <!-- Interactive hotspots -->
+                <button type="button" class="t2-hotspot t2-spotlight-steak" id="t2SpotlightSteak" aria-label="Suggested: Steak"></button>
+                <button type="button" class="t2-hotspot t2-spotlight-bacon" id="t2SpotlightBacon" aria-label="Frequently Used: Bacon"></button>
+                <button type="button" class="t2-hotspot t2-spotlight-beef" id="t2SpotlightBeef" aria-label="Frequently Used: Beef"></button>
+              </div>
+
+              <!-- PANEL 2: TECHNIQUE (VERTICAL SCROLLABLE WITH TOP-CROP) -->
+              <div class="t2-panel" id="t2PanelTechnique" hidden>
+                <div class="t2-crop-header">
+                  <img class="t2-crop-header-img" src="./assets/pc-technique.png" alt="Technique Header">
+                </div>
+                <div class="t2-options-scroll-container" id="t2TechniqueScroll">
+                  <img class="t2-options-img" src="./assets/precision-technique-options.png" alt="Technique Options">
+                </div>
+              </div>
+
+              <!-- PANEL 3: FOOD (VERTICAL SCROLLABLE WITH TOP-CROP) -->
+              <div class="t2-panel" id="t2PanelFood" hidden>
+                <div class="t2-crop-header">
+                  <img class="t2-crop-header-img" src="./assets/pc-food.png" alt="Food Header">
+                </div>
+                <div class="t2-options-scroll-container" id="t2FoodScroll">
+                  <img class="t2-options-img" src="./assets/precision-food-options.png" alt="Food Options">
+                </div>
+              </div>
+
+              <!-- PANEL 4: TEMPERATURE (PICKER & DIGIPAD) -->
+              <div class="t2-panel" id="t2PanelTemperature" hidden>
+                <!-- Mode A: Temperature Picker -->
+                <div class="t2-temp-mode" id="t2TempModePicker">
+                  <img class="t2-temp-bg" src="./assets/pc-temperature-picker.png" alt="Temperature Picker">
+                  <!-- START button -->
+                  <button type="button" class="t2-temp-start-btn t2-picker-start" id="t2PickerStartBtn" aria-label="Start Temperature"></button>
+                  <!-- Secondary round button with keypad icon (switches to Digipad) -->
+                  <button type="button" class="t2-temp-switch-btn t2-switch-to-digipad" id="t2BtnToDigipad" aria-label="Switch to Keypad"></button>
+                  <!-- Selectable temperature values -->
+                  <button type="button" class="t2-picker-val t2-val-325" data-temp="325" aria-label="325 Degrees"></button>
+                  <button type="button" class="t2-picker-val t2-val-350" data-temp="350" aria-label="350 Degrees"></button>
+                  <button type="button" class="t2-picker-val t2-val-375" data-temp="375" aria-label="375 Degrees"></button>
+                  <button type="button" class="t2-picker-val t2-val-400" data-temp="400" aria-label="400 Degrees"></button>
+                  <button type="button" class="t2-picker-val t2-val-425" data-temp="425" aria-label="425 Degrees"></button>
+                </div>
+
+                <!-- Mode B: Temperature Digipad -->
+                <div class="t2-temp-mode" id="t2TempModeDigipad" hidden>
+                  <img class="t2-temp-bg" src="./assets/pc-temperature-digipad.png" alt="Temperature Digital Pad">
+                  <!-- Dynamic Temperature Readout -->
+                  <div class="t2-digipad-readout" id="t2DigipadReadout">
+                    <span id="t2DigipadValue">375</span><span class="deg-unit">°F</span>
+                  </div>
+                  <!-- START button -->
+                  <button type="button" class="t2-temp-start-btn t2-digipad-start" id="t2DigipadStartBtn" aria-label="Start Temperature"></button>
+                  <!-- Secondary round button with carousel icon (switches back to Picker) -->
+                  <button type="button" class="t2-temp-switch-btn t2-switch-to-picker" id="t2BtnToPicker" aria-label="Switch to Dial Picker"></button>
+                  <!-- Keypad buttons: 1-9, Clear, 0, Backspace -->
+                  <div class="t2-digipad-keypad" id="t2DigipadKeypad">
+                    <button type="button" class="t2-key-btn" data-key="1" aria-label="1"></button>
+                    <button type="button" class="t2-key-btn" data-key="2" aria-label="2"></button>
+                    <button type="button" class="t2-key-btn" data-key="3" aria-label="3"></button>
+                    <button type="button" class="t2-key-btn" data-key="4" aria-label="4"></button>
+                    <button type="button" class="t2-key-btn" data-key="5" aria-label="5"></button>
+                    <button type="button" class="t2-key-btn" data-key="6" aria-label="6"></button>
+                    <button type="button" class="t2-key-btn" data-key="7" aria-label="7"></button>
+                    <button type="button" class="t2-key-btn" data-key="8" aria-label="8"></button>
+                    <button type="button" class="t2-key-btn" data-key="9" aria-label="9"></button>
+                    <button type="button" class="t2-key-btn" data-key="clear" aria-label="Clear"></button>
+                    <button type="button" class="t2-key-btn" data-key="0" aria-label="0"></button>
+                    <button type="button" class="t2-key-btn" data-key="backspace" aria-label="Backspace"></button>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
@@ -133,50 +248,6 @@
 
           <!-- SCREEN CONTENT CANVAS -->
           <div class="screen-canvas" id="screenCanvas" hidden>
-
-            <!-- ============================================== -->
-            <!-- VIEW: TASK 2 (CONCEPT EVALUATION) -->
-            <!-- ============================================== -->
-            <section class="screen-view" id="viewTask2" hidden>
-              <div class="concept-screen">
-                <div class="concept-header">
-                  <div class="concept-badge">ROUX PRECISION COOKING</div>
-                  <h1 class="concept-title">Smart Temperature & Technique Control</h1>
-                  <p class="concept-desc">
-                    Cook with chef-level consistency. Control pans and probes directly from your cooktop screen with three precision methods:
-                  </p>
-                </div>
-
-                <div class="concept-pillars">
-                  <!-- Pillar 1: Temperature -->
-                  <div class="pillar-card" data-mode="temp">
-                    <div class="pillar-icon">🌡️</div>
-                    <div class="pillar-title">Temperature</div>
-                    <div class="pillar-subtitle">Exact °F Target</div>
-                    <div class="pillar-detail">Set exact pan/probe target temp (100°F – 500°F). Great for delicate sauces and frying.</div>
-                    <div class="pillar-example">Example: 375°F Oil</div>
-                  </div>
-
-                  <!-- Pillar 2: Food Guided -->
-                  <div class="pillar-card is-highlight" data-mode="food">
-                    <div class="pillar-icon">🥩</div>
-                    <div class="pillar-title">Food</div>
-                    <div class="pillar-subtitle">Ingredient Profiles</div>
-                    <div class="pillar-detail">Targeted doneness and heat curve for specific proteins, vegetables, and dishes.</div>
-                    <div class="pillar-example">Example: Steak, Salmon, Eggs</div>
-                  </div>
-
-                  <!-- Pillar 3: Technique -->
-                  <div class="pillar-card" data-mode="technique">
-                    <div class="pillar-icon">🍳</div>
-                    <div class="pillar-title">Technique</div>
-                    <div class="pillar-subtitle">Culinary Methods</div>
-                    <div class="pillar-detail">Preset thermal regulation for specific culinary operations without guessing heat.</div>
-                    <div class="pillar-example">Example: Caramelize, Simmer, Sear</div>
-                  </div>
-                </div>
-              </div>
-            </section>
 
             <!-- ============================================== -->
             <!-- VIEW: TASK 3 (USABILITY FLOW) -->

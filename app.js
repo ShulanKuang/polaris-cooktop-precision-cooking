@@ -39,6 +39,14 @@
       "center": { state: "off", temp: null, mode: null, label: "OFF" },
       "top-right": { state: "off", temp: null, mode: null, label: "OFF" },
       "front-right": { state: "off", temp: null, mode: null, label: "OFF" }
+    },
+    task2: {
+      screen: "explore", // "explore" or "precision"
+      tab: "spotlight",  // "spotlight", "technique", "food", "temperature"
+      tempMode: "picker",// "picker" or "digipad"
+      temperature: 375,
+      digipadBuffer: "375",
+      hasEditedKeypad: false
     }
   };
 
@@ -55,6 +63,15 @@
     glanceStatusPill: document.getElementById("glanceStatusPill"),
     pillStatusText: document.getElementById("pillStatusText"),
 
+    // Task 2 Researcher Controls
+    task2Controls: document.getElementById("task2Controls"),
+    btnT2NavExplore: document.getElementById("btnT2NavExplore"),
+    btnT2NavSpotlight: document.getElementById("btnT2NavSpotlight"),
+    btnT2NavTechnique: document.getElementById("btnT2NavTechnique"),
+    btnT2NavFood: document.getElementById("btnT2NavFood"),
+    btnT2NavTempPicker: document.getElementById("btnT2NavTempPicker"),
+    btnT2NavTempDigipad: document.getElementById("btnT2NavTempDigipad"),
+
     btnScalePhysical: document.getElementById("btnScalePhysical"),
     btnScaleNative: document.getElementById("btnScaleNative"),
     deviceSpec: document.querySelector(".device-spec"),
@@ -66,7 +83,34 @@
     screenCanvas: document.getElementById("screenCanvas"),
     screenBottomStrip: document.getElementById("screenBottomStrip"),
 
+    // Task 2 DOM elements
     viewTask2: document.getElementById("viewTask2"),
+    t2ScreenExplore: document.getElementById("t2ScreenExplore"),
+    t2ScreenPrecision: document.getElementById("t2ScreenPrecision"),
+    t2BtnExplore: document.getElementById("t2BtnExplore"),
+    t2BtnBack: document.getElementById("t2BtnBack"),
+
+    t2TabSpotlight: document.getElementById("t2TabSpotlight"),
+    t2TabTechnique: document.getElementById("t2TabTechnique"),
+    t2TabFood: document.getElementById("t2TabFood"),
+    t2TabTemperature: document.getElementById("t2TabTemperature"),
+
+    t2PanelSpotlight: document.getElementById("t2PanelSpotlight"),
+    t2PanelTechnique: document.getElementById("t2PanelTechnique"),
+    t2PanelFood: document.getElementById("t2PanelFood"),
+    t2PanelTemperature: document.getElementById("t2PanelTemperature"),
+
+    t2TechniqueScroll: document.getElementById("t2TechniqueScroll"),
+    t2FoodScroll: document.getElementById("t2FoodScroll"),
+
+    t2TempModePicker: document.getElementById("t2TempModePicker"),
+    t2TempModeDigipad: document.getElementById("t2TempModeDigipad"),
+    t2PickerStartBtn: document.getElementById("t2PickerStartBtn"),
+    t2DigipadStartBtn: document.getElementById("t2DigipadStartBtn"),
+    t2BtnToDigipad: document.getElementById("t2BtnToDigipad"),
+    t2BtnToPicker: document.getElementById("t2BtnToPicker"),
+    t2DigipadValue: document.getElementById("t2DigipadValue"),
+
     viewTask3: document.getElementById("viewTask3"),
     precisionDrawer: document.getElementById("precisionDrawer"),
     drawerCloseBtn: document.getElementById("drawerCloseBtn"),
@@ -156,22 +200,40 @@
       if (els.taskPrompt) els.taskPrompt.textContent = TASK_INFO[taskId].prompt;
     }
 
-    // Toggle subbar controls (ONLY show for Task 1, hide for Task 2 and 3)
+    // Toggle subbar controls
     if (taskId === 1) {
       if (els.glanceControls) {
         els.glanceControls.hidden = false;
         els.glanceControls.style.display = "flex";
+      }
+      if (els.task2Controls) {
+        els.task2Controls.hidden = true;
+        els.task2Controls.style.display = "none";
+      }
+    } else if (taskId === 2) {
+      if (els.glanceControls) {
+        els.glanceControls.hidden = true;
+        els.glanceControls.style.display = "none";
+      }
+      if (els.task2Controls) {
+        els.task2Controls.hidden = false;
+        els.task2Controls.style.display = "flex";
       }
     } else {
       if (els.glanceControls) {
         els.glanceControls.hidden = true;
         els.glanceControls.style.display = "none";
       }
+      if (els.task2Controls) {
+        els.task2Controls.hidden = true;
+        els.task2Controls.style.display = "none";
+      }
     }
 
     // Switch screen view
     if (taskId === 1) {
       if (els.task1FullScreen) els.task1FullScreen.hidden = false;
+      if (els.viewTask2) els.viewTask2.hidden = true;
       if (els.screenRail) els.screenRail.hidden = true;
       if (els.topStatus) els.topStatus.hidden = true;
       if (els.screenCanvas) els.screenCanvas.hidden = true;
@@ -179,19 +241,145 @@
 
       // Always start with screen covered in standby
       coverTask1Screen();
+    } else if (taskId === 2) {
+      if (els.task1FullScreen) els.task1FullScreen.hidden = true;
+      if (els.viewTask2) els.viewTask2.hidden = false;
+      if (els.screenRail) els.screenRail.hidden = true;
+      if (els.topStatus) els.topStatus.hidden = true;
+      if (els.screenCanvas) els.screenCanvas.hidden = true;
+      if (els.screenBottomStrip) els.screenBottomStrip.hidden = true;
+
+      // Initialize Task 2 to explore view
+      showT2Explore(true);
     } else {
       if (els.task1FullScreen) els.task1FullScreen.hidden = true;
+      if (els.viewTask2) els.viewTask2.hidden = true;
       if (els.screenRail) els.screenRail.hidden = false;
       if (els.topStatus) els.topStatus.hidden = false;
       if (els.screenCanvas) els.screenCanvas.hidden = false;
       if (els.screenBottomStrip) els.screenBottomStrip.hidden = false;
 
-      if (els.viewTask2) els.viewTask2.hidden = taskId !== 2;
       if (els.viewTask3) els.viewTask3.hidden = taskId !== 3;
     }
 
     // Reset drawer
     closeDrawer();
+  }
+
+  // ==============================================
+  // TASK 2: PRECISION COOKING CONCEPT LOGIC
+  // ==============================================
+  function updateT2ToolbarButtons() {
+    const navBtns = [
+      els.btnT2NavExplore,
+      els.btnT2NavSpotlight,
+      els.btnT2NavTechnique,
+      els.btnT2NavFood,
+      els.btnT2NavTempPicker,
+      els.btnT2NavTempDigipad
+    ];
+    navBtns.forEach(b => { if (b) b.classList.remove("is-active"); });
+
+    if (state.task2.screen === "explore") {
+      if (els.btnT2NavExplore) els.btnT2NavExplore.classList.add("is-active");
+    } else if (state.task2.tab === "spotlight") {
+      if (els.btnT2NavSpotlight) els.btnT2NavSpotlight.classList.add("is-active");
+    } else if (state.task2.tab === "technique") {
+      if (els.btnT2NavTechnique) els.btnT2NavTechnique.classList.add("is-active");
+    } else if (state.task2.tab === "food") {
+      if (els.btnT2NavFood) els.btnT2NavFood.classList.add("is-active");
+    } else if (state.task2.tab === "temperature") {
+      if (state.task2.tempMode === "picker") {
+        if (els.btnT2NavTempPicker) els.btnT2NavTempPicker.classList.add("is-active");
+      } else {
+        if (els.btnT2NavTempDigipad) els.btnT2NavTempDigipad.classList.add("is-active");
+      }
+    }
+  }
+
+  function showT2Explore(silent = false) {
+    if (!silent) playSound("touch");
+    state.task2.screen = "explore";
+    if (els.t2ScreenExplore) els.t2ScreenExplore.hidden = false;
+    if (els.t2ScreenPrecision) els.t2ScreenPrecision.hidden = true;
+    updateT2ToolbarButtons();
+  }
+
+  function showT2Precision(tabName = "spotlight", tempMode = "picker", silent = false) {
+    if (!silent) playSound("touch");
+    state.task2.screen = "precision";
+    if (els.t2ScreenExplore) els.t2ScreenExplore.hidden = true;
+    if (els.t2ScreenPrecision) els.t2ScreenPrecision.hidden = false;
+    setT2Tab(tabName, tempMode, true);
+  }
+
+  function setT2Tab(tabName, tempMode = null, silent = false) {
+    if (!silent) playSound("touch");
+    state.task2.tab = tabName;
+    if (tempMode) {
+      state.task2.tempMode = tempMode;
+    }
+
+    const panels = {
+      spotlight: els.t2PanelSpotlight,
+      technique: els.t2PanelTechnique,
+      food: els.t2PanelFood,
+      temperature: els.t2PanelTemperature
+    };
+
+    for (const [key, panel] of Object.entries(panels)) {
+      if (panel) {
+        panel.hidden = (key !== tabName);
+      }
+    }
+
+    // Reset scroll positions when entering technique or food
+    if (tabName === "technique" && els.t2TechniqueScroll) {
+      els.t2TechniqueScroll.scrollTop = 0;
+    }
+    if (tabName === "food" && els.t2FoodScroll) {
+      els.t2FoodScroll.scrollTop = 0;
+    }
+
+    if (tabName === "temperature") {
+      setT2TempMode(state.task2.tempMode, true);
+    }
+
+    updateT2ToolbarButtons();
+  }
+
+  function setT2TempMode(mode, silent = false) {
+    if (!silent) playSound("touch");
+    state.task2.tempMode = mode;
+    if (mode === "picker") {
+      if (els.t2TempModePicker) els.t2TempModePicker.hidden = false;
+      if (els.t2TempModeDigipad) els.t2TempModeDigipad.hidden = true;
+    } else {
+      if (els.t2TempModePicker) els.t2TempModePicker.hidden = true;
+      if (els.t2TempModeDigipad) els.t2TempModeDigipad.hidden = false;
+    }
+    updateT2ToolbarButtons();
+  }
+
+  function handleDigipadInput(key) {
+    playSound("touch");
+    if (key === "clear") {
+      state.task2.digipadBuffer = "";
+    } else if (key === "backspace") {
+      state.task2.digipadBuffer = state.task2.digipadBuffer.slice(0, -1);
+    } else {
+      // numeric digit
+      if (state.task2.digipadBuffer === "375" && !state.task2.hasEditedKeypad) {
+        state.task2.digipadBuffer = key;
+        state.task2.hasEditedKeypad = true;
+      } else if (state.task2.digipadBuffer.length < 3) {
+        state.task2.digipadBuffer += key;
+      }
+    }
+
+    if (els.t2DigipadValue) {
+      els.t2DigipadValue.textContent = state.task2.digipadBuffer || "---";
+    }
   }
 
   // TASK 1: GLANCE FLASH CONTROLS (0.5s / 1s / 2s) - SILENT FOR USER STUDY
@@ -418,7 +606,7 @@
     els.btnTask3.addEventListener("click", () => setTask(3));
 
     // Task 1 Glance Flash triggers (0.5s / 1s / 2s)
-    document.querySelectorAll(".glance-btn").forEach(btn => {
+    document.querySelectorAll("#glanceControls .glance-btn").forEach(btn => {
       btn.addEventListener("click", () => {
         const dur = btn.dataset.duration;
         if (dur === "toggle") {
@@ -428,6 +616,89 @@
         }
       });
     });
+
+    // TASK 2 EVENT LISTENERS
+    if (els.t2BtnExplore) {
+      els.t2BtnExplore.addEventListener("click", () => showT2Precision("spotlight"));
+    }
+    if (els.t2BtnBack) {
+      els.t2BtnBack.addEventListener("click", () => showT2Explore());
+    }
+
+    // Task 2 Tab Bar
+    if (els.t2TabSpotlight) {
+      els.t2TabSpotlight.addEventListener("click", () => setT2Tab("spotlight"));
+    }
+    if (els.t2TabTechnique) {
+      els.t2TabTechnique.addEventListener("click", () => setT2Tab("technique"));
+    }
+    if (els.t2TabFood) {
+      els.t2TabFood.addEventListener("click", () => setT2Tab("food"));
+    }
+    if (els.t2TabTemperature) {
+      els.t2TabTemperature.addEventListener("click", () => setT2Tab("temperature"));
+    }
+
+    // Task 2 Temperature Mode Switchers
+    if (els.t2BtnToDigipad) {
+      els.t2BtnToDigipad.addEventListener("click", () => setT2TempMode("digipad"));
+    }
+    if (els.t2BtnToPicker) {
+      els.t2BtnToPicker.addEventListener("click", () => setT2TempMode("picker"));
+    }
+
+    // Task 2 Start Buttons
+    if (els.t2PickerStartBtn) {
+      els.t2PickerStartBtn.addEventListener("click", () => playSound("toggleOn"));
+    }
+    if (els.t2DigipadStartBtn) {
+      els.t2DigipadStartBtn.addEventListener("click", () => playSound("toggleOn"));
+    }
+
+    // Task 2 Temperature Picker Options
+    document.querySelectorAll(".t2-picker-val").forEach(btn => {
+      btn.addEventListener("click", () => {
+        playSound("touch");
+        const val = btn.dataset.temp;
+        state.task2.temperature = parseInt(val, 10);
+        state.task2.digipadBuffer = val;
+        if (els.t2DigipadValue) els.t2DigipadValue.textContent = val;
+      });
+    });
+
+    // Task 2 Digipad Keypad Keys
+    document.querySelectorAll(".t2-key-btn").forEach(btn => {
+      btn.addEventListener("click", () => {
+        handleDigipadInput(btn.dataset.key);
+      });
+    });
+
+    // Task 2 Spotlight Interactive Cards
+    document.querySelectorAll(".t2-hotspot").forEach(btn => {
+      btn.addEventListener("click", () => {
+        playSound("touch");
+      });
+    });
+
+    // Task 2 Researcher Quick-Jump Toolbar
+    if (els.btnT2NavExplore) {
+      els.btnT2NavExplore.addEventListener("click", () => showT2Explore());
+    }
+    if (els.btnT2NavSpotlight) {
+      els.btnT2NavSpotlight.addEventListener("click", () => showT2Precision("spotlight"));
+    }
+    if (els.btnT2NavTechnique) {
+      els.btnT2NavTechnique.addEventListener("click", () => showT2Precision("technique"));
+    }
+    if (els.btnT2NavFood) {
+      els.btnT2NavFood.addEventListener("click", () => showT2Precision("food"));
+    }
+    if (els.btnT2NavTempPicker) {
+      els.btnT2NavTempPicker.addEventListener("click", () => showT2Precision("temperature", "picker"));
+    }
+    if (els.btnT2NavTempDigipad) {
+      els.btnT2NavTempDigipad.addEventListener("click", () => showT2Precision("temperature", "digipad"));
+    }
 
     // T3 Interactive Burner Clicks
     els.t3RearLeft.addEventListener("click", () => openDrawer("rear-left", "temp"));

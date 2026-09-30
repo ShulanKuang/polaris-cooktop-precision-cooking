@@ -47,8 +47,36 @@ The prototype includes an external researcher toolbar positioned above the appli
 | Task | Status | Focus / Objectives | Controls Available |
 | :--- | :---: | :--- | :--- |
 | **Task 1: Awareness Test** | **COMPLETE** | Test whether participants notice active heating burners and precision cooking states during quick glance exposures. | • **0.5s / 1s / 2s glance reveal buttons**<br>• **Silent execution** (zero sound cues to prevent audio bias)<br>• **1024 × 12px running activity bar** (magenta ⇄ blue left-to-right)<br>• **Stable 140px status pill** (`Hidden`, `Revealed`, `Preview`) |
-| **Task 2: Concept Evaluation** | *Up Next* | Evaluate participant comprehension of Precision Cooking pillars (Temperature, Food, Technique). | Focus cards and interactive concept walkthrough. |
+| **Task 2: Concept Evaluation** | **COMPLETE** | Evaluate participant comprehension of Precision Cooking pillars (Spotlight, Technique, Food, Temperature Picker, and Digital Pad). | • **Explore Screen (`PC-explore`)** with clickable Explore button<br>• **Tab Navigation Bar** (Spotlight, Technique, Food, Temperature)<br>• **Vertical Scrollable Tiles** for Food & Technique with top crop<br>• **Temperature Picker ⇄ Digital Pad Switcher** via round secondary button<br>• **Interactive Digipad Keypad** (0-9, Clear, Backspace, live display)<br>• **Researcher Quick-Jump subbar** to leap directly to any state |
 | **Task 3: Usability Flow** | *Planned* | Interactive burner flow (Tasks A – E):<br>• Task A: Rear left 375°F<br>• Task B: Set 500°F<br>• Task C: Front left Steak mode<br>• Task D: Turn OFF precision<br>• Task E: Front right Caramelize mode | Interactive burners, drawer stepper, food selection cards, technique mode options, and native audio feedback. |
+
+---
+
+## 🍳 Task 2 Details (Precision Cooking Concept Evaluation)
+
+Task 2 is fully built and wired with authentic 1024 × 384 px Figma artboards and interactive components:
+
+1. **Start Screen (`PC-explore`)**:
+   - Displays the initial cooktop explore screen with the prominent pill-shaped **Explore** button.
+   - Clicking **Explore** navigates directly into the Precision Cooking experience on the **Spotlight** tab.
+2. **Back Navigation (`< Cooktop`)**:
+   - Tapping the top-left `< Cooktop` button at any point returns seamlessly to the Explore screen.
+3. **Tab Group Navigation**:
+   - Participants or researchers can tap between the 4 core tabs:
+     - **Spotlight**: Highlights suggested cooking recipes (Steak, Bacon, Beef).
+     - **Technique**: Displays technique tiles (Sear, Sauté, Poach, Caramelize, Simmer, etc.).
+     - **Food**: Displays food-guided ingredient categories.
+     - **Temperature**: Precision temperature selection.
+4. **Vertical Scrollable Option Tiles (Top Cropped)**:
+   - Both **Technique** and **Food** tabs feature vertical touch scrolling for their full grid of options.
+   - Fixed crop container starts cleanly at the first row ($y = 179\text{px}$) beneath the pinned header and navigation tab bar, matching Figma layout behavior.
+5. **Temperature Dial Picker & Digital Pad Toggle**:
+   - **Dial Picker Mode**: Shows the dial selector with clickable preset values (`325°F`, `350°F`, `375°F`, `400°F`, `425°F`) and the `START` button.
+   - **Switch to Digipad**: Tapping the secondary round keypad button next to `START` toggles to the **Digital Pad** screen.
+   - **Interactive Digipad Keypad**: 12-key numeric keypad (1–9, Clear, 0, Backspace) with live dynamic temperature readout updates (`°F`).
+   - **Switch to Dial**: Tapping the secondary round carousel button next to `START` toggles back to the Dial Picker.
+6. **Researcher Subbar Quick Jump**:
+   - When Task 2 is active, the researcher toolbar provides dedicated quick-jump buttons (`Explore`, `Spotlight`, `Technique`, `Food`, `Temp (Dial)`, `Temp (Keypad)`) for direct test administration.
 
 ---
 
