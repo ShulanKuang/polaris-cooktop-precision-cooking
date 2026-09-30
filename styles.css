@@ -1169,15 +1169,85 @@ html, body {
   margin-top: 2px;
 }
 
-/* BOTTOM STATUS STRIP */
+/* ============================================== */
+/* RUNNING ACTIVITY BAR (MAGENTA TO BLUE FLOW)    */
+/* ============================================== */
+.running-activity-bar {
+  position: absolute;
+  bottom: 0;
+  left: 82px;
+  right: 0;
+  height: 5px;
+  z-index: 102;
+  overflow: hidden;
+  background: linear-gradient(
+    90deg,
+    #ff007f 0%,
+    #d8009d 12%,
+    #9d00ff 25%,
+    #5522ff 38%,
+    #0066ff 50%,
+    #00d4ff 62%,
+    #0066ff 72%,
+    #9d00ff 84%,
+    #d8009d 92%,
+    #ff007f 100%
+  );
+  background-size: 942px 100%;
+  background-repeat: repeat-x;
+  animation: runFlowLeftToRight 2.8s linear infinite, glowPulse 3s ease-in-out infinite alternate;
+  box-shadow: 0 -1px 8px rgba(255, 0, 127, 0.7), 0 -2px 16px rgba(0, 150, 255, 0.5);
+  pointer-events: none;
+}
+
+/* Travelling light highlight moving along the bar */
+.running-activity-bar::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0) 0%,
+    rgba(255, 255, 255, 0.5) 50%,
+    rgba(255, 255, 255, 0) 100%
+  );
+  background-size: 942px 100%;
+  background-repeat: repeat-x;
+  animation: runFlowLeftToRight 2.0s linear infinite;
+  mix-blend-mode: overlay;
+  pointer-events: none;
+}
+
+@keyframes runFlowLeftToRight {
+  0% {
+    background-position: 0 0;
+  }
+  100% {
+    background-position: 942px 0;
+  }
+}
+
+@keyframes glowPulse {
+  0% {
+    filter: brightness(1) drop-shadow(0 0 4px #ff007f);
+  }
+  50% {
+    filter: brightness(1.2) drop-shadow(0 0 10px #00d4ff);
+  }
+  100% {
+    filter: brightness(1.05) drop-shadow(0 0 6px #9d00ff);
+  }
+}
+
 .screen-bottom-strip {
   position: absolute;
   bottom: 0;
   left: 82px;
   right: 0;
-  height: 4px;
-  background: var(--orange-accent);
-  box-shadow: 0 0 10px var(--orange-accent);
+  height: 5px;
 }
 
 /* FOOTER */
