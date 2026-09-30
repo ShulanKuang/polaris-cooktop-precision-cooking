@@ -199,21 +199,30 @@
                 <!-- Mode A: Temperature Picker -->
                 <div class="t2-temp-mode" id="t2TempModePicker">
                   <img class="t2-temp-bg" src="./assets/pc-temperature-picker.png" alt="Temperature Picker">
+                  
+                  <!-- Dynamic Horizontal Temperature Carousel (200°F - 500°F in 10° increments) -->
+                  <div class="t2-picker-wheel-container" id="t2PickerWheelContainer">
+                    <div class="t2-picker-track" id="t2PickerTrack"></div>
+                  </div>
+
                   <!-- START button -->
                   <button type="button" class="t2-temp-start-btn t2-picker-start" id="t2PickerStartBtn" aria-label="Start Temperature"></button>
                   <!-- Secondary round button with keypad icon (switches to Digipad) -->
                   <button type="button" class="t2-temp-switch-btn t2-switch-to-digipad" id="t2BtnToDigipad" aria-label="Switch to Keypad"></button>
-                  <!-- Selectable temperature values -->
-                  <button type="button" class="t2-picker-val t2-val-325" data-temp="325" aria-label="325 Degrees"></button>
-                  <button type="button" class="t2-picker-val t2-val-350" data-temp="350" aria-label="350 Degrees"></button>
-                  <button type="button" class="t2-picker-val t2-val-375" data-temp="375" aria-label="375 Degrees"></button>
-                  <button type="button" class="t2-picker-val t2-val-400" data-temp="400" aria-label="400 Degrees"></button>
-                  <button type="button" class="t2-picker-val t2-val-425" data-temp="425" aria-label="425 Degrees"></button>
                 </div>
 
                 <!-- Mode B: Temperature Digipad -->
                 <div class="t2-temp-mode" id="t2TempModeDigipad" hidden>
                   <img class="t2-temp-bg" src="./assets/pc-temperature-digipad.png" alt="Temperature Digital Pad">
+                  
+                  <!-- Dynamic Temperature Digipad Readout -->
+                  <div class="t2-digipad-display-container">
+                    <div class="t2-digipad-value-row">
+                      <span class="t2-digipad-val-num" id="t2DigipadValue">370</span>
+                      <span class="t2-digipad-val-unit">°F</span>
+                    </div>
+                  </div>
+
                   <!-- START button -->
                   <button type="button" class="t2-temp-start-btn t2-digipad-start" id="t2DigipadStartBtn" aria-label="Start Temperature"></button>
                   <!-- Secondary round button with carousel icon (switches back to Picker) -->

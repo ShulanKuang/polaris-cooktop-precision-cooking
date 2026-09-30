@@ -80,11 +80,18 @@ Task 2 is fully wired with authentic 1024 × 384 px Figma artboards and interact
 6. **Frosted Glass / Background Blur**:
    - Uses `-webkit-backdrop-filter: blur(16px)` with GPU hardware compositing (`transform: translateZ(0)`).
    - Cooktop food photography (bacon and eggs) subtly blurs through the translucent 80% opacity tiles.
-7. **Temperature Dial Picker & Digital Pad Toggle**:
-   - **Dial Picker Mode**: Shows the dial selector with clickable preset values (`325°F`, `350°F`, `375°F`, `400°F`, `425°F`) and the `START` button.
-   - **Switch to Digipad**: Tapping the secondary round keypad button next to `START` toggles to the **Digital Pad** screen.
-   - **Interactive Digipad Keypad**: 12-key numeric keypad (1–9, Clear, 0, Backspace) with live dynamic temperature readout updates (`°F`).
-   - **Switch to Dial**: Tapping the secondary round carousel button next to `START` toggles back to the Dial Picker.
+7. **Real Horizontal Temperature Carousel & Digital Pad**:
+   - **Horizontal Scroll Carousel Dial**:
+     - **Range**: **$200^\circ\text{F}$ to $500^\circ\text{F}$** in **$10^\circ\text{F}$ increments** (31 discrete selectable values).
+     - **Visual Hierarchy**: Centered directly above the `START` button. Active center number renders bold ($68\text{px}$) with an inline $^\circ\text{F}$ unit badge; immediate neighbors scale smoothly down to $46\text{px}$ ($80\%$ opacity), $36\text{px}$ ($45\%$ opacity), and fade gracefully into the edge masks.
+     - **Physics & Touch**: Native CSS touch scroll-snap (`scroll-snap-type: x mandatory`) for iPad Pro, plus desktop mouse drag-and-flick and click-to-center.
+     - **Audio Feedback**: Subtle tactile tick (`playSound("touch")`) triggers dynamically each time a new $10^\circ\text{F}$ increment is snapped or scrolled into center.
+   - **Dynamic Interactive Digipad**:
+     - **Live Display**: Clean digital readout ($76\text{px}$ bold numbers + $30\text{px}$ $^\circ\text{F}$ unit) positioned above `START`.
+     - **12-Key Numeric Keypad**: Interactive 0–9 digits, Clear (clears to `---` with audio cue), and Backspace.
+     - **Validation & Clamping**: Clamped to valid cooktop range ($200^\circ\text{F} - 500^\circ\text{F}$) when pressing `START` or switching back to Dial.
+   - **Two-Way Synchronization**:
+     - Seamless two-way sync: Scrolling the dial to a temperature (e.g. $420^\circ\text{F}$) automatically updates the Digipad buffer; switching back to Dial from the Digipad instantly scrolls and snaps the wheel to the typed temperature.
 
 ---
 

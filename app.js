@@ -44,8 +44,8 @@
       screen: "explore", // "explore" or "precision"
       tab: "spotlight",  // "spotlight", "technique", "food", "temperature"
       tempMode: "picker",// "picker" or "digipad"
-      temperature: 375,
-      digipadBuffer: "375",
+      temperature: 370,
+      digipadBuffer: "370",
       hasEditedKeypad: false
     }
   };
@@ -98,6 +98,8 @@
 
     t2TempModePicker: document.getElementById("t2TempModePicker"),
     t2TempModeDigipad: document.getElementById("t2TempModeDigipad"),
+    t2PickerWheelContainer: document.getElementById("t2PickerWheelContainer"),
+    t2PickerTrack: document.getElementById("t2PickerTrack"),
     t2PickerStartBtn: document.getElementById("t2PickerStartBtn"),
     t2DigipadStartBtn: document.getElementById("t2DigipadStartBtn"),
     t2BtnToDigipad: document.getElementById("t2BtnToDigipad"),
@@ -283,6 +285,146 @@
 
     if (tabName === "temperature") {
       setT2TempMode(state.task2.tempMode, true);
+      setTimeout(() => {
+        if (state.task2.tempMode === "picker") {
+          scrollToT2Temp(state.task2.temperature, false);
+        }
+      }, 50);
+    }
+  }
+
+  // TASK 2 TEMPERATURE WHEEL & DIGIPAD LOGIC (200°F - 500°F, 10° increments)
+  const T2_TEMP_MIN = 200;
+  const T2_TEMP_MAX = 500;
+  const T2_TEMP_STEP = 10;
+  let lastTickTemp = 370;
+
+  function initT2PickerWheel() {
+    if (!els.t2PickerTrack) return;
+    els.t2PickerTrack.innerHTML = "";
+
+    for (let t = T2_TEMP_MIN; t <= T2_TEMP_MAX; t += T2_TEMP_STEP) {
+      const item = document.createElement("div");
+      item.className = "t2-picker-item";
+      item.dataset.temp = String(t);
+      item.innerHTML = `<span class="t2-item-num">${t}</span><span class="t2-item-unit">°F</span>`;
+      item.addEventListener("click", () => {
+        scrollToT2Temp(t, true);
+      });
+      els.t2PickerTrack.appendChild(item);
+    }
+
+    let rafId = null;
+    els.t2PickerTrack.addEventListener("scroll", () => {
+      if (rafId) cancelAnimationFrame(rafId);
+      rafId = requestAnimationFrame(() => {
+        updateT2PickerVisuals();
+      });
+    }, { passive: true });
+
+    // Enable drag-to-scroll with mouse on desktop
+    let isDown = false;
+    let startX = 0;
+    let scrollLeft = 0;
+
+    els.t2PickerTrack.addEventListener("mousedown", (e) => {
+      isDown = true;
+      startX = e.pageX - els.t2PickerTrack.offsetLeft;
+      scrollLeft = els.t2PickerTrack.scrollLeft;
+      els.t2PickerTrack.style.scrollSnapType = "none";
+    });
+    window.addEventListener("mouseup", () => {
+      if (isDown) {
+        isDown = false;
+        els.t2PickerTrack.style.scrollSnapType = "x mandatory";
+        snapToClosestT2Temp();
+      }
+    });
+    window.addEventListener("mousemove", (e) => {
+      if (!isDown) return;
+      e.preventDefault();
+      const x = e.pageX - els.t2PickerTrack.offsetLeft;
+      const walk = (x - startX) * 1.5;
+      els.t2PickerTrack.scrollLeft = scrollLeft - walk;
+    });
+  }
+
+  function updateT2PickerVisuals() {
+    if (!els.t2PickerTrack) return;
+    const trackCenter = els.t2PickerTrack.scrollLeft + (els.t2PickerTrack.clientWidth / 2);
+    const items = els.t2PickerTrack.querySelectorAll(".t2-picker-item");
+    let closestItem = null;
+    let closestDist = Infinity;
+
+    items.forEach(item => {
+      const itemCenter = item.offsetLeft + (item.offsetWidth / 2);
+      const dist = Math.abs(itemCenter - trackCenter);
+
+      if (dist < closestDist) {
+        closestDist = dist;
+        closestItem = item;
+      }
+
+      // Hierarchy classes
+      item.classList.remove("is-active", "is-neighbor-1", "is-neighbor-2");
+      if (dist < 65) {
+        // active
+      } else if (dist < 195) {
+        item.classList.add("is-neighbor-1");
+      } else if (dist < 325) {
+        item.classList.add("is-neighbor-2");
+      }
+    });
+
+    if (closestItem) {
+      closestItem.classList.add("is-active");
+      const tempVal = parseInt(closestItem.dataset.temp, 10);
+      if (tempVal !== state.task2.temperature) {
+        state.task2.temperature = tempVal;
+        state.task2.digipadBuffer = String(tempVal);
+        if (els.t2DigipadValue) els.t2DigipadValue.textContent = String(tempVal);
+        
+        if (tempVal !== lastTickTemp) {
+          lastTickTemp = tempVal;
+          playSound("touch");
+        }
+      }
+    }
+  }
+
+  function snapToClosestT2Temp() {
+    if (!els.t2PickerTrack) return;
+    const trackCenter = els.t2PickerTrack.scrollLeft + (els.t2PickerTrack.clientWidth / 2);
+    const items = els.t2PickerTrack.querySelectorAll(".t2-picker-item");
+    let closestTemp = 370;
+    let closestDist = Infinity;
+
+    items.forEach(item => {
+      const itemCenter = item.offsetLeft + (item.offsetWidth / 2);
+      const dist = Math.abs(itemCenter - trackCenter);
+      if (dist < closestDist) {
+        closestDist = dist;
+        closestTemp = parseInt(item.dataset.temp, 10);
+      }
+    });
+
+    scrollToT2Temp(closestTemp, true);
+  }
+
+  function scrollToT2Temp(temp, smooth = true) {
+    if (!els.t2PickerTrack) return;
+    const targetItem = els.t2PickerTrack.querySelector(`.t2-picker-item[data-temp="${temp}"]`);
+    if (targetItem) {
+      const itemCenter = targetItem.offsetLeft + (targetItem.offsetWidth / 2);
+      const targetScrollLeft = itemCenter - (els.t2PickerTrack.clientWidth / 2);
+      els.t2PickerTrack.scrollTo({
+        left: targetScrollLeft,
+        behavior: smooth ? "smooth" : "auto"
+      });
+      state.task2.temperature = temp;
+      state.task2.digipadBuffer = String(temp);
+      if (els.t2DigipadValue) els.t2DigipadValue.textContent = String(temp);
+      setTimeout(updateT2PickerVisuals, smooth ? 250 : 50);
     }
   }
 
@@ -290,23 +432,49 @@
     if (!silent) playSound("touch");
     state.task2.tempMode = mode;
     if (mode === "picker") {
+      // Sync from digipad input if switching to picker
+      if (state.task2.digipadBuffer && state.task2.digipadBuffer !== "---") {
+        let val = parseInt(state.task2.digipadBuffer, 10);
+        if (!isNaN(val)) {
+          val = Math.max(T2_TEMP_MIN, Math.min(T2_TEMP_MAX, val));
+          val = Math.round(val / T2_TEMP_STEP) * T2_TEMP_STEP;
+          state.task2.temperature = val;
+          state.task2.digipadBuffer = String(val);
+        }
+      }
       if (els.t2TempModePicker) els.t2TempModePicker.hidden = false;
       if (els.t2TempModeDigipad) els.t2TempModeDigipad.hidden = true;
+      setTimeout(() => {
+        scrollToT2Temp(state.task2.temperature, false);
+      }, 30);
     } else {
+      // Switching to digipad
+      state.task2.digipadBuffer = String(state.task2.temperature);
+      if (els.t2DigipadValue) els.t2DigipadValue.textContent = state.task2.digipadBuffer;
+      state.task2.hasEditedKeypad = false;
       if (els.t2TempModePicker) els.t2TempModePicker.hidden = true;
       if (els.t2TempModeDigipad) els.t2TempModeDigipad.hidden = false;
     }
   }
 
   function handleDigipadInput(key) {
-    playSound("touch");
     if (key === "clear") {
-      state.task2.digipadBuffer = "";
+      playSound("cancel");
+      state.task2.digipadBuffer = "---";
+      state.task2.hasEditedKeypad = true;
     } else if (key === "backspace") {
-      state.task2.digipadBuffer = state.task2.digipadBuffer.slice(0, -1);
+      playSound("touch");
+      if (state.task2.digipadBuffer !== "---" && state.task2.digipadBuffer.length > 0) {
+        state.task2.digipadBuffer = state.task2.digipadBuffer.slice(0, -1);
+        if (!state.task2.digipadBuffer) {
+          state.task2.digipadBuffer = "---";
+        }
+      }
+      state.task2.hasEditedKeypad = true;
     } else {
-      // numeric digit
-      if (state.task2.digipadBuffer === "375" && !state.task2.hasEditedKeypad) {
+      // numeric digit (0-9)
+      playSound("touch");
+      if (state.task2.digipadBuffer === "---" || !state.task2.hasEditedKeypad) {
         state.task2.digipadBuffer = key;
         state.task2.hasEditedKeypad = true;
       } else if (state.task2.digipadBuffer.length < 3) {
@@ -589,19 +757,23 @@
       els.t2PickerStartBtn.addEventListener("click", () => playSound("toggleOn"));
     }
     if (els.t2DigipadStartBtn) {
-      els.t2DigipadStartBtn.addEventListener("click", () => playSound("toggleOn"));
+      els.t2DigipadStartBtn.addEventListener("click", () => {
+        playSound("toggleOn");
+        if (state.task2.digipadBuffer && state.task2.digipadBuffer !== "---") {
+          let val = parseInt(state.task2.digipadBuffer, 10);
+          if (!isNaN(val)) {
+            val = Math.max(T2_TEMP_MIN, Math.min(T2_TEMP_MAX, val));
+            val = Math.round(val / T2_TEMP_STEP) * T2_TEMP_STEP;
+            state.task2.temperature = val;
+            state.task2.digipadBuffer = String(val);
+            if (els.t2DigipadValue) els.t2DigipadValue.textContent = state.task2.digipadBuffer;
+          }
+        }
+      });
     }
 
-    // Task 2 Temperature Picker Options
-    document.querySelectorAll(".t2-picker-val").forEach(btn => {
-      btn.addEventListener("click", () => {
-        playSound("touch");
-        const val = btn.dataset.temp;
-        state.task2.temperature = parseInt(val, 10);
-        state.task2.digipadBuffer = val;
-        if (els.t2DigipadValue) els.t2DigipadValue.textContent = val;
-      });
-    });
+    // Initialize Task 2 Dynamic Horizontal Temperature Picker Wheel
+    initT2PickerWheel();
 
     // Task 2 Digipad Keypad Keys
     document.querySelectorAll(".t2-key-btn").forEach(btn => {

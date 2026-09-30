@@ -1708,27 +1708,136 @@ html, body {
   height: 66px;
 }
 
-/* Temperature Picker Values (325, 350, 375, 400, 425) */
-.t2-picker-val {
+/* Dynamic Horizontal Temperature Carousel Wheel */
+.t2-picker-wheel-container {
   position: absolute;
-  top: 175px;
-  height: 70px;
-  background: transparent;
-  border: none;
+  left: 140px;
+  top: 150px;
+  width: 840px;
+  height: 116px;
+  z-index: 20;
+  -webkit-mask-image: linear-gradient(to right, transparent 0%, black 14%, black 86%, transparent 100%);
+  mask-image: linear-gradient(to right, transparent 0%, black 14%, black 86%, transparent 100%);
+  overflow: hidden;
+}
+
+.t2-picker-track {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+  overflow-x: scroll;
+  overflow-y: hidden;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+  padding: 0 calc(50% - 65px);
+  box-sizing: border-box;
+  scrollbar-width: none;
+}
+.t2-picker-track::-webkit-scrollbar {
+  display: none;
+}
+
+.t2-picker-item {
+  flex: 0 0 130px;
+  width: 130px;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  scroll-snap-align: center;
   cursor: pointer;
-  outline: none;
-  border-radius: 12px;
-  z-index: 25;
+  user-select: none;
+  -webkit-user-select: none;
+  position: relative;
   transition: transform 0.12s ease;
 }
-.t2-picker-val:active {
-  transform: scale(0.96);
+
+.t2-item-num {
+  font-family: var(--roux-typography-subtitle-small-font-family);
+  font-size: 32px;
+  font-weight: 500;
+  color: #ffffff;
+  opacity: 0.35;
+  letter-spacing: -0.5px;
+  line-height: 1;
+  transition: font-size 0.12s ease, opacity 0.12s ease, font-weight 0.12s ease;
 }
-.t2-val-325 { left: 230px; width: 85px; }
-.t2-val-350 { left: 330px; width: 105px; }
-.t2-val-375 { left: 450px; width: 195px; }
-.t2-val-400 { left: 660px; width: 110px; }
-.t2-val-425 { left: 790px; width: 85px; }
+
+.t2-item-unit {
+  font-family: var(--roux-typography-subtitle-small-font-family);
+  font-size: 24px;
+  font-weight: 700;
+  color: #ffffff;
+  margin-left: 4px;
+  margin-top: -24px;
+  line-height: 1;
+  opacity: 0;
+  transition: opacity 0.12s ease;
+}
+
+.t2-picker-item.is-neighbor-2 .t2-item-num {
+  font-size: 36px;
+  font-weight: 500;
+  opacity: 0.45;
+}
+
+.t2-picker-item.is-neighbor-1 .t2-item-num {
+  font-size: 46px;
+  font-weight: 600;
+  opacity: 0.8;
+}
+
+.t2-picker-item.is-active .t2-item-num {
+  font-size: 68px;
+  font-weight: 700;
+  opacity: 1;
+  letter-spacing: -1px;
+}
+
+.t2-picker-item.is-active .t2-item-unit {
+  opacity: 1;
+}
+
+/* Digipad Dynamic Display */
+.t2-digipad-display-container {
+  position: absolute;
+  left: 170px;
+  top: 155px;
+  width: 310px;
+  height: 100px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 20;
+  pointer-events: none;
+}
+
+.t2-digipad-value-row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+}
+
+.t2-digipad-val-num {
+  font-family: var(--roux-typography-subtitle-small-font-family);
+  font-size: 76px;
+  font-weight: 700;
+  color: #ffffff;
+  letter-spacing: 0.5px;
+  line-height: 1;
+}
+
+.t2-digipad-val-unit {
+  font-family: var(--roux-typography-subtitle-small-font-family);
+  font-size: 30px;
+  font-weight: 600;
+  color: #ffffff;
+  margin-top: 4px;
+  margin-left: 6px;
+  line-height: 1;
+}
+
 
 /* Digipad Interactive Keypad */
 .t2-digipad-keypad {
