@@ -1598,12 +1598,17 @@ html, body {
   box-sizing: border-box;
   cursor: pointer;
   outline: none;
+  -webkit-backdrop-filter: blur(16px);
+  backdrop-filter: blur(16px);
+  transform: translateZ(0);
+  -webkit-transform: translateZ(0);
   transition: background-color 0.15s ease, transform 0.1s ease;
   -webkit-tap-highlight-color: transparent;
 }
 
 .buttontile:active {
-  transform: scale(0.97);
+  transform: scale(0.97) translateZ(0);
+  -webkit-transform: scale(0.97) translateZ(0);
 }
 
 .buttontile.is-selected {
