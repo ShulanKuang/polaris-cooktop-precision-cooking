@@ -488,16 +488,18 @@ html, body {
 
 .cooktop-wrapper {
   display: flex;
-  justify-content: center;
-  align-items: flex-start;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
   margin-top: 6px;
   width: 100%;
-  height: calc(414px * var(--app-scale, 0.8146));
-  transition: height 0.25s cubic-bezier(0.2, 0, 0, 1);
+  max-width: 100%;
+  min-height: calc(414px * var(--app-scale, 0.8146));
+  box-sizing: border-box;
 }
 
 .cooktop-wrapper.is-task-3 {
-  height: calc(646px * var(--app-scale, 0.8146));
+  min-height: auto;
 }
 
 .appliance-bezel {
@@ -509,6 +511,7 @@ html, body {
   transform: scale(var(--app-scale, 0.8146));
   transform-origin: top center;
   transition: transform 0.25s cubic-bezier(0.2, 0, 0, 1);
+  flex-shrink: 0;
 }
 
 /* EXACT 1024 x 384 SCREEN CONTAINER */
@@ -522,15 +525,20 @@ html, body {
   box-shadow: inset 0 0 14px rgba(0, 0, 0, 0.9);
 }
 
-/* TASK 3 ONLY: COOKTOP KNOBS MANIFOLD (80px BELOW SCREEN) */
+/* TASK 3 ONLY: COOKTOP KNOBS MANIFOLD (ACROSS WHOLE WIDTH OF IPAD, 80px VISUAL GAP) */
 .cooktop-manifold-panel {
   position: relative;
-  width: 1024px;
-  height: 152px;
-  margin-top: 80px;
+  width: 100%;
+  max-width: 1366px;
+  aspect-ratio: 1024 / 152;
+  margin-top: calc(80px - (414px * (1 - var(--app-scale, 0.8146))));
+  container-type: inline-size;
   border-radius: 8px;
   overflow: hidden;
-  box-shadow: inset 0 1px 2px rgba(255, 255, 255, 0.25), 0 4px 16px rgba(0, 0, 0, 0.4);
+  box-shadow: inset 0 1px 2px rgba(255, 255, 255, 0.25), 0 8px 30px rgba(0, 0, 0, 0.5);
+  user-select: none;
+  -webkit-user-select: none;
+  flex-shrink: 0;
 }
 
 .cooktop-manifold-panel[hidden] {
@@ -538,36 +546,40 @@ html, body {
 }
 
 .manifold-img {
-  display: block;
-  width: 1024px;
-  height: 152px;
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: fill;
   user-select: none;
   -webkit-user-select: none;
   pointer-events: none;
+  z-index: 1;
 }
 
-/* KNOB ASSEMBLY */
+/* KNOB ASSEMBLY (SCALED PROPORTIONALLY VIA CONTAINER QUERIES) */
 .knob-assembly {
   position: absolute;
-  left: var(--knob-cx);
-  top: var(--knob-cy);
-  width: 90px;
-  height: 90px;
+  left: var(--knob-cx-pct, 50%);
+  top: var(--knob-cy-pct, 53.289%);
+  width: calc(90 / 1024 * 100cqw);
+  height: calc(90 / 1024 * 100cqw);
   transform: translate(-50%, -50%);
   user-select: none;
   -webkit-user-select: none;
+  z-index: 5;
 }
 
 /* KNOB LIGHT INDICATOR */
 .knob-light-indicator {
   position: absolute;
   left: 50%;
-  top: calc(50% - 45.5px);
+  top: calc(50% - (45.5 / 90 * 100%));
   transform: translate(-50%, -50%);
-  width: 52px;
-  height: 24px;
+  width: calc(52 / 90 * 100%);
+  height: calc(24 / 90 * 100%);
   opacity: 0;
-  transition: opacity 0.18s cubic-bezier(0.2, 0, 0, 1);
+  transition: opacity 0.2s cubic-bezier(0.2, 0, 0, 1);
   pointer-events: none;
   z-index: 10;
 }
@@ -580,7 +592,7 @@ html, body {
   display: block;
   width: 100%;
   height: 100%;
-  filter: drop-shadow(0 0 6px rgba(255, 255, 255, 0.75));
+  filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.95)) drop-shadow(0 0 16px rgba(255, 255, 255, 0.6));
   pointer-events: none;
 }
 
@@ -588,8 +600,8 @@ html, body {
 .knob-dial-touch-target {
   position: absolute;
   inset: 0;
-  width: 90px;
-  height: 90px;
+  width: 100%;
+  height: 100%;
   border-radius: 50%;
   cursor: grab;
   user-select: none;
@@ -614,8 +626,8 @@ html, body {
 /* KNOB DIAL & NOSE IMAGE */
 .knob-dial {
   position: relative;
-  width: 90px;
-  height: 90px;
+  width: 100%;
+  height: 100%;
   border-radius: 50%;
   transform: rotate(var(--knob-angle, 0deg));
   transform-origin: center center;
@@ -630,11 +642,13 @@ html, body {
 .knob-nose-img {
   position: absolute;
   inset: 0;
-  width: 90px;
-  height: 90px;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
   pointer-events: none;
   user-select: none;
   -webkit-user-select: none;
+  filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.4));
 }
 
 /* TASK 1 FULL SCREEN ARTWORK & STANDBY COVER */

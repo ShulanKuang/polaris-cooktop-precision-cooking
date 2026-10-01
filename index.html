@@ -6,7 +6,7 @@
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <title>Polaris Cooktop Precision Cooking Prototype</title>
-  <link rel="stylesheet" href="./styles.css?v=20261001-knobs2">
+  <link rel="stylesheet" href="./styles.css?v=20261001-scaleup">
 </head>
 <body>
   <div class="test-environment">
@@ -468,72 +468,73 @@
           <div class="screen-bottom-strip running-activity-bar" id="screenBottomStrip"></div>
         </div> <!-- /.cooktop-screen (1024x384) -->
 
-        <!-- TASK 3 ONLY: COOKTOP KNOBS MANIFOLD (80px BELOW SCREEN) -->
-        <div class="cooktop-manifold-panel" id="cooktopManifoldPanel" hidden>
-          <img src="./assets/manifold-bg.png" alt="Cooktop Knobs Manifold" class="manifold-img" id="manifoldImg">
+      </div> <!-- /.appliance-bezel -->
 
-          <!-- 5 ROTATABLE COOKTOP KNOBS WITH LIGHT INDICATORS -->
-          <!-- Knob 1: Front Left (FL) -->
-          <div class="knob-assembly" id="knobAssembly1" data-burner="front-left" data-index="1" style="--knob-cx: 234px; --knob-cy: 81px;">
-            <div class="knob-light-indicator" id="knobLight1" aria-hidden="true">
-              <img src="./assets/knob-light-on-1x.png" alt="" class="knob-light-img">
-            </div>
-            <div class="knob-dial-touch-target" id="knobTarget1" role="slider" aria-label="Front Left Burner Knob" aria-valuemin="-90" aria-valuemax="45" aria-valuenow="0" tabindex="0">
-              <div class="knob-dial" id="knobDial1">
-                <img src="./assets/knob-nose.png" alt="" class="knob-nose-img">
-              </div>
-            </div>
+      <!-- TASK 3 ONLY: COOKTOP KNOBS MANIFOLD (ACROSS WHOLE WIDTH OF IPAD) -->
+      <div class="cooktop-manifold-panel" id="cooktopManifoldPanel" hidden>
+        <img src="./assets/manifold-hd-3x.png" srcset="./assets/manifold-hd-2x.png 2048w, ./assets/manifold-hd-3x.png 3072w" sizes="(max-width: 1400px) 100vw, 1366px" alt="Cooktop Knobs Manifold" class="manifold-img" id="manifoldImg" draggable="false">
+
+        <!-- 5 ROTATABLE COOKTOP KNOBS WITH LIGHT INDICATORS -->
+        <!-- Knob 1: Front Left (FL) -->
+        <div class="knob-assembly" id="knobAssembly1" data-burner="front-left" data-index="1" style="--knob-cx-pct: 22.85156%; --knob-cy-pct: 53.28947%;">
+          <div class="knob-light-indicator" id="knobLight1" aria-hidden="true">
+            <img src="./assets/knob-light-on.png" alt="" class="knob-light-img">
           </div>
-
-          <!-- Knob 2: Rear Left (RL) -->
-          <div class="knob-assembly" id="knobAssembly2" data-burner="rear-left" data-index="2" style="--knob-cx: 372.5px; --knob-cy: 81px;">
-            <div class="knob-light-indicator" id="knobLight2" aria-hidden="true">
-              <img src="./assets/knob-light-on-1x.png" alt="" class="knob-light-img">
-            </div>
-            <div class="knob-dial-touch-target" id="knobTarget2" role="slider" aria-label="Rear Left Burner Knob" aria-valuemin="-90" aria-valuemax="45" aria-valuenow="0" tabindex="0">
-              <div class="knob-dial" id="knobDial2">
-                <img src="./assets/knob-nose.png" alt="" class="knob-nose-img">
-              </div>
-            </div>
-          </div>
-
-          <!-- Knob 3: Center (C) -->
-          <div class="knob-assembly" id="knobAssembly3" data-burner="center" data-index="3" style="--knob-cx: 511px; --knob-cy: 81px;">
-            <div class="knob-light-indicator" id="knobLight3" aria-hidden="true">
-              <img src="./assets/knob-light-on-1x.png" alt="" class="knob-light-img">
-            </div>
-            <div class="knob-dial-touch-target" id="knobTarget3" role="slider" aria-label="Center Burner Knob" aria-valuemin="0" aria-valuemax="45" aria-valuenow="0" tabindex="0">
-              <div class="knob-dial" id="knobDial3">
-                <img src="./assets/knob-nose.png" alt="" class="knob-nose-img">
-              </div>
-            </div>
-          </div>
-
-          <!-- Knob 4: Rear Right (RR / Top-Right) -->
-          <div class="knob-assembly" id="knobAssembly4" data-burner="top-right" data-index="4" style="--knob-cx: 649.5px; --knob-cy: 81px;">
-            <div class="knob-light-indicator" id="knobLight4" aria-hidden="true">
-              <img src="./assets/knob-light-on-1x.png" alt="" class="knob-light-img">
-            </div>
-            <div class="knob-dial-touch-target" id="knobTarget4" role="slider" aria-label="Rear Right Burner Knob" aria-valuemin="-90" aria-valuemax="45" aria-valuenow="0" tabindex="0">
-              <div class="knob-dial" id="knobDial4">
-                <img src="./assets/knob-nose.png" alt="" class="knob-nose-img">
-              </div>
-            </div>
-          </div>
-
-          <!-- Knob 5: Front Right (FR) -->
-          <div class="knob-assembly" id="knobAssembly5" data-burner="front-right" data-index="5" style="--knob-cx: 788px; --knob-cy: 81px;">
-            <div class="knob-light-indicator" id="knobLight5" aria-hidden="true">
-              <img src="./assets/knob-light-on-1x.png" alt="" class="knob-light-img">
-            </div>
-            <div class="knob-dial-touch-target" id="knobTarget5" role="slider" aria-label="Front Right Burner Knob" aria-valuemin="-90" aria-valuemax="45" aria-valuenow="0" tabindex="0">
-              <div class="knob-dial" id="knobDial5">
-                <img src="./assets/knob-nose.png" alt="" class="knob-nose-img">
-              </div>
+          <div class="knob-dial-touch-target" id="knobTarget1" role="slider" aria-label="Front Left Burner Knob" aria-valuemin="-90" aria-valuemax="45" aria-valuenow="0" tabindex="0">
+            <div class="knob-dial" id="knobDial1">
+              <img src="./assets/knob-nose-2x.png" alt="" class="knob-nose-img" draggable="false">
             </div>
           </div>
         </div>
-      </div> <!-- /.appliance-bezel -->
+
+        <!-- Knob 2: Rear Left (RL) -->
+        <div class="knob-assembly" id="knobAssembly2" data-burner="rear-left" data-index="2" style="--knob-cx-pct: 36.37695%; --knob-cy-pct: 53.28947%;">
+          <div class="knob-light-indicator" id="knobLight2" aria-hidden="true">
+            <img src="./assets/knob-light-on.png" alt="" class="knob-light-img">
+          </div>
+          <div class="knob-dial-touch-target" id="knobTarget2" role="slider" aria-label="Rear Left Burner Knob" aria-valuemin="-90" aria-valuemax="45" aria-valuenow="0" tabindex="0">
+            <div class="knob-dial" id="knobDial2">
+              <img src="./assets/knob-nose-2x.png" alt="" class="knob-nose-img" draggable="false">
+            </div>
+          </div>
+        </div>
+
+        <!-- Knob 3: Center (C) -->
+        <div class="knob-assembly" id="knobAssembly3" data-burner="center" data-index="3" style="--knob-cx-pct: 49.90234%; --knob-cy-pct: 53.28947%;">
+          <div class="knob-light-indicator" id="knobLight3" aria-hidden="true">
+            <img src="./assets/knob-light-on.png" alt="" class="knob-light-img">
+          </div>
+          <div class="knob-dial-touch-target" id="knobTarget3" role="slider" aria-label="Center Burner Knob" aria-valuemin="0" aria-valuemax="45" aria-valuenow="0" tabindex="0">
+            <div class="knob-dial" id="knobDial3">
+              <img src="./assets/knob-nose-2x.png" alt="" class="knob-nose-img" draggable="false">
+            </div>
+          </div>
+        </div>
+
+        <!-- Knob 4: Rear Right (RR / Top-Right) -->
+        <div class="knob-assembly" id="knobAssembly4" data-burner="top-right" data-index="4" style="--knob-cx-pct: 63.42773%; --knob-cy-pct: 53.28947%;">
+          <div class="knob-light-indicator" id="knobLight4" aria-hidden="true">
+            <img src="./assets/knob-light-on.png" alt="" class="knob-light-img">
+          </div>
+          <div class="knob-dial-touch-target" id="knobTarget4" role="slider" aria-label="Rear Right Burner Knob" aria-valuemin="-90" aria-valuemax="45" aria-valuenow="0" tabindex="0">
+            <div class="knob-dial" id="knobDial4">
+              <img src="./assets/knob-nose-2x.png" alt="" class="knob-nose-img" draggable="false">
+            </div>
+          </div>
+        </div>
+
+        <!-- Knob 5: Front Right (FR) -->
+        <div class="knob-assembly" id="knobAssembly5" data-burner="front-right" data-index="5" style="--knob-cx-pct: 76.95312%; --knob-cy-pct: 53.28947%;">
+          <div class="knob-light-indicator" id="knobLight5" aria-hidden="true">
+            <img src="./assets/knob-light-on.png" alt="" class="knob-light-img">
+          </div>
+          <div class="knob-dial-touch-target" id="knobTarget5" role="slider" aria-label="Front Right Burner Knob" aria-valuemin="-90" aria-valuemax="45" aria-valuenow="0" tabindex="0">
+            <div class="knob-dial" id="knobDial5">
+              <img src="./assets/knob-nose-2x.png" alt="" class="knob-nose-img" draggable="false">
+            </div>
+          </div>
+        </div>
+      </div>
     </main>
 
     <!-- FOOTER HELPER -->
@@ -542,6 +543,6 @@
     </footer>
   </div>
 
-  <script src="./app.js?v=20261001-knobs2"></script>
+  <script src="./app.js?v=20261001-scaleup"></script>
 </body>
 </html>
