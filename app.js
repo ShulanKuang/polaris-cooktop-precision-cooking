@@ -713,12 +713,169 @@
     }
   }
 
+  // ==============================================
+  // TASK 3: COOKTOP KNOBS MANIFOLD & ROTATABLE DIALS
+  // ==============================================
+  const knobsState = [
+    { index: 1, burner: "front-left", angle: 0, isOn: false },
+    { index: 2, burner: "rear-left", angle: 0, isOn: false },
+    { index: 3, burner: "center", angle: 0, isOn: false },
+    { index: 4, burner: "top-right", angle: 0, isOn: false },
+    { index: 5, burner: "front-right", angle: 0, isOn: false }
+  ];
+
+  function setKnobAngle(index, angle, animate = false, updateBurner = true) {
+    const k = knobsState[index - 1];
+    if (!k) return;
+    k.angle = angle;
+    const dial = document.getElementById(`knobDial${index}`);
+    const light = document.getElementById(`knobLight${index}`);
+    const target = document.getElementById(`knobTarget${index}`);
+
+    if (dial) {
+      if (animate) dial.classList.add("is-animating");
+      dial.style.setProperty("--knob-angle", `${angle}deg`);
+      if (animate) setTimeout(() => dial.classList.remove("is-animating"), 260);
+    }
+
+    const isOn = Math.abs(angle) > 5;
+    if (k.isOn !== isOn) {
+      k.isOn = isOn;
+      if (light) light.classList.toggle("is-on", isOn);
+
+      if (updateBurner && k.burner && state.burners[k.burner]) {
+        if (!isOn) {
+          state.burners[k.burner].state = "off";
+          state.burners[k.burner].label = "OFF";
+          renderBurnerState(k.burner);
+        } else {
+          // If turned towards PRC (-56 deg)
+          if (angle < -25 && angle > -75) {
+            state.burners[k.burner].state = "precision";
+            if (!state.burners[k.burner].temp && !state.burners[k.burner].mode) {
+              state.burners[k.burner].temp = 375;
+              state.burners[k.burner].label = "375°F";
+            }
+            renderBurnerState(k.burner);
+          }
+        }
+      }
+    }
+
+    if (target) {
+      target.setAttribute("aria-valuenow", Math.round(angle));
+    }
+  }
+
+  function setupKnobsListeners() {
+    knobsState.forEach((k, idx) => {
+      const index = idx + 1;
+      const target = document.getElementById(`knobTarget${index}`);
+      const dial = document.getElementById(`knobDial${index}`);
+      if (!target || !dial) return;
+
+      let isDragging = false;
+      let startX = 0;
+      let startY = 0;
+      let hasMoved = false;
+
+      target.addEventListener("pointerdown", (e) => {
+        e.preventDefault();
+        target.setPointerCapture(e.pointerId);
+        isDragging = true;
+        hasMoved = false;
+        startX = e.clientX;
+        startY = e.clientY;
+        target.classList.add("is-dragging");
+        dial.classList.remove("is-animating");
+      });
+
+      target.addEventListener("pointermove", (e) => {
+        if (!isDragging) return;
+        const distFromStart = Math.hypot(e.clientX - startX, e.clientY - startY);
+        if (distFromStart > 4) hasMoved = true;
+
+        const rect = target.getBoundingClientRect();
+        const cx = rect.left + rect.width / 2;
+        const cy = rect.top + rect.height / 2;
+        const dx = e.clientX - cx;
+        const dy = e.clientY - cy;
+
+        // Angle from 12 o'clock (-dy = up, dx = right)
+        let deg = Math.atan2(dx, -dy) * (180 / Math.PI);
+
+        // Snap thresholds:
+        // Within 10 degrees of OFF (0 deg) -> snap to 0
+        if (Math.abs(deg) < 10) {
+          deg = 0;
+        }
+        // Within 12 degrees of PRC (-56 deg) -> snap to -56
+        else if (Math.abs(deg - (-56)) < 12) {
+          deg = -56;
+        }
+
+        setKnobAngle(index, deg, false, true);
+      });
+
+      const endDrag = (e) => {
+        if (!isDragging) return;
+        isDragging = false;
+        target.classList.remove("is-dragging");
+        try { target.releasePointerCapture(e.pointerId); } catch(err) {}
+
+        // If clicked without moving, toggle between OFF (0 deg) and PRC (-56 deg)
+        // Center knob (index 3) toggles between OFF (0 deg) and ON (+45 deg)
+        if (!hasMoved) {
+          playSound("touch");
+          const isOff = Math.abs(k.angle) <= 5;
+          const targetDeg = isOff ? (index === 3 ? 45 : -56) : 0;
+          setKnobAngle(index, targetDeg, true, true);
+        } else {
+          // Snap to nearest detent on release
+          let snapDeg = k.angle;
+          if (Math.abs(snapDeg) < 16) {
+            snapDeg = 0;
+          } else if (Math.abs(snapDeg - (-56)) < 20) {
+            snapDeg = -56;
+          }
+          playSound("touch");
+          setKnobAngle(index, snapDeg, true, true);
+        }
+      };
+
+      target.addEventListener("pointerup", endDrag);
+      target.addEventListener("pointercancel", endDrag);
+
+      // Keyboard accessibility
+      target.addEventListener("keydown", (e) => {
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          playSound("touch");
+          const isOff = Math.abs(k.angle) <= 5;
+          const targetDeg = isOff ? (index === 3 ? 45 : -56) : 0;
+          setKnobAngle(index, targetDeg, true, true);
+        } else if (e.key === "ArrowLeft") {
+          e.preventDefault();
+          playSound("touch");
+          setKnobAngle(index, Math.max(-90, k.angle - 10), true, true);
+        } else if (e.key === "ArrowRight") {
+          e.preventDefault();
+          playSound("touch");
+          setKnobAngle(index, Math.min(45, k.angle + 10), true, true);
+        }
+      });
+    });
+  }
+
   // EVENT LISTENERS
   function setupListeners() {
     // Researcher Task Switchers
     els.btnTask1.addEventListener("click", () => setTask(1));
     els.btnTask2.addEventListener("click", () => setTask(2));
     els.btnTask3.addEventListener("click", () => setTask(3));
+
+    // Setup Cooktop Knobs Listeners
+    setupKnobsListeners();
 
     // Task 1 Glance Flash triggers (0.5s / 1s / 2s)
     document.querySelectorAll("#glanceControls .glance-btn").forEach(btn => {
