@@ -263,7 +263,10 @@
       if (els.screenRail) els.screenRail.hidden = true;
       if (els.topStatus) els.topStatus.hidden = true;
       if (els.screenCanvas) els.screenCanvas.hidden = true;
-      if (els.screenBottomStrip) els.screenBottomStrip.hidden = false;
+      if (els.screenBottomStrip) {
+        els.screenBottomStrip.hidden = true;
+        els.screenBottomStrip.style.display = "none";
+      }
 
       // Initialize Task 2 to explore view
       showT2Explore(true);
