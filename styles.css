@@ -2499,15 +2499,15 @@ html, body {
 /* Toast Action Hotspots over authentic Figma toast in completed screen */
 .t3-toast-hotspot-ok {
   position: absolute;
-  left: 746px;
-  top: 316px;
-  width: 44px;
-  height: 32px;
+  left: 737px;
+  top: 310px;
+  width: 54px;
+  height: 44px;
   background: transparent;
   border: none;
   cursor: pointer;
   outline: none;
-  border-radius: 4px;
+  border-radius: 6px;
   z-index: 30;
 }
 .t3-toast-hotspot-ok:active {
@@ -2516,15 +2516,15 @@ html, body {
 
 .t3-toast-hotspot-close {
   position: absolute;
-  left: 810px;
-  top: 316px;
-  width: 32px;
-  height: 32px;
+  left: 801px;
+  top: 310px;
+  width: 44px;
+  height: 44px;
   background: transparent;
   border: none;
   cursor: pointer;
   outline: none;
-  border-radius: 4px;
+  border-radius: 6px;
   z-index: 30;
 }
 .t3-toast-hotspot-close:active {

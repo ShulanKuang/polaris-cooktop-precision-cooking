@@ -880,7 +880,14 @@
       if (progress >= 1.0) {
         clearInterval(t3PreheatInterval);
         t3PreheatInterval = null;
-        startT3PreheatCompleted();
+        if (els.t3PreheatCurrent) {
+          els.t3PreheatCurrent.textContent = targetTemp;
+        }
+
+        // 2s holding delay at target temperature before transition to completed
+        t3HoldingTimeout = setTimeout(() => {
+          startT3PreheatCompleted();
+        }, 2000);
       }
     }, 50);
   }
@@ -894,14 +901,11 @@
     if (els.t3CompleteTarget) {
       els.t3CompleteTarget.textContent = targetTemp;
     }
-    if (els.t3ToastPreheatComplete) {
-      els.t3ToastPreheatComplete.classList.remove("is-dismissing");
-    }
 
-    // 3 seconds holding time -> go to burnerStatus screen
+    // Stay on this screen for 30s before going to burnerStatus (or user clicks OK or ✕)
     t3HoldingTimeout = setTimeout(() => {
       finishT3PreheatToBurnerStatus();
-    }, 3000);
+    }, 30000);
   }
 
   function finishT3PreheatToBurnerStatus() {
