@@ -2033,3 +2033,227 @@ html, body {
   opacity: 0.6;
   transform: scale(0.94);
 }
+
+/* ============================================== */
+/* TASK 3: PRECISION USABILITY FLOW (TASK 3A)     */
+/* ============================================== */
+.task3-full-screen {
+  position: absolute;
+  inset: 0;
+  width: 1024px;
+  height: 384px;
+  z-index: 100;
+  overflow: hidden;
+  background: #111215;
+}
+
+.t3-screen {
+  position: absolute;
+  inset: 0;
+  width: 1024px;
+  height: 384px;
+  animation: fadeIn 0.18s ease-out forwards;
+}
+
+.t3-screen-bg {
+  width: 1024px;
+  height: 384px;
+  display: block;
+  user-select: none;
+  -webkit-user-select: none;
+  pointer-events: none;
+}
+
+/* Explore Button Hotspot (Task 3A Start) */
+.t3-explore-hotspot {
+  position: absolute;
+  left: 154px;
+  top: 240px;
+  width: 149px;
+  height: 70px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  z-index: 102;
+  border-radius: 35px;
+  transition: transform 0.12s ease;
+}
+.t3-explore-hotspot:active {
+  transform: scale(0.95);
+}
+
+/* Burner Hotspot */
+.t3-burner-hotspot {
+  position: absolute;
+  left: 310px;
+  top: 180px;
+  width: 120px;
+  height: 120px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  z-index: 102;
+  border-radius: 50%;
+}
+
+/* Back Button (< Cooktop) */
+.t3-back-btn {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  width: 140px;
+  height: 52px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  z-index: 102;
+  border-radius: 8px;
+}
+
+/* Spotlight Hotspots */
+.t3-hotspot {
+  position: absolute;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  z-index: 102;
+  border-radius: 8px;
+}
+.t3-spotlight-steak {
+  left: 162px;
+  top: 220px;
+  width: 287px;
+  height: 100px;
+}
+.t3-spotlight-bacon {
+  left: 598px;
+  top: 220px;
+  width: 176px;
+  height: 100px;
+}
+.t3-spotlight-beef {
+  left: 798px;
+  top: 220px;
+  width: 176px;
+  height: 100px;
+}
+
+/* TASK 3A TOAST BANNER (Starting Precision Cooking in 3s) */
+.t3-toast-card {
+  position: absolute;
+  bottom: 15px;
+  left: 180px;
+  width: 750px;
+  height: 60px;
+  background: #ffffff;
+  border-radius: 6px;
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.45);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 20px 0 24px;
+  box-sizing: border-box;
+  z-index: 105;
+  animation: toastSlideUp 0.28s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.t3-toast-card.is-dismissing {
+  animation: toastSlideDown 0.22s ease-in forwards;
+}
+
+@keyframes toastSlideUp {
+  from {
+    transform: translateY(80px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes toastSlideDown {
+  from {
+    transform: translateY(0);
+    opacity: 1;
+  }
+  to {
+    transform: translateY(80px);
+    opacity: 0;
+  }
+}
+
+.t3-toast-text {
+  font-family: var(--font-text);
+  font-size: 20px;
+  font-weight: 500;
+  color: #1f2024;
+  letter-spacing: 0.15px;
+  line-height: 1;
+}
+
+.t3-toast-num {
+  font-weight: 700;
+  color: #1f2024;
+}
+
+.t3-toast-actions {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+}
+
+.t3-toast-dismiss {
+  background: transparent;
+  border: none;
+  color: #a02b8f;
+  font-family: var(--font-text);
+  font-size: 18px;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 8px 4px;
+  border-radius: 4px;
+  transition: opacity 0.15s;
+}
+.t3-toast-dismiss:active {
+  opacity: 0.7;
+}
+
+.t3-toast-close {
+  background: transparent;
+  border: none;
+  color: #a02b8f;
+  font-size: 20px;
+  font-weight: 500;
+  cursor: pointer;
+  padding: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: opacity 0.15s;
+  line-height: 1;
+}
+.t3-toast-close:active {
+  opacity: 0.7;
+}
+
+/* Knob Hint Toast */
+.t3-knob-hint {
+  position: absolute;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(30, 32, 38, 0.95);
+  color: #ffffff;
+  border: 1px solid rgba(255, 109, 43, 0.6);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.5);
+  padding: 8px 18px;
+  border-radius: 20px;
+  font-size: 14px;
+  font-weight: 600;
+  z-index: 110;
+  pointer-events: none;
+  animation: fadeIn 0.2s ease;
+}
+

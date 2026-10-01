@@ -132,13 +132,21 @@
     btnConfirmFood: document.getElementById("btnConfirmFood"),
     btnConfirmTech: document.getElementById("btnConfirmTech"),
 
-    // T3 interactive burners
-    t3RearLeft: document.getElementById("t3RearLeft"),
-    t3RearLeftState: document.getElementById("t3RearLeftState"),
-    t3FrontLeft: document.getElementById("t3FrontLeft"),
-    t3FrontLeftState: document.getElementById("t3FrontLeftState"),
-    t3FrontRight: document.getElementById("t3FrontRight"),
-    t3FrontRightState: document.getElementById("t3FrontRightState"),
+    // Task 3A DOM elements
+    t3ScreenStart: document.getElementById("t3ScreenStart"),
+    t3ScreenTurnKnob: document.getElementById("t3ScreenTurnKnob"),
+    t3ScreenSpotlight: document.getElementById("t3ScreenSpotlight"),
+    t3BtnExplore: document.getElementById("t3BtnExplore"),
+    t3HotspotRearLeft: document.getElementById("t3HotspotRearLeft"),
+    t3KnobHint: document.getElementById("t3KnobHint"),
+    t3ToastCard: document.getElementById("t3ToastCard"),
+    t3ToastNum: document.getElementById("t3ToastNum"),
+    t3ToastDismiss: document.getElementById("t3ToastDismiss"),
+    t3ToastClose: document.getElementById("t3ToastClose"),
+    t3BtnBack: document.getElementById("t3BtnBack"),
+    t3SpotlightSteak: document.getElementById("t3SpotlightSteak"),
+    t3SpotlightBacon: document.getElementById("t3SpotlightBacon"),
+    t3SpotlightBeef: document.getElementById("t3SpotlightBeef"),
 
     clockReadout: document.getElementById("clockReadout"),
     navHomeBtn: document.getElementById("navHomeBtn")
@@ -169,8 +177,8 @@
       prompt: "Show the Precision Cooking concept screen. Ask user what they think Precision Cooking is and what it means to them."
     },
     3: {
-      title: "Task 3: Usability Flow (Tasks A - E)",
-      prompt: "Task A: Set Rear Left to 375°F. Task B: Adjust to 500°F. Task C: Front Left Steak. Task D: Precision OFF. Task E: Front Right Caramelize."
+      title: "Task 3A: Precision Cooking Startup",
+      prompt: "Turn Knob 1 to PRC position. Watch 3s countdown toast, then proceed to Precision Cooking Spotlight."
     },
     4: {
       title: "Task 4: End & Turn Off",
@@ -224,15 +232,25 @@
 
       // Initialize Task 2 to explore view
       showT2Explore(true);
+    } else if (taskId === 3) {
+      if (els.task1FullScreen) els.task1FullScreen.hidden = true;
+      if (els.viewTask2) els.viewTask2.hidden = true;
+      if (els.viewTask3) els.viewTask3.hidden = false;
+      if (els.screenRail) els.screenRail.hidden = true;
+      if (els.topStatus) els.topStatus.hidden = true;
+      if (els.screenCanvas) els.screenCanvas.hidden = true;
+      if (els.screenBottomStrip) els.screenBottomStrip.hidden = false;
+
+      // Initialize Task 3A to start screen
+      showT3Screen("start");
     } else {
       if (els.task1FullScreen) els.task1FullScreen.hidden = true;
       if (els.viewTask2) els.viewTask2.hidden = true;
+      if (els.viewTask3) els.viewTask3.hidden = true;
       if (els.screenRail) els.screenRail.hidden = false;
       if (els.topStatus) els.topStatus.hidden = false;
       if (els.screenCanvas) els.screenCanvas.hidden = false;
       if (els.screenBottomStrip) els.screenBottomStrip.hidden = false;
-
-      if (els.viewTask3) els.viewTask3.hidden = taskId !== 3;
     }
 
     // Task 3 Knobs Manifold (Only visible in Task 3, 80px below screen)
@@ -720,6 +738,87 @@
   }
 
   // ==============================================
+  // TASK 3A: PRECISION COOKING FLOW (FIGMA ARTBOARDS)
+  // ==============================================
+  let t3CountdownInterval = null;
+  let t3HoldingTimeout = null;
+  let t3Stage = "start"; // "start" | "turnknob" | "spotlight"
+
+  function showT3Screen(stage) {
+    t3Stage = stage;
+    if (els.t3ScreenStart) els.t3ScreenStart.hidden = (stage !== "start");
+    if (els.t3ScreenTurnKnob) els.t3ScreenTurnKnob.hidden = (stage !== "turnknob");
+    if (els.t3ScreenSpotlight) els.t3ScreenSpotlight.hidden = (stage !== "spotlight");
+
+    if (stage === "start") {
+      clearT3Timers();
+      if (els.t3ToastCard) {
+        els.t3ToastCard.classList.remove("is-dismissing");
+      }
+      if (els.t3ToastNum) {
+        els.t3ToastNum.textContent = "3";
+      }
+    }
+  }
+
+  function clearT3Timers() {
+    if (t3CountdownInterval) {
+      clearInterval(t3CountdownInterval);
+      t3CountdownInterval = null;
+    }
+    if (t3HoldingTimeout) {
+      clearTimeout(t3HoldingTimeout);
+      t3HoldingTimeout = null;
+    }
+  }
+
+  function startT3ACountdown() {
+    clearT3Timers();
+    showT3Screen("turnknob");
+
+    if (els.t3ToastCard) {
+      els.t3ToastCard.classList.remove("is-dismissing");
+    }
+    let seconds = 3;
+    if (els.t3ToastNum) {
+      els.t3ToastNum.textContent = seconds;
+    }
+
+    t3CountdownInterval = setInterval(() => {
+      seconds--;
+      if (seconds >= 1) {
+        if (els.t3ToastNum) els.t3ToastNum.textContent = seconds;
+        playSound("tick");
+      } else {
+        clearInterval(t3CountdownInterval);
+        t3CountdownInterval = null;
+      }
+    }, 1000);
+
+    // 3 seconds holding time -> directly transition to Precision Cooking Spotlight
+    t3HoldingTimeout = setTimeout(() => {
+      clearT3Timers();
+      playSound("toggleOn");
+      showT3Screen("spotlight");
+    }, 3000);
+  }
+
+  function cancelT3A() {
+    clearT3Timers();
+    if (els.t3ToastCard) {
+      els.t3ToastCard.classList.add("is-dismissing");
+      setTimeout(() => {
+        showT3Screen("start");
+        setKnobAngle(1, 0, true, false);
+      }, 200);
+    } else {
+      showT3Screen("start");
+      setKnobAngle(1, 0, true, false);
+    }
+    playSound("toggleOff");
+  }
+
+  // ==============================================
   // TASK 3: COOKTOP KNOBS MANIFOLD & ROTATABLE DIALS
   // ==============================================
   const knobsState = [
@@ -765,6 +864,18 @@
             renderBurnerState(k.burner);
           }
         }
+      }
+    }
+
+    // TASK 3A PRECISION COOKING WORKFLOW TRIGGER
+    if (index === 1 && state.currentTask === 3) {
+      const isPRC = (angle < -25 && angle > -75);
+      const isOff = (Math.abs(angle) <= 10);
+
+      if (isPRC && t3Stage === "start") {
+        startT3ACountdown();
+      } else if (isOff && t3Stage !== "start") {
+        cancelT3A();
       }
     }
 
@@ -977,64 +1088,54 @@
       });
     });
 
-    // T3 Interactive Burner Clicks
-    els.t3RearLeft.addEventListener("click", () => openDrawer("rear-left", "temp"));
-    els.t3FrontLeft.addEventListener("click", () => openDrawer("front-left", "food"));
-    els.t3FrontRight.addEventListener("click", () => openDrawer("front-right", "technique"));
-
-    // Drawer Tabs
-    els.tabTemp.addEventListener("click", () => switchTab("temp"));
-    els.tabFood.addEventListener("click", () => switchTab("food"));
-    els.tabTechnique.addEventListener("click", () => switchTab("technique"));
-    els.drawerCloseBtn.addEventListener("click", () => {
-      playSound("cancel");
-      closeDrawer();
-    });
-
-    // Stepper
-    els.tempMinusBtn.addEventListener("click", () => {
-      playSound("decrease");
-      updateTemp(state.targetTemp - 5);
-    });
-    els.tempPlusBtn.addEventListener("click", () => {
-      playSound("increase");
-      updateTemp(state.targetTemp + 5);
-    });
-
-    // Quick pills
-    document.querySelectorAll(".quick-pill").forEach(pill => {
-      pill.addEventListener("click", () => {
+    // ==============================================
+    // TASK 3A: PRECISION COOKING FLOW LISTENERS
+    // ==============================================
+    if (els.t3BtnExplore) {
+      els.t3BtnExplore.addEventListener("click", () => {
         playSound("touch");
-        updateTemp(parseInt(pill.dataset.val, 10));
+        // Animate Knob 1 turning to PRC position and trigger flow
+        setKnobAngle(1, -56, true, true);
       });
-    });
-
-    // Action Confirmations
-    els.btnConfirmTemp.addEventListener("click", confirmTemperature);
-    els.btnTurnOffPrecision.addEventListener("click", turnOffPrecision);
-    els.btnConfirmFood.addEventListener("click", () => confirmFood("Steak"));
-    els.btnConfirmTech.addEventListener("click", () => confirmTechnique("Caramelize"));
-
-    // Food selection cards
-    document.querySelectorAll(".food-card").forEach(card => {
-      card.addEventListener("click", () => {
+    }
+    if (els.t3HotspotRearLeft) {
+      els.t3HotspotRearLeft.addEventListener("click", () => {
         playSound("touch");
-        document.querySelectorAll(".food-card").forEach(c => c.classList.remove("is-highlight"));
-        card.classList.add("is-highlight");
-        const food = card.dataset.food;
-        els.btnConfirmFood.textContent = `Set ${food} Mode`;
+        setKnobAngle(1, -56, true, true);
       });
-    });
+    }
 
-    // Tech selection cards
-    document.querySelectorAll(".tech-card").forEach(card => {
-      card.addEventListener("click", () => {
-        playSound("touch");
-        document.querySelectorAll(".tech-card").forEach(c => c.classList.remove("is-highlight"));
-        card.classList.add("is-highlight");
-        const tech = card.dataset.tech;
-        els.btnConfirmTech.textContent = `Set ${tech} Mode`;
+    // Toast Actions
+    if (els.t3ToastClose) {
+      els.t3ToastClose.addEventListener("click", (e) => {
+        e.stopPropagation();
+        cancelT3A();
       });
+    }
+    if (els.t3ToastDismiss) {
+      els.t3ToastDismiss.addEventListener("click", (e) => {
+        e.stopPropagation();
+        clearT3Timers();
+        playSound("toggleOn");
+        showT3Screen("spotlight");
+      });
+    }
+
+    // Back button (< Cooktop) on Spotlight screen
+    if (els.t3BtnBack) {
+      els.t3BtnBack.addEventListener("click", () => {
+        playSound("touch");
+        cancelT3A();
+      });
+    }
+
+    // Interactive hotspots on Spotlight screen (Steak, Bacon, Beef)
+    [els.t3SpotlightSteak, els.t3SpotlightBacon, els.t3SpotlightBeef].forEach(btn => {
+      if (btn) {
+        btn.addEventListener("click", () => {
+          playSound("touch");
+        });
+      }
     });
 
     // Home button

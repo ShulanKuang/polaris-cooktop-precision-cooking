@@ -6,7 +6,7 @@
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <title>Polaris Cooktop Precision Cooking Prototype</title>
-  <link rel="stylesheet" href="./styles.css?v=20261001-activitybar-fix">
+  <link rel="stylesheet" href="./styles.css?v=20261001-task3a">
 </head>
 <body>
   <div class="test-environment">
@@ -281,189 +281,54 @@
             </div>
           </div>
 
-          <!-- SCREEN CONTENT CANVAS -->
-          <div class="screen-canvas" id="screenCanvas" hidden>
+          <!-- ============================================== -->
+          <!-- TASK 3 FULL SCREEN (PRECISION COOKING FLOW)    -->
+          <!-- ============================================== -->
+          <div class="task3-full-screen" id="viewTask3" hidden>
 
-            <!-- ============================================== -->
-            <!-- VIEW: TASK 3 (USABILITY FLOW) -->
-            <!-- ============================================== -->
-            <section class="screen-view" id="viewTask3" hidden>
-              <!-- TASK 3 COOKTOP HOME / BURNER SELECTION -->
-              <div class="t3-stage" id="t3CooktopStage">
-                <div class="canvas-header">
-                  <h2 class="view-title">Cooktop Precision</h2>
-                  <div class="t3-instruction-badge" id="t3InstructionBadge">
-                    Tap a burner to configure Precision Cooking
-                  </div>
+            <!-- 1. SCREEN: 3A-START (ALL BURNERS OFF) -->
+            <div class="t3-screen" id="t3ScreenStart">
+              <img class="t3-screen-bg" src="./assets/task3a-start.png" alt="Cooktop Home - All Burners Off">
+              <!-- Explore button hotspot (x: 154, y: 240, w: 149, h: 70) -->
+              <button type="button" class="t3-explore-hotspot" id="t3BtnExplore" aria-label="Explore Precision Cooking"></button>
+              <!-- Rear Left burner hotspot -->
+              <button type="button" class="t3-burner-hotspot" id="t3HotspotRearLeft" aria-label="Rear Left Burner"></button>
+              <!-- Subtle hint banner if participant taps on screen instead of turning knob -->
+              <div class="t3-knob-hint" id="t3KnobHint" hidden>Turn Knob 1 below to PRC to begin</div>
+            </div>
+
+            <!-- 2. SCREEN: 3A-TURNKNOB (REAR LEFT ON PRC WITH COUNTDOWN TOAST) -->
+            <div class="t3-screen" id="t3ScreenTurnKnob" hidden>
+              <img class="t3-screen-bg" src="./assets/task3a-turnknob.png" alt="Cooktop Rear Left Burner Active">
+              
+              <!-- TOAST POPUP: Starting Precision Cooking in 3s (countdown 3s -> 2s -> 1s) -->
+              <div class="t3-toast-card" id="t3ToastCard">
+                <div class="t3-toast-text">
+                  Starting Precision Cooking in <span class="t3-toast-num" id="t3ToastNum">3</span>s.
                 </div>
-
-                <div class="burners-layout t3-burners">
-                  <!-- Rear Left -->
-                  <button type="button" class="burner-card burner-rear-left interactive-burner" id="t3RearLeft" data-burner="rear-left">
-                    <div class="burner-position-icon">
-                      <span class="dot-pos active-pos"></span>
-                      <span class="pos-name">Rear Left</span>
-                    </div>
-                    <div class="burner-body">
-                      <div class="burner-state-label" id="t3RearLeftState">OFF</div>
-                    </div>
-                  </button>
-
-                  <!-- Front Left -->
-                  <button type="button" class="burner-card burner-front-left interactive-burner" id="t3FrontLeft" data-burner="front-left">
-                    <div class="burner-position-icon">
-                      <span class="dot-pos"></span>
-                      <span class="pos-name">Front Left</span>
-                    </div>
-                    <div class="burner-body">
-                      <div class="burner-state-label" id="t3FrontLeftState">OFF</div>
-                    </div>
-                  </button>
-
-                  <!-- Top Center -->
-                  <button type="button" class="burner-card burner-center interactive-burner" id="t3Center" data-burner="center">
-                    <div class="burner-position-icon">
-                      <span class="dot-pos"></span>
-                      <span class="pos-name">Center</span>
-                    </div>
-                    <div class="burner-body">
-                      <div class="burner-state-label">OFF</div>
-                    </div>
-                  </button>
-
-                  <!-- Top Right -->
-                  <button type="button" class="burner-card burner-top-right interactive-burner" id="t3TopRight" data-burner="top-right">
-                    <div class="burner-position-icon">
-                      <span class="dot-pos"></span>
-                      <span class="pos-name">Rear Right</span>
-                    </div>
-                    <div class="burner-body">
-                      <div class="burner-state-label">OFF</div>
-                    </div>
-                  </button>
-
-                  <!-- Front Right -->
-                  <button type="button" class="burner-card burner-front-right interactive-burner" id="t3FrontRight" data-burner="front-right">
-                    <div class="burner-position-icon">
-                      <span class="dot-pos"></span>
-                      <span class="pos-name">Front Right</span>
-                    </div>
-                    <div class="burner-body">
-                      <div class="burner-state-label" id="t3FrontRightState">OFF</div>
-                    </div>
-                  </button>
+                <div class="t3-toast-actions">
+                  <button type="button" class="t3-toast-dismiss" id="t3ToastDismiss">Don’t show again</button>
+                  <button type="button" class="t3-toast-close" id="t3ToastClose" aria-label="Close Toast">✕</button>
                 </div>
               </div>
+            </div>
 
-              <!-- PRECISION CONFIGURATION OVERLAY / MODAL -->
-              <div class="precision-drawer" id="precisionDrawer" hidden>
-                <div class="drawer-header">
-                  <div class="drawer-title-group">
-                    <span class="drawer-target-burner" id="drawerBurnerLabel">Rear Left Burner</span>
-                    <h2 class="drawer-heading">Precision Cooking Mode</h2>
-                  </div>
-                  <!-- MODE TABS: Temperature | Food | Technique -->
-                  <div class="mode-tabs" role="tablist">
-                    <button type="button" class="mode-tab is-active" id="tabTemp" data-mode="temp">Temperature</button>
-                    <button type="button" class="mode-tab" id="tabFood" data-mode="food">Food</button>
-                    <button type="button" class="mode-tab" id="tabTechnique" data-mode="technique">Technique</button>
-                  </div>
-                  <button type="button" class="drawer-close-btn" id="drawerCloseBtn" aria-label="Close">✕</button>
-                </div>
+            <!-- 3. SCREEN: 3A-PCSPOTLIGHT (PRECISION COOKING SPOTLIGHT) -->
+            <div class="t3-screen" id="t3ScreenSpotlight" hidden>
+              <img class="t3-screen-bg" src="./assets/task3a-pc-spotlight.png" alt="Precision Cooking Spotlight">
+              <!-- Back button (< Cooktop) -->
+              <button type="button" class="t3-back-btn" id="t3BtnBack" aria-label="Back to Cooktop"></button>
+              
+              <!-- Hotspots on Spotlight screen for future tasks -->
+              <button type="button" class="t3-hotspot t3-spotlight-steak" id="t3SpotlightSteak" aria-label="Suggested: Steak"></button>
+              <button type="button" class="t3-hotspot t3-spotlight-bacon" id="t3SpotlightBacon" aria-label="Frequently Used: Bacon"></button>
+              <button type="button" class="t3-hotspot t3-spotlight-beef" id="t3SpotlightBeef" aria-label="Frequently Used: Beef"></button>
+            </div>
 
-                <div class="drawer-content">
-                  <!-- PANEL: TEMPERATURE MODE -->
-                  <div class="mode-panel" id="panelTemp">
-                    <div class="temp-stepper-box">
-                      <button type="button" class="stepper-btn" id="tempMinusBtn">−</button>
-                      <div class="stepper-readout">
-                        <span class="stepper-num" id="tempNum">375</span>
-                        <span class="stepper-deg">°F</span>
-                        <span class="stepper-caption">Target Pan Temperature</span>
-                      </div>
-                      <button type="button" class="stepper-btn" id="tempPlusBtn">+</button>
-                    </div>
+          </div>
 
-                    <div class="temp-quick-pills">
-                      <button type="button" class="quick-pill is-selected" data-val="375">375°F (Task A)</button>
-                      <button type="button" class="quick-pill" data-val="500">500°F (Task B)</button>
-                      <button type="button" class="quick-pill" data-val="250">250°F</button>
-                      <button type="button" class="quick-pill" data-val="425">425°F</button>
-                    </div>
-
-                    <div class="drawer-actions">
-                      <button type="button" class="action-btn-primary" id="btnConfirmTemp">Start Heating at 375°F</button>
-                      <button type="button" class="action-btn-danger" id="btnTurnOffPrecision">Turn OFF Precision Mode</button>
-                    </div>
-                  </div>
-
-                  <!-- PANEL: FOOD MODE -->
-                  <div class="mode-panel" id="panelFood" hidden>
-                    <div class="food-grid">
-                      <button type="button" class="food-card is-highlight" id="foodSteak" data-food="Steak">
-                        <span class="food-emoji">🥩</span>
-                        <span class="food-name">Steak</span>
-                        <span class="food-hint">Task C (Sear & Baste)</span>
-                      </button>
-                      <button type="button" class="food-card" data-food="Salmon">
-                        <span class="food-emoji">🐟</span>
-                        <span class="food-name">Salmon</span>
-                        <span class="food-hint">Crisp Skin</span>
-                      </button>
-                      <button type="button" class="food-card" data-food="Eggs">
-                        <span class="food-emoji">🍳</span>
-                        <span class="food-name">Eggs</span>
-                        <span class="food-hint">Gentle Heat</span>
-                      </button>
-                      <button type="button" class="food-card" data-food="Vegetables">
-                        <span class="food-emoji">🥦</span>
-                        <span class="food-name">Vegetables</span>
-                        <span class="food-hint">Saute</span>
-                      </button>
-                      <button type="button" class="food-card" data-food="Soup">
-                        <span class="food-emoji">🍲</span>
-                        <span class="food-name">Soup</span>
-                        <span class="food-hint">Controlled Simmer</span>
-                      </button>
-                    </div>
-                    <div class="drawer-actions">
-                      <button type="button" class="action-btn-primary" id="btnConfirmFood">Set Steak Mode</button>
-                    </div>
-                  </div>
-
-                  <!-- PANEL: TECHNIQUE MODE -->
-                  <div class="mode-panel" id="panelTechnique" hidden>
-                    <div class="tech-grid">
-                      <button type="button" class="tech-card is-highlight" id="techCaramelize" data-tech="Caramelize">
-                        <span class="tech-icon">🧅</span>
-                        <span class="tech-name">Caramelize</span>
-                        <span class="tech-hint">Task E (Low & Slow Onion/Sugar)</span>
-                      </button>
-                      <button type="button" class="tech-card" data-tech="Sear">
-                        <span class="tech-icon">🔥</span>
-                        <span class="tech-name">High Sear</span>
-                        <span class="tech-hint">Maximum Browning</span>
-                      </button>
-                      <button type="button" class="tech-card" data-tech="Simmer">
-                        <span class="tech-icon">🫧</span>
-                        <span class="tech-name">Gentle Simmer</span>
-                        <span class="tech-hint">Steady Bubble</span>
-                      </button>
-                      <button type="button" class="tech-card" data-tech="Sous-Vide">
-                        <span class="tech-icon">💧</span>
-                        <span class="tech-name">Sous-Vide Water</span>
-                        <span class="tech-hint">Probe Precision</span>
-                      </button>
-                    </div>
-                    <div class="drawer-actions">
-                      <button type="button" class="action-btn-primary" id="btnConfirmTech">Set Caramelize Mode</button>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </section>
-
-          </div> <!-- /.screen-canvas -->
+          <!-- HIDDEN CANVAS PLACEHOLDER -->
+          <div class="screen-canvas" id="screenCanvas" hidden></div>
 
           <!-- BOTTOM STATUS COLOR STRIP -->
           <div class="screen-bottom-strip running-activity-bar" id="screenBottomStrip">
@@ -546,6 +411,6 @@
     </footer>
   </div>
 
-  <script src="./app.js?v=20261001-activitybar-fix"></script>
+  <script src="./app.js?v=20261001-task3a"></script>
 </body>
 </html>

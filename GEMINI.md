@@ -27,7 +27,12 @@ This is an interactive high-fidelity web prototype deployed on an **iPad Pro 13"
        - Switcher: Round secondary keypad button switches seamlessly between Carousel and Digipad.
 
 3. **Task 3: Usability Flow & Physical Knobs Manifold** (`?task=3#task3`)
-   - Interactive cooking flow (Tasks A–E): configure burner, set temp/food/technique, turn off precision.
+   - **Task 3A: Precision Cooking Startup Flow**:
+     - **Start Screen (`task3a-start.png`)**: All burners OFF, left card shows *"Precision Cooking / Select temperature or mode for precise results! / Explore"*.
+     - **Knob 1 Interaction**: Turning Knob 1 to `PRC` position (-56°) illuminates Knob 1 LED indicator and activates the rear-left burner on screen (`task3a-turnknob.png`).
+     - **Countdown Toast (`t3-toast-card`)**: Bottom white toast card ($750 \times 60\text{px}$) slides up with *"Starting Precision Cooking in 3s."* (counts down $3\text{s} \rightarrow 2\text{s} \rightarrow 1\text{s}$).
+     - **Spotlight Transition**: After 3s holding time, directly transitions to Precision Cooking Spotlight screen (`task3a-pc-spotlight.png`).
+     - **Cancel / Reset**: Turning Knob 1 back to OFF or clicking `✕` dismisses the toast and resets to start. Clicking `< Cooktop` returns to start and turns Knob 1 OFF.
    - **Physical Cooktop Manifold**: Located 80px below the screen, stretching across the full width of the iPad Pro.
    - **Direct Figma Vector SVG (`assets/manifold-figma.svg`)**: Native `viewBox="0 0 2894 432"` containing vector path text (`OFF`, `PRC`, `MAX`, `MIN`, `ON`), tick marks, thermometer icons, and burner locator rectangles using exact Roux token `--core-color-steel-40: rgba(75, 76, 82, 1)` (`#4B4C52`).
    - **5 Rotatable Knobs**: Sized at $232\text{px}$ touch targets with `assets/knob-nose-figma.png` ($111 \times 250\text{px}$) and active glowing LED indicators `assets/knob-light-figma.png` ($96 \times 50\text{px}$).
