@@ -6,7 +6,7 @@
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <title>Polaris Cooktop Precision Cooking Prototype</title>
-  <link rel="stylesheet" href="./styles.css?v=20261001-task3a">
+  <link rel="stylesheet" href="./styles.css?v=20261001-task3b">
 </head>
 <body>
   <div class="test-environment">
@@ -323,6 +323,88 @@
               <button type="button" class="t3-hotspot t3-spotlight-steak" id="t3SpotlightSteak" aria-label="Suggested: Steak"></button>
               <button type="button" class="t3-hotspot t3-spotlight-bacon" id="t3SpotlightBacon" aria-label="Frequently Used: Bacon"></button>
               <button type="button" class="t3-hotspot t3-spotlight-beef" id="t3SpotlightBeef" aria-label="Frequently Used: Beef"></button>
+
+              <!-- Temperature Tab Nav Button -->
+              <button type="button" class="t3-tab-nav-btn t3-tab-temperature" id="t3TabBtnTemperature" aria-label="Temperature Tab"></button>
+            </div>
+
+            <!-- 4. SCREEN: 3B-PCTEMPERATURE (HORIZONTAL PICKER & START BUTTON) -->
+            <div class="t3-screen" id="t3ScreenTemperature" hidden>
+              <img class="t3-screen-bg" src="./assets/task3b-pc-temperature.png" alt="Precision Cooking Temperature">
+              <!-- Back button (< Cooktop) -->
+              <button type="button" class="t3-back-btn" id="t3BtnBackFromTemp" aria-label="Back to Cooktop"></button>
+
+              <!-- Tab to Spotlight -->
+              <button type="button" class="t3-tab-nav-btn t3-tab-spotlight" id="t3TabBtnSpotlightFromTemp" aria-label="Spotlight Tab"></button>
+
+              <!-- Dynamic Horizontal Temperature Carousel (200°F - 500°F in 25° increments, centered at 375°F) -->
+              <div class="t3-picker-wheel-container" id="t3PickerWheelContainer">
+                <div class="t3-picker-track" id="t3PickerTrack"></div>
+              </div>
+
+              <!-- START Button -->
+              <button type="button" class="t3-temp-start-btn" id="t3BtnStartTemp" aria-label="Start Temperature"></button>
+            </div>
+
+            <!-- 5. SCREEN: 3B-TEMP EXPAND PREHEAT (LIVE GROWING TEMP OVER 5S) -->
+            <div class="t3-screen" id="t3ScreenPreheat" hidden>
+              <img class="t3-screen-bg" src="./assets/task3b-temp-expand-preheat-clean.png" alt="Temperature Preheating">
+              <!-- Back button (< Cooktop) -->
+              <button type="button" class="t3-back-btn" id="t3BtnBackFromPreheat" aria-label="Back to Cooktop"></button>
+
+              <!-- Current Temperature Display (grows from 182°F to 375°F over 5s) -->
+              <div class="t3-preheat-current-display">
+                <span class="t3-temp-val-num" id="t3PreheatCurrent">182</span>
+                <span class="t3-temp-val-unit">°F</span>
+              </div>
+
+              <!-- Target Temperature Display -->
+              <div class="t3-preheat-target-display">
+                <span class="t3-temp-val-num" id="t3PreheatTarget">375</span>
+                <span class="t3-temp-val-unit">°F</span>
+              </div>
+
+              <!-- Edit button hotspot -->
+              <button type="button" class="t3-btn-edit-preheat" id="t3BtnEditPreheat" aria-label="Edit Temperature"></button>
+            </div>
+
+            <!-- 6. SCREEN: 3B-TEMP EXPAND COMPLETED (PREHEATED WITH 3S TOAST) -->
+            <div class="t3-screen" id="t3ScreenPreheatComplete" hidden>
+              <img class="t3-screen-bg" src="./assets/task3b-temp-expand-completed-clean.png" alt="Temperature Preheated Complete">
+              <!-- Back button (< Cooktop) -->
+              <button type="button" class="t3-back-btn" id="t3BtnBackFromComplete" aria-label="Back to Cooktop"></button>
+
+              <!-- Center Target Temperature Display -->
+              <div class="t3-completed-temp-display">
+                <span class="t3-temp-val-num-large" id="t3CompleteTarget">375</span>
+                <span class="t3-temp-val-unit-large">°F</span>
+              </div>
+
+              <!-- TOAST POPUP: Preheat complete. OK ✕ -->
+              <div class="t3-toast-card t3-toast-preheat-complete" id="t3ToastPreheatComplete">
+                <div class="t3-toast-text">
+                  Preheat complete.
+                </div>
+                <div class="t3-toast-actions">
+                  <button type="button" class="t3-toast-ok" id="t3ToastCompleteOk">OK</button>
+                  <button type="button" class="t3-toast-close" id="t3ToastCompleteClose" aria-label="Close Toast">✕</button>
+                </div>
+              </div>
+            </div>
+
+            <!-- 7. SCREEN: 3B-BURNER STATUS (COOKTOP OVERVIEW WITH 375°F ACTIVE) -->
+            <div class="t3-screen" id="t3ScreenBurnerStatus" hidden>
+              <img class="t3-screen-bg" src="./assets/task3b-burner-status-clean.png" alt="Cooktop Burner Status">
+              <!-- Back button (< Cooktop) -->
+              <button type="button" class="t3-back-btn" id="t3BtnBackFromBurnerStatus" aria-label="Back to Cooktop"></button>
+
+              <!-- Rear-Left Active Burner Card Readout -->
+              <div class="t3-burner-status-temp-display">
+                <span class="t3-burner-temp-val" id="t3BurnerStatusTemp">375°F</span>
+              </div>
+
+              <!-- Active Burner Hotspot -->
+              <button type="button" class="t3-active-burner-hotspot" id="t3HotspotActiveBurner" aria-label="Rear Left Active Burner"></button>
             </div>
 
           </div>
@@ -411,6 +493,6 @@
     </footer>
   </div>
 
-  <script src="./app.js?v=20261001-task3a"></script>
+  <script src="./app.js?v=20261001-task3b"></script>
 </body>
 </html>

@@ -47,7 +47,8 @@
       temperature: 370,
       digipadBuffer: "370",
       hasEditedKeypad: false
-    }
+    },
+    task3TargetTemp: 375
   };
 
   // DOM ELEMENTS
@@ -132,7 +133,7 @@
     btnConfirmFood: document.getElementById("btnConfirmFood"),
     btnConfirmTech: document.getElementById("btnConfirmTech"),
 
-    // Task 3A DOM elements
+    // Task 3A & 3B DOM elements
     t3ScreenStart: document.getElementById("t3ScreenStart"),
     t3ScreenTurnKnob: document.getElementById("t3ScreenTurnKnob"),
     t3ScreenSpotlight: document.getElementById("t3ScreenSpotlight"),
@@ -147,6 +148,33 @@
     t3SpotlightSteak: document.getElementById("t3SpotlightSteak"),
     t3SpotlightBacon: document.getElementById("t3SpotlightBacon"),
     t3SpotlightBeef: document.getElementById("t3SpotlightBeef"),
+
+    // Task 3B: Temperature Picker & Preheat
+    t3TabBtnTemperature: document.getElementById("t3TabBtnTemperature"),
+    t3ScreenTemperature: document.getElementById("t3ScreenTemperature"),
+    t3BtnBackFromTemp: document.getElementById("t3BtnBackFromTemp"),
+    t3TabBtnSpotlightFromTemp: document.getElementById("t3TabBtnSpotlightFromTemp"),
+    t3PickerWheelContainer: document.getElementById("t3PickerWheelContainer"),
+    t3PickerTrack: document.getElementById("t3PickerTrack"),
+    t3BtnStartTemp: document.getElementById("t3BtnStartTemp"),
+
+    t3ScreenPreheat: document.getElementById("t3ScreenPreheat"),
+    t3BtnBackFromPreheat: document.getElementById("t3BtnBackFromPreheat"),
+    t3PreheatCurrent: document.getElementById("t3PreheatCurrent"),
+    t3PreheatTarget: document.getElementById("t3PreheatTarget"),
+    t3BtnEditPreheat: document.getElementById("t3BtnEditPreheat"),
+
+    t3ScreenPreheatComplete: document.getElementById("t3ScreenPreheatComplete"),
+    t3BtnBackFromComplete: document.getElementById("t3BtnBackFromComplete"),
+    t3CompleteTarget: document.getElementById("t3CompleteTarget"),
+    t3ToastPreheatComplete: document.getElementById("t3ToastPreheatComplete"),
+    t3ToastCompleteOk: document.getElementById("t3ToastCompleteOk"),
+    t3ToastCompleteClose: document.getElementById("t3ToastCompleteClose"),
+
+    t3ScreenBurnerStatus: document.getElementById("t3ScreenBurnerStatus"),
+    t3BtnBackFromBurnerStatus: document.getElementById("t3BtnBackFromBurnerStatus"),
+    t3BurnerStatusTemp: document.getElementById("t3BurnerStatusTemp"),
+    t3HotspotActiveBurner: document.getElementById("t3HotspotActiveBurner"),
 
     clockReadout: document.getElementById("clockReadout"),
     navHomeBtn: document.getElementById("navHomeBtn")
@@ -177,8 +205,8 @@
       prompt: "Show the Precision Cooking concept screen. Ask user what they think Precision Cooking is and what it means to them."
     },
     3: {
-      title: "Task 3A: Precision Cooking Startup",
-      prompt: "Turn Knob 1 to PRC position. Watch 3s countdown toast, then proceed to Precision Cooking Spotlight."
+      title: "Task 3: Precision Cooking Flow",
+      prompt: "Turn Knob 1 to PRC (3s toast -> Spotlight). Tap Temperature tab -> pick temp -> click START. Live 5s preheat -> complete toast (3s) -> Burner status."
     },
     4: {
       title: "Task 4: End & Turn Off",
@@ -239,9 +267,12 @@
       if (els.screenRail) els.screenRail.hidden = true;
       if (els.topStatus) els.topStatus.hidden = true;
       if (els.screenCanvas) els.screenCanvas.hidden = true;
-      if (els.screenBottomStrip) els.screenBottomStrip.hidden = false;
+      if (els.screenBottomStrip) {
+        els.screenBottomStrip.hidden = true;
+        els.screenBottomStrip.style.display = "none";
+      }
 
-      // Initialize Task 3A to start screen
+      // Initialize Task 3 to start screen
       showT3Screen("start");
     } else {
       if (els.task1FullScreen) els.task1FullScreen.hidden = true;
@@ -738,17 +769,30 @@
   }
 
   // ==============================================
-  // TASK 3A: PRECISION COOKING FLOW (FIGMA ARTBOARDS)
+  // TASK 3: PRECISION COOKING FLOW (FIGMA ARTBOARDS)
   // ==============================================
   let t3CountdownInterval = null;
   let t3HoldingTimeout = null;
-  let t3Stage = "start"; // "start" | "turnknob" | "spotlight"
+  let t3PreheatInterval = null;
+  let t3Stage = "start"; // "start" | "turnknob" | "spotlight" | "temperature" | "preheat" | "completed" | "burnerStatus"
 
   function showT3Screen(stage) {
     t3Stage = stage;
     if (els.t3ScreenStart) els.t3ScreenStart.hidden = (stage !== "start");
     if (els.t3ScreenTurnKnob) els.t3ScreenTurnKnob.hidden = (stage !== "turnknob");
     if (els.t3ScreenSpotlight) els.t3ScreenSpotlight.hidden = (stage !== "spotlight");
+    if (els.t3ScreenTemperature) els.t3ScreenTemperature.hidden = (stage !== "temperature");
+    if (els.t3ScreenPreheat) els.t3ScreenPreheat.hidden = (stage !== "preheat");
+    if (els.t3ScreenPreheatComplete) els.t3ScreenPreheatComplete.hidden = (stage !== "completed");
+    if (els.t3ScreenBurnerStatus) els.t3ScreenBurnerStatus.hidden = (stage !== "burnerStatus");
+
+    // Activity bar only shows up starting from preheat screen!
+    // Before this or before user clicks start, activity bar must not show up.
+    const showActivityBar = (stage === "preheat" || stage === "completed" || stage === "burnerStatus");
+    if (els.screenBottomStrip) {
+      els.screenBottomStrip.hidden = !showActivityBar;
+      els.screenBottomStrip.style.display = showActivityBar ? "block" : "none";
+    }
 
     if (stage === "start") {
       clearT3Timers();
@@ -769,6 +813,10 @@
     if (t3HoldingTimeout) {
       clearTimeout(t3HoldingTimeout);
       t3HoldingTimeout = null;
+    }
+    if (t3PreheatInterval) {
+      clearInterval(t3PreheatInterval);
+      t3PreheatInterval = null;
     }
   }
 
@@ -803,6 +851,77 @@
     }, 3000);
   }
 
+  // TASK 3B: PREHEAT AND COMPLETION TIMERS
+  function startT3Preheat() {
+    clearT3Timers();
+    showT3Screen("preheat");
+    playSound("toggleOn");
+
+    const targetTemp = state.task3TargetTemp || 375;
+    const startTemp = 182;
+    const durationMs = 5000; // 5s smooth temperature growth
+    const startTime = Date.now();
+
+    if (els.t3PreheatTarget) {
+      els.t3PreheatTarget.textContent = targetTemp;
+    }
+    if (els.t3PreheatCurrent) {
+      els.t3PreheatCurrent.textContent = startTemp;
+    }
+
+    t3PreheatInterval = setInterval(() => {
+      const elapsed = Date.now() - startTime;
+      const progress = Math.min(1.0, elapsed / durationMs);
+      const current = Math.round(startTemp + progress * (targetTemp - startTemp));
+      if (els.t3PreheatCurrent) {
+        els.t3PreheatCurrent.textContent = current;
+      }
+
+      if (progress >= 1.0) {
+        clearInterval(t3PreheatInterval);
+        t3PreheatInterval = null;
+        startT3PreheatCompleted();
+      }
+    }, 50);
+  }
+
+  function startT3PreheatCompleted() {
+    clearT3Timers();
+    showT3Screen("completed");
+    playSound("toggleOn");
+
+    const targetTemp = state.task3TargetTemp || 375;
+    if (els.t3CompleteTarget) {
+      els.t3CompleteTarget.textContent = targetTemp;
+    }
+    if (els.t3ToastPreheatComplete) {
+      els.t3ToastPreheatComplete.classList.remove("is-dismissing");
+    }
+
+    // 3 seconds holding time -> go to burnerStatus screen
+    t3HoldingTimeout = setTimeout(() => {
+      finishT3PreheatToBurnerStatus();
+    }, 3000);
+  }
+
+  function finishT3PreheatToBurnerStatus() {
+    clearT3Timers();
+    if (els.t3ToastPreheatComplete) {
+      els.t3ToastPreheatComplete.classList.add("is-dismissing");
+      setTimeout(() => {
+        showT3Screen("burnerStatus");
+      }, 200);
+    } else {
+      showT3Screen("burnerStatus");
+    }
+    playSound("touch");
+
+    const targetTemp = state.task3TargetTemp || 375;
+    if (els.t3BurnerStatusTemp) {
+      els.t3BurnerStatusTemp.textContent = `${targetTemp}°F`;
+    }
+  }
+
   function cancelT3A() {
     clearT3Timers();
     if (els.t3ToastCard) {
@@ -816,6 +935,138 @@
       setKnobAngle(1, 0, true, false);
     }
     playSound("toggleOff");
+  }
+
+  // TASK 3: HORIZONTAL TEMPERATURE CAROUSEL PICKER
+  const T3_TEMP_MIN = 200;
+  const T3_TEMP_MAX = 500;
+  const T3_TEMP_STEP = 25;
+
+  function initT3PickerWheel() {
+    if (!els.t3PickerTrack) return;
+    els.t3PickerTrack.innerHTML = "";
+
+    for (let t = T3_TEMP_MIN; t <= T3_TEMP_MAX; t += T3_TEMP_STEP) {
+      const item = document.createElement("div");
+      item.className = "t3-picker-item";
+      item.dataset.temp = String(t);
+      item.innerHTML = `<span class="t3-item-num">${t}</span><span class="t3-item-unit">°F</span>`;
+      item.addEventListener("click", () => {
+        scrollToT3Temp(t, true);
+      });
+      els.t3PickerTrack.appendChild(item);
+    }
+
+    let rafId = null;
+    els.t3PickerTrack.addEventListener("scroll", () => {
+      if (rafId) cancelAnimationFrame(rafId);
+      rafId = requestAnimationFrame(() => {
+        updateT3PickerVisuals();
+      });
+    }, { passive: true });
+
+    let isDown = false;
+    let startX = 0;
+    let scrollLeft = 0;
+
+    els.t3PickerTrack.addEventListener("mousedown", (e) => {
+      isDown = true;
+      startX = e.pageX - els.t3PickerTrack.offsetLeft;
+      scrollLeft = els.t3PickerTrack.scrollLeft;
+      els.t3PickerTrack.style.scrollSnapType = "none";
+    });
+    window.addEventListener("mouseup", () => {
+      if (isDown) {
+        isDown = false;
+        els.t3PickerTrack.style.scrollSnapType = "x mandatory";
+        snapToClosestT3Temp();
+      }
+    });
+    window.addEventListener("mousemove", (e) => {
+      if (!isDown) return;
+      e.preventDefault();
+      const x = e.pageX - els.t3PickerTrack.offsetLeft;
+      const walk = (x - startX) * 1.5;
+      els.t3PickerTrack.scrollLeft = scrollLeft - walk;
+    });
+
+    els.t3PickerTrack.addEventListener("touchend", () => {
+      setTimeout(snapToClosestT3Temp, 80);
+    }, { passive: true });
+  }
+
+  let lastT3TickTemp = null;
+  function updateT3PickerVisuals() {
+    if (!els.t3PickerTrack) return;
+    const trackCenter = els.t3PickerTrack.scrollLeft + (els.t3PickerTrack.clientWidth / 2);
+    const items = els.t3PickerTrack.querySelectorAll(".t3-picker-item");
+    let closestItem = null;
+    let closestDist = Infinity;
+
+    items.forEach(item => {
+      const itemCenter = item.offsetLeft + (item.offsetWidth / 2);
+      const dist = Math.abs(itemCenter - trackCenter);
+
+      if (dist < closestDist) {
+        closestDist = dist;
+        closestItem = item;
+      }
+
+      item.classList.remove("is-active", "is-neighbor-1", "is-neighbor-2");
+      if (dist < 65) {
+        // active
+      } else if (dist < 195) {
+        item.classList.add("is-neighbor-1");
+      } else if (dist < 325) {
+        item.classList.add("is-neighbor-2");
+      }
+    });
+
+    if (closestItem) {
+      closestItem.classList.add("is-active");
+      const tempVal = parseInt(closestItem.dataset.temp, 10);
+      if (tempVal !== state.task3TargetTemp) {
+        state.task3TargetTemp = tempVal;
+        if (tempVal !== lastT3TickTemp) {
+          lastT3TickTemp = tempVal;
+          playSound("touch");
+        }
+      }
+    }
+  }
+
+  function snapToClosestT3Temp() {
+    if (!els.t3PickerTrack) return;
+    const trackCenter = els.t3PickerTrack.scrollLeft + (els.t3PickerTrack.clientWidth / 2);
+    const items = els.t3PickerTrack.querySelectorAll(".t3-picker-item");
+    let closestTemp = 375;
+    let closestDist = Infinity;
+
+    items.forEach(item => {
+      const itemCenter = item.offsetLeft + (item.offsetWidth / 2);
+      const dist = Math.abs(itemCenter - trackCenter);
+      if (dist < closestDist) {
+        closestDist = dist;
+        closestTemp = parseInt(item.dataset.temp, 10);
+      }
+    });
+
+    scrollToT3Temp(closestTemp, true);
+  }
+
+  function scrollToT3Temp(temp, smooth = true) {
+    if (!els.t3PickerTrack) return;
+    const targetItem = els.t3PickerTrack.querySelector(`.t3-picker-item[data-temp="${temp}"]`);
+    if (targetItem) {
+      const itemCenter = targetItem.offsetLeft + (targetItem.offsetWidth / 2);
+      const targetScrollLeft = itemCenter - (els.t3PickerTrack.clientWidth / 2);
+      els.t3PickerTrack.scrollTo({
+        left: targetScrollLeft,
+        behavior: smooth ? "smooth" : "auto"
+      });
+      state.task3TargetTemp = temp;
+      setTimeout(updateT3PickerVisuals, smooth ? 250 : 50);
+    }
   }
 
   // ==============================================
@@ -1137,6 +1388,102 @@
         });
       }
     });
+
+    // ==============================================
+    // TASK 3B: TEMPERATURE & PREHEAT LISTENERS
+    // ==============================================
+
+    // Initialize Task 3 Horizontal Temperature Carousel
+    initT3PickerWheel();
+
+    // Spotlight -> Click Temperature Tab -> Go to PCTemperature Screen
+    if (els.t3TabBtnTemperature) {
+      els.t3TabBtnTemperature.addEventListener("click", () => {
+        playSound("touch");
+        showT3Screen("temperature");
+        setTimeout(() => {
+          scrollToT3Temp(state.task3TargetTemp || 375, false);
+        }, 30);
+      });
+    }
+
+    // Temperature Screen: Back button (< Cooktop) & Spotlight Tab
+    if (els.t3BtnBackFromTemp) {
+      els.t3BtnBackFromTemp.addEventListener("click", () => {
+        playSound("touch");
+        showT3Screen("spotlight");
+      });
+    }
+    if (els.t3TabBtnSpotlightFromTemp) {
+      els.t3TabBtnSpotlightFromTemp.addEventListener("click", () => {
+        playSound("touch");
+        showT3Screen("spotlight");
+      });
+    }
+
+    // Temperature Screen: START button -> Triggers Activity Bar & Preheating!
+    if (els.t3BtnStartTemp) {
+      els.t3BtnStartTemp.addEventListener("click", () => {
+        startT3Preheat();
+      });
+    }
+
+    // Preheat Screen: Back & Edit Buttons
+    if (els.t3BtnBackFromPreheat) {
+      els.t3BtnBackFromPreheat.addEventListener("click", () => {
+        playSound("touch");
+        clearT3Timers();
+        showT3Screen("temperature");
+        setTimeout(() => {
+          scrollToT3Temp(state.task3TargetTemp || 375, false);
+        }, 30);
+      });
+    }
+    if (els.t3BtnEditPreheat) {
+      els.t3BtnEditPreheat.addEventListener("click", () => {
+        playSound("touch");
+        clearT3Timers();
+        showT3Screen("temperature");
+        setTimeout(() => {
+          scrollToT3Temp(state.task3TargetTemp || 375, false);
+        }, 30);
+      });
+    }
+
+    // Preheat Completed Screen: Back Button & Toast Actions
+    if (els.t3BtnBackFromComplete) {
+      els.t3BtnBackFromComplete.addEventListener("click", () => {
+        playSound("touch");
+        clearT3Timers();
+        showT3Screen("temperature");
+      });
+    }
+    if (els.t3ToastCompleteOk) {
+      els.t3ToastCompleteOk.addEventListener("click", (e) => {
+        e.stopPropagation();
+        finishT3PreheatToBurnerStatus();
+      });
+    }
+    if (els.t3ToastCompleteClose) {
+      els.t3ToastCompleteClose.addEventListener("click", (e) => {
+        e.stopPropagation();
+        finishT3PreheatToBurnerStatus();
+      });
+    }
+
+    // Burner Status Screen: Back Button & Active Burner Card Hotspot
+    if (els.t3BtnBackFromBurnerStatus) {
+      els.t3BtnBackFromBurnerStatus.addEventListener("click", () => {
+        playSound("touch");
+        cancelT3A();
+      });
+    }
+    if (els.t3HotspotActiveBurner) {
+      els.t3HotspotActiveBurner.addEventListener("click", () => {
+        playSound("touch");
+        showT3Screen("completed");
+      });
+    }
 
     // Home button
     if (els.navHomeBtn) {
