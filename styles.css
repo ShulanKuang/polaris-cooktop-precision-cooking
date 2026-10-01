@@ -530,7 +530,7 @@ html, body {
   position: relative;
   width: 100%;
   max-width: 1366px;
-  aspect-ratio: 2694 / 432;
+  aspect-ratio: 2000 / 432;
   margin-top: calc(80px - (414px * (1 - var(--app-scale, 0.8146))));
   container-type: inline-size;
   border-radius: 8px;
@@ -563,8 +563,8 @@ html, body {
   position: absolute;
   left: var(--knob-cx-pct, 50%);
   top: var(--knob-cy-pct, 53.241%);
-  width: calc(256 / 2694 * 100cqw);
-  height: calc(256 / 2694 * 100cqw);
+  width: calc(232 / 2000 * 100cqw);
+  height: calc(232 / 2000 * 100cqw);
   transform: translate(-50%, -50%);
   user-select: none;
   -webkit-user-select: none;
@@ -575,10 +575,10 @@ html, body {
 .knob-light-indicator {
   position: absolute;
   left: 50%;
-  top: calc(50% - (128.25 / 256 * 100%));
+  top: calc(50% - (128.25 / 232 * 100%));
   transform: translate(-50%, -50%);
-  width: calc(96 / 256 * 100%);
-  height: calc(50 / 256 * 100%);
+  width: calc(96 / 232 * 100%);
+  height: calc(50 / 232 * 100%);
   opacity: 0;
   transition: opacity 0.2s cubic-bezier(0.2, 0, 0, 1);
   pointer-events: none;
