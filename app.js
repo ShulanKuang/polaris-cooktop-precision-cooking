@@ -245,6 +245,12 @@
 
     // Reset drawer
     closeDrawer();
+
+    // Persist active task
+    try {
+      localStorage.setItem("polaris_active_task", taskId);
+      history.replaceState(null, "", `?task=${taskId}#task${taskId}`);
+    } catch (e) {}
   }
 
   // ==============================================
@@ -1056,5 +1062,12 @@
     setAppScale(0.8146, "physical");
   }
   setupListeners();
-  setTask(1);
+
+  // Restore active task from URL or localStorage, default to Task 3 for current testing
+  const urlParams = new URLSearchParams(window.location.search);
+  const taskFromParam = parseInt(urlParams.get("task"), 10);
+  const taskFromHash = window.location.hash === "#task3" ? 3 : window.location.hash === "#task2" ? 2 : window.location.hash === "#task1" ? 1 : null;
+  const taskFromStorage = parseInt(localStorage.getItem("polaris_active_task"), 10);
+  const initialTask = taskFromParam || taskFromHash || taskFromStorage || 3;
+  setTask(initialTask);
 })();
