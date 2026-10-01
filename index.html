@@ -78,7 +78,7 @@
     </section>
 
     <!-- MAIN COOKTOP CONTAINER (CENTERED ON IPAD) -->
-    <main class="cooktop-wrapper">
+    <main class="cooktop-wrapper" id="cooktopWrapper">
       <div class="appliance-bezel">
         <!-- EXACT 1024 x 384 APPLIANCE TOUCH SCREEN -->
         <div class="cooktop-screen" id="cooktopScreen" aria-label="Cooktop control screen">
@@ -467,6 +467,11 @@
           <!-- BOTTOM STATUS COLOR STRIP -->
           <div class="screen-bottom-strip running-activity-bar" id="screenBottomStrip"></div>
         </div> <!-- /.cooktop-screen (1024x384) -->
+
+        <!-- TASK 3 ONLY: COOKTOP KNOBS MANIFOLD (80px BELOW SCREEN) -->
+        <div class="cooktop-manifold-panel" id="cooktopManifoldPanel" hidden>
+          <img src="./assets/cooktop-knobs-off.png" alt="Cooktop Knobs Manifold" class="manifold-img" id="manifoldImg">
+        </div>
       </div> <!-- /.appliance-bezel -->
     </main>
 

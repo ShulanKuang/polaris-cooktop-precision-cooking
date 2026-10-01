@@ -107,6 +107,8 @@
     t2DigipadValue: document.getElementById("t2DigipadValue"),
 
     viewTask3: document.getElementById("viewTask3"),
+    cooktopWrapper: document.getElementById("cooktopWrapper"),
+    cooktopManifoldPanel: document.getElementById("cooktopManifoldPanel"),
     precisionDrawer: document.getElementById("precisionDrawer"),
     drawerCloseBtn: document.getElementById("drawerCloseBtn"),
     drawerBurnerLabel: document.getElementById("drawerBurnerLabel"),
@@ -231,6 +233,14 @@
       if (els.screenBottomStrip) els.screenBottomStrip.hidden = false;
 
       if (els.viewTask3) els.viewTask3.hidden = taskId !== 3;
+    }
+
+    // Task 3 Knobs Manifold (Only visible in Task 3, 80px below screen)
+    if (els.cooktopManifoldPanel) {
+      els.cooktopManifoldPanel.hidden = (taskId !== 3);
+    }
+    if (els.cooktopWrapper) {
+      els.cooktopWrapper.classList.toggle("is-task-3", taskId === 3);
     }
 
     // Reset drawer
