@@ -1552,23 +1552,18 @@ html, body {
   pointer-events: none;
 }
 
-/* Explore Screen */
+/* Explore Screen (Cooktop Surface Touch Target) */
 .t2-explore-btn {
   position: absolute;
-  left: 148px;
-  top: 256px;
-  width: 156px;
-  height: 56px;
-  border-radius: 28px;
+  left: 80px;
+  top: 48px;
+  right: 0;
+  bottom: 0;
   background: transparent;
   border: none;
   cursor: pointer;
   z-index: 20;
   outline: none;
-  transition: transform 0.12s cubic-bezier(0.2, 0, 0, 1);
-}
-.t2-explore-btn:active {
-  transform: scale(0.96);
 }
 
 /* Back Button (< Cooktop) */
@@ -2064,31 +2059,27 @@ html, body {
   pointer-events: none;
 }
 
-/* Explore Button Hotspot (Task 3A Start) */
+/* Explore / Cooktop Surface Hotspot (Task 3A Start) */
 .t3-explore-hotspot {
   position: absolute;
-  left: 154px;
-  top: 240px;
-  width: 149px;
-  height: 70px;
+  left: 80px;
+  top: 48px;
+  right: 0;
+  bottom: 0;
   background: transparent;
   border: none;
   cursor: pointer;
-  z-index: 102;
-  border-radius: 35px;
-  transition: transform 0.12s ease;
-}
-.t3-explore-hotspot:active {
-  transform: scale(0.95);
+  z-index: 101;
+  outline: none;
 }
 
-/* Burner Hotspot */
+/* Burner Hotspot (Rear Left Burner: x=324, y=73, w=125, h=125) */
 .t3-burner-hotspot {
   position: absolute;
-  left: 310px;
-  top: 180px;
-  width: 120px;
-  height: 120px;
+  left: 324px;
+  top: 73px;
+  width: 125px;
+  height: 125px;
   background: transparent;
   border: none;
   cursor: pointer;
