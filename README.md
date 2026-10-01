@@ -1,6 +1,6 @@
 # Polaris Cooktop Precision Cooking Prototype
 
-Interactive prototype for the **October 2026 Polaris Cooktop Precision Cooking User Testing**. Designed specifically for the **ROUX 6.75" appliance touchscreen** (1024 × 384 px) with dedicated researcher controls docked outside the appliance canvas.
+Interactive prototype for the **October 2026 Polaris Cooktop Precision Cooking User Testing**. Designed specifically for the **ROUX 6.75" appliance touchscreen** (1024 × 384 px) with dedicated researcher controls docked outside the appliance canvas, and an authentic **5-knob physical manifold** positioned beneath the display.
 
 ---
 
@@ -8,14 +8,14 @@ Interactive prototype for the **October 2026 Polaris Cooktop Precision Cooking U
 
 Click below to open and test the prototype directly:
 
-* **[Live Web Prototype Link](https://gold-boats-admire.loca.lt)**  
-  *(If prompted for a tunnel password, enter: `4.53.66.82`)*
+* **[Live Web Prototype Link](https://clean-stars-beam.loca.lt/?task=3#task3)**  
+  *(If prompted for a tunnel password / Endpoint IP, enter: `4.53.66.82`)*
 
-* **Local iPad / Lab Wi-Fi Link**: `http://10.35.122.114:8080`  
+* **Local iPad / Lab Wi-Fi Link**: `http://10.35.122.114:8080/?task=3#task3`  
   *(Recommended for zero latency when on the same Wi-Fi network as the host machine)*
 
 * **Direct Browser**:  
-  Clone or download this repository, and double-click `index.html` in Safari, Chrome, or Edge.
+  Clone or download this repository, and open `index.html` in Safari, Chrome, or Edge.
 
 ---
 
@@ -48,8 +48,56 @@ The prototype includes an external researcher toolbar positioned above the appli
 | Task | Status | Focus / Objectives | Controls Available |
 | :--- | :---: | :--- | :--- |
 | **Task 1: Awareness Test** | **COMPLETE** | Test whether participants notice active heating burners and precision cooking states during quick glance exposures. | • **0.5s / 1s / 2s glance reveal buttons**<br>• **Silent execution** (zero sound cues to prevent audio bias)<br>• **1024 × 12px running activity bar** (magenta ⇄ blue left-to-right)<br>• **Stable 140px status pill** (`Hidden`, `Revealed`, `Preview`) |
-| **Task 2: Concept Evaluation** | **COMPLETE** | Evaluate participant comprehension of Precision Cooking pillars (Spotlight, Technique, Food, Temperature Picker, and Digital Pad). | • **Explore Screen (`PC-explore`)** with clickable Explore button<br>• **Tab Navigation Bar** (Spotlight, Technique, Food, Temperature)<br>• **Dynamic Buttontile Components** with official Roux design tokens<br>• **Vertical Scrollable Tiles** for Food & Technique with top crop at $y = 179\text{px}$<br>• **Hardware-accelerated Backdrop Blur** (`-webkit-backdrop-filter: blur(16px)`)<br>• **Temperature Picker ⇄ Digital Pad Switcher** via secondary round button<br>• **Interactive Digipad Keypad** (0-9, Clear, Backspace, live display) |
-| **Task 3: Usability Flow** | **IN PROGRESS** | Interactive burner flow (Tasks A – E):<br>• Task A: Rear left 375°F<br>• Task B: Set 500°F<br>• Task C: Front left Steak mode<br>• Task D: Turn OFF precision<br>• Task E: Front right Caramelize mode | • **Scaled Physical Knobs Manifold across Full iPad Width** (`aspect-ratio: 2894 / 432`)<br>• **Direct Figma Vector SVG Integration (`manifold-figma.svg`)**: 100% authentic typography (`OFF`, `PRC`, `MAX`, `MIN`, `ON`), tick marks, thermometer icons, and burner locator boxes using Roux design token `--core-color-steel-40: rgba(75, 76, 82, 1)` (`#4B4C52`)<br>• **5 Rotatable Knobs with Pointer/Touch Drag & Tap Toggle** (`knob-nose-figma.png`)<br>• **Active Light Indicators (`knob-light-figma.png`)**: Unlit when OFF, glowing white when turned ON<br>• **Magnetic Detents**: Snaps cleanly to `OFF` (0°) and `PRC` (-56°)<br>• Interactive burners, drawer stepper, food selection cards, technique mode options, and native audio feedback. |
+| **Task 2: Concept Evaluation** | **COMPLETE** | Evaluate participant comprehension of Precision Cooking pillars (Spotlight, Technique, Food, Temperature Picker, and Digital Pad). | • **Explore Screen (`PC-explore`)** with clickable Explore button<br>• **Tab Navigation Bar** (Spotlight, Technique, Food, Temperature)<br>• **Dynamic Buttontile Components** with official Roux design tokens<br>• **Vertical Scrollable Tiles** for Food & Technique with top crop at $y = 179\text{px}$<br>• **Hardware-accelerated Backdrop Blur** (`-webkit-backdrop-filter: blur(16px)`)<br>• **Temperature Picker ⇄ Digital Pad Switcher** via secondary round button<br>• **Interactive Digipad Keypad** (0-9, Clear, Backspace, live display)<br>• *(Note: Activity bar removed from Task 2 per design direction)* |
+| **Task 3: Usability Flow** | **COMPLETE** | Full interactive precision cooking workflow (Tasks 3A & 3B) with authentic 1.5× physical knobs manifold. | • **New 1.5× Scaled Physical Knobs Manifold** (`aspect-ratio: 2000 / 432`) at 2× Retina resolution (4000 × 864 px)<br>• **5 Rotatable Knobs with Pointer/Touch Drag & Tap Toggle** (`knob-nose-figma.png`)<br>• **Glowing LED Light Indicators (`knob-light-figma.png`)**: Unlit in standby, illuminates white when turned to PRC/ON<br>• **Magnetic Detents**: Snaps cleanly to `OFF` (0°) and `PRC` (-56°)<br>• **Precision Cooking Start Flow**: Turn Knob 1 to PRC $\to$ 3s countdown toast $\to$ Spotlight screen<br>• **Interactive Temperature Picker**: Horizontal scroll carousel ($200^\circ\text{F} - 500^\circ\text{F}$ in $25^\circ$ increments, default $375^\circ\text{F}$)<br>• **Preheating Animation**: Activity bar starts running on START tap; live temperature climbs $182^\circ\text{F} \to 375^\circ\text{F}$ over 5s $\to$ 2s delay $\to$ "Preheat complete" toast (30s timeout or OK/✕)<br>• **Burner Status Screen**: Active rear-left burner card at 375°F with `COOKTOP HOT` badge and running activity bar<br>• **Back Navigation**: Returns to `PCTemperatureRun` maintaining active running burner and activity bar. |
+
+---
+
+## 🍳 Task 3 Flow Details (Precision Cooking Usability Flow)
+
+### 1. Startup via Physical Knob 1
+- **Standby (`Task3A-start`)**: All burners OFF. Manifold panel sits beneath display with 5 clean, unlit knobs.
+- **Turn Knob 1 to PRC**: Dragging or tapping Knob 1 to $-56^\circ$ (`PRC` detent):
+  - Knob 1 LED indicator illuminates white.
+  - Rear-left burner activates on screen (`Task3A-turnKnob`).
+  - Toast card slides up from bottom: *"Starting Precision Cooking in 3s."* (counts down $3\text{s} \to 2\text{s} \to 1\text{s}$).
+  - Turning Knob 1 back to OFF or clicking `✕` cancels the flow.
+- **Spotlight Screen (`Task3A-PCSpotlight`)**: After the 3s holding countdown, transitions directly to the Precision Cooking Spotlight screen.
+
+### 2. Temperature Selection & Preheating
+- **Navigate to Temperature**: Tapping the temperature section or tab opens `Task3B-PCTemperature`.
+- **Horizontal Temperature Picker**: Custom horizontal wheel ($200^\circ\text{F} - 500^\circ\text{F}$ in $25^\circ$ steps), centered on $375^\circ\text{F}$ with touch-snap physics and tick audio.
+- **Tap START**:
+  - **Activity Bar Rule**: The bottom flowing magenta-to-blue activity bar **only starts appearing now**! (It does NOT show up before START is tapped).
+- **Temp Expand Preheat Screen (`Task3B-TempExpandPreheat`)**:
+  - Live temperature readout dynamically climbs from $182^\circ\text{F}$ to $375^\circ\text{F}$ over **5 seconds**.
+  - Once $375^\circ\text{F}$ is reached, there is a **2-second delay**.
+- **Preheat Completed Screen (`Task3B-TempExpand`)**:
+  - Displays large $375^\circ\text{F}$ and "Preheated" status.
+  - Toast popup appears: *"Preheat complete.    OK   ✕"*.
+  - Stays on screen for **30 seconds**, or advances immediately if the user taps `OK` or `✕`.
+- **Burner Status Overview (`Task3B-burnerStatus`)**:
+  - Shows the rear-left burner actively running at $375^\circ\text{F}$ with `COOKTOP HOT` badge and bottom running activity bar.
+- **Back Navigation**: Tapping `<` returns to `PCTemperatureRun` screen with horizontal temperature picker while keeping Knob 1 ON and the activity bar running.
+
+---
+
+## 🎛️ Manifold & Knobs Geometry (1.5× Enlarged)
+
+The cooktop manifold was upgraded with the new Figma design export at **2000 × 432 px** canvas:
+
+* **Resolution**: Rendered at **2× Retina (4000 × 864 px)** for razor-sharp visual fidelity on iPad Pro 13".
+* **On-Screen Size**: Knobs and manifold are **1.45× (~1.5×) larger** on screen compared to the original 2894px frame.
+* **Knob Center Coordinates (2000 × 432 coordinate system)**:
+  - **Knob 1 (Front Left)**: `10.9%` ($X = 218\text{px}$)
+  - **Knob 2 (Rear Left)**: `30.45%` ($X = 609\text{px}$)
+  - **Knob 3 (Center)**: `50.0%` ($X = 1000\text{px}$)
+  - **Knob 4 (Rear Right)**: `69.55%` ($X = 1391\text{px}$)
+  - **Knob 5 (Front Right)**: `89.1%` ($X = 1782\text{px}$)
+  - **Center Y**: `53.24074%` ($Y = 230\text{px}$)
+  - **Symmetrical Margins**: Exactly $218\text{px}$ from both outer edges.
+* **Knob Touch Target & Assembly**: `calc(232 / 2000 * 100cqw)` with centered 3D nose image overlay (`assets/knob-nose-figma.png`).
+* **Active LED Glow**: `top: calc(50% - (128.25 / 232 * 100%))` with smooth opacity transition.
 
 ---
 
@@ -57,59 +105,26 @@ The prototype includes an external researcher toolbar positioned above the appli
 
 Task 2 is fully wired with authentic 1024 × 384 px Figma artboards and interactive components:
 
-1. **Start Screen (`PC-explore`)**:
-   - Displays the initial cooktop explore screen with the prominent pill-shaped **Explore** button.
-   - Clicking **Explore** navigates directly into the Precision Cooking experience on the **Spotlight** tab.
-2. **Back Navigation (`< Cooktop`)**:
-   - Tapping the top-left `< Cooktop` button at any point returns seamlessly to the Explore screen.
-3. **Tab Group Navigation**:
-   - Participants can tap between the 4 core tabs:
-     - **Spotlight**: Highlights suggested cooking recipes (Steak, Bacon, Beef).
-     - **Technique**: Displays technique tiles (Sear, Sauté, Poach, Caramelize, Simmer, etc.).
-     - **Food**: Displays food-guided ingredient categories (Bacon, Beef, Butter, Chicken, etc.).
-     - **Temperature**: Precision temperature selection.
-4. **Dynamic Option Tiles with Roux Design Tokens**:
-   - Option tiles are implemented as real HTML/CSS `.buttontile` components using the official design tokens:
-     - **Size**: 176px wide × 96px tall (`min-height: 88px`, `padding: 12px`, `border-radius: 8px`).
-     - **Colors**: Default `rgba(75, 76, 82, 0.8)` (`--brands-roux-color-basetile-secondary`); Selected `rgba(244, 244, 242, 1)` (`--brands-roux-color-basetile-secondaryselected`).
-     - **Typography**: `"Profile Text"`, 28px, semi-bold (600), letter-spacing 0.56px, line-height 120%, color `#ffffff`. Selected text: `rgba(31, 32, 36, 1)`.
-     - **Interactive Selection**: Tapping any tile triggers the tactile selection state and audio touch feedback.
-5. **Vertical Scrolling & Top Cropping**:
-   - Both **Technique** (14 options) and **Food** (16 options) grids scroll vertically over the underlying cooktop background artwork (`pc-bg.png`).
-   - Fixed crop container begins cleanly at the first row ($y = 179\text{px}$) beneath the pinned header and navigation tab bar, matching Figma layout behavior.
-6. **Frosted Glass / Background Blur**:
-   - Uses `-webkit-backdrop-filter: blur(16px)` with GPU hardware compositing (`transform: translateZ(0)`).
-   - Cooktop food photography (bacon and eggs) subtly blurs through the translucent 80% opacity tiles.
-7. **Real Horizontal Temperature Carousel & Digital Pad**:
-   - **Horizontal Scroll Carousel Dial**:
-     - **Range**: **$200^\circ\text{F}$ to $500^\circ\text{F}$** in **$10^\circ\text{F}$ increments** (31 discrete selectable values).
-     - **Visual Hierarchy**: Centered directly above the `START` button. Active center number renders bold ($68\text{px}$) with an inline $^\circ\text{F}$ unit badge; immediate neighbors scale smoothly down to $46\text{px}$ ($80\%$ opacity), $36\text{px}$ ($45\%$ opacity), and fade gracefully into the edge masks.
-     - **Physics & Touch**: Native CSS touch scroll-snap (`scroll-snap-type: x mandatory`) for iPad Pro, plus desktop mouse drag-and-flick and click-to-center.
-     - **Audio Feedback**: Subtle tactile tick (`playSound("touch")`) triggers dynamically each time a new $10^\circ\text{F}$ increment is snapped or scrolled into center.
-   - **Dynamic Interactive Digipad**:
-     - **Live Display**: Clean digital readout ($76\text{px}$ bold numbers + $30\text{px}$ $^\circ\text{F}$ unit) positioned above `START`.
-     - **12-Key Numeric Keypad**: Interactive 0–9 digits, Clear (clears to `---` with audio cue), and Backspace.
-     - **Validation & Clamping**: Clamped to valid cooktop range ($200^\circ\text{F} - 500^\circ\text{F}$) when pressing `START` or switching back to Dial.
-   - **Two-Way Synchronization**:
-     - Seamless two-way sync: Scrolling the dial to a temperature (e.g. $420^\circ\text{F}$) automatically updates the Digipad buffer; switching back to Dial from the Digipad instantly scrolls and snaps the wheel to the typed temperature.
+1. **Start Screen (`PC-explore`)**: Clickable pill-shaped **Explore** button navigating to Precision Cooking.
+2. **Back Navigation (`< Cooktop`)**: Returns to the Explore screen.
+3. **Tab Group Navigation**: Spotlight, Technique, Food, and Temperature tabs.
+4. **Dynamic Option Tiles**: Authentic `.buttontile` components using Roux tokens (`176 × 96px`, `rgba(75, 76, 82, 0.8)` default, `rgba(244, 244, 242, 1)` selected).
+5. **Vertical Scrolling & Top Cropping**: 14 Technique options and 16 Food options scroll smoothly with fixed crop at $y = 179\text{px}$.
+6. **Frosted Glass / Background Blur**: `-webkit-backdrop-filter: blur(16px)` with GPU acceleration.
+7. **Temperature Dial & Digipad**:
+   - Horizontal snap carousel ($200^\circ\text{F} - 500^\circ\text{F}$ in $10^\circ$ increments).
+   - 12-key numeric Digipad (0–9, Clear, Backspace).
+   - Seamless two-way state synchronization.
 
 ---
 
 ## 🔬 Task 1 Details (Awareness Test)
 
-* **Silent Operation**: All sounds are intentionally disabled for Task 1 to ensure participant responses are purely driven by visual recognition.
+* **Silent Operation**: All sounds are disabled for Task 1 to ensure participant responses are purely driven by visual recognition.
 * **Standby Shield**: Screen remains hidden under a dark standby cover until the researcher triggers an exposure.
 * **Timed Auto-Re-cover**: Clicking `0.5s`, `1s`, or `2s` reveals the screen for that exact duration before automatically returning to standby.
 * **Preview Mode**: Clicking `Preview` toggles the screen continuously on/off for inspection.
-* **Running Activity Bar**: A full-width (1024px × 12px) seamless gradient animation runs along the bottom edge, cycling continuously from magenta to blue to magenta. Engineered with GPU hardware-accelerated `transform: translate3d(-1024px, 0, 0)` on a dedicated 2048px track and a resilient animation loop in `app.js`, ensuring silky smooth 60/120 FPS fluid motion across iOS Safari, iPad Pro, and all embedded browser engines.
-
----
-
-## 💡 Engineering Note: Background Blur on Embedded Appliances
-
-If engineering teams report difficulty implementing real-time `backdrop-filter: blur()` on the production cooktop:
-* **The Root Cause**: Low-power embedded Linux/Android SoCs (e.g. NXP i.MX, Allwinner, STM32) lack the GPU fill-rate and memory bandwidth for multi-pass real-time Gaussian shaders across 16 moving tiles, dropping 60 FPS scrolling to 10–15 FPS.
-* **The Production Solution (Pre-blurred Background)**: In Figma, export an alternative background image (`pc-bg-blur.png`) with the Gaussian blur pre-baked into the artwork. On screens with option tiles, display `pc-bg-blur.png` under the semi-transparent tiles (`rgba(75, 76, 82, 0.8)`). This delivers the exact frosted glass aesthetic with **zero GPU overhead** and buttery smooth 60 FPS performance.
+* **Running Activity Bar**: Seamless gradient animation cycling from magenta to blue to magenta with GPU hardware-accelerated `transform: translate3d(-1024px, 0, 0)` on a dedicated 2048px track.
 
 ---
 
@@ -117,5 +132,5 @@ If engineering teams report difficulty implementing real-time `backdrop-filter: 
 
 * **Appliance Display Canvas**: Exact 1024 × 384 pixels (ROUX 6.75" display aspect ratio).
 * **Typography**: GE Appliances Profile Display and Profile Text font families loaded via local `@font-face`.
-* **Iconography**: Clean SVG vector assets matching Polaris production design.
 * **Architecture**: Vanilla HTML5, CSS3, and JavaScript — zero external dependencies, no build steps required.
+* **Cache Busting**: Versioned CSS/JS URLs (e.g. `?v=20261001-manifold-15x`) preventing iOS Safari cache issues.

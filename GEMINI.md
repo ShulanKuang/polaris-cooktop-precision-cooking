@@ -25,6 +25,7 @@ This is an interactive high-fidelity web prototype deployed on an **iPad Pro 13"
        - Mode A: Horizontal scrollable carousel wheel with magnetic snapping.
        - Mode B: Dynamic 10-key Digipad (`0-9`, `Clear`, `Backspace`, live readout).
        - Switcher: Round secondary keypad button switches seamlessly between Carousel and Digipad.
+     - *(Note: Task 2 activity bar removed per design direction)*.
 
 3. **Task 3: Usability Flow & Physical Knobs Manifold** (`?task=3#task3`)
    - **Task 3A: Precision Cooking Startup Flow**:
@@ -41,17 +42,25 @@ This is an interactive high-fidelity web prototype deployed on an **iPad Pro 13"
      - **Temp Expand Preheat Screen (`task3b-temp-expand-preheat-clean.png`)**:
        - Displays live growing temperature from $182^\circ\text{F}$ up to $375^\circ\text{F}$ over exactly $5\text{s}$.
        - Shows dynamic target temperature readout ($375^\circ\text{F}$).
+       - After reaching target temp, there is an exact **2s delay** before advancing.
      - **Preheat Complete Screen (`task3b-temp-expand-completed-clean.png`)**:
        - Shows large centered $375^\circ\text{F}$ and *"Preheated"* status.
        - Toast card slides up from bottom: *"Preheat complete.    OK   ✕"*.
-       - After $3\text{s}$ holding time (or upon tapping `OK` or `✕`), transitions directly to the final `burnerStatus` screen.
+       - Stays on this screen for **30 seconds**, or advances immediately if the user taps `OK` or `✕`.
      - **Burner Status Overview Screen (`task3b-burner-status-clean.png`)**:
        - Displays rear-left burner card actively running at $375^\circ\text{F}$ with `COOKTOP HOT` badge and running activity bar.
+       - Back caret `<` navigation returns to `PCTemperatureRun` screen with horizontal temperature picker while keeping Knob 1 ON and activity bar running.
        - Turning Knob 1 back to OFF or clicking `< Cooktop` resets the flow back to the start screen.
    - **Physical Cooktop Manifold**: Located 80px below the screen, stretching across the full width of the iPad Pro.
-   - **Direct Figma Vector SVG (`assets/manifold-figma.svg`)**: Native `viewBox="0 0 2894 432"` containing vector path text (`OFF`, `PRC`, `MAX`, `MIN`, `ON`), tick marks, thermometer icons, and burner locator rectangles using exact Roux token `--core-color-steel-40: rgba(75, 76, 82, 1)` (`#4B4C52`).
-   - **5 Rotatable Knobs**: Sized at $232\text{px}$ touch targets with `assets/knob-nose-figma.png` ($111 \times 250\text{px}$) and active glowing LED indicators `assets/knob-light-figma.png` ($96 \times 50\text{px}$).
-   - **Magnetic Detents**: Snaps cleanly to `OFF` (0°) and `PRC` (-56°).
+   - **1.5× Scaled Manifold Image (`assets/manifold-new-clean.png`)**:
+     - Rendered from Figma vector frame at **2× Retina (4000 × 864 px)** based on 2000 × 432 px artboard.
+     - Knobs are **1.45× (~1.5×) larger on screen**, providing comfortable touch targets.
+   - **5 Rotatable Knobs**:
+     - Touch targets: `calc(232 / 2000 * 100cqw)`
+     - Dynamic center calculation: `target.getBoundingClientRect()`
+     - Magnetic Detents: Snaps cleanly to `OFF` (0°) and `PRC` (-56°)
+     - Click/tap toggles between OFF and PRC
+     - Glowing LED indicators: `assets/knob-light-figma.png`
 
 ---
 
@@ -60,18 +69,19 @@ This is an interactive high-fidelity web prototype deployed on an **iPad Pro 13"
 | Component | Resolution / Aspect Ratio | Visual Styling / Notes |
 | :--- | :--- | :--- |
 | **Appliance Touch Screen** | $1024 \times 384\text{px}$ (6.75" ROUX display) | Centered inside dark appliance bezel; rounded corners (8px) |
-| **Physical Knobs Manifold** | $2894 \times 432\text{px}$ (`aspect-ratio: 2894 / 432`) | Vector SVG; brushed stainless background `#b1b1b1` |
+| **Physical Knobs Manifold** | $2000 \times 432\text{px}$ (`aspect-ratio: 2000 / 432`) | Retina PNG from vector frame; brushed stainless background `#b1b1b1` |
 | **iPad Pro 13" Physical Scale** | `transform: scale(0.8146)` | Renders display at authentic 1:1 physical dimensions on iPad Pro (2752×2064, ~264 PPI) |
 | **Knob Nose Asset** | $111 \times 250\text{px}$ (`assets/knob-nose-figma.png`) | Center-anchored rotation |
 | **Knob Light Indicator** | $96 \times 50\text{px}$ (`assets/knob-light-figma.png`) | Glows white when turned to PRC/ON; unlit when OFF |
 
-### 5 Knobs Coordinate Map (relative to 2894 × 432 SVG canvas):
-- **Knob 1 (Front Left)**: `cx = 22.94402%` ($664 / 2894$), `cy = 53.24074%` ($230 / 432$)
-- **Knob 2 (Rear Left)**: `cx = 36.45473%` ($1055 / 2894$), `cy = 53.24074%` ($230 / 432$)
-- **Knob 3 (Center)**: `cx = 49.96545%` ($1446 / 2894$), `cy = 53.24074%` ($230 / 432$)
-- **Knob 4 (Rear Right)**: `cx = 63.47616%` ($1837 / 2894$), `cy = 53.24074%` ($230 / 432$)
-- **Knob 5 (Front Right)**: `cx = 76.98687%` ($2228 / 2894$), `cy = 53.24074%` ($230 / 432$)
-- **Dial Pitch**: Exactly $391\text{px}$ ($13.51\%$) between all adjacent centers.
+### 5 Knobs Coordinate Map (relative to 2000 × 432 canvas):
+- **Knob 1 (Front Left)**: `cx = 10.9%` ($X = 218\text{px}$), `cy = 53.24074%` ($Y = 230\text{px}$)
+- **Knob 2 (Rear Left)**: `cx = 30.45%` ($X = 609\text{px}$), `cy = 53.24074%` ($Y = 230\text{px}$)
+- **Knob 3 (Center)**: `cx = 50.0%` ($X = 1000\text{px}$), `cy = 53.24074%` ($Y = 230\text{px}$)
+- **Knob 4 (Rear Right)**: `cx = 69.55%` ($X = 1391\text{px}$), `cy = 53.24074%` ($Y = 230\text{px}$)
+- **Knob 5 (Front Right)**: `cx = 89.1%` ($X = 1782\text{px}$), `cy = 53.24074%` ($Y = 230\text{px}$)
+- **Dial Pitch**: Exactly $391\text{px}$ between all adjacent knob centers.
+- **Outer Margins**: Symmetrical $218\text{px}$ on both left and right sides.
 
 ---
 
@@ -110,5 +120,18 @@ This is an interactive high-fidelity web prototype deployed on an **iPad Pro 13"
 ## 🚀 5. Testing & Deployment Environment
 - **Local Server**: `python3 -m http.server 8080 -d /Users/a240165853/Documents/PolarisPrototypeCooktopPrecisionCooking`
 - **Tunnel Command**: `npx --yes localtunnel --port 8080`
-- **Current Live URL**: `https://chatty-dogs-kiss.loca.lt/?task=3#task3`
+- **Current Live URL**: `https://clean-stars-beam.loca.lt/?task=3#task3`
 - **Tunnel Password / Endpoint IP**: `4.53.66.82`
+
+---
+
+## 🔄 6. How to Resume Work After Antigravity Restart
+When opening a new conversation or restarting Antigravity:
+1. Open this workspace directory: `/Users/a240165853/Documents/PolarisPrototypeCooktopPrecisionCooking`.
+2. Antigravity automatically reads `GEMINI.md` to load full memory of the project.
+3. If background tasks stopped, re-launch:
+   ```bash
+   python3 -m http.server 8080 -d /Users/a240165853/Documents/PolarisPrototypeCooktopPrecisionCooking &
+   npx --yes localtunnel --port 8080 &
+   ```
+4. If Figma MCP is connected, you can directly query Figma components or tokens by node ID or frame name!
