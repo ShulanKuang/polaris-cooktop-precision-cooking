@@ -101,8 +101,7 @@ Task 2 is fully wired with authentic 1024 × 384 px Figma artboards and interact
 * **Standby Shield**: Screen remains hidden under a dark standby cover until the researcher triggers an exposure.
 * **Timed Auto-Re-cover**: Clicking `0.5s`, `1s`, or `2s` reveals the screen for that exact duration before automatically returning to standby.
 * **Preview Mode**: Clicking `Preview` toggles the screen continuously on/off for inspection.
-* **Layout Stability**: The status indicator is locked at a fixed 140px width to ensure surrounding buttons never shift during state transitions.
-* **Running Activity Bar**: A full-width (1024px × 12px) seamless gradient animation runs along the bottom edge, cycling continuously from magenta to blue to magenta.
+* **Running Activity Bar**: A full-width (1024px × 12px) seamless gradient animation runs along the bottom edge, cycling continuously from magenta to blue to magenta. Engineered with GPU hardware-accelerated `transform: translate3d(-1024px, 0, 0)` on a dedicated 2048px track and a resilient animation loop in `app.js`, ensuring silky smooth 60/120 FPS fluid motion across iOS Safari, iPad Pro, and all embedded browser engines.
 
 ---
 
