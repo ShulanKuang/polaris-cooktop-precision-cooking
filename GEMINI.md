@@ -29,11 +29,11 @@ This is an interactive high-fidelity web prototype deployed on an **iPad Pro 13"
 
 3. **Task 3: Usability Flow & Physical Knobs Manifold** (`?task=3#task3`)
    - **Task 3A: Precision Cooking Startup Flow**:
-     - **Start Screen (`task3a-start.png`)**: All burners OFF, left card shows *"Precision Cooking / Select temperature or mode for precise results! / Explore"*.
-     - **Knob 1 Interaction**: Turning Knob 1 to `PRC` position (-56°) illuminates Knob 1 LED indicator and activates the rear-left burner on screen (`task3a-turnknob.png`).
-     - **Countdown Toast (`t3-toast-card`)**: Bottom white toast card ($750 \times 60\text{px}$) slides up with *"Starting Precision Cooking in 3s."* (counts down $3\text{s} \rightarrow 2\text{s} \rightarrow 1\text{s}$).
-     - **Spotlight Transition**: After 3s holding time, directly transitions to Precision Cooking Spotlight screen (`task3a-pc-spotlight.png`).
-     - **Cancel / Reset**: Turning Knob 1 back to OFF or clicking `✕` dismisses the toast and resets to start. Clicking `< Cooktop` returns to start and turns Knob 1 OFF.
+     - **Start Screen (`task2-start-new.png`)**: All burners OFF, clean cooktop without Precision Cooking card per Figma node `2345:16560`.
+     - **Knob Turning Animation (Min to Max)**: Turning Knob 1 clockwise rolls the rear-left burner display through levels 1 to 10 inside the dashed white ring with haptic tick audio.
+     - **Knob 1 to PRC**: Turning Knob 1 to `PRC` detent (-56°) illuminates Knob 1 LED and displays the white Precision Cooking Temperature Icon centered within the dashed ring.
+     - **2s Delay & Transition**: Holds the temperature icon for 2 seconds, then automatically advances to the Precision Cooking Spotlight screen.
+     - **Cancel / Reset**: Turning Knob 1 back to OFF (0°) or clicking `< Cooktop` resets the burner roller and turns Knob 1 OFF.
    - **Task 3B: Temperature Picker, Preheat & Burner Status Flow**:
      - **Spotlight $\rightarrow$ Temperature**: Tapping the **Temperature** tab navigates to the horizontal temperature picker screen (`task3b-pc-temperature.png`).
      - **Horizontal Carousel Wheel**: Allows scrolling and picking temperatures from $200^\circ\text{F}$ to $500^\circ\text{F}$ in $25^\circ$ increments, centered by default on $375^\circ\text{F}$ with active scaling and snapping.

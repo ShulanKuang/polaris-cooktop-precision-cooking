@@ -2087,6 +2087,106 @@ html, body {
   border-radius: 50%;
 }
 
+/* ============================================== */
+/* DYNAMIC ANIMATED BURNER ROLLER (FIGMA 2528, 2529) */
+/* ============================================== */
+.t3-burner-roller {
+  position: absolute;
+  left: 323.5px;
+  top: 72px;
+  width: 128px;
+  height: 128px;
+  border-radius: 50%;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+  z-index: 105;
+}
+
+.t3-burner-roller.is-active {
+  opacity: 1;
+}
+
+.t3-burner-roller-bg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+.t3-burner-roller-strip {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  transform: translateY(45px); /* default index 0: OFF */
+  transition: transform 0.22s cubic-bezier(0.2, 0, 0, 1);
+  will-change: transform;
+}
+
+.t3-burner-roller-strip.is-instant {
+  transition: none !important;
+}
+
+.t3-burner-roller-item {
+  width: 100%;
+  height: 38px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: "Profile Display", system-ui, -apple-system, sans-serif;
+  font-size: 26px;
+  font-weight: 600;
+  color: #5C5F68;
+  line-height: 1;
+  box-sizing: border-box;
+  transition: color 0.15s ease, font-size 0.15s ease;
+  user-select: none;
+}
+
+.t3-burner-roller-item[data-index="0"] {
+  font-size: 20px;
+  letter-spacing: 0.5px;
+}
+
+.t3-burner-roller-item.is-selected {
+  font-size: 34px;
+  font-weight: 700;
+  color: #FFFFFF;
+}
+
+.t3-burner-roller-item[data-index="0"].is-selected {
+  font-size: 24px;
+  font-weight: 700;
+  color: #FFFFFF;
+}
+
+.t3-burner-roller-item.is-temp .t3-temp-icon {
+  display: block;
+  width: 30px;
+  height: 40px;
+  opacity: 0.45;
+  transition: opacity 0.15s ease, filter 0.15s ease;
+}
+
+.t3-burner-roller-item.is-temp.is-selected .t3-temp-icon {
+  opacity: 1;
+  filter: drop-shadow(0 0 2px rgba(255, 255, 255, 0.5));
+}
+
+.t3-burner-roller-item.is-temp.is-selected .t3-temp-icon {
+  transform: scale(1.1);
+  filter: drop-shadow(0 0 4px rgba(255, 255, 255, 0.6));
+}
+
 /* Back Button (< Cooktop) */
 .t3-back-btn {
   position: absolute;

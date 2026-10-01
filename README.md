@@ -8,7 +8,7 @@ Interactive prototype for the **October 2026 Polaris Cooktop Precision Cooking U
 
 Click below to open and test the prototype directly:
 
-* **[Live Web Prototype Link](https://clean-stars-beam.loca.lt/?task=3#task3)**  
+* **[Live Web Prototype Link](https://yellow-baths-camp.loca.lt/?task=3#task3)**  
   *(If prompted for a tunnel password / Endpoint IP, enter: `4.53.66.82`)*
 
 * **Local iPad / Lab Wi-Fi Link**: `http://10.35.122.114:8080/?task=3#task3`  
@@ -49,7 +49,7 @@ The prototype includes an external researcher toolbar positioned above the appli
 | :--- | :---: | :--- | :--- |
 | **Task 1: Awareness Test** | **COMPLETE** | Test whether participants notice active heating burners and precision cooking states during quick glance exposures. | • **0.5s / 1s / 2s glance reveal buttons**<br>• **Silent execution** (zero sound cues to prevent audio bias)<br>• **1024 × 12px running activity bar** (magenta ⇄ blue left-to-right)<br>• **Stable 140px status pill** (`Hidden`, `Revealed`, `Preview`) |
 | **Task 2: Concept Evaluation** | **COMPLETE** | Evaluate participant comprehension of Precision Cooking pillars (Spotlight, Technique, Food, Temperature Picker, and Digital Pad). | • **Explore Screen (`PC-explore`)** with clickable Explore button<br>• **Tab Navigation Bar** (Spotlight, Technique, Food, Temperature)<br>• **Dynamic Buttontile Components** with official Roux design tokens<br>• **Vertical Scrollable Tiles** for Food & Technique with top crop at $y = 179\text{px}$<br>• **Hardware-accelerated Backdrop Blur** (`-webkit-backdrop-filter: blur(16px)`)<br>• **Temperature Picker ⇄ Digital Pad Switcher** via secondary round button<br>• **Interactive Digipad Keypad** (0-9, Clear, Backspace, live display)<br>• *(Note: Activity bar removed from Task 2 per design direction)* |
-| **Task 3: Usability Flow** | **COMPLETE** | Full interactive precision cooking workflow (Tasks 3A & 3B) with authentic 1.5× physical knobs manifold. | • **New 1.5× Scaled Physical Knobs Manifold** (`aspect-ratio: 2000 / 432`) at 2× Retina resolution (4000 × 864 px)<br>• **5 Rotatable Knobs with Pointer/Touch Drag & Tap Toggle** (`knob-nose-figma.png`)<br>• **Glowing LED Light Indicators (`knob-light-figma.png`)**: Unlit in standby, illuminates white when turned to PRC/ON<br>• **Magnetic Detents**: Snaps cleanly to `OFF` (0°) and `PRC` (-56°)<br>• **Precision Cooking Start Flow**: Turn Knob 1 to PRC $\to$ 3s countdown toast $\to$ Spotlight screen<br>• **Interactive Temperature Picker**: Horizontal scroll carousel ($200^\circ\text{F} - 500^\circ\text{F}$ in $25^\circ$ increments, default $375^\circ\text{F}$)<br>• **Preheating Animation**: Activity bar starts running on START tap; live temperature climbs $182^\circ\text{F} \to 375^\circ\text{F}$ over 5s $\to$ 2s delay $\to$ "Preheat complete" toast (30s timeout or OK/✕)<br>• **Burner Status Screen**: Active rear-left burner card at 375°F with `COOKTOP HOT` badge and running activity bar<br>• **Back Navigation**: Returns to `PCTemperatureRun` maintaining active running burner and activity bar. |
+| **Task 3: Usability Flow** | **COMPLETE** | Full interactive precision cooking workflow (Tasks 3A & 3B) with authentic 1.5× physical knobs manifold and live burner roller. | • **New 1.5× Scaled Physical Knobs Manifold** (`aspect-ratio: 2000 / 432`) at 2× Retina resolution (4000 × 864 px)<br>• **5 Rotatable Knobs with Pointer/Touch Drag & Tap Toggle** (`knob-nose-figma.png`)<br>• **Glowing LED Light Indicators (`knob-light-figma.png`)**: Unlit in standby, illuminates white when turned to PRC/ON<br>• **Magnetic Detents**: Snaps cleanly to `OFF` (0°), `PRC` (-56°), and power levels 1–10 ($30^\circ - 150^\circ$)<br>• **Min to Max Knob Turning Animation**: Dedicated rear-left burner dynamically rolls numbers 1–10 with tick audio<br>• **PRC Temperature Icon & 2s Transition**: Turning Knob 1 to PRC shows the centered temperature icon within the dashed ring, delays 2 seconds, then smoothly advances to Spotlight<br>• **Interactive Temperature Picker**: Horizontal scroll carousel ($200^\circ\text{F} - 500^\circ\text{F}$ in $25^\circ$ increments, default $375^\circ\text{F}$)<br>• **Preheating Animation**: Activity bar starts running on START tap; live temperature climbs $182^\circ\text{F} \to 375^\circ\text{F}$ over 5s $\to$ 2s delay $\to$ "Preheat complete" toast (30s timeout or OK/✕)<br>• **Burner Status Screen**: Active rear-left burner card at 375°F with `COOKTOP HOT` badge and running activity bar<br>• **Back Navigation**: Returns to `PCTemperatureRun` maintaining active running burner and activity bar. |
 
 ---
 
@@ -57,12 +57,13 @@ The prototype includes an external researcher toolbar positioned above the appli
 
 ### 1. Startup via Physical Knob 1
 - **Standby (`Task3A-start`)**: All burners OFF. Manifold panel sits beneath display with 5 clean, unlit knobs.
+- **Knob Turning (Min to Max)**: Turning Knob 1 clockwise smoothly rolls the dedicated rear-left burner display through power levels **1 to 10** inside an authentic dashed white ring with haptic tick audio.
 - **Turn Knob 1 to PRC**: Dragging or tapping Knob 1 to $-56^\circ$ (`PRC` detent):
   - Knob 1 LED indicator illuminates white.
-  - Rear-left burner activates on screen (`Task3A-turnKnob`).
-  - Toast card slides up from bottom: *"Starting Precision Cooking in 3s."* (counts down $3\text{s} \to 2\text{s} \to 1\text{s}$).
-  - Turning Knob 1 back to OFF or clicking `✕` cancels the flow.
-- **Spotlight Screen (`Task3A-PCSpotlight`)**: After the 3s holding countdown, transitions directly to the Precision Cooking Spotlight screen.
+  - Dedicated rear-left burner displays the glowing white **Precision Cooking Temperature Icon**.
+  - **2-Second Delay**: Holds the temperature icon for exactly 2 seconds.
+  - Automatically transitions smoothly to the **Spotlight Screen (`Task3A-PCSpotlight`)**.
+- **Cancel / Reset**: Turning Knob 1 back to OFF (0°) or tapping back resets the burner display and cancels pending transitions.
 
 ### 2. Temperature Selection & Preheating
 - **Navigate to Temperature**: Tapping the temperature section or tab opens `Task3B-PCTemperature`.

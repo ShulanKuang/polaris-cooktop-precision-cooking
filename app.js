@@ -135,6 +135,8 @@
 
     // Task 3A & 3B DOM elements
     t3ScreenStart: document.getElementById("t3ScreenStart"),
+    t3BurnerRoller1: document.getElementById("t3BurnerRoller1"),
+    t3BurnerStrip1: document.getElementById("t3BurnerStrip1"),
     t3ScreenTurnKnob: document.getElementById("t3ScreenTurnKnob"),
     t3ScreenSpotlight: document.getElementById("t3ScreenSpotlight"),
     t3BtnExplore: document.getElementById("t3BtnExplore"),
@@ -641,6 +643,7 @@
 
   // TASK 3: DRAWER & CONFIGURATION
   function openDrawer(burnerId, defaultTab = "temp") {
+    if (!els.precisionDrawer) return;
     playSound("touch");
     state.selectedBurner = burnerId;
 
@@ -651,28 +654,36 @@
       "top-right": "Rear Right Burner",
       "front-right": "Front Right Burner"
     };
-    els.drawerBurnerLabel.textContent = names[burnerId] || burnerId;
+    if (els.drawerBurnerLabel) {
+      els.drawerBurnerLabel.textContent = names[burnerId] || burnerId;
+    }
 
     switchTab(defaultTab);
     els.precisionDrawer.hidden = false;
   }
 
   function closeDrawer() {
-    els.precisionDrawer.hidden = true;
+    if (els.precisionDrawer) {
+      els.precisionDrawer.hidden = true;
+    }
   }
 
   function switchTab(tabKey) {
     playSound("touch");
-    [els.tabTemp, els.tabFood, els.tabTechnique].forEach(t => t.classList.remove("is-active"));
-    [els.panelTemp, els.panelFood, els.panelTechnique].forEach(p => p.hidden = true);
+    [els.tabTemp, els.tabFood, els.tabTechnique].forEach(t => {
+      if (t) t.classList.remove("is-active");
+    });
+    [els.panelTemp, els.panelFood, els.panelTechnique].forEach(p => {
+      if (p) p.hidden = true;
+    });
 
-    if (tabKey === "temp") {
+    if (tabKey === "temp" && els.tabTemp && els.panelTemp) {
       els.tabTemp.classList.add("is-active");
       els.panelTemp.hidden = false;
-    } else if (tabKey === "food") {
+    } else if (tabKey === "food" && els.tabFood && els.panelFood) {
       els.tabFood.classList.add("is-active");
       els.panelFood.hidden = false;
-    } else if (tabKey === "technique") {
+    } else if (tabKey === "technique" && els.tabTechnique && els.panelTechnique) {
       els.tabTechnique.classList.add("is-active");
       els.panelTechnique.hidden = false;
     }
@@ -784,6 +795,8 @@
   let t3CountdownInterval = null;
   let t3HoldingTimeout = null;
   let t3PreheatInterval = null;
+  let t3PrcDelayTimer = null;
+  let currentT3BurnerLevel = null;
   let t3Stage = "start"; // "start" | "turnknob" | "spotlight" | "temperature" | "preheat" | "completed" | "burnerStatus"
 
   function showT3Screen(stage) {
@@ -818,6 +831,10 @@
   }
 
   function clearT3Timers() {
+    if (t3PrcDelayTimer) {
+      clearTimeout(t3PrcDelayTimer);
+      t3PrcDelayTimer = null;
+    }
     if (t3CountdownInterval) {
       clearInterval(t3CountdownInterval);
       t3CountdownInterval = null;
@@ -829,6 +846,101 @@
     if (t3PreheatInterval) {
       clearInterval(t3PreheatInterval);
       t3PreheatInterval = null;
+    }
+  }
+
+  function updateT3BurnerFromKnob(index, angle, animate = false) {
+    if (index !== 1 || state.currentTask !== 3) return;
+    if (!els.t3BurnerRoller1 || !els.t3BurnerStrip1) return;
+
+    if (t3Stage !== "start") {
+      // If user turns knob to OFF while on another Task 3 screen (like Spotlight), cancel back to start
+      if (Math.abs(angle) <= 10) {
+        cancelT3A();
+      }
+      return;
+    }
+
+    const isPRC = (angle < -25 && angle > -75);
+    const isMinToMax = (angle >= 25 && angle <= 165);
+    const isOff = (Math.abs(angle) <= 12);
+
+    if (animate) {
+      els.t3BurnerStrip1.classList.remove("is-instant");
+    } else {
+      els.t3BurnerStrip1.classList.add("is-instant");
+    }
+
+    if (isPRC) {
+      // 1. Pointing at PRC (-56 deg): dedicated burner shows temperature icon
+      els.t3BurnerRoller1.classList.add("is-active");
+      currentT3BurnerLevel = "prc";
+
+      // Translate strip to center index 11 (temp icon): 45 - 11*38 = -373px
+      els.t3BurnerStrip1.style.transform = "translateY(-373px)";
+
+      const items = els.t3BurnerStrip1.querySelectorAll(".t3-burner-roller-item");
+      items.forEach(it => {
+        const idx = parseInt(it.dataset.index, 10);
+        it.classList.toggle("is-selected", idx === 11);
+      });
+
+      // Delay 2s here, then go to next screen (Spotlight)
+      if (!t3PrcDelayTimer) {
+        t3PrcDelayTimer = setTimeout(() => {
+          t3PrcDelayTimer = null;
+          playSound("toggleOn");
+          showT3Screen("spotlight");
+        }, 2000);
+      }
+    } else if (isMinToMax) {
+      // 2. Turning from Min to Max: dedicated burner changes number 1-10
+      if (t3PrcDelayTimer) {
+        clearTimeout(t3PrcDelayTimer);
+        t3PrcDelayTimer = null;
+      }
+
+      els.t3BurnerRoller1.classList.add("is-active");
+
+      // Angle: Min is ~35 deg, Max is ~145 deg
+      const clamped = Math.max(30, Math.min(150, angle));
+      const level = Math.max(1, Math.min(10, Math.round(1 + ((clamped - 30) / 120) * 9)));
+
+      if (level !== currentT3BurnerLevel) {
+        currentT3BurnerLevel = level;
+        playSound("tick");
+      }
+
+      // Translate strip to center index level: 45 - level*38
+      const targetY = 45 - level * 38;
+      els.t3BurnerStrip1.style.transform = `translateY(${targetY}px)`;
+
+      const items = els.t3BurnerStrip1.querySelectorAll(".t3-burner-roller-item");
+      items.forEach(it => {
+        const idx = parseInt(it.dataset.index, 10);
+        it.classList.toggle("is-selected", idx === level);
+      });
+    } else if (isOff) {
+      // 3. Knob at OFF (0 deg)
+      if (t3PrcDelayTimer) {
+        clearTimeout(t3PrcDelayTimer);
+        t3PrcDelayTimer = null;
+      }
+      currentT3BurnerLevel = "off";
+
+      els.t3BurnerStrip1.style.transform = "translateY(45px)";
+      const items = els.t3BurnerStrip1.querySelectorAll(".t3-burner-roller-item");
+      items.forEach(it => {
+        const idx = parseInt(it.dataset.index, 10);
+        it.classList.toggle("is-selected", idx === 0);
+      });
+
+      els.t3BurnerRoller1.classList.remove("is-active");
+    } else {
+      if (t3PrcDelayTimer) {
+        clearTimeout(t3PrcDelayTimer);
+        t3PrcDelayTimer = null;
+      }
     }
   }
 
@@ -944,11 +1056,11 @@
       els.t3ToastCard.classList.add("is-dismissing");
       setTimeout(() => {
         showT3Screen("start");
-        setKnobAngle(1, 0, true, false);
+        setKnobAngle(1, 0, true, true);
       }, 200);
     } else {
       showT3Screen("start");
-      setKnobAngle(1, 0, true, false);
+      setKnobAngle(1, 0, true, true);
     }
     playSound("toggleOff");
   }
@@ -1266,14 +1378,7 @@
 
     // TASK 3A PRECISION COOKING WORKFLOW TRIGGER
     if (index === 1 && state.currentTask === 3) {
-      const isPRC = (angle < -25 && angle > -75);
-      const isOff = (Math.abs(angle) <= 10);
-
-      if (isPRC && t3Stage === "start") {
-        startT3ACountdown();
-      } else if (isOff && t3Stage !== "start") {
-        cancelT3A();
-      }
+      updateT3BurnerFromKnob(index, angle, animate);
     }
 
     if (target) {
@@ -1351,6 +1456,11 @@
             snapDeg = 0;
           } else if (Math.abs(snapDeg - (-56)) < 20) {
             snapDeg = -56;
+          } else if (snapDeg >= 25 && snapDeg <= 165) {
+            // Snap to nearest discrete 1-10 level angle
+            const clamped = Math.max(30, Math.min(150, snapDeg));
+            const level = Math.max(1, Math.min(10, Math.round(1 + ((clamped - 30) / 120) * 9)));
+            snapDeg = 30 + (level - 1) * (120 / 9);
           }
           playSound("touch");
           setKnobAngle(index, snapDeg, true, true);
@@ -1737,4 +1847,13 @@
   const taskFromStorage = parseInt(localStorage.getItem("polaris_active_task"), 10);
   const initialTask = taskFromParam || taskFromHash || taskFromStorage || 3;
   setTask(initialTask);
+
+  window.__polaris = {
+    state,
+    knobsState,
+    setKnobAngle,
+    setTask,
+    showT3Screen,
+    updateT3BurnerFromKnob
+  };
 })();
