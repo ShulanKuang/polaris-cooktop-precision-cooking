@@ -6,7 +6,7 @@
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <title>Polaris Cooktop Precision Cooking Prototype</title>
-  <link rel="stylesheet" href="./styles.css?v=20261001-timing-update">
+  <link rel="stylesheet" href="./styles.css?v=20261001-pctemprun">
 </head>
 <body>
   <div class="test-environment">
@@ -395,6 +395,24 @@
               <button type="button" class="t3-active-burner-hotspot" id="t3HotspotActiveBurner" aria-label="Rear Left Active Burner"></button>
             </div>
 
+            <!-- 8. SCREEN: 3B-PCTEMPERATURERUN (RUNNING TEMP WITH UPDATE BUTTON & KEYPAD) -->
+            <div class="t3-screen" id="t3ScreenTempRun" hidden>
+              <img class="t3-screen-bg" src="./assets/task3b-pc-temperature-run-clean.png" alt="Precision Cooking Temperature Running">
+              <!-- Back button (< Cooktop) -->
+              <button type="button" class="t3-back-btn" id="t3BtnBackFromTempRun" aria-label="Back to Cooktop"></button>
+
+              <!-- Dynamic Horizontal Temperature Carousel (matching Task 2 / Task 3 picker) -->
+              <div class="t3-picker-wheel-container" id="t3RunPickerWheelContainer">
+                <div class="t3-picker-track" id="t3RunPickerTrack"></div>
+              </div>
+
+              <!-- UPDATE Button -->
+              <button type="button" class="t3-temp-update-btn" id="t3BtnUpdateTemp" aria-label="Update Temperature"></button>
+
+              <!-- Keypad Switch Button -->
+              <button type="button" class="t3-temp-keypad-btn" id="t3BtnKeypadTemp" aria-label="Keypad"></button>
+            </div>
+
           </div>
 
           <!-- HIDDEN CANVAS PLACEHOLDER -->
@@ -481,6 +499,6 @@
     </footer>
   </div>
 
-  <script src="./app.js?v=20261001-timing-update"></script>
+  <script src="./app.js?v=20261001-pctemprun"></script>
 </body>
 </html>

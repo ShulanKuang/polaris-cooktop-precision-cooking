@@ -176,6 +176,13 @@
     t3BurnerStatusTemp: document.getElementById("t3BurnerStatusTemp"),
     t3HotspotActiveBurner: document.getElementById("t3HotspotActiveBurner"),
 
+    t3ScreenTempRun: document.getElementById("t3ScreenTempRun"),
+    t3BtnBackFromTempRun: document.getElementById("t3BtnBackFromTempRun"),
+    t3RunPickerWheelContainer: document.getElementById("t3RunPickerWheelContainer"),
+    t3RunPickerTrack: document.getElementById("t3RunPickerTrack"),
+    t3BtnUpdateTemp: document.getElementById("t3BtnUpdateTemp"),
+    t3BtnKeypadTemp: document.getElementById("t3BtnKeypadTemp"),
+
     clockReadout: document.getElementById("clockReadout"),
     navHomeBtn: document.getElementById("navHomeBtn")
   };
@@ -785,10 +792,12 @@
     if (els.t3ScreenPreheat) els.t3ScreenPreheat.hidden = (stage !== "preheat");
     if (els.t3ScreenPreheatComplete) els.t3ScreenPreheatComplete.hidden = (stage !== "completed");
     if (els.t3ScreenBurnerStatus) els.t3ScreenBurnerStatus.hidden = (stage !== "burnerStatus");
+    if (els.t3ScreenTempRun) els.t3ScreenTempRun.hidden = (stage !== "tempRun");
 
     // Activity bar only shows up starting from preheat screen!
     // Before this or before user clicks start, activity bar must not show up.
-    const showActivityBar = (stage === "preheat" || stage === "completed" || stage === "burnerStatus");
+    // When on burnerStatus or tempRun, activity bar continues running!
+    const showActivityBar = (stage === "preheat" || stage === "completed" || stage === "burnerStatus" || stage === "tempRun");
     if (els.screenBottomStrip) {
       els.screenBottomStrip.hidden = !showActivityBar;
       els.screenBottomStrip.style.display = showActivityBar ? "block" : "none";
@@ -1071,6 +1080,135 @@
       });
       state.task3TargetTemp = temp;
       setTimeout(updateT3PickerVisuals, smooth ? 250 : 50);
+    }
+  }
+
+  // TASK 3: PCTEMPERATURERUN HORIZONTAL TEMPERATURE CAROUSEL PICKER
+  function initT3RunPickerWheel() {
+    if (!els.t3RunPickerTrack) return;
+    els.t3RunPickerTrack.innerHTML = "";
+
+    for (let t = T3_TEMP_MIN; t <= T3_TEMP_MAX; t += T3_TEMP_STEP) {
+      const item = document.createElement("div");
+      item.className = "t3-picker-item";
+      item.dataset.temp = String(t);
+      item.innerHTML = `<span class="t3-item-num">${t}</span><span class="t3-item-unit">°F</span>`;
+      item.addEventListener("click", () => {
+        scrollToT3RunTemp(t, true);
+      });
+      els.t3RunPickerTrack.appendChild(item);
+    }
+
+    let rafId = null;
+    els.t3RunPickerTrack.addEventListener("scroll", () => {
+      if (rafId) cancelAnimationFrame(rafId);
+      rafId = requestAnimationFrame(() => {
+        updateT3RunPickerVisuals();
+      });
+    }, { passive: true });
+
+    let isDown = false;
+    let startX = 0;
+    let scrollLeft = 0;
+
+    els.t3RunPickerTrack.addEventListener("mousedown", (e) => {
+      isDown = true;
+      startX = e.pageX - els.t3RunPickerTrack.offsetLeft;
+      scrollLeft = els.t3RunPickerTrack.scrollLeft;
+      els.t3RunPickerTrack.style.scrollSnapType = "none";
+    });
+    window.addEventListener("mouseup", () => {
+      if (isDown) {
+        isDown = false;
+        els.t3RunPickerTrack.style.scrollSnapType = "x mandatory";
+        snapToClosestT3RunTemp();
+      }
+    });
+    window.addEventListener("mousemove", (e) => {
+      if (!isDown) return;
+      e.preventDefault();
+      const x = e.pageX - els.t3RunPickerTrack.offsetLeft;
+      const walk = (x - startX) * 1.5;
+      els.t3RunPickerTrack.scrollLeft = scrollLeft - walk;
+    });
+
+    els.t3RunPickerTrack.addEventListener("touchend", () => {
+      setTimeout(snapToClosestT3RunTemp, 80);
+    }, { passive: true });
+  }
+
+  let lastT3RunTickTemp = null;
+  function updateT3RunPickerVisuals() {
+    if (!els.t3RunPickerTrack) return;
+    const trackCenter = els.t3RunPickerTrack.scrollLeft + (els.t3RunPickerTrack.clientWidth / 2);
+    const items = els.t3RunPickerTrack.querySelectorAll(".t3-picker-item");
+    let closestItem = null;
+    let closestDist = Infinity;
+
+    items.forEach(item => {
+      const itemCenter = item.offsetLeft + (item.offsetWidth / 2);
+      const dist = Math.abs(itemCenter - trackCenter);
+
+      if (dist < closestDist) {
+        closestDist = dist;
+        closestItem = item;
+      }
+
+      item.classList.remove("is-active", "is-neighbor-1", "is-neighbor-2");
+      if (dist < 65) {
+        // active
+      } else if (dist < 195) {
+        item.classList.add("is-neighbor-1");
+      } else if (dist < 325) {
+        item.classList.add("is-neighbor-2");
+      }
+    });
+
+    if (closestItem) {
+      closestItem.classList.add("is-active");
+      const tempVal = parseInt(closestItem.dataset.temp, 10);
+      if (tempVal !== state.task3TargetTemp) {
+        state.task3TargetTemp = tempVal;
+        if (tempVal !== lastT3RunTickTemp) {
+          lastT3RunTickTemp = tempVal;
+          playSound("touch");
+        }
+      }
+    }
+  }
+
+  function snapToClosestT3RunTemp() {
+    if (!els.t3RunPickerTrack) return;
+    const trackCenter = els.t3RunPickerTrack.scrollLeft + (els.t3RunPickerTrack.clientWidth / 2);
+    const items = els.t3RunPickerTrack.querySelectorAll(".t3-picker-item");
+    let closestTemp = 375;
+    let closestDist = Infinity;
+
+    items.forEach(item => {
+      const itemCenter = item.offsetLeft + (item.offsetWidth / 2);
+      const dist = Math.abs(itemCenter - trackCenter);
+      if (dist < closestDist) {
+        closestDist = dist;
+        closestTemp = parseInt(item.dataset.temp, 10);
+      }
+    });
+
+    scrollToT3RunTemp(closestTemp, true);
+  }
+
+  function scrollToT3RunTemp(temp, smooth = true) {
+    if (!els.t3RunPickerTrack) return;
+    const targetItem = els.t3RunPickerTrack.querySelector(`.t3-picker-item[data-temp="${temp}"]`);
+    if (targetItem) {
+      const trackWidth = els.t3RunPickerTrack.clientWidth || 840;
+      const itemCenter = targetItem.offsetLeft + (targetItem.offsetWidth / 2);
+      const targetScrollLeft = itemCenter - (trackWidth / 2);
+      els.t3RunPickerTrack.scrollTo({
+        left: targetScrollLeft,
+        behavior: smooth ? "smooth" : "auto"
+      });
+      state.task3TargetTemp = temp;
+      setTimeout(updateT3RunPickerVisuals, smooth ? 250 : 50);
     }
   }
 
@@ -1398,8 +1536,9 @@
     // TASK 3B: TEMPERATURE & PREHEAT LISTENERS
     // ==============================================
 
-    // Initialize Task 3 Horizontal Temperature Carousel
+    // Initialize Task 3 Horizontal Temperature Carousel & PCTemperatureRun Carousel
     initT3PickerWheel();
+    initT3RunPickerWheel();
 
     // Spotlight -> Click Temperature Tab -> Go to PCTemperature Screen
     if (els.t3TabBtnTemperature) {
@@ -1492,16 +1631,48 @@
     }
 
     // Burner Status Screen: Back Button & Active Burner Card Hotspot
+    // When task finished, clicking back caret button goes to PCTemperatureRun screen!
     if (els.t3BtnBackFromBurnerStatus) {
       els.t3BtnBackFromBurnerStatus.addEventListener("click", () => {
         playSound("touch");
-        cancelT3A();
+        showT3Screen("tempRun");
+        requestAnimationFrame(() => {
+          scrollToT3RunTemp(state.task3TargetTemp || 375, false);
+          setTimeout(() => {
+            scrollToT3RunTemp(state.task3TargetTemp || 375, false);
+          }, 60);
+        });
       });
     }
     if (els.t3HotspotActiveBurner) {
       els.t3HotspotActiveBurner.addEventListener("click", () => {
         playSound("touch");
-        showT3Screen("completed");
+        showT3Screen("tempRun");
+        requestAnimationFrame(() => {
+          scrollToT3RunTemp(state.task3TargetTemp || 375, false);
+          setTimeout(() => {
+            scrollToT3RunTemp(state.task3TargetTemp || 375, false);
+          }, 60);
+        });
+      });
+    }
+
+    // PCTemperatureRun Screen: Back Button, Update Button & Keypad Button
+    if (els.t3BtnBackFromTempRun) {
+      els.t3BtnBackFromTempRun.addEventListener("click", () => {
+        playSound("touch");
+        showT3Screen("burnerStatus");
+      });
+    }
+    if (els.t3BtnUpdateTemp) {
+      els.t3BtnUpdateTemp.addEventListener("click", () => {
+        playSound("toggleOn");
+        showT3Screen("burnerStatus");
+      });
+    }
+    if (els.t3BtnKeypadTemp) {
+      els.t3BtnKeypadTemp.addEventListener("click", () => {
+        playSound("touch");
       });
     }
 
