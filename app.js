@@ -220,7 +220,7 @@
       if (els.screenRail) els.screenRail.hidden = true;
       if (els.topStatus) els.topStatus.hidden = true;
       if (els.screenCanvas) els.screenCanvas.hidden = true;
-      if (els.screenBottomStrip) els.screenBottomStrip.hidden = true;
+      if (els.screenBottomStrip) els.screenBottomStrip.hidden = false;
 
       // Initialize Task 2 to explore view
       showT2Explore(true);
@@ -1054,6 +1054,30 @@
     }
   }
 
+  // RUNNING ACTIVITY BAR RUNNER (Guarantees active liquid flow even if Safari CSS animation is throttled)
+  function initRunningActivityBar() {
+    const runners = document.querySelectorAll(".activity-bar-runner");
+    if (!runners.length) return;
+
+    let offset = -1024;
+    let lastTime = performance.now();
+    const speed = 1024 / 2.8; // 1024px every 2.8s (~365.7px/s)
+
+    function loop(now) {
+      const delta = (now - lastTime) / 1000;
+      lastTime = now;
+      if (delta > 0 && delta < 0.2) {
+        offset += speed * delta;
+        if (offset >= 0) offset -= 1024;
+        for (let i = 0; i < runners.length; i++) {
+          runners[i].style.setProperty("--runner-offset", `${offset.toFixed(2)}px`);
+        }
+      }
+      requestAnimationFrame(loop);
+    }
+    requestAnimationFrame(loop);
+  }
+
   // INIT
   const savedScaleMode = localStorage.getItem("polaris_app_scale_mode") || "physical";
   if (savedScaleMode === "native") {
@@ -1062,6 +1086,7 @@
     setAppScale(0.8146, "physical");
   }
   setupListeners();
+  initRunningActivityBar();
 
   // Restore active task from URL or localStorage, default to Task 3 for current testing
   const urlParams = new URLSearchParams(window.location.search);

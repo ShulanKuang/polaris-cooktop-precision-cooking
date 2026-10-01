@@ -1442,33 +1442,66 @@ html, body {
   height: 12px;
   z-index: 102;
   overflow: hidden;
+  pointer-events: none;
+  background: #111215;
+}
+
+.running-activity-bar .activity-bar-runner,
+.running-activity-bar:empty::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 2048px;
+  height: 100%;
   background: linear-gradient(
     90deg,
     #ff007f 0%,
-    #d800a6 12%,
-    #9900ff 25%,
-    #4422ff 38%,
-    #0066ff 50%,
-    #00c4ff 62%,
-    #0066ff 72%,
-    #9900ff 84%,
-    #d800a6 92%,
+    #d800a6 6.25%,
+    #9900ff 12.5%,
+    #4422ff 18.75%,
+    #0066ff 25%,
+    #00c4ff 31.25%,
+    #0066ff 37.5%,
+    #9900ff 43.75%,
+    #d800a6 47%,
+    #ff007f 50%,
+    #d800a6 56.25%,
+    #9900ff 62.5%,
+    #4422ff 68.75%,
+    #0066ff 75%,
+    #00c4ff 81.25%,
+    #0066ff 87.5%,
+    #9900ff 93.75%,
+    #d800a6 97%,
     #ff007f 100%
   );
-  background-size: 1024px 100%;
-  background-repeat: repeat-x;
-  animation: runFlowLeftToRight 2.8s linear infinite;
-  box-shadow: none;
-  filter: none;
-  pointer-events: none;
+  will-change: transform;
+  -webkit-transform: translate3d(var(--runner-offset, -1024px), 0, 0);
+  transform: translate3d(var(--runner-offset, -1024px), 0, 0);
+  -webkit-animation: runFlowLeftToRightGPU 2.8s linear infinite;
+  animation: runFlowLeftToRightGPU 2.8s linear infinite;
 }
 
-@keyframes runFlowLeftToRight {
+@-webkit-keyframes runFlowLeftToRightGPU {
   0% {
-    background-position: 0 0;
+    -webkit-transform: translate3d(-1024px, 0, 0);
+    transform: translate3d(-1024px, 0, 0);
   }
   100% {
-    background-position: 1024px 0;
+    -webkit-transform: translate3d(0, 0, 0);
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+@keyframes runFlowLeftToRightGPU {
+  0% {
+    -webkit-transform: translate3d(-1024px, 0, 0);
+    transform: translate3d(-1024px, 0, 0);
+  }
+  100% {
+    -webkit-transform: translate3d(0, 0, 0);
+    transform: translate3d(0, 0, 0);
   }
 }
 
