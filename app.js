@@ -1058,8 +1058,9 @@
     if (!els.t3PickerTrack) return;
     const targetItem = els.t3PickerTrack.querySelector(`.t3-picker-item[data-temp="${temp}"]`);
     if (targetItem) {
+      const trackWidth = els.t3PickerTrack.clientWidth || 840;
       const itemCenter = targetItem.offsetLeft + (targetItem.offsetWidth / 2);
-      const targetScrollLeft = itemCenter - (els.t3PickerTrack.clientWidth / 2);
+      const targetScrollLeft = itemCenter - (trackWidth / 2);
       els.t3PickerTrack.scrollTo({
         left: targetScrollLeft,
         behavior: smooth ? "smooth" : "auto"
@@ -1401,9 +1402,12 @@
       els.t3TabBtnTemperature.addEventListener("click", () => {
         playSound("touch");
         showT3Screen("temperature");
-        setTimeout(() => {
+        requestAnimationFrame(() => {
           scrollToT3Temp(state.task3TargetTemp || 375, false);
-        }, 30);
+          setTimeout(() => {
+            scrollToT3Temp(state.task3TargetTemp || 375, false);
+          }, 60);
+        });
       });
     }
 
@@ -1434,9 +1438,12 @@
         playSound("touch");
         clearT3Timers();
         showT3Screen("temperature");
-        setTimeout(() => {
+        requestAnimationFrame(() => {
           scrollToT3Temp(state.task3TargetTemp || 375, false);
-        }, 30);
+          setTimeout(() => {
+            scrollToT3Temp(state.task3TargetTemp || 375, false);
+          }, 60);
+        });
       });
     }
     if (els.t3BtnEditPreheat) {
@@ -1444,9 +1451,12 @@
         playSound("touch");
         clearT3Timers();
         showT3Screen("temperature");
-        setTimeout(() => {
+        requestAnimationFrame(() => {
           scrollToT3Temp(state.task3TargetTemp || 375, false);
-        }, 30);
+          setTimeout(() => {
+            scrollToT3Temp(state.task3TargetTemp || 375, false);
+          }, 60);
+        });
       });
     }
 
@@ -1456,6 +1466,12 @@
         playSound("touch");
         clearT3Timers();
         showT3Screen("temperature");
+        requestAnimationFrame(() => {
+          scrollToT3Temp(state.task3TargetTemp || 375, false);
+          setTimeout(() => {
+            scrollToT3Temp(state.task3TargetTemp || 375, false);
+          }, 60);
+        });
       });
     }
     if (els.t3ToastCompleteOk) {
