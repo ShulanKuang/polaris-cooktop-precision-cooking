@@ -6,7 +6,7 @@
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <title>Polaris Cooktop Precision Cooking Prototype</title>
-  <link rel="stylesheet" href="./styles.css?v=20261001-fixpicker">
+  <link rel="stylesheet" href="./styles.css?v=20261001-active-num-fix">
 </head>
 <body>
   <div class="test-environment">
@@ -380,28 +380,16 @@
                 <span class="t3-temp-val-unit-large">°F</span>
               </div>
 
-              <!-- TOAST POPUP: Preheat complete. OK ✕ -->
-              <div class="t3-toast-card t3-toast-preheat-complete" id="t3ToastPreheatComplete">
-                <div class="t3-toast-text">
-                  Preheat complete.
-                </div>
-                <div class="t3-toast-actions">
-                  <button type="button" class="t3-toast-ok" id="t3ToastCompleteOk">OK</button>
-                  <button type="button" class="t3-toast-close" id="t3ToastCompleteClose" aria-label="Close Toast">✕</button>
-                </div>
-              </div>
+              <!-- Toast Action Hotspots (aligned over OK and ✕ in the Figma toast) -->
+              <button type="button" class="t3-toast-hotspot-ok" id="t3ToastCompleteOk" aria-label="OK"></button>
+              <button type="button" class="t3-toast-hotspot-close" id="t3ToastCompleteClose" aria-label="Close Toast"></button>
             </div>
 
             <!-- 7. SCREEN: 3B-BURNER STATUS (COOKTOP OVERVIEW WITH 375°F ACTIVE) -->
             <div class="t3-screen" id="t3ScreenBurnerStatus" hidden>
-              <img class="t3-screen-bg" src="./assets/task3b-burner-status-clean.png" alt="Cooktop Burner Status">
+              <img class="t3-screen-bg" src="./assets/task3b-burner-status.png" alt="Cooktop Burner Status">
               <!-- Back button (< Cooktop) -->
               <button type="button" class="t3-back-btn" id="t3BtnBackFromBurnerStatus" aria-label="Back to Cooktop"></button>
-
-              <!-- Rear-Left Active Burner Card Readout -->
-              <div class="t3-burner-status-temp-display">
-                <span class="t3-burner-temp-val" id="t3BurnerStatusTemp">375°F</span>
-              </div>
 
               <!-- Active Burner Hotspot -->
               <button type="button" class="t3-active-burner-hotspot" id="t3HotspotActiveBurner" aria-label="Rear Left Active Burner"></button>
@@ -493,6 +481,6 @@
     </footer>
   </div>
 
-  <script src="./app.js?v=20261001-fixpicker"></script>
+  <script src="./app.js?v=20261001-active-num-fix"></script>
 </body>
 </html>

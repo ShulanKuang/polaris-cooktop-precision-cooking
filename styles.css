@@ -2398,13 +2398,13 @@ html, body {
   transform: scale(0.95);
 }
 
-/* Temp Expand Preheat Live Readouts */
+/* Temp Expand Preheat Live Readouts (Pixel-perfect match to Figma) */
 .t3-preheat-current-display {
   position: absolute;
-  left: 535px;
-  top: 172px;
-  width: 165px;
-  height: 66px;
+  left: 560px;
+  top: 184px;
+  width: 145px;
+  height: 52px;
   display: flex;
   align-items: baseline;
   justify-content: center;
@@ -2414,10 +2414,10 @@ html, body {
 
 .t3-preheat-target-display {
   position: absolute;
-  left: 720px;
-  top: 172px;
-  width: 165px;
-  height: 66px;
+  left: 775px;
+  top: 184px;
+  width: 148px;
+  height: 52px;
   display: flex;
   align-items: baseline;
   justify-content: center;
@@ -2427,20 +2427,22 @@ html, body {
 
 .t3-temp-val-num {
   font-family: var(--font-display), "Profile Display", system-ui, sans-serif;
-  font-size: 48px;
+  font-size: 50px;
   font-weight: 700;
   color: #ffffff;
   line-height: 1;
+  letter-spacing: -0.5px;
 }
 
 .t3-temp-val-unit {
   font-family: var(--font-display), "Profile Display", system-ui, sans-serif;
-  font-size: 22px;
-  font-weight: 600;
+  font-size: 20px;
+  font-weight: 700;
   color: #ffffff;
-  margin-left: 3px;
+  margin-left: 2px;
   line-height: 1;
   vertical-align: super;
+  transform: translateY(-14px);
 }
 
 .t3-btn-edit-preheat {
@@ -2460,13 +2462,13 @@ html, body {
   transform: scale(0.95);
 }
 
-/* Completed Screen Large Temperature Readout */
+/* Completed Screen Large Temperature Readout (Exact center at 728.5px, Y: 158-223) */
 .t3-completed-temp-display {
   position: absolute;
-  left: 480px;
-  width: 460px;
-  top: 132px;
-  height: 86px;
+  left: 630px;
+  top: 158px;
+  width: 196px;
+  height: 66px;
   display: flex;
   align-items: baseline;
   justify-content: center;
@@ -2476,79 +2478,60 @@ html, body {
 
 .t3-temp-val-num-large {
   font-family: var(--font-display), "Profile Display", system-ui, sans-serif;
-  font-size: 64px;
+  font-size: 72px;
   font-weight: 700;
   color: #ffffff;
   line-height: 1;
+  letter-spacing: -1px;
 }
 
 .t3-temp-val-unit-large {
   font-family: var(--font-display), "Profile Display", system-ui, sans-serif;
-  font-size: 28px;
-  font-weight: 600;
+  font-size: 32px;
+  font-weight: 700;
   color: #ffffff;
   margin-left: 4px;
   line-height: 1;
   vertical-align: super;
+  transform: translateY(-22px);
 }
 
-/* Preheat Complete Toast Card */
-.t3-toast-preheat-complete {
+/* Toast Action Hotspots over authentic Figma toast in completed screen */
+.t3-toast-hotspot-ok {
   position: absolute;
-  left: 257px;
-  bottom: 20px;
-  width: 593px;
-  height: 60px;
-  background: #ffffff;
-  border-radius: 6px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.45);
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0 24px;
-  box-sizing: border-box;
-  z-index: 150;
-  animation: toastSlideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-}
-
-.t3-toast-ok {
+  left: 746px;
+  top: 316px;
+  width: 44px;
+  height: 32px;
   background: transparent;
   border: none;
-  outline: none;
   cursor: pointer;
-  color: #a02b8f;
-  font-family: var(--font-text), "Profile Text", system-ui, sans-serif;
-  font-size: 19px;
-  font-weight: 600;
-  padding: 6px 12px;
-  margin-right: 12px;
+  outline: none;
   border-radius: 4px;
-  transition: opacity 0.15s ease;
+  z-index: 30;
 }
-.t3-toast-ok:active {
-  opacity: 0.7;
+.t3-toast-hotspot-ok:active {
+  background: rgba(160, 43, 143, 0.15);
 }
 
-/* Burner Status Overview Screen */
-.t3-burner-status-temp-display {
+.t3-toast-hotspot-close {
   position: absolute;
-  left: 228px;
-  top: 196px;
-  height: 40px;
-  display: flex;
-  align-items: center;
-  z-index: 10;
-  pointer-events: none;
+  left: 810px;
+  top: 316px;
+  width: 32px;
+  height: 32px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  outline: none;
+  border-radius: 4px;
+  z-index: 30;
+}
+.t3-toast-hotspot-close:active {
+  background: rgba(160, 43, 143, 0.15);
 }
 
-.t3-burner-temp-val {
-  font-family: var(--font-display), "Profile Display", system-ui, sans-serif;
-  font-size: 22px;
-  font-weight: 700;
-  color: #ffffff;
-  line-height: 1;
-}
-
+/* Burner Status Overview Screen Active Hotspot */
 .t3-active-burner-hotspot {
   position: absolute;
   left: 128px;
