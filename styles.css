@@ -530,7 +530,7 @@ html, body {
   position: relative;
   width: 100%;
   max-width: 1366px;
-  aspect-ratio: 1024 / 152;
+  aspect-ratio: 2894 / 432;
   margin-top: calc(80px - (414px * (1 - var(--app-scale, 0.8146))));
   container-type: inline-size;
   border-radius: 8px;
@@ -539,6 +539,7 @@ html, body {
   user-select: none;
   -webkit-user-select: none;
   flex-shrink: 0;
+  background-color: #b1b1b1;
 }
 
 .cooktop-manifold-panel[hidden] {
@@ -561,23 +562,23 @@ html, body {
 .knob-assembly {
   position: absolute;
   left: var(--knob-cx-pct, 50%);
-  top: var(--knob-cy-pct, 53.289%);
-  width: calc(90 / 1024 * 100cqw);
-  height: calc(90 / 1024 * 100cqw);
+  top: var(--knob-cy-pct, 53.241%);
+  width: calc(232 / 2894 * 100cqw);
+  height: calc(232 / 2894 * 100cqw);
   transform: translate(-50%, -50%);
   user-select: none;
   -webkit-user-select: none;
   z-index: 5;
 }
 
-/* KNOB LIGHT INDICATOR */
+/* KNOB LIGHT INDICATOR (FIGMA GEOMETRY: y-offset = -128.25px from center) */
 .knob-light-indicator {
   position: absolute;
   left: 50%;
-  top: calc(50% - (45.5 / 90 * 100%));
+  top: calc(50% - (128.25 / 232 * 100%));
   transform: translate(-50%, -50%);
-  width: calc(52 / 90 * 100%);
-  height: calc(24 / 90 * 100%);
+  width: calc(96 / 232 * 100%);
+  height: calc(50 / 232 * 100%);
   opacity: 0;
   transition: opacity 0.2s cubic-bezier(0.2, 0, 0, 1);
   pointer-events: none;
@@ -592,7 +593,7 @@ html, body {
   display: block;
   width: 100%;
   height: 100%;
-  filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.95)) drop-shadow(0 0 16px rgba(255, 255, 255, 0.6));
+  filter: drop-shadow(0 0 6px rgba(255, 255, 255, 0.95)) drop-shadow(0 0 14px rgba(255, 255, 255, 0.6));
   pointer-events: none;
 }
 
@@ -641,9 +642,11 @@ html, body {
 
 .knob-nose-img {
   position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
+  left: 50%;
+  top: 50%;
+  width: calc(111 / 232 * 100%);
+  height: calc(250 / 232 * 100%);
+  transform: translate(-50%, -50%);
   object-fit: contain;
   pointer-events: none;
   user-select: none;
