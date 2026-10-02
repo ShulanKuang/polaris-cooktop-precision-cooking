@@ -58,10 +58,29 @@ This is an interactive high-fidelity web prototype deployed on an **iPad Pro 13"
        - Shows large centered $375^\circ\text{F}$ and *"Preheated"* status.
        - Toast card slides up from bottom: *"Preheat complete.    OK   ✕"*.
        - Stays on this screen for **30 seconds**, or advances immediately if the user taps `OK` or `✕`.
-     - **Burner Status Overview Screen (`task3b-burner-status-clean.png`)**:
-       - Displays active burner card running at $375^\circ\text{F}$ with `COOKTOP HOT` badge and running activity bar.
+     - **Burner Status Overview Screen (`task3b-burner-status-clean.png` / Figma `2310:12162` & `2310:12166`)**:
+       - Displays single active Rear-Left burner card running at $375^\circ\text{F}$ with authentic solid light grey circular badge (`#D9D8D7`), dark thermometer icon (`#303238`), seamless frosted glass card, `COOKTOP HOT` badge, and bottom running activity bar.
+       - All other 4 burners remain unlit / OFF until another knob is rotated.
        - Back caret `<` navigation returns to `PCTemperatureRun` screen with horizontal temperature picker while keeping knob ON and activity bar running.
        - Turning knob back to OFF or clicking `< Cooktop` resets the flow back to the start screen.
+   - **Task 3C: Food Mode Flow & Dual Active Burner Operation**:
+     - **Second Knob Turning (From Burner Status)**: When on the 375°F Burner Status screen, rotating Knob 1 (Front Left) activates the Front Left burner's live level setting animation ($1 \to 10$ across $55^\circ - 270^\circ$).
+     - **PRC Detent & Toast**: Rotating to PRC ($-56^\circ$) triggers the 3-second countdown toast card (*"Starting Precision Cooking in 3s."*).
+     - **Food Mode Navigation Sequence**:
+       1. **Precision Cooking Spotlight** with active **Food** tab.
+       2. **Food Options (`2315:14683`)**: Categorized food options.
+       3. **Protein Category (`2323:15099`)**: Protein selections.
+       4. **Steak Item (`2323:14983`)**: Steak cut selection.
+       5. **Vessel Selection (`2323:15041`)**: Pan type (e.g., Cast Iron).
+       6. **Doneness Selection (`2323:15136`)**: Medium Rare selection.
+       7. **Confirmation Screen (`2348:17304`)**: Summary & START button.
+       8. **Dual Preheating Screen (`2348:17501`)**: Both Rear-Left (375°F) and Front-Left (Steak Med Rare) preheating.
+       9. **Dual Active Burner Status Overview (`2327:15934`)**: Full overview with both burners running simultaneously.
+   - **Physical Knobs State Persistence Rule (Strict Hardware Metaphor)**:
+     - Physical cooktop knobs do not mechanically reset themselves. Knobs **NEVER auto-turn off** across screen transitions, timer completions, or preheating.
+     - Any actively running burner keeps its knob turned to $-56^\circ$ (PRC) with its white LED indicator illuminated.
+     - When multiple burners are running (e.g. Task 3C), all corresponding physical knobs remain ON simultaneously.
+     - Knobs only turn OFF when the user explicitly rotates or taps them back to $0^\circ$ (OFF).
    - **Physical Cooktop Manifold**: Located 80px below the screen, stretching across the full width of the iPad Pro.
    - **1.5× Scaled Manifold Image (`assets/manifold-new-clean.png`)**:
      - Rendered from Figma vector frame at **2× Retina (4000 × 864 px)** based on 2000 × 432 px artboard.

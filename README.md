@@ -79,10 +79,28 @@ The prototype includes an external researcher toolbar positioned above the appli
   - Displays large $375^\circ\text{F}$ and "Preheated" status.
   - Toast popup appears: *"Preheat complete.    OK   ✕"*.
   - Stays on screen for **30 seconds**, or advances immediately if the user taps `OK` or `✕`.
-- **Burner Status Overview (`Task3B-burnerStatus`)**:
-  - Shows the rear-left burner actively running at $375^\circ\text{F}$ with `COOKTOP HOT` badge and bottom running activity bar.
-- **Back Navigation**: Tapping `<` returns to `PCTemperatureRun` screen with horizontal temperature picker while keeping Knob 1 ON and the activity bar running.
+- **Burner Status Overview (`Task3B-burnerStatus` / Figma `2310:12162` & `2310:12166`)**:
+  - Shows the rear-left burner actively running at $375^\circ\text{F}$ with authentic solid light grey circular badge (`#D9D8D7`), dark thermometer icon (`#303238`), seamless frosted glass card, `COOKTOP HOT` badge, and bottom running activity bar.
+  - All other 4 burners are OFF until the user turns another knob.
+- **Back Navigation**: Tapping `<` returns to `PCTemperatureRun` screen with horizontal temperature picker while keeping Knob 2 ON and the activity bar running.
 
+### 3. Food Mode & Multi-Burner Usability Flow (Task 3C)
+- **Second Knob Interaction**: From the $375^\circ\text{F}$ Burner Status screen, rotating Knob 1 (Front Left) triggers the live level setting roller animation ($1 \to 10$ power levels).
+- **PRC Detent & Countdown Toast**: Rotating Knob 1 to PRC ($-56^\circ$) pops up the 3s countdown toast (*"Starting Precision Cooking in 3s."*) with instant skip option.
+- **Direct Navigation into Food Mode**: Spotlight screen transitions into view with the **Food** tab active.
+- **Full Recipe Selection Flow**:
+  1. **Food Category Options** (Figma `2315:14683`)
+  2. **Protein Category** (Figma `2323:15099`)
+  3. **Steak Item** (Figma `2323:14983`)
+  4. **Cooking Vessel / Pan** (Figma `2323:15041`)
+  5. **Doneness (Medium Rare)** (Figma `2323:15136`)
+  6. **Summary & Confirmation** (Figma `2348:17304`)
+  7. **Dual Preheat Screen** (Figma `2348:17501`) — Both Rear-Left ($375^\circ\text{F}$) and Front-Left (Steak Med Rare) preheat simultaneously!
+  8. **Dual Active Burner Status** (Figma `2327:15934`) — Both burners active on the appliance overview screen.
+- **Physical Knobs Hardware Metaphor (Knobs Never Auto Turn Off)**:
+  - Knobs reflect the physical state of the cooktop dials and never auto-turn off across screen transitions.
+  - Both Knob 2 ($-56^\circ$) and Knob 1 ($-56^\circ$) remain illuminated and active simultaneously.
+  - Knobs only turn off when the user explicitly rotates or taps them back to $0^\circ$ (OFF).
 ---
 
 ## 🎛️ Manifold & Knobs Geometry (1.5× Enlarged)
