@@ -6,7 +6,7 @@
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <title>Polaris Cooktop Precision Cooking Prototype</title>
-  <link rel="stylesheet" href="./styles.css?v=20261002-gpu-slide-toast-ipad">
+  <link rel="stylesheet" href="./styles.css?v=20261002-pinned-nav-centered-toast">
 </head>
 <body>
   <div class="test-environment">
@@ -248,38 +248,7 @@
             </div>
           </div>
           
-          <!-- LEFT NAVIGATION RAIL -->
-          <aside class="screen-rail" aria-hidden="true">
-            <div class="nav-icon nav-summary">
-              <img src="./figma-assets/nav-summary-top.svg" alt="">
-            </div>
-            <div class="rail-apps">
-              <div class="nav-icon nav-app nav-cooktop is-selected">
-                <span class="cooktop-icon-active">
-                  <img class="cooktop-active-img" src="./figma-assets/cooktop-selected-active.svg" alt="Cooktop">
-                </span>
-              </div>
-              <div class="nav-icon nav-app">
-                <img src="./figma-assets/nav-oven-upper.svg" alt="Upper Oven">
-              </div>
-              <div class="nav-icon nav-app">
-                <img src="./figma-assets/nav-oven-lower.svg" alt="Lower Oven">
-              </div>
-            </div>
-            <div class="nav-icon nav-home" id="navHomeBtn">
-              <img src="./figma-assets/nav-home-bottom.svg" alt="Home">
-            </div>
-          </aside>
 
-          <!-- TOP STATUS BAR -->
-          <div class="top-status" aria-hidden="true">
-            <div class="status-pull"></div>
-            <div class="status-right">
-              <span class="beta-tag">BETA</span>
-              <img class="status-icon wifi-icon" src="./figma-assets/wifi-on.svg" alt="WiFi">
-              <span class="time-readout" id="clockReadout">10:32 AM</span>
-            </div>
-          </div>
 
           <!-- ============================================== -->
           <!-- TASK 3 FULL SCREEN (PRECISION COOKING FLOW)    -->
@@ -541,6 +510,40 @@
               <button type="button" class="t3-temp-keypad-btn" id="t3BtnKeypadTemp" aria-label="Keypad"></button>
             </div>
 
+          </div> <!-- /.task3-full-screen -->
+
+          <!-- LEFT NAVIGATION RAIL (PINNED 90px NAVBAR OVER ALL SCREENS) -->
+          <aside class="screen-rail" id="screenRail" aria-label="Cooktop navigation">
+            <img class="screen-rail-bg" src="./assets/navbar-pinned-90px.png" alt="" aria-hidden="true">
+            <div class="nav-icon nav-summary" id="navSummaryBtn" title="Summary">
+              <img src="./figma-assets/nav-summary-top.svg" alt="Summary">
+            </div>
+            <div class="rail-apps">
+              <div class="nav-icon nav-app nav-cooktop is-selected" id="navCooktopBtn" title="Cooktop">
+                <span class="cooktop-icon-active">
+                  <img class="cooktop-active-img" src="./figma-assets/cooktop-selected-active.svg" alt="Cooktop">
+                </span>
+              </div>
+              <div class="nav-icon nav-app" id="navOvenUpperBtn" title="Upper Oven">
+                <img src="./figma-assets/nav-oven-upper.svg" alt="Upper Oven">
+              </div>
+              <div class="nav-icon nav-app" id="navOvenLowerBtn" title="Lower Oven">
+                <img src="./figma-assets/nav-oven-lower.svg" alt="Lower Oven">
+              </div>
+            </div>
+            <div class="nav-icon nav-home" id="navHomeBtn" title="Home">
+              <img src="./figma-assets/nav-home-bottom.svg" alt="Home">
+            </div>
+          </aside>
+
+          <!-- TOP STATUS BAR -->
+          <div class="top-status" id="topStatus" aria-hidden="true">
+            <div class="status-pull"></div>
+            <div class="status-right">
+              <span class="beta-tag">BETA</span>
+              <img class="status-icon wifi-icon" src="./figma-assets/wifi-on.svg" alt="WiFi">
+              <span class="time-readout" id="clockReadout">10:32 AM</span>
+            </div>
           </div>
 
           <!-- HIDDEN CANVAS PLACEHOLDER -->
@@ -627,6 +630,6 @@
     </footer>
   </div>
 
-  <script src="./app.js?v=20261002-gpu-slide-toast-ipad"></script>
+  <script src="./app.js?v=20261002-pinned-nav-centered-toast"></script>
 </body>
 </html>

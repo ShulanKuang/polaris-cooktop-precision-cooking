@@ -733,25 +733,44 @@ html, body {
 }
 
 /* ============================================== */
-/* LEFT SCREEN RAIL */
+/* LEFT SCREEN RAIL (PINNED 90px NAVBAR)          */
 /* ============================================== */
 .screen-rail {
   position: absolute;
   left: 0;
   top: 0;
   bottom: 0;
-  width: 82px;
-  background: #151619;
-  border-right: 1px solid rgba(255, 255, 255, 0.08);
+  width: 90px;
+  height: 384px;
+  background: #141417;
+  border-right: 1px solid #222427;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   align-items: center;
-  padding: 16px 0;
-  z-index: 20;
+  padding: 14px 0 16px 0;
+  box-sizing: border-box;
+  z-index: 200 !important;
+  pointer-events: auto;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.screen-rail-bg {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 90px;
+  height: 384px;
+  pointer-events: none;
+  user-select: none;
+  -webkit-user-drag: none;
+  z-index: 1;
 }
 
 .rail-apps {
+  position: relative;
+  z-index: 2;
   display: flex;
   flex-direction: column;
   gap: 18px;
@@ -759,30 +778,37 @@ html, body {
 }
 
 .nav-icon {
+  position: relative;
+  z-index: 2;
   width: 44px;
   height: 44px;
   display: flex;
   align-items: center;
   justify-content: center;
   border-radius: 10px;
-  opacity: 0.6;
-  transition: opacity 0.2s, background 0.2s;
+  opacity: 0.85;
+  transition: opacity 0.15s, transform 0.12s;
   cursor: pointer;
+}
+.nav-icon:active {
+  transform: scale(0.92);
 }
 
 .nav-icon img {
   width: 24px;
   height: 24px;
+  display: block;
+  pointer-events: none;
 }
 
 .nav-icon.is-selected {
   opacity: 1;
-  background: rgba(255, 255, 255, 0.08);
 }
 
 .cooktop-active-img {
   width: 28px;
   height: 28px;
+  display: block;
 }
 
 /* ============================================== */
@@ -791,14 +817,14 @@ html, body {
 .top-status {
   position: absolute;
   top: 0;
-  left: 82px;
+  left: 90px;
   right: 0;
   height: 38px;
   display: flex;
   align-items: center;
   justify-content: space-between;
   padding: 0 24px;
-  z-index: 20;
+  z-index: 150;
 }
 
 .status-pull {
@@ -1540,16 +1566,20 @@ html, body {
 
 .t2-screen {
   position: absolute;
-  inset: 0;
-  width: 1024px;
+  left: 90px;
+  top: 0;
+  width: 934px;
   height: 384px;
+  overflow: hidden;
 }
 
 .t2-screen-bg {
   position: absolute;
-  inset: 0;
+  left: -90px;
+  top: 0;
   width: 1024px;
   height: 384px;
+  max-width: none;
   display: block;
   user-select: none;
   -webkit-user-drag: none;
@@ -1559,7 +1589,7 @@ html, body {
 /* Explore Screen (Cooktop Surface Touch Target) */
 .t2-explore-btn {
   position: absolute;
-  left: 80px;
+  left: 0;
   top: 48px;
   right: 0;
   bottom: 0;
@@ -1573,7 +1603,7 @@ html, body {
 /* Back Button (< Cooktop) */
 .t2-back-btn {
   position: absolute;
-  left: 12px;
+  left: 0;
   top: 8px;
   width: 190px;
   height: 48px;
@@ -1592,7 +1622,7 @@ html, body {
 /* Tab Group Navigation */
 .t2-tab-group {
   position: absolute;
-  left: 300px;
+  left: 210px;
   top: 96px;
   width: 515px;
   height: 46px;
@@ -2048,15 +2078,21 @@ html, body {
 
 .t3-screen {
   position: absolute;
-  inset: 0;
-  width: 1024px;
+  left: 90px;
+  top: 0;
+  width: 934px;
   height: 384px;
+  overflow: hidden;
   will-change: transform, opacity;
 }
 
 .t3-screen-bg {
+  position: absolute;
+  left: -90px;
+  top: 0;
   width: 1024px;
   height: 384px;
+  max-width: none;
   display: block;
   user-select: none;
   -webkit-user-select: none;
@@ -2066,7 +2102,7 @@ html, body {
 /* Explore / Cooktop Surface Hotspot (Task 3A Start) */
 .t3-explore-hotspot {
   position: absolute;
-  left: 80px;
+  left: 0;
   top: 48px;
   right: 0;
   bottom: 0;
@@ -2077,10 +2113,10 @@ html, body {
   outline: none;
 }
 
-/* Burner Hotspot (Rear Left Burner: x=324, y=73, w=125, h=125) */
+/* Burner Hotspot (Rear Left Burner: x=324, y=73, w=125, h=125 -> adjusted to left: 234px) */
 .t3-burner-hotspot {
   position: absolute;
-  left: 324px;
+  left: 234px;
   top: 73px;
   width: 125px;
   height: 125px;
@@ -2112,37 +2148,37 @@ html, body {
   opacity: 1;
 }
 
-/* Individual Burner Placements */
+/* Individual Burner Placements (coordinates shifted by -90px for 934px viewport) */
 .t3-burner-roller.burner-fl {
-  left: 323.5px;
+  left: 233.5px;
   top: 216px;
   width: 128px;
   height: 128px;
 }
 
 .t3-burner-roller.burner-rl {
-  left: 323.5px;
+  left: 233.5px;
   top: 72px;
   width: 128px;
   height: 128px;
 }
 
 .t3-burner-roller.burner-rc {
-  left: 469px;
+  left: 379px;
   top: 73px;
   width: 106px;
   height: 106px;
 }
 
 .t3-burner-roller.burner-main {
-  left: 521.5px;
+  left: 431.5px;
   top: 169px;
   width: 176px;
   height: 176px;
 }
 
 .t3-burner-roller.burner-rr {
-  left: 663px;
+  left: 573px;
   top: 72px;
   width: 128px;
   height: 128px;
@@ -2278,8 +2314,8 @@ html, body {
 .t3-back-btn {
   position: absolute;
   top: 10px;
-  left: 10px;
-  width: 140px;
+  left: 0px;
+  width: 160px;
   height: 52px;
   background: transparent;
   border: none;
@@ -2298,19 +2334,19 @@ html, body {
   border-radius: 8px;
 }
 .t3-spotlight-steak {
-  left: 162px;
+  left: 72px;
   top: 220px;
   width: 287px;
   height: 100px;
 }
 .t3-spotlight-bacon {
-  left: 598px;
+  left: 508px;
   top: 220px;
   width: 176px;
   height: 100px;
 }
 .t3-spotlight-beef {
-  left: 798px;
+  left: 708px;
   top: 220px;
   width: 176px;
   height: 100px;
@@ -2518,13 +2554,13 @@ html, body {
   opacity: 0.7;
 }
 .t3-tab-temperature {
-  left: 630px;
+  left: 540px;
   top: 76px;
   width: 170px;
   height: 52px;
 }
 .t3-tab-spotlight {
-  left: 300px;
+  left: 210px;
   top: 76px;
   width: 120px;
   height: 52px;
@@ -2533,7 +2569,7 @@ html, body {
 /* Horizontal Temperature Carousel Picker (Identical structure and centering as Task 2) */
 .t3-picker-wheel-container {
   position: absolute;
-  left: 140px;
+  left: 50px;
   top: 150px;
   width: 840px;
   height: 116px;
@@ -2621,10 +2657,10 @@ html, body {
   opacity: 1;
 }
 
-/* Start Button on Temperature Screen (Centered at 560px matching picker) */
+/* Start Button on Temperature Screen */
 .t3-temp-start-btn {
   position: absolute;
-  left: 490px;
+  left: 400px;
   top: 295px;
   width: 140px;
   height: 68px;
@@ -2643,7 +2679,7 @@ html, body {
 /* Temp Expand Preheat Live Readouts (Pixel-perfect match to Figma) */
 .t3-preheat-current-display {
   position: absolute;
-  left: 560px;
+  left: 470px;
   top: 184px;
   width: 145px;
   height: 52px;
@@ -2656,7 +2692,7 @@ html, body {
 
 .t3-preheat-target-display {
   position: absolute;
-  left: 775px;
+  left: 685px;
   top: 184px;
   width: 148px;
   height: 52px;
@@ -2689,7 +2725,7 @@ html, body {
 
 .t3-btn-edit-preheat {
   position: absolute;
-  left: 676px;
+  left: 586px;
   top: 278px;
   width: 90px;
   height: 42px;
@@ -2704,10 +2740,10 @@ html, body {
   transform: scale(0.95);
 }
 
-/* Completed Screen Large Temperature Readout (Exact center at 728.5px, Y: 158-223) */
+/* Completed Screen Large Temperature Readout */
 .t3-completed-temp-display {
   position: absolute;
-  left: 630px;
+  left: 540px;
   top: 158px;
   width: 196px;
   height: 66px;
@@ -2741,7 +2777,7 @@ html, body {
 /* Toast Action Hotspots over authentic Figma toast in completed screen */
 .t3-toast-hotspot-ok {
   position: absolute;
-  left: 737px;
+  left: 647px;
   top: 310px;
   width: 54px;
   height: 44px;
@@ -2758,7 +2794,7 @@ html, body {
 
 .t3-toast-hotspot-close {
   position: absolute;
-  left: 801px;
+  left: 711px;
   top: 310px;
   width: 44px;
   height: 44px;
@@ -2776,7 +2812,7 @@ html, body {
 /* Burner Status Overview Screen Active Hotspot */
 .t3-active-burner-hotspot {
   position: absolute;
-  left: 128px;
+  left: 38px;
   top: 76px;
   width: 310px;
   height: 180px;
@@ -2791,7 +2827,7 @@ html, body {
 /* PCTemperatureRun Screen Bottom Actions */
 .t3-temp-update-btn {
   position: absolute;
-  left: 494px;
+  left: 404px;
   top: 295px;
   width: 150px;
   height: 60px;
@@ -2808,7 +2844,7 @@ html, body {
 
 .t3-temp-keypad-btn {
   position: absolute;
-  left: 677px;
+  left: 587px;
   top: 295px;
   width: 64px;
   height: 64px;

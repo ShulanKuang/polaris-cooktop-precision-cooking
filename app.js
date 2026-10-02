@@ -72,8 +72,8 @@
 
     task1FullScreen: document.getElementById("task1FullScreen"),
     task1StandbyCover: document.getElementById("task1StandbyCover"),
-    screenRail: document.querySelector(".screen-rail"),
-    topStatus: document.querySelector(".top-status"),
+    screenRail: document.getElementById("screenRail") || document.querySelector(".screen-rail"),
+    topStatus: document.getElementById("topStatus") || document.querySelector(".top-status"),
     screenCanvas: document.getElementById("screenCanvas"),
     screenBottomStrip: document.getElementById("screenBottomStrip"),
 
@@ -270,7 +270,7 @@
     } else if (taskId === 2) {
       if (els.task1FullScreen) els.task1FullScreen.hidden = true;
       if (els.viewTask2) els.viewTask2.hidden = false;
-      if (els.screenRail) els.screenRail.hidden = true;
+      if (els.screenRail) els.screenRail.hidden = false;
       if (els.topStatus) els.topStatus.hidden = true;
       if (els.screenCanvas) els.screenCanvas.hidden = true;
       if (els.screenBottomStrip) {
@@ -284,7 +284,7 @@
       if (els.task1FullScreen) els.task1FullScreen.hidden = true;
       if (els.viewTask2) els.viewTask2.hidden = true;
       if (els.viewTask3) els.viewTask3.hidden = false;
-      if (els.screenRail) els.screenRail.hidden = true;
+      if (els.screenRail) els.screenRail.hidden = false;
       if (els.topStatus) els.topStatus.hidden = true;
       if (els.screenCanvas) els.screenCanvas.hidden = true;
       if (els.screenBottomStrip) {
@@ -2084,11 +2084,28 @@
       });
     }
 
-    // Home button
+    // Home & Cooktop navbar buttons
     if (els.navHomeBtn) {
       els.navHomeBtn.addEventListener("click", () => {
         playSound("touch");
+        if (state.currentTask === 3 && t3Stage !== "start") {
+          cancelT3A();
+        } else if (state.currentTask === 2) {
+          showT2Explore(true);
+        }
         closeDrawer();
+      });
+    }
+
+    const navCooktop = document.getElementById("navCooktopBtn");
+    if (navCooktop) {
+      navCooktop.addEventListener("click", () => {
+        playSound("touch");
+        if (state.currentTask === 3 && t3Stage !== "start") {
+          cancelT3A();
+        } else if (state.currentTask === 2) {
+          showT2Explore(true);
+        }
       });
     }
 
