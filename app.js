@@ -137,6 +137,14 @@
     t3ScreenStart: document.getElementById("t3ScreenStart"),
     t3BurnerRoller1: document.getElementById("t3BurnerRoller1"),
     t3BurnerStrip1: document.getElementById("t3BurnerStrip1"),
+    t3BurnerRoller2: document.getElementById("t3BurnerRoller2"),
+    t3BurnerStrip2: document.getElementById("t3BurnerStrip2"),
+    t3BurnerRoller3: document.getElementById("t3BurnerRoller3"),
+    t3BurnerStrip3: document.getElementById("t3BurnerStrip3"),
+    t3BurnerRoller4: document.getElementById("t3BurnerRoller4"),
+    t3BurnerStrip4: document.getElementById("t3BurnerStrip4"),
+    t3BurnerRoller5: document.getElementById("t3BurnerRoller5"),
+    t3BurnerStrip5: document.getElementById("t3BurnerStrip5"),
     t3ScreenTurnKnob: document.getElementById("t3ScreenTurnKnob"),
     t3ScreenSpotlight: document.getElementById("t3ScreenSpotlight"),
     t3BtnExplore: document.getElementById("t3BtnExplore"),
@@ -215,7 +223,7 @@
     },
     3: {
       title: "Task 3: Precision Cooking Flow",
-      prompt: "Turn Knob 1 to PRC (3s toast -> Spotlight). Tap Temperature tab -> pick temp -> click START. Live 5s preheat -> complete toast (3s) -> Burner status."
+      prompt: "Turn any PRC-enabled knob to PRC (2s delay -> Spotlight). Tap Temperature tab -> pick temp -> click START. Live 5s preheat -> complete toast (3s) -> Burner status."
     },
     4: {
       title: "Task 4: End & Turn Off",
@@ -795,8 +803,9 @@
   let t3CountdownInterval = null;
   let t3HoldingTimeout = null;
   let t3PreheatInterval = null;
-  let t3PrcDelayTimer = null;
-  let currentT3BurnerLevel = null;
+  const t3PrcDelayTimers = { 1: null, 2: null, 3: null, 4: null, 5: null };
+  const currentT3BurnerLevels = { 1: "off", 2: "off", 3: "off", 4: "off", 5: "off" };
+  let activePrcKnobIndex = 1;
   let t3Stage = "start"; // "start" | "turnknob" | "spotlight" | "temperature" | "preheat" | "completed" | "burnerStatus"
 
   function showT3Screen(stage) {
@@ -821,6 +830,10 @@
 
     if (stage === "start") {
       clearT3Timers();
+      [1, 2, 3, 4, 5].forEach(i => {
+        const k = knobsState[i - 1];
+        if (k) updateT3BurnerFromKnob(i, k.angle, false);
+      });
       if (els.t3ToastCard) {
         els.t3ToastCard.classList.remove("is-dismissing");
       }
@@ -831,10 +844,12 @@
   }
 
   function clearT3Timers() {
-    if (t3PrcDelayTimer) {
-      clearTimeout(t3PrcDelayTimer);
-      t3PrcDelayTimer = null;
-    }
+    [1, 2, 3, 4, 5].forEach(i => {
+      if (t3PrcDelayTimers[i]) {
+        clearTimeout(t3PrcDelayTimers[i]);
+        t3PrcDelayTimers[i] = null;
+      }
+    });
     if (t3CountdownInterval) {
       clearInterval(t3CountdownInterval);
       t3CountdownInterval = null;
@@ -850,97 +865,139 @@
   }
 
   function updateT3BurnerFromKnob(index, angle, animate = false) {
-    if (index !== 1 || state.currentTask !== 3) return;
-    if (!els.t3BurnerRoller1 || !els.t3BurnerStrip1) return;
+    if (state.currentTask !== 3) return;
+
+    const burnerConfigs = {
+      1: { roller: els.t3BurnerRoller1, strip: els.t3BurnerStrip1, type: "standard", itemH: 38, baseOffset: 45 },
+      2: { roller: els.t3BurnerRoller2, strip: els.t3BurnerStrip2, type: "standard", itemH: 38, baseOffset: 45 },
+      3: { roller: els.t3BurnerRoller3, strip: els.t3BurnerStrip3, type: "onoff",    itemH: 36, baseOffset: 35 },
+      4: { roller: els.t3BurnerRoller4, strip: els.t3BurnerStrip4, type: "main",     itemH: 52, baseOffset: 62 },
+      5: { roller: els.t3BurnerRoller5, strip: els.t3BurnerStrip5, type: "standard", itemH: 38, baseOffset: 45 }
+    };
+
+    const cfg = burnerConfigs[index];
+    if (!cfg || !cfg.roller || !cfg.strip) return;
+    const { roller, strip, type, itemH, baseOffset } = cfg;
 
     if (t3Stage !== "start") {
-      // If user turns knob to OFF while on another Task 3 screen (like Spotlight), cancel back to start
-      if (Math.abs(angle) <= 10) {
+      // If user turns the active knob to OFF while on another Task 3 screen (like Spotlight), cancel back to start
+      if (Math.abs(angle) <= 10 && index === activePrcKnobIndex) {
         cancelT3A();
       }
       return;
     }
 
+    if (animate) {
+      strip.classList.remove("is-instant");
+    } else {
+      strip.classList.add("is-instant");
+    }
+
+    // Center Knob 3 (OFF / ON)
+    if (type === "onoff") {
+      const isCenterOn = (angle >= 25);
+      if (isCenterOn) {
+        roller.classList.add("is-active");
+        if (currentT3BurnerLevels[3] !== "on") {
+          currentT3BurnerLevels[3] = "on";
+          playSound("tick");
+        }
+        strip.style.transform = `translateY(${baseOffset - 1 * itemH}px)`;
+        const items = strip.querySelectorAll(".t3-burner-roller-item");
+        items.forEach(it => {
+          const idx = parseInt(it.dataset.index, 10);
+          it.classList.toggle("is-selected", idx === 1);
+        });
+      } else {
+        currentT3BurnerLevels[3] = "off";
+        strip.style.transform = `translateY(${baseOffset}px)`;
+        const items = strip.querySelectorAll(".t3-burner-roller-item");
+        items.forEach(it => {
+          const idx = parseInt(it.dataset.index, 10);
+          it.classList.toggle("is-selected", idx === 0);
+        });
+        roller.classList.remove("is-active");
+      }
+      return;
+    }
+
+    // Standard (1, 2, 5) and Main (4) Burners: OFF (0°), PRC (-56°), MIN (55°) to MAX (270°)
     const isPRC = (angle < -20 && angle > -80);
     const isMinToMax = (angle >= 20 && angle <= 285);
     const isOff = (Math.abs(angle) <= 12);
 
-    if (animate) {
-      els.t3BurnerStrip1.classList.remove("is-instant");
-    } else {
-      els.t3BurnerStrip1.classList.add("is-instant");
-    }
-
     if (isPRC) {
       // 1. Pointing at PRC (-56 deg): dedicated burner shows temperature icon
-      els.t3BurnerRoller1.classList.add("is-active");
-      currentT3BurnerLevel = "prc";
+      roller.classList.add("is-active");
+      currentT3BurnerLevels[index] = "prc";
+      activePrcKnobIndex = index;
 
-      // Translate strip to center index 11 (temp icon): 45 - 11*38 = -373px
-      els.t3BurnerStrip1.style.transform = "translateY(-373px)";
+      // Translate strip to center index 11 (temp icon)
+      const prcY = baseOffset - 11 * itemH;
+      strip.style.transform = `translateY(${prcY}px)`;
 
-      const items = els.t3BurnerStrip1.querySelectorAll(".t3-burner-roller-item");
+      const items = strip.querySelectorAll(".t3-burner-roller-item");
       items.forEach(it => {
         const idx = parseInt(it.dataset.index, 10);
         it.classList.toggle("is-selected", idx === 11);
       });
 
-      // Delay 2s here, then go to next screen (Spotlight)
-      if (!t3PrcDelayTimer) {
-        t3PrcDelayTimer = setTimeout(() => {
-          t3PrcDelayTimer = null;
+      // Delay 2s here on PRC, then advance to next screen (Spotlight)
+      if (!t3PrcDelayTimers[index]) {
+        t3PrcDelayTimers[index] = setTimeout(() => {
+          t3PrcDelayTimers[index] = null;
           playSound("toggleOn");
           showT3Screen("spotlight");
         }, 2000);
       }
     } else if (isMinToMax) {
       // 2. Turning from Min to Max: dedicated burner changes number 1-10 equally divided
-      if (t3PrcDelayTimer) {
-        clearTimeout(t3PrcDelayTimer);
-        t3PrcDelayTimer = null;
+      if (t3PrcDelayTimers[index]) {
+        clearTimeout(t3PrcDelayTimers[index]);
+        t3PrcDelayTimers[index] = null;
       }
 
-      els.t3BurnerRoller1.classList.add("is-active");
+      roller.classList.add("is-active");
 
       // Angle: MIN tick is at 55 deg, MAX tick is at 270 deg (arc span = 215 deg)
       const clamped = Math.max(55, Math.min(270, angle));
       const progress = (clamped - 55) / (270 - 55);
       const level = Math.max(1, Math.min(10, Math.round(1 + progress * 9)));
 
-      if (level !== currentT3BurnerLevel) {
-        currentT3BurnerLevel = level;
+      if (level !== currentT3BurnerLevels[index]) {
+        currentT3BurnerLevels[index] = level;
         playSound("tick");
       }
 
-      // Translate strip to center index level: 45 - level*38
-      const targetY = 45 - level * 38;
-      els.t3BurnerStrip1.style.transform = `translateY(${targetY}px)`;
+      // Translate strip to center index level
+      const targetY = baseOffset - level * itemH;
+      strip.style.transform = `translateY(${targetY}px)`;
 
-      const items = els.t3BurnerStrip1.querySelectorAll(".t3-burner-roller-item");
+      const items = strip.querySelectorAll(".t3-burner-roller-item");
       items.forEach(it => {
         const idx = parseInt(it.dataset.index, 10);
         it.classList.toggle("is-selected", idx === level);
       });
     } else if (isOff) {
       // 3. Knob at OFF (0 deg)
-      if (t3PrcDelayTimer) {
-        clearTimeout(t3PrcDelayTimer);
-        t3PrcDelayTimer = null;
+      if (t3PrcDelayTimers[index]) {
+        clearTimeout(t3PrcDelayTimers[index]);
+        t3PrcDelayTimers[index] = null;
       }
-      currentT3BurnerLevel = "off";
+      currentT3BurnerLevels[index] = "off";
 
-      els.t3BurnerStrip1.style.transform = "translateY(45px)";
-      const items = els.t3BurnerStrip1.querySelectorAll(".t3-burner-roller-item");
+      strip.style.transform = `translateY(${baseOffset}px)`;
+      const items = strip.querySelectorAll(".t3-burner-roller-item");
       items.forEach(it => {
         const idx = parseInt(it.dataset.index, 10);
         it.classList.toggle("is-selected", idx === 0);
       });
 
-      els.t3BurnerRoller1.classList.remove("is-active");
+      roller.classList.remove("is-active");
     } else {
-      if (t3PrcDelayTimer) {
-        clearTimeout(t3PrcDelayTimer);
-        t3PrcDelayTimer = null;
+      if (t3PrcDelayTimers[index]) {
+        clearTimeout(t3PrcDelayTimers[index]);
+        t3PrcDelayTimers[index] = null;
       }
     }
   }
@@ -1053,15 +1110,16 @@
 
   function cancelT3A() {
     clearT3Timers();
+    const knobToReset = activePrcKnobIndex || 1;
     if (els.t3ToastCard) {
       els.t3ToastCard.classList.add("is-dismissing");
       setTimeout(() => {
         showT3Screen("start");
-        setKnobAngle(1, 0, true, true);
+        setKnobAngle(knobToReset, 0, true, true);
       }, 200);
     } else {
       showT3Screen("start");
-      setKnobAngle(1, 0, true, true);
+      setKnobAngle(knobToReset, 0, true, true);
     }
     playSound("toggleOff");
   }
@@ -1378,7 +1436,7 @@
     }
 
     // TASK 3A PRECISION COOKING WORKFLOW TRIGGER
-    if (index === 1 && state.currentTask === 3) {
+    if (state.currentTask === 3) {
       updateT3BurnerFromKnob(index, angle, animate);
     }
 

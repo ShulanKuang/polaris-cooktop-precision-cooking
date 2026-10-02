@@ -119,6 +119,30 @@ Task 2 is fully wired with authentic 1024 × 384 px Figma artboards and interact
 
 ---
 
+## 🎛 Task 3 Details (Precision Cooking Flow & Multi-Burner Animated Rollers)
+
+Task 3 replicates the full physical-to-digital interaction model between the 5 cooktop knobs and the appliance touch screen:
+
+1. **5 Interactive Burner Displays (Exact Concentric Alignment)**:
+   - **Knob 1 (Far Left)** $\rightarrow$ **Front-Left Burner (128px)**: `left: 323.5px; top: 216px;`
+   - **Knob 2 (Mid-Left)** $\rightarrow$ **Rear-Left Burner (128px)**: `left: 323.5px; top: 72px;`
+   - **Knob 3 (Center)** $\rightarrow$ **Rear-Center Burner (106px)**: `left: 469px; top: 73px;` (ON/OFF rotary toggle)
+   - **Knob 4 (Mid-Right)** $\rightarrow$ **Main Burner (176px)**: `left: 521.5px; top: 169px;` ($1.375\times$ scaled diameter, 52px item height, 47px bold selected numerals, scaled $42\times 55\text{px}$ thermometer SVG)
+   - **Knob 5 (Far Right)** $\rightarrow$ **Rear-Right Burner (128px)**: `left: 663px; top: 72px;`
+2. **Equally Divided Power Levels (1–10)**:
+   - Turning Knobs 1, 2, 4, or 5 clockwise rolls the dedicated burner display through power levels 1 to 10 equally divided across the entire arc from MIN ($55^\circ$) to MAX ($270^\circ$, 9 o'clock) inside the dashed white ring with haptic tick audio.
+3. **Knob 3 ON/OFF Behavior**:
+   - Rotates $0^\circ \to 45^\circ$. Below $25^\circ$, Burner 3 shows OFF / unlit; at $\ge 25^\circ$, it illuminates active and displays bold white "ON" inside the 106px dashed ring.
+4. **Precision Cooking Trigger & 2-Second Hold Delay**:
+   - Turning any PRC-enabled knob (1, 2, 4, 5) counter-clockwise to `PRC` detent ($-56^\circ$) illuminates the knob LED and scrolls that burner to the glowing Precision Cooking temperature icon.
+   - Holds on the temperature icon for **exactly 2 seconds**, giving the user clear visual feedback before transitioning smoothly to the **Spotlight** screen.
+5. **Full Precision Cooking Workflow**:
+   - **Spotlight $\rightarrow$ Temperature**: Select recipes or navigate directly to the Temperature tab.
+   - **Horizontal Carousel Wheel**: Temperature selection from $200^\circ\text{F}$ to $500^\circ\text{F}$ ($25^\circ\text{F}$ steps).
+   - **Preheat & Status Flow**: Live 5-second animated preheat from $182^\circ\text{F}$ to $375^\circ\text{F}$ $\rightarrow$ Preheat Complete banner $\rightarrow$ Active Burner Status card with running activity bar.
+
+---
+
 ## 🔬 Task 1 Details (Awareness Test)
 
 * **Silent Operation**: All sounds are disabled for Task 1 to ensure participant responses are purely driven by visual recognition.

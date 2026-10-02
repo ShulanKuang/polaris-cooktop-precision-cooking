@@ -28,12 +28,18 @@ This is an interactive high-fidelity web prototype deployed on an **iPad Pro 13"
      - *(Note: Task 2 activity bar removed per design direction)*.
 
 3. **Task 3: Usability Flow & Physical Knobs Manifold** (`?task=3#task3`)
-   - **Task 3A: Precision Cooking Startup Flow**:
-     - **Start Screen (`task2-start-new.png`)**: All burners OFF, clean cooktop without Precision Cooking card per Figma node `2345:16560`.
-     - **Knob Turning Animation (Min to Max)**: Turning Knob 1 clockwise rolls the rear-left burner display through levels 1 to 10 equally divided across the entire arc from MIN ($55^\circ$) to MAX ($270^\circ$, 9 o'clock) inside the dashed white ring with haptic tick audio.
-     - **Knob 1 to PRC**: Turning Knob 1 to `PRC` detent (-56°) illuminates Knob 1 LED and displays the white Precision Cooking Temperature Icon centered within the dashed ring.
-     - **2s Delay & Transition**: Holds the temperature icon for 2 seconds, then automatically advances to the Precision Cooking Spotlight screen.
-     - **Cancel / Reset**: Turning Knob 1 back to OFF (0°) or clicking `< Cooktop` resets the burner roller and turns Knob 1 OFF.
+   - **Task 3A: Precision Cooking Startup Flow & 5 Animated Burner Rollers**:
+     - **Start Screen (`task3a-start.png` / `task2-start-new.png`)**: All burners OFF, clean cooktop without Precision Cooking card per Figma node `2345:16560`.
+     - **5-Knob to 5-Burner Geometry Map (Exact Concentric Alignment)**:
+       - **Knob 1 (Far Left)** $\rightarrow$ **Front-Left Burner (128px)**: `left: 323.5px; top: 216px; width: 128px; height: 128px;`
+       - **Knob 2 (Mid-Left)** $\rightarrow$ **Rear-Left Burner (128px)**: `left: 323.5px; top: 72px; width: 128px; height: 128px;`
+       - **Knob 3 (Center)** $\rightarrow$ **Rear-Center Burner (106px)**: `left: 469px; top: 73px; width: 106px; height: 106px;` (ON/OFF rotary switch, $0^\circ \to 45^\circ$)
+       - **Knob 4 (Mid-Right)** $\rightarrow$ **Main Burner (176px)**: `left: 521.5px; top: 169px; width: 176px; height: 176px;` ($1.375\times$ scaled strip, 52px item height, 47px bold selected numerals, scaled $42\times 55\text{px}$ thermometer SVG)
+       - **Knob 5 (Far Right)** $\rightarrow$ **Rear-Right Burner (128px)**: `left: 663px; top: 72px; width: 128px; height: 128px;`
+     - **Equally Divided Power Levels (1–10)**: Turning Knobs 1, 2, 4, or 5 clockwise rolls the dedicated burner display through power levels 1 to 10 equally divided across the entire arc from MIN ($55^\circ$) to MAX ($270^\circ$, 9 o'clock) inside the dashed white ring with haptic tick audio.
+     - **Knob 3 ON/OFF Behavior**: Rotates $0^\circ \to 45^\circ$. Below $25^\circ$, Burner 3 shows OFF / unlit; at $\ge 25^\circ$, it illuminates active and displays bold white "ON" inside the 106px dashed ring.
+     - **PRC Rotation & 2s Delay**: Turning any PRC-enabled knob (1, 2, 4, 5) to `PRC` detent ($-56^\circ$) illuminates the knob LED and displays the glowing white Precision Cooking Temperature Icon inside that burner. Holds the icon for **2 seconds** before automatically advancing to the Precision Cooking Spotlight screen.
+     - **Cancel / Reset**: Turning the active PRC knob back to OFF ($0^\circ$) or clicking `< Cooktop` resets the burner roller and turns the knob OFF.
    - **Task 3B: Temperature Picker, Preheat & Burner Status Flow**:
      - **Spotlight $\rightarrow$ Temperature**: Tapping the **Temperature** tab navigates to the horizontal temperature picker screen (`task3b-pc-temperature.png`).
      - **Horizontal Carousel Wheel**: Allows scrolling and picking temperatures from $200^\circ\text{F}$ to $500^\circ\text{F}$ in $25^\circ$ increments, centered by default on $375^\circ\text{F}$ with active scaling and snapping.
@@ -48,9 +54,9 @@ This is an interactive high-fidelity web prototype deployed on an **iPad Pro 13"
        - Toast card slides up from bottom: *"Preheat complete.    OK   ✕"*.
        - Stays on this screen for **30 seconds**, or advances immediately if the user taps `OK` or `✕`.
      - **Burner Status Overview Screen (`task3b-burner-status-clean.png`)**:
-       - Displays rear-left burner card actively running at $375^\circ\text{F}$ with `COOKTOP HOT` badge and running activity bar.
-       - Back caret `<` navigation returns to `PCTemperatureRun` screen with horizontal temperature picker while keeping Knob 1 ON and activity bar running.
-       - Turning Knob 1 back to OFF or clicking `< Cooktop` resets the flow back to the start screen.
+       - Displays active burner card running at $375^\circ\text{F}$ with `COOKTOP HOT` badge and running activity bar.
+       - Back caret `<` navigation returns to `PCTemperatureRun` screen with horizontal temperature picker while keeping knob ON and activity bar running.
+       - Turning knob back to OFF or clicking `< Cooktop` resets the flow back to the start screen.
    - **Physical Cooktop Manifold**: Located 80px below the screen, stretching across the full width of the iPad Pro.
    - **1.5× Scaled Manifold Image (`assets/manifold-new-clean.png`)**:
      - Rendered from Figma vector frame at **2× Retina (4000 × 864 px)** based on 2000 × 432 px artboard.

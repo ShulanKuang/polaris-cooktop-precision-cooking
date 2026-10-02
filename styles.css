@@ -2088,14 +2088,10 @@ html, body {
 }
 
 /* ============================================== */
-/* DYNAMIC ANIMATED BURNER ROLLER (FIGMA 2528, 2529) */
+/* DYNAMIC ANIMATED BURNER ROLLERS (ALL 5 BURNERS) */
 /* ============================================== */
 .t3-burner-roller {
   position: absolute;
-  left: 323.5px;
-  top: 72px;
-  width: 128px;
-  height: 128px;
   border-radius: 50%;
   overflow: hidden;
   display: flex;
@@ -2109,6 +2105,42 @@ html, body {
 
 .t3-burner-roller.is-active {
   opacity: 1;
+}
+
+/* Individual Burner Placements */
+.t3-burner-roller.burner-fl {
+  left: 323.5px;
+  top: 216px;
+  width: 128px;
+  height: 128px;
+}
+
+.t3-burner-roller.burner-rl {
+  left: 323.5px;
+  top: 72px;
+  width: 128px;
+  height: 128px;
+}
+
+.t3-burner-roller.burner-rc {
+  left: 469px;
+  top: 73px;
+  width: 106px;
+  height: 106px;
+}
+
+.t3-burner-roller.burner-main {
+  left: 521.5px;
+  top: 169px;
+  width: 176px;
+  height: 176px;
+}
+
+.t3-burner-roller.burner-rr {
+  left: 663px;
+  top: 72px;
+  width: 128px;
+  height: 128px;
 }
 
 .t3-burner-roller-bg {
@@ -2179,12 +2211,64 @@ html, body {
 
 .t3-burner-roller-item.is-temp.is-selected .t3-temp-icon {
   opacity: 1;
-  filter: drop-shadow(0 0 2px rgba(255, 255, 255, 0.5));
-}
-
-.t3-burner-roller-item.is-temp.is-selected .t3-temp-icon {
   transform: scale(1.1);
   filter: drop-shadow(0 0 4px rgba(255, 255, 255, 0.6));
+}
+
+/* Rear-Center 106px Burner (Knob 3: OFF / ON) */
+.t3-burner-roller-strip.is-rc-strip {
+  transform: translateY(35px);
+}
+
+.t3-burner-roller-item.is-rc-item {
+  height: 36px;
+  font-size: 22px;
+}
+
+.t3-burner-roller-item.is-rc-item.is-selected {
+  font-size: 28px;
+  font-weight: 700;
+  color: #FFFFFF;
+}
+
+/* Main 176px Burner (Knob 4) */
+.t3-burner-roller-strip.is-main-strip {
+  transform: translateY(62px);
+}
+
+.t3-burner-roller-item.is-main-item {
+  height: 52px;
+  font-size: 36px;
+}
+
+.t3-burner-roller-item.is-main-item[data-index="0"] {
+  font-size: 28px;
+}
+
+.t3-burner-roller-item.is-main-item.is-selected {
+  font-size: 47px;
+  font-weight: 700;
+  color: #FFFFFF;
+}
+
+.t3-burner-roller-item.is-main-item[data-index="0"].is-selected {
+  font-size: 33px;
+  font-weight: 700;
+  color: #FFFFFF;
+}
+
+.t3-burner-roller-item.is-main-item.is-temp .t3-temp-icon-main {
+  display: block;
+  width: 42px;
+  height: 55px;
+  opacity: 0.45;
+  transition: opacity 0.15s ease, filter 0.15s ease, transform 0.15s ease;
+}
+
+.t3-burner-roller-item.is-main-item.is-temp.is-selected .t3-temp-icon-main {
+  opacity: 1;
+  transform: scale(1.1);
+  filter: drop-shadow(0 0 5px rgba(255, 255, 255, 0.6));
 }
 
 /* Back Button (< Cooktop) */
