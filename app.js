@@ -895,12 +895,6 @@
       return;
     }
 
-    if (animate) {
-      strip.classList.remove("is-instant");
-    } else {
-      strip.classList.add("is-instant");
-    }
-
     // Center Knob 3 (OFF / ON)
     if (type === "onoff") {
       const isCenterOn = (angle >= 25);
@@ -910,7 +904,9 @@
           currentT3BurnerLevels[3] = "on";
           playSound("tick");
         }
-        strip.style.transform = `translateY(${baseOffset - 1 * itemH}px)`;
+        const onY = baseOffset - 1 * itemH;
+        strip.style.webkitTransform = `translate3d(0, ${onY}px, 0)`;
+        strip.style.transform = `translate3d(0, ${onY}px, 0)`;
         const items = strip.querySelectorAll(".t3-burner-roller-item");
         items.forEach(it => {
           const idx = parseInt(it.dataset.index, 10);
@@ -918,7 +914,8 @@
         });
       } else {
         currentT3BurnerLevels[3] = "off";
-        strip.style.transform = `translateY(${baseOffset}px)`;
+        strip.style.webkitTransform = `translate3d(0, ${baseOffset}px, 0)`;
+        strip.style.transform = `translate3d(0, ${baseOffset}px, 0)`;
         const items = strip.querySelectorAll(".t3-burner-roller-item");
         items.forEach(it => {
           const idx = parseInt(it.dataset.index, 10);
@@ -942,7 +939,8 @@
 
       // Translate strip to center index 11 (temp icon)
       const prcY = baseOffset - 11 * itemH;
-      strip.style.transform = `translateY(${prcY}px)`;
+      strip.style.webkitTransform = `translate3d(0, ${prcY}px, 0)`;
+      strip.style.transform = `translate3d(0, ${prcY}px, 0)`;
 
       const items = strip.querySelectorAll(".t3-burner-roller-item");
       items.forEach(it => {
@@ -953,8 +951,8 @@
       // 1s quiet delay on PRC, then quick raise up toast with 3s countdown, then slide in Spotlight
       if (!t3PrcQuietTimers[index] && !t3CountdownInterval && !t3HoldingTimeout) {
         if (els.t3ToastCard) {
-          els.t3ToastCard.hidden = true;
-          els.t3ToastCard.classList.remove("is-raising-up", "is-dismissing");
+          els.t3ToastCard.classList.remove("is-visible", "is-dismissing");
+          els.t3ToastCard.setAttribute("hidden", "");
         }
         if (els.t3ToastNum) {
           els.t3ToastNum.textContent = "3";
@@ -983,7 +981,8 @@
 
       // Translate strip to center index level
       const targetY = baseOffset - level * itemH;
-      strip.style.transform = `translateY(${targetY}px)`;
+      strip.style.webkitTransform = `translate3d(0, ${targetY}px, 0)`;
+      strip.style.transform = `translate3d(0, ${targetY}px, 0)`;
 
       const items = strip.querySelectorAll(".t3-burner-roller-item");
       items.forEach(it => {
@@ -995,7 +994,8 @@
       dismissPrcTimerAndToast(index);
       currentT3BurnerLevels[index] = "off";
 
-      strip.style.transform = `translateY(${baseOffset}px)`;
+      strip.style.webkitTransform = `translate3d(0, ${baseOffset}px, 0)`;
+      strip.style.transform = `translate3d(0, ${baseOffset}px, 0)`;
       const items = strip.querySelectorAll(".t3-burner-roller-item");
       items.forEach(it => {
         const idx = parseInt(it.dataset.index, 10);
@@ -1010,11 +1010,10 @@
 
   function showT3PrcToastAndStartCountdown() {
     if (els.t3ToastCard) {
-      els.t3ToastCard.hidden = false;
+      els.t3ToastCard.removeAttribute("hidden");
       els.t3ToastCard.classList.remove("is-dismissing");
-      els.t3ToastCard.classList.remove("is-raising-up");
-      void els.t3ToastCard.offsetWidth; // Force CSS reflow to ensure animation runs fresh
-      els.t3ToastCard.classList.add("is-raising-up");
+      void els.t3ToastCard.offsetWidth; // Force CSS reflow
+      els.t3ToastCard.classList.add("is-visible");
     }
 
     let seconds = 3;
@@ -1061,32 +1060,21 @@
       clearTimeout(t3HoldingTimeout);
       t3HoldingTimeout = null;
     }
-    if (els.t3ToastCard && !els.t3ToastCard.hidden) {
-      els.t3ToastCard.classList.remove("is-raising-up");
+    if (els.t3ToastCard) {
+      els.t3ToastCard.classList.remove("is-visible");
       els.t3ToastCard.classList.add("is-dismissing");
       setTimeout(() => {
         if (els.t3ToastCard) {
-          els.t3ToastCard.hidden = true;
           els.t3ToastCard.classList.remove("is-dismissing");
+          els.t3ToastCard.setAttribute("hidden", "");
         }
-      }, 200);
+      }, 250);
     }
   }
 
   function transitionToT3Spotlight() {
     clearT3Timers();
-
-    // Dismiss toast
-    if (els.t3ToastCard && !els.t3ToastCard.hidden) {
-      els.t3ToastCard.classList.remove("is-raising-up");
-      els.t3ToastCard.classList.add("is-dismissing");
-      setTimeout(() => {
-        if (els.t3ToastCard) {
-          els.t3ToastCard.hidden = true;
-          els.t3ToastCard.classList.remove("is-dismissing");
-        }
-      }, 200);
-    }
+    dismissPrcTimerAndToast();
 
     playSound("toggleOn");
 
@@ -1095,32 +1083,61 @@
       return;
     }
 
-    // Perform smooth synchronized push-slide transition from right
+    // Perform smooth synchronized GPU push-slide transition from right
     if (els.t3ScreenSpotlight && els.t3ScreenStart) {
       t3Stage = "spotlight";
 
+      // 1. Prepare start screen: visible at 0, opacity 1
       els.t3ScreenStart.hidden = false;
-      els.t3ScreenStart.classList.remove("is-sliding-in-right", "is-sliding-out-right", "is-pushing-out-left", "is-popping-in-left");
+      els.t3ScreenStart.style.transition = "none";
+      els.t3ScreenStart.style.webkitTransition = "none";
+      els.t3ScreenStart.style.transform = "translate3d(0, 0, 0)";
+      els.t3ScreenStart.style.webkitTransform = "translate3d(0, 0, 0)";
+      els.t3ScreenStart.style.opacity = "1";
+      els.t3ScreenStart.style.zIndex = "100";
 
+      // 2. Prepare spotlight screen: unhide and place at +100% off screen right
       els.t3ScreenSpotlight.hidden = false;
-      els.t3ScreenSpotlight.classList.remove("is-sliding-in-right", "is-sliding-out-right", "is-pushing-out-left", "is-popping-in-left");
+      els.t3ScreenSpotlight.style.transition = "none";
+      els.t3ScreenSpotlight.style.webkitTransition = "none";
+      els.t3ScreenSpotlight.style.transform = "translate3d(100%, 0, 0)";
+      els.t3ScreenSpotlight.style.webkitTransform = "translate3d(100%, 0, 0)";
+      els.t3ScreenSpotlight.style.boxShadow = "-16px 0 40px rgba(0, 0, 0, 0.75)";
+      els.t3ScreenSpotlight.style.zIndex = "110";
 
-      // Force layout reflow so WebKit starts keyframes from 0% synchronously
+      // 3. Force layout reflow so WebKit commits initial transforms
       void els.t3ScreenSpotlight.offsetWidth;
       void els.t3ScreenStart.offsetWidth;
 
-      els.t3ScreenSpotlight.classList.add("is-sliding-in-right");
-      els.t3ScreenStart.classList.add("is-pushing-out-left");
+      // 4. Animate both screens in requestAnimationFrame
+      requestAnimationFrame(() => {
+        const ease = "cubic-bezier(0.16, 1, 0.3, 1)";
+        const dur = "0.45s";
 
-      setTimeout(() => {
-        els.t3ScreenSpotlight.classList.remove("is-sliding-in-right");
-        els.t3ScreenStart.classList.remove("is-pushing-out-left");
-        if (t3Stage === "spotlight") {
-          els.t3ScreenStart.hidden = true;
-          els.t3ScreenStart.style.transform = "";
-          els.t3ScreenStart.style.opacity = "";
-        }
-      }, 420);
+        els.t3ScreenSpotlight.style.transition = `transform ${dur} ${ease}`;
+        els.t3ScreenSpotlight.style.webkitTransition = `-webkit-transform ${dur} ${ease}`;
+        els.t3ScreenSpotlight.style.transform = "translate3d(0, 0, 0)";
+        els.t3ScreenSpotlight.style.webkitTransform = "translate3d(0, 0, 0)";
+
+        els.t3ScreenStart.style.transition = `transform ${dur} ${ease}, opacity ${dur} ease`;
+        els.t3ScreenStart.style.webkitTransition = `-webkit-transform ${dur} ${ease}, opacity ${dur} ease`;
+        els.t3ScreenStart.style.transform = "translate3d(-25%, 0, 0)";
+        els.t3ScreenStart.style.webkitTransform = "translate3d(-25%, 0, 0)";
+        els.t3ScreenStart.style.opacity = "0.4";
+
+        setTimeout(() => {
+          if (t3Stage === "spotlight") {
+            els.t3ScreenStart.hidden = true;
+            els.t3ScreenStart.style.transition = "";
+            els.t3ScreenStart.style.webkitTransition = "";
+            els.t3ScreenStart.style.transform = "";
+            els.t3ScreenStart.style.webkitTransform = "";
+            els.t3ScreenStart.style.opacity = "";
+            els.t3ScreenSpotlight.style.transition = "";
+            els.t3ScreenSpotlight.style.webkitTransition = "";
+          }
+        }, 480);
+      });
     } else {
       showT3Screen("spotlight");
     }
@@ -1207,41 +1224,60 @@
 
   function cancelT3A() {
     clearT3Timers();
+    dismissPrcTimerAndToast();
     const knobToReset = activePrcKnobIndex || 1;
-
-    if (els.t3ToastCard && !els.t3ToastCard.hidden) {
-      els.t3ToastCard.classList.remove("is-raising-up");
-      els.t3ToastCard.classList.add("is-dismissing");
-      setTimeout(() => {
-        if (els.t3ToastCard) {
-          els.t3ToastCard.hidden = true;
-          els.t3ToastCard.classList.remove("is-dismissing");
-        }
-      }, 200);
-    }
 
     if (els.t3ScreenSpotlight && !els.t3ScreenSpotlight.hidden && els.t3ScreenStart) {
       t3Stage = "start";
 
+      // 1. Prepare start screen positioned slightly to the left (-25%) with opacity 0.4
       els.t3ScreenStart.hidden = false;
-      els.t3ScreenStart.classList.remove("is-sliding-in-right", "is-sliding-out-right", "is-pushing-out-left", "is-popping-in-left");
-      els.t3ScreenSpotlight.classList.remove("is-sliding-in-right", "is-sliding-out-right", "is-pushing-out-left", "is-popping-in-left");
+      els.t3ScreenStart.style.transition = "none";
+      els.t3ScreenStart.style.webkitTransition = "none";
+      els.t3ScreenStart.style.transform = "translate3d(-25%, 0, 0)";
+      els.t3ScreenStart.style.webkitTransform = "translate3d(-25%, 0, 0)";
+      els.t3ScreenStart.style.opacity = "0.4";
+      els.t3ScreenStart.style.zIndex = "100";
 
-      // Force layout reflow
+      // 2. Spotlight is visible at (0, 0, 0)
+      els.t3ScreenSpotlight.hidden = false;
+      els.t3ScreenSpotlight.style.transition = "none";
+      els.t3ScreenSpotlight.style.webkitTransition = "none";
+      els.t3ScreenSpotlight.style.transform = "translate3d(0, 0, 0)";
+      els.t3ScreenSpotlight.style.webkitTransform = "translate3d(0, 0, 0)";
+      els.t3ScreenSpotlight.style.zIndex = "110";
+
       void els.t3ScreenSpotlight.offsetWidth;
       void els.t3ScreenStart.offsetWidth;
 
-      els.t3ScreenSpotlight.classList.add("is-sliding-out-right");
-      els.t3ScreenStart.classList.add("is-popping-in-left");
+      requestAnimationFrame(() => {
+        const ease = "cubic-bezier(0.16, 1, 0.3, 1)";
+        const dur = "0.40s";
 
-      setTimeout(() => {
-        els.t3ScreenSpotlight.classList.remove("is-sliding-out-right");
-        els.t3ScreenStart.classList.remove("is-popping-in-left");
-        els.t3ScreenSpotlight.hidden = true;
-        els.t3ScreenStart.style.transform = "";
-        els.t3ScreenStart.style.opacity = "";
-        setKnobAngle(knobToReset, 0, true, true);
-      }, 380);
+        els.t3ScreenSpotlight.style.transition = `transform ${dur} ${ease}`;
+        els.t3ScreenSpotlight.style.webkitTransition = `-webkit-transform ${dur} ${ease}`;
+        els.t3ScreenSpotlight.style.transform = "translate3d(100%, 0, 0)";
+        els.t3ScreenSpotlight.style.webkitTransform = "translate3d(100%, 0, 0)";
+
+        els.t3ScreenStart.style.transition = `transform ${dur} ${ease}, opacity ${dur} ease`;
+        els.t3ScreenStart.style.webkitTransition = `-webkit-transform ${dur} ${ease}, opacity ${dur} ease`;
+        els.t3ScreenStart.style.transform = "translate3d(0, 0, 0)";
+        els.t3ScreenStart.style.webkitTransform = "translate3d(0, 0, 0)";
+        els.t3ScreenStart.style.opacity = "1";
+
+        setTimeout(() => {
+          showT3Screen("start");
+          els.t3ScreenSpotlight.style.transition = "";
+          els.t3ScreenSpotlight.style.webkitTransition = "";
+          els.t3ScreenSpotlight.style.transform = "";
+          els.t3ScreenSpotlight.style.webkitTransform = "";
+          els.t3ScreenStart.style.transition = "";
+          els.t3ScreenStart.style.webkitTransition = "";
+          els.t3ScreenStart.style.transform = "";
+          els.t3ScreenStart.style.webkitTransform = "";
+          setKnobAngle(knobToReset, 0, true, true);
+        }, 430);
+      });
     } else {
       showT3Screen("start");
       setKnobAngle(knobToReset, 0, true, true);
@@ -1533,6 +1569,8 @@
     if (dial) {
       if (animate) dial.classList.add("is-animating");
       dial.style.setProperty("--knob-angle", `${angle}deg`);
+      dial.style.webkitTransform = `rotate(${angle}deg) translateZ(0)`;
+      dial.style.transform = `rotate(${angle}deg) translateZ(0)`;
       if (animate) setTimeout(() => dial.classList.remove("is-animating"), 260);
     }
 
@@ -2102,7 +2140,7 @@
   const taskFromParam = parseInt(urlParams.get("task"), 10);
   const taskFromHash = window.location.hash === "#task3" ? 3 : window.location.hash === "#task2" ? 2 : window.location.hash === "#task1" ? 1 : null;
   const taskFromStorage = parseInt(localStorage.getItem("polaris_active_task"), 10);
-  const initialTask = taskFromParam || taskFromHash || taskFromStorage || 3;
+  const initialTask = taskFromParam || taskFromHash || (taskFromStorage >= 2 ? taskFromStorage : 3);
   setTask(initialTask);
 
   window.__polaris = {

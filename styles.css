@@ -563,9 +563,13 @@ html, body {
   position: absolute;
   left: var(--knob-cx-pct, 50%);
   top: var(--knob-cy-pct, 53.241%);
+  width: 11.6%;
+  height: auto;
+  aspect-ratio: 1 / 1;
   width: calc(232 / 2000 * 100cqw);
   height: calc(232 / 2000 * 100cqw);
   transform: translate(-50%, -50%);
+  -webkit-transform: translate(-50%, -50%);
   user-select: none;
   -webkit-user-select: none;
   z-index: 5;
@@ -2047,7 +2051,7 @@ html, body {
   inset: 0;
   width: 1024px;
   height: 384px;
-  animation: fadeIn 0.18s ease-out forwards;
+  will-change: transform, opacity;
 }
 
 .t3-screen-bg {
@@ -2160,13 +2164,11 @@ html, body {
   display: flex;
   flex-direction: column;
   align-items: center;
-  transform: translateY(45px); /* default index 0: OFF */
-  transition: transform 0.22s cubic-bezier(0.2, 0, 0, 1);
+  transform: translate3d(0, 45px, 0);
+  -webkit-transform: translate3d(0, 45px, 0);
+  transition: transform 0.22s cubic-bezier(0.16, 1, 0.3, 1), -webkit-transform 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+  -webkit-transition: transform 0.22s cubic-bezier(0.16, 1, 0.3, 1), -webkit-transform 0.22s cubic-bezier(0.16, 1, 0.3, 1);
   will-change: transform;
-}
-
-.t3-burner-roller-strip.is-instant {
-  transition: none !important;
 }
 
 .t3-burner-roller-item {
@@ -2318,18 +2320,24 @@ html, body {
 .t3-toast-card {
   position: absolute;
   bottom: 14px;
-  left: 180px;
+  left: 50%;
+  transform: translate3d(-50%, 120px, 0);
+  -webkit-transform: translate3d(-50%, 120px, 0);
   width: 750px;
   height: 60px;
   background: #ffffff;
   border-radius: 6px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.45);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.55);
   display: flex;
   align-items: center;
   justify-content: space-between;
   padding: 0 20px 0 24px;
   box-sizing: border-box;
   z-index: 108;
+  opacity: 0;
+  pointer-events: none;
+  transition: transform 0.32s cubic-bezier(0.16, 1, 0.3, 1), -webkit-transform 0.32s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.25s ease;
+  -webkit-transition: transform 0.32s cubic-bezier(0.16, 1, 0.3, 1), -webkit-transform 0.32s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.25s ease;
   will-change: transform, opacity;
 }
 
@@ -2337,38 +2345,19 @@ html, body {
   display: none !important;
 }
 
-/* Quick raise up from bottom animation */
-.t3-toast-card.is-raising-up {
-  animation: toastQuickRaiseUp 0.26s cubic-bezier(0.16, 1, 0.3, 1) forwards !important;
+/* Quick raise up from bottom animation state */
+.t3-toast-card.is-visible {
+  transform: translate3d(-50%, 0, 0) !important;
+  -webkit-transform: translate3d(-50%, 0, 0) !important;
+  opacity: 1 !important;
+  pointer-events: auto !important;
 }
 
 .t3-toast-card.is-dismissing {
-  animation: toastQuickDismiss 0.20s cubic-bezier(0.4, 0, 1, 1) forwards !important;
-}
-
-@keyframes toastQuickRaiseUp {
-  0% {
-    transform: translate3d(0, 100px, 0);
-    opacity: 0;
-  }
-  35% {
-    opacity: 1;
-  }
-  100% {
-    transform: translate3d(0, 0, 0);
-    opacity: 1;
-  }
-}
-
-@keyframes toastQuickDismiss {
-  0% {
-    transform: translate3d(0, 0, 0);
-    opacity: 1;
-  }
-  100% {
-    transform: translate3d(0, 100px, 0);
-    opacity: 0;
-  }
+  transform: translate3d(-50%, 120px, 0) !important;
+  -webkit-transform: translate3d(-50%, 120px, 0) !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
 }
 
 .t3-toast-text {
