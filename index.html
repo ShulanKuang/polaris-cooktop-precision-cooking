@@ -6,7 +6,7 @@
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <title>Polaris Cooktop Precision Cooking Prototype</title>
-  <link rel="stylesheet" href="./styles.css?v=20261002-v4-update-temp-preheat-flow">
+  <link rel="stylesheet" href="./styles.css?v=20261002-v5-task3c-food-mode">
 </head>
 <body>
   <div class="test-environment">
@@ -74,6 +74,17 @@
           <span class="pill-dot" id="pillDot"></span>
           <span id="pillStatusText">Hidden</span>
         </div>
+      </div>
+
+      <!-- TASK 3 ONLY: SUB-FLOW SWITCHER (3B: Temp vs 3C: Food Mode) -->
+      <div class="t3-subflow-controls" id="t3SubflowControls" hidden>
+        <span class="glance-label">Task 3 Flow:</span>
+        <button type="button" class="glance-btn is-active" id="btnT3FlowTemp">
+          3B: Temp (Knob 1)
+        </button>
+        <button type="button" class="glance-btn" id="btnT3FlowFood">
+          3C: Food (Knob 2)
+        </button>
       </div>
     </section>
 
@@ -382,6 +393,22 @@
                 </div>
               </div>
 
+              <!-- Task 3C: Active Burner 1 Running Card on Start Screen -->
+              <div class="t3-start-active-burner1" id="tStartActiveBurner1" hidden>
+                <div class="t3-start-card-info">
+                  <span class="t3-start-card-label">Temperature</span>
+                  <span class="t3-start-card-val" id="tStartBurner1Temp">375°F</span>
+                </div>
+                <div class="t3-start-card-icon">
+                  <svg viewBox="48 42 34 46" fill="#303238" width="28" height="28">
+                    <path fill-rule="evenodd" clip-rule="evenodd" d="M60.3949 43.7395C63.9175 43.7395 66.7731 46.5951 66.7731 50.1177V67.1261C69.3548 69.0655 71.0252 72.1526 71.0252 75.6303C71.0252 81.5012 66.2658 86.2605 60.3949 86.2605C54.524 86.2605 49.7646 81.5012 49.7646 75.6303C49.7646 72.1526 51.435 69.0655 54.0168 67.1261V50.1177C54.0168 46.5951 56.8723 43.7395 60.3949 43.7395ZM58.391 69.4029L56.7903 70.6044C55.3208 71.7083 54.3833 73.4528 54.3833 75.4164C54.3833 78.7365 57.0748 81.428 60.3949 81.428C63.715 81.428 66.4065 78.7365 66.4065 75.4164C66.4065 73.4528 65.469 71.7083 63.9995 70.6044L62.3988 69.4029V62.3914H58.391V69.4029ZM60.3949 48.0645C59.2882 48.0645 58.3911 48.9617 58.3911 50.0683V57.9615H62.3987V50.0683C62.3987 48.9617 61.5016 48.0645 60.3949 48.0645Z"/>
+                    <path d="M77.4033 62.874C78.5775 62.874 79.5294 63.8258 79.5294 65C79.5294 66.1742 78.5775 67.1261 77.4033 67.1261H73.1512C71.977 67.1261 71.0252 66.1742 71.0252 65C71.0252 63.8258 71.977 62.874 73.1512 62.874H77.4033Z"/>
+                    <path d="M77.4033 54.3698C78.5775 54.3698 79.5294 55.3216 79.5294 56.4958C79.5294 57.67 78.5775 58.6219 77.4033 58.6219H73.1512C71.977 58.6219 71.0252 57.67 71.0252 56.4958C71.0252 55.3216 71.977 54.3698 73.1512 54.3698H77.4033Z"/>
+                    <path d="M77.4033 45.8656C78.5775 45.8656 79.5294 46.8174 79.5294 47.9916C79.5294 49.1658 78.5775 50.1177 77.4033 50.1177H73.1512C71.977 50.1177 71.0252 49.1658 71.0252 47.9916C71.0252 46.8174 71.977 45.8656 73.1512 45.8656H77.4033Z"/>
+                  </svg>
+                </div>
+              </div>
+
               <!-- TOAST POPUP: Starting Precision Cooking in 3s (countdown 3s -> 2s -> 1s) -->
               <div class="t3-toast-card" id="t3ToastCard" hidden>
                 <div class="t3-toast-text">
@@ -421,7 +448,8 @@
               <button type="button" class="t3-hotspot t3-spotlight-bacon" id="t3SpotlightBacon" aria-label="Frequently Used: Bacon"></button>
               <button type="button" class="t3-hotspot t3-spotlight-beef" id="t3SpotlightBeef" aria-label="Frequently Used: Beef"></button>
 
-              <!-- Temperature Tab Nav Button -->
+              <!-- Temperature & Food Tab Nav Buttons -->
+              <button type="button" class="t3-tab-nav-btn t3-tab-food" id="t3TabBtnFood" aria-label="Food Tab"></button>
               <button type="button" class="t3-tab-nav-btn t3-tab-temperature" id="t3TabBtnTemperature" aria-label="Temperature Tab"></button>
             </div>
 
@@ -519,6 +547,103 @@
 
               <!-- Keypad Switch Button -->
               <button type="button" class="t3-temp-keypad-btn" id="t3BtnKeypadTemp" aria-label="Keypad"></button>
+            </div>
+
+            <!-- 9. SCREEN: 3C-FOOD-OPTIONS (COOKTOP PRECISION COOKING FOOD GRID - FIGMA 2315:14683) -->
+            <div class="t3-screen" id="t3ScreenFoodOptions" hidden>
+              <img class="t3-screen-bg" src="./assets/task3c/2315_14683.png" alt="Precision Cooking Food Options">
+              <!-- Back button (< Cooktop) -->
+              <button type="button" class="t3-back-btn" id="t3BtnBackFromFoodOptions" aria-label="Back to Cooktop"></button>
+              <!-- Tab Navigation Buttons -->
+              <button type="button" class="t3-tab-nav-btn t3-tab-spotlight" id="t3TabFoodToSpotlight" aria-label="Spotlight Tab"></button>
+              <button type="button" class="t3-tab-nav-btn t3-tab-temperature" id="t3TabFoodToTemp" aria-label="Temperature Tab"></button>
+              <!-- Food Option Tiles -->
+              <button type="button" class="t3-food-tile-btn t3-food-beef" id="t3BtnFoodBeef" aria-label="Beef Option"></button>
+            </div>
+
+            <!-- 10. SCREEN: 3C-BEEF-TYPE (SELECT TYPE: STEAK, GROUND, PATTIES - FIGMA 2323:15099) -->
+            <div class="t3-screen" id="t3ScreenBeefType" hidden>
+              <img class="t3-screen-bg" src="./assets/task3c/2323_15099.png" alt="Select Type">
+              <!-- Back button (< Cooktop | Beef) -->
+              <button type="button" class="t3-back-btn" id="t3BtnBackFromBeefType" aria-label="Back to Food Options"></button>
+              <!-- Left sidebar item hotspots -->
+              <button type="button" class="t3-recipe-nav-item t3-recipe-nav-type" id="t3RecipeNavType" aria-label="Type: Steak"></button>
+              <button type="button" class="t3-recipe-nav-item t3-recipe-nav-doneness" id="t3RecipeNavDoneness" aria-label="Doneness: Med Rare"></button>
+              <button type="button" class="t3-recipe-nav-item t3-recipe-nav-thickness" id="t3RecipeNavThickness" aria-label="Thickness"></button>
+              <!-- Type options -->
+              <button type="button" class="t3-type-option-btn t3-type-steak" id="t3BtnTypeSteak" aria-label="Steak"></button>
+              <!-- START Button -->
+              <button type="button" class="t3-recipe-start-btn" id="t3BtnBeefTypeStart" aria-label="Start Precision Cooking"></button>
+            </div>
+
+            <!-- 11. SCREEN: 3C-BEEF-DONENESS (SELECT DONENESS - FIGMA 2323:14983 / 2323:15041) -->
+            <div class="t3-screen" id="t3ScreenBeefDoneness" hidden>
+              <img class="t3-screen-bg" id="t3BeefDonenessBg" src="./assets/task3c/2323_14983.png" alt="Select Doneness">
+              <!-- Back button (< Cooktop | Beef) -->
+              <button type="button" class="t3-back-btn" id="t3BtnBackFromBeefDoneness" aria-label="Back to Select Type"></button>
+              <!-- Left sidebar item hotspots -->
+              <button type="button" class="t3-recipe-nav-item t3-recipe-nav-type" id="t3RecipeNavType2" aria-label="Type: Steak"></button>
+              <button type="button" class="t3-recipe-nav-item t3-recipe-nav-doneness" id="t3RecipeNavDoneness2" aria-label="Doneness: Med Rare"></button>
+              <button type="button" class="t3-recipe-nav-item t3-recipe-nav-thickness" id="t3RecipeNavThickness2" aria-label="Thickness"></button>
+              <!-- Info / Photo toggle button (bottom right) -->
+              <button type="button" class="t3-doneness-info-toggle" id="t3BtnDonenessToggle" aria-label="Toggle Description"></button>
+              <!-- Doneness card hotspot -->
+              <button type="button" class="t3-doneness-card t3-doneness-med-rare" id="t3BtnDonenessMedRare" aria-label="Med Rare"></button>
+              <!-- START Button -->
+              <button type="button" class="t3-recipe-start-btn" id="t3BtnBeefDonenessStart" aria-label="Start Precision Cooking"></button>
+            </div>
+
+            <!-- 12. SCREEN: 3C-BEEF-THICKNESS (SELECT THICKNESS - FIGMA 2323:15136) -->
+            <div class="t3-screen" id="t3ScreenBeefThickness" hidden>
+              <img class="t3-screen-bg" src="./assets/task3c/2323_15136.png" alt="Select Thickness">
+              <!-- Back button (< Cooktop | Beef) -->
+              <button type="button" class="t3-back-btn" id="t3BtnBackFromBeefThickness" aria-label="Back to Select Doneness"></button>
+              <!-- Left sidebar item hotspots -->
+              <button type="button" class="t3-recipe-nav-item t3-recipe-nav-type" id="t3RecipeNavType3" aria-label="Type: Steak"></button>
+              <button type="button" class="t3-recipe-nav-item t3-recipe-nav-doneness" id="t3RecipeNavDoneness3" aria-label="Doneness: Med Rare"></button>
+              <button type="button" class="t3-recipe-nav-item t3-recipe-nav-thickness" id="t3RecipeNavThickness3" aria-label="Thickness"></button>
+              <!-- Stepper buttons: Minus, Plus -->
+              <button type="button" class="t3-thickness-btn t3-thickness-minus" id="t3BtnThicknessMinus" aria-label="Decrease Thickness"></button>
+              <button type="button" class="t3-thickness-btn t3-thickness-plus" id="t3BtnThicknessPlus" aria-label="Increase Thickness"></button>
+              <!-- START Button -->
+              <button type="button" class="t3-recipe-start-btn t3-recipe-start-thickness" id="t3BtnBeefThicknessStart" aria-label="Start Precision Cooking"></button>
+            </div>
+
+            <!-- 13. SCREEN: 3C-FOOD-PREHEAT (STEAK MED RARE PREHEATING RAMP UP - FIGMA 2348:17304) -->
+            <div class="t3-screen" id="t3ScreenFoodPreheat" hidden>
+              <img class="t3-screen-bg" src="./assets/task3c/2348_17304_clean.png" alt="Steak Med Rare Preheating">
+              <!-- Back button (< Cooktop) -->
+              <button type="button" class="t3-back-btn" id="t3BtnBackFromFoodPreheat" aria-label="Back to Cooktop"></button>
+              <!-- Dynamic Current Temperature (counts up from 182 to 375) -->
+              <div class="t3-food-preheat-current-display">
+                <span class="t3-food-preheat-current-val" id="t3FoodPreheatCurrent">182</span>
+              </div>
+              <!-- Edit button -->
+              <button type="button" class="t3-food-edit-btn" id="t3BtnEditFoodPreheat" aria-label="Edit Steak Settings"></button>
+            </div>
+
+            <!-- 14. SCREEN: 3C-FOOD-COMPLETE (STEAK MED RARE PREHEATED COMPLETE - FIGMA 2348:17501) -->
+            <div class="t3-screen" id="t3ScreenFoodComplete" hidden>
+              <img class="t3-screen-bg" src="./assets/task3c/2348_17501_clean.png" alt="Steak Med Rare Preheated">
+              <!-- Back button (< Cooktop) -->
+              <button type="button" class="t3-back-btn" id="t3BtnBackFromFoodComplete" aria-label="Back to Cooktop"></button>
+              <!-- Edit button -->
+              <button type="button" class="t3-food-edit-btn" id="t3BtnEditFoodComplete" aria-label="Edit Steak Settings"></button>
+            </div>
+
+            <!-- 15. SCREEN: 3C-FOOD-BURNER-STATUS (COOKTOP OVERVIEW WITH TWO ACTIVE BURNERS - FIGMA 2327:15934) -->
+            <div class="t3-screen" id="t3ScreenFoodBurnerStatus" hidden>
+              <img class="t3-screen-bg" src="./assets/task3c/2327_15934_clean.png" alt="Cooktop Burner Status with Steak Med Rare">
+              <!-- Back button (< Cooktop) -->
+              <button type="button" class="t3-back-btn" id="t3BtnBackFromFoodBurnerStatus" aria-label="Back to Cooktop"></button>
+              <!-- Rear Left Burner Readout -->
+              <div class="t3-burner-status-temp-display">
+                <span class="t3-burner-status-temp-val" id="t3FoodBurnerStatusTemp1">375°F</span>
+              </div>
+              <!-- Front Left Steak Burner Hotspot -->
+              <button type="button" class="t3-front-left-burner-hotspot" id="t3HotspotFrontLeftBurner" aria-label="Front Left Steak Burner"></button>
+              <!-- Rear Left Temperature Burner Hotspot -->
+              <button type="button" class="t3-active-burner-hotspot" id="t3HotspotRearLeftBurner" aria-label="Rear Left Temperature Burner"></button>
             </div>
 
           </div> <!-- /.task3-full-screen -->
@@ -628,6 +753,6 @@
     </footer>
   </div>
 
-  <script src="./app.js?v=20261002-v4-update-temp-preheat-flow"></script>
+  <script src="./app.js?v=20261002-v5-task3c-food-mode"></script>
 </body>
 </html>

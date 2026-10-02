@@ -195,6 +195,63 @@
     t3BtnUpdateTemp: document.getElementById("t3BtnUpdateTemp"),
     t3BtnKeypadTemp: document.getElementById("t3BtnKeypadTemp"),
 
+    // Task 3C: Food Mode & Active Cards
+    tStartActiveBurner1: document.getElementById("tStartActiveBurner1"),
+    tStartBurner1Temp: document.getElementById("tStartBurner1Temp"),
+    t3TabBtnFood: document.getElementById("t3TabBtnFood"),
+
+    t3ScreenFoodOptions: document.getElementById("t3ScreenFoodOptions"),
+    t3BtnBackFromFoodOptions: document.getElementById("t3BtnBackFromFoodOptions"),
+    t3TabFoodToSpotlight: document.getElementById("t3TabFoodToSpotlight"),
+    t3TabFoodToTemp: document.getElementById("t3TabFoodToTemp"),
+    t3BtnFoodBeef: document.getElementById("t3BtnFoodBeef"),
+
+    t3ScreenBeefType: document.getElementById("t3ScreenBeefType"),
+    t3BtnBackFromBeefType: document.getElementById("t3BtnBackFromBeefType"),
+    t3RecipeNavType: document.getElementById("t3RecipeNavType"),
+    t3RecipeNavDoneness: document.getElementById("t3RecipeNavDoneness"),
+    t3RecipeNavThickness: document.getElementById("t3RecipeNavThickness"),
+    t3BtnTypeSteak: document.getElementById("t3BtnTypeSteak"),
+    t3BtnBeefTypeStart: document.getElementById("t3BtnBeefTypeStart"),
+
+    t3ScreenBeefDoneness: document.getElementById("t3ScreenBeefDoneness"),
+    t3BeefDonenessBg: document.getElementById("t3BeefDonenessBg"),
+    t3BtnBackFromBeefDoneness: document.getElementById("t3BtnBackFromBeefDoneness"),
+    t3RecipeNavType2: document.getElementById("t3RecipeNavType2"),
+    t3RecipeNavDoneness2: document.getElementById("t3RecipeNavDoneness2"),
+    t3RecipeNavThickness2: document.getElementById("t3RecipeNavThickness2"),
+    t3BtnDonenessToggle: document.getElementById("t3BtnDonenessToggle"),
+    t3BtnDonenessMedRare: document.getElementById("t3BtnDonenessMedRare"),
+    t3BtnBeefDonenessStart: document.getElementById("t3BtnBeefDonenessStart"),
+
+    t3ScreenBeefThickness: document.getElementById("t3ScreenBeefThickness"),
+    t3BtnBackFromBeefThickness: document.getElementById("t3BtnBackFromBeefThickness"),
+    t3RecipeNavType3: document.getElementById("t3RecipeNavType3"),
+    t3RecipeNavDoneness3: document.getElementById("t3RecipeNavDoneness3"),
+    t3RecipeNavThickness3: document.getElementById("t3RecipeNavThickness3"),
+    t3BtnThicknessMinus: document.getElementById("t3BtnThicknessMinus"),
+    t3BtnThicknessPlus: document.getElementById("t3BtnThicknessPlus"),
+    t3BtnBeefThicknessStart: document.getElementById("t3BtnBeefThicknessStart"),
+
+    t3ScreenFoodPreheat: document.getElementById("t3ScreenFoodPreheat"),
+    t3BtnBackFromFoodPreheat: document.getElementById("t3BtnBackFromFoodPreheat"),
+    t3FoodPreheatCurrent: document.getElementById("t3FoodPreheatCurrent"),
+    t3BtnEditFoodPreheat: document.getElementById("t3BtnEditFoodPreheat"),
+
+    t3ScreenFoodComplete: document.getElementById("t3ScreenFoodComplete"),
+    t3BtnBackFromFoodComplete: document.getElementById("t3BtnBackFromFoodComplete"),
+    t3BtnEditFoodComplete: document.getElementById("t3BtnEditFoodComplete"),
+
+    t3ScreenFoodBurnerStatus: document.getElementById("t3ScreenFoodBurnerStatus"),
+    t3BtnBackFromFoodBurnerStatus: document.getElementById("t3BtnBackFromFoodBurnerStatus"),
+    t3FoodBurnerStatusTemp1: document.getElementById("t3FoodBurnerStatusTemp1"),
+    t3HotspotFrontLeftBurner: document.getElementById("t3HotspotFrontLeftBurner"),
+    t3HotspotRearLeftBurner: document.getElementById("t3HotspotRearLeftBurner"),
+
+    t3SubflowControls: document.getElementById("t3SubflowControls"),
+    btnT3FlowTemp: document.getElementById("btnT3FlowTemp"),
+    btnT3FlowFood: document.getElementById("btnT3FlowFood"),
+
     clockReadout: document.getElementById("clockReadout"),
     navHomeBtn: document.getElementById("navHomeBtn")
   };
@@ -252,10 +309,14 @@
       if (els.taskPrompt) els.taskPrompt.textContent = TASK_INFO[taskId].prompt;
     }
 
-    // Toggle subbar controls (Task 1 glance controls only)
+    // Toggle subbar controls (Task 1 glance controls vs Task 3 flow controls)
     if (els.glanceControls) {
       els.glanceControls.hidden = taskId !== 1;
       els.glanceControls.style.display = taskId === 1 ? "flex" : "none";
+    }
+    if (els.t3SubflowControls) {
+      els.t3SubflowControls.hidden = taskId !== 3;
+      els.t3SubflowControls.style.display = taskId === 3 ? "flex" : "none";
     }
 
     // Switch screen view
@@ -847,7 +908,10 @@
         t3Stage === "preheat" ||
         t3Stage === "completed" ||
         t3Stage === "burnerStatus" ||
-        t3Stage === "tempRun"
+        t3Stage === "tempRun" ||
+        t3Stage === "foodPreheat" ||
+        t3Stage === "foodComplete" ||
+        t3Stage === "foodBurnerStatus"
       ) {
         return true;
       }
@@ -875,15 +939,27 @@
     if (els.t3ScreenPreheatComplete) els.t3ScreenPreheatComplete.hidden = (stage !== "completed");
     if (els.t3ScreenBurnerStatus) els.t3ScreenBurnerStatus.hidden = (stage !== "burnerStatus");
     if (els.t3ScreenTempRun) els.t3ScreenTempRun.hidden = (stage !== "tempRun");
-    if (stage !== "completed" && els.t3ToastPreheatComplete) {
+
+    // Task 3C screens:
+    if (els.t3ScreenFoodOptions) els.t3ScreenFoodOptions.hidden = (stage !== "foodOptions");
+    if (els.t3ScreenBeefType) els.t3ScreenBeefType.hidden = (stage !== "beefType");
+    if (els.t3ScreenBeefDoneness) els.t3ScreenBeefDoneness.hidden = (stage !== "beefDoneness");
+    if (els.t3ScreenBeefThickness) els.t3ScreenBeefThickness.hidden = (stage !== "beefThickness");
+    if (els.t3ScreenFoodPreheat) els.t3ScreenFoodPreheat.hidden = (stage !== "foodPreheat");
+    if (els.t3ScreenFoodComplete) els.t3ScreenFoodComplete.hidden = (stage !== "foodComplete");
+    if (els.t3ScreenFoodBurnerStatus) els.t3ScreenFoodBurnerStatus.hidden = (stage !== "foodBurnerStatus");
+
+    if (stage !== "completed" && stage !== "foodComplete" && els.t3ToastPreheatComplete) {
       els.t3ToastPreheatComplete.classList.remove("is-visible");
       els.t3ToastPreheatComplete.classList.remove("is-dismissing");
     }
 
     // Activity bar only shows up starting from preheat screen!
-    // Before this or before user clicks start, activity bar must not show up.
-    // When on burnerStatus or tempRun, activity bar continues running!
-    const showActivityBar = (stage === "preheat" || stage === "completed" || stage === "burnerStatus" || stage === "tempRun");
+    // When on burnerStatus, tempRun, or food preheat/complete/status, activity bar continues running!
+    const showActivityBar = (
+      stage === "preheat" || stage === "completed" || stage === "burnerStatus" || stage === "tempRun" ||
+      stage === "foodPreheat" || stage === "foodComplete" || stage === "foodBurnerStatus"
+    );
     if (els.screenBottomStrip) {
       els.screenBottomStrip.hidden = !showActivityBar;
       els.screenBottomStrip.style.display = showActivityBar ? "block" : "none";
@@ -897,8 +973,19 @@
       const targetTemp = state.task3TargetTemp || 375;
       if (els.t3BurnerStatusTemp) els.t3BurnerStatusTemp.textContent = `${targetTemp}°F`;
     }
+    if (stage === "foodBurnerStatus") {
+      const targetTemp = state.task3TargetTemp || 375;
+      if (els.t3FoodBurnerStatusTemp1) els.t3FoodBurnerStatusTemp1.textContent = `${targetTemp}°F`;
+    }
 
     if (stage === "start") {
+      const isFoodFlow = (state.task3Mode === "food");
+      if (els.tStartActiveBurner1) {
+        els.tStartActiveBurner1.hidden = !isFoodFlow;
+        if (els.tStartBurner1Temp) {
+          els.tStartBurner1Temp.textContent = `${state.task3TargetTemp || 375}°F`;
+        }
+      }
       clearT3Timers();
       [1, 2, 3, 4, 5].forEach(i => {
         const k = knobsState[i - 1];
@@ -953,11 +1040,18 @@
     const { roller, strip, type, itemH, baseOffset } = cfg;
 
     if (t3Stage !== "start") {
-      // If user turns the active knob to OFF while on another Task 3 screen (like Spotlight), cancel back to start
-      if (Math.abs(angle) <= 10 && index === activePrcKnobIndex) {
-        cancelT3A();
+      // If user turns Knob 2 to PRC while on burnerStatus: start Task 3C!
+      const isPRCTurn = (angle < -20 && angle > -80);
+      if ((t3Stage === "burnerStatus" || t3Stage === "tempRun") && index === 2 && isPRCTurn) {
+        state.task3Mode = "food";
+        showT3Screen("start");
+      } else {
+        // If user turns the active knob to OFF while on another Task 3 screen (like Spotlight), cancel back to start
+        if (Math.abs(angle) <= 10 && index === activePrcKnobIndex) {
+          cancelT3A();
+        }
+        return;
       }
-      return;
     }
 
     // Center Knob 3 (OFF / ON)
@@ -1298,6 +1392,87 @@
     const targetTemp = state.task3TargetTemp || 375;
     if (els.t3BurnerStatusTemp) {
       els.t3BurnerStatusTemp.textContent = `${targetTemp}°F`;
+    }
+  }
+
+  // TASK 3C: FOOD RECIPE PREHEAT AND COMPLETION TIMERS
+  function startT3FoodPreheat() {
+    clearT3Timers();
+    showT3Screen("foodPreheat");
+    playSound("toggleOn");
+
+    const targetTemp = 375;
+    const startTemp = 182;
+    const durationMs = 5000; // 5s smooth temperature growth
+    const startTime = Date.now();
+
+    if (els.t3FoodPreheatCurrent) {
+      els.t3FoodPreheatCurrent.textContent = startTemp;
+    }
+
+    t3PreheatInterval = setInterval(() => {
+      const elapsed = Date.now() - startTime;
+      const progress = Math.min(1.0, elapsed / durationMs);
+      const current = Math.round(startTemp + progress * (targetTemp - startTemp));
+      if (els.t3FoodPreheatCurrent) {
+        els.t3FoodPreheatCurrent.textContent = current;
+      }
+
+      if (progress >= 1.0) {
+        clearInterval(t3PreheatInterval);
+        t3PreheatInterval = null;
+        if (els.t3FoodPreheatCurrent) {
+          els.t3FoodPreheatCurrent.textContent = targetTemp;
+        }
+
+        // 2s holding delay before completion screen
+        t3HoldingTimeout = setTimeout(() => {
+          startT3FoodPreheatCompleted();
+        }, 2000);
+      }
+    }, 50);
+  }
+
+  function startT3FoodPreheatCompleted() {
+    clearT3Timers();
+    showT3Screen("foodComplete");
+    playSound("toggleOn");
+
+    // Pop up preheat complete toast with spring animation!
+    if (els.t3ToastPreheatComplete) {
+      els.t3ToastPreheatComplete.classList.remove("is-visible");
+      els.t3ToastPreheatComplete.classList.remove("is-dismissing");
+      requestAnimationFrame(() => {
+        setTimeout(() => {
+          if (t3Stage === "foodComplete" && els.t3ToastPreheatComplete) {
+            els.t3ToastPreheatComplete.classList.add("is-visible");
+          }
+        }, 50);
+      });
+    }
+
+    // Auto-advance to foodBurnerStatus after 4s (or user clicks OK or ✕)
+    t3HoldingTimeout = setTimeout(() => {
+      finishT3FoodPreheatToBurnerStatus();
+    }, 4000);
+  }
+
+  function finishT3FoodPreheatToBurnerStatus() {
+    clearT3Timers();
+    if (els.t3ToastPreheatComplete) {
+      els.t3ToastPreheatComplete.classList.remove("is-visible");
+      els.t3ToastPreheatComplete.classList.remove("is-dismissing");
+      setTimeout(() => {
+        showT3Screen("foodBurnerStatus");
+      }, 250);
+    } else {
+      showT3Screen("foodBurnerStatus");
+    }
+    playSound("touch");
+
+    const targetTemp = state.task3TargetTemp || 375;
+    if (els.t3FoodBurnerStatusTemp1) {
+      els.t3FoodBurnerStatusTemp1.textContent = `${targetTemp}°F`;
     }
   }
 
@@ -2108,7 +2283,11 @@
     if (els.t3ToastCompleteOk) {
       const handleOk = (e) => {
         if (e) e.stopPropagation();
-        finishT3PreheatToBurnerStatus();
+        if (t3Stage === "foodComplete") {
+          finishT3FoodPreheatToBurnerStatus();
+        } else {
+          finishT3PreheatToBurnerStatus();
+        }
       };
       els.t3ToastCompleteOk.addEventListener("click", handleOk);
       els.t3ToastCompleteOk.addEventListener("touchstart", handleOk, { passive: true });
@@ -2116,7 +2295,11 @@
     if (els.t3ToastCompleteClose) {
       const handleClose = (e) => {
         if (e) e.stopPropagation();
-        finishT3PreheatToBurnerStatus();
+        if (t3Stage === "foodComplete") {
+          finishT3FoodPreheatToBurnerStatus();
+        } else {
+          finishT3PreheatToBurnerStatus();
+        }
       };
       els.t3ToastCompleteClose.addEventListener("click", handleClose);
       els.t3ToastCompleteClose.addEventListener("touchstart", handleClose, { passive: true });
@@ -2187,6 +2370,237 @@
     if (els.t3BtnKeypadTemp) {
       els.t3BtnKeypadTemp.addEventListener("click", () => {
         playSound("touch");
+      });
+    }
+
+    // ==============================================
+    // TASK 3C: FOOD MODE & RECIPE CONFIG LISTENERS
+    // ==============================================
+
+    // Subflow switcher buttons
+    if (els.btnT3FlowTemp) {
+      els.btnT3FlowTemp.addEventListener("click", () => {
+        playSound("touch");
+        state.task3Mode = "temperature";
+        els.btnT3FlowTemp.classList.add("is-active");
+        if (els.btnT3FlowFood) els.btnT3FlowFood.classList.remove("is-active");
+        if (els.tStartActiveBurner1) els.tStartActiveBurner1.hidden = true;
+        setKnobAngle(1, 0, false, true);
+        setKnobAngle(2, 0, false, true);
+        showT3Screen("start");
+      });
+    }
+
+    if (els.btnT3FlowFood) {
+      els.btnT3FlowFood.addEventListener("click", () => {
+        playSound("touch");
+        state.task3Mode = "food";
+        els.btnT3FlowFood.classList.add("is-active");
+        if (els.btnT3FlowTemp) els.btnT3FlowTemp.classList.remove("is-active");
+        showT3Screen("start");
+        // Turn Knob 2 to PRC
+        setTimeout(() => {
+          setKnobAngle(2, -56, true, true);
+        }, 300);
+      });
+    }
+
+    // Food Tab Button on Spotlight screen
+    if (els.t3TabBtnFood) {
+      els.t3TabBtnFood.addEventListener("click", () => {
+        playSound("touch");
+        showT3Screen("foodOptions");
+      });
+    }
+
+    // Food Options Screen (Figma 2315:14683)
+    if (els.t3BtnBackFromFoodOptions) {
+      els.t3BtnBackFromFoodOptions.addEventListener("click", () => {
+        playSound("touch");
+        showT3Screen("spotlight");
+      });
+    }
+    if (els.t3TabFoodToSpotlight) {
+      els.t3TabFoodToSpotlight.addEventListener("click", () => {
+        playSound("touch");
+        showT3Screen("spotlight");
+      });
+    }
+    if (els.t3TabFoodToTemp) {
+      els.t3TabFoodToTemp.addEventListener("click", () => {
+        playSound("touch");
+        showT3Screen("temperature");
+      });
+    }
+    if (els.t3BtnFoodBeef) {
+      els.t3BtnFoodBeef.addEventListener("click", () => {
+        playSound("touch");
+        showT3Screen("beefType");
+      });
+    }
+    if (els.t3SpotlightBeef) {
+      els.t3SpotlightBeef.addEventListener("click", () => {
+        playSound("touch");
+        showT3Screen("beefType");
+      });
+    }
+
+    // Select Type Screen (Figma 2323:15099)
+    if (els.t3BtnBackFromBeefType) {
+      els.t3BtnBackFromBeefType.addEventListener("click", () => {
+        playSound("touch");
+        showT3Screen("foodOptions");
+      });
+    }
+    if (els.t3BtnTypeSteak) {
+      els.t3BtnTypeSteak.addEventListener("click", () => {
+        playSound("touch");
+        showT3Screen("beefDoneness");
+      });
+    }
+    if (els.t3RecipeNavDoneness) {
+      els.t3RecipeNavDoneness.addEventListener("click", () => {
+        playSound("touch");
+        showT3Screen("beefDoneness");
+      });
+    }
+    if (els.t3RecipeNavThickness) {
+      els.t3RecipeNavThickness.addEventListener("click", () => {
+        playSound("touch");
+        showT3Screen("beefThickness");
+      });
+    }
+    if (els.t3BtnBeefTypeStart) {
+      els.t3BtnBeefTypeStart.addEventListener("click", () => {
+        startT3FoodPreheat();
+      });
+    }
+
+    // Select Doneness Screen (Figma 2323:14983 & 2323:15041)
+    let isDonenessDescriptionView = false;
+    if (els.t3BtnBackFromBeefDoneness) {
+      els.t3BtnBackFromBeefDoneness.addEventListener("click", () => {
+        playSound("touch");
+        showT3Screen("beefType");
+      });
+    }
+    if (els.t3RecipeNavType2) {
+      els.t3RecipeNavType2.addEventListener("click", () => {
+        playSound("touch");
+        showT3Screen("beefType");
+      });
+    }
+    if (els.t3RecipeNavThickness2) {
+      els.t3RecipeNavThickness2.addEventListener("click", () => {
+        playSound("touch");
+        showT3Screen("beefThickness");
+      });
+    }
+    if (els.t3BtnDonenessToggle) {
+      els.t3BtnDonenessToggle.addEventListener("click", () => {
+        playSound("touch");
+        isDonenessDescriptionView = !isDonenessDescriptionView;
+        if (els.t3BeefDonenessBg) {
+          els.t3BeefDonenessBg.src = isDonenessDescriptionView
+            ? "./assets/task3c/2323_15041.png"
+            : "./assets/task3c/2323_14983.png";
+        }
+      });
+    }
+    if (els.t3BtnDonenessMedRare) {
+      els.t3BtnDonenessMedRare.addEventListener("click", () => {
+        playSound("touch");
+        showT3Screen("beefThickness");
+      });
+    }
+    if (els.t3BtnBeefDonenessStart) {
+      els.t3BtnBeefDonenessStart.addEventListener("click", () => {
+        startT3FoodPreheat();
+      });
+    }
+
+    // Select Thickness Screen (Figma 2323:15136)
+    if (els.t3BtnBackFromBeefThickness) {
+      els.t3BtnBackFromBeefThickness.addEventListener("click", () => {
+        playSound("touch");
+        showT3Screen("beefDoneness");
+      });
+    }
+    if (els.t3RecipeNavType3) {
+      els.t3RecipeNavType3.addEventListener("click", () => {
+        playSound("touch");
+        showT3Screen("beefType");
+      });
+    }
+    if (els.t3RecipeNavDoneness3) {
+      els.t3RecipeNavDoneness3.addEventListener("click", () => {
+        playSound("touch");
+        showT3Screen("beefDoneness");
+      });
+    }
+    if (els.t3BtnThicknessMinus) {
+      els.t3BtnThicknessMinus.addEventListener("click", () => {
+        playSound("tick");
+      });
+    }
+    if (els.t3BtnThicknessPlus) {
+      els.t3BtnThicknessPlus.addEventListener("click", () => {
+        playSound("tick");
+      });
+    }
+    if (els.t3BtnBeefThicknessStart) {
+      els.t3BtnBeefThicknessStart.addEventListener("click", () => {
+        startT3FoodPreheat();
+      });
+    }
+
+    // Food Preheat & Complete Screens (Figma 2348:17304 & 2348:17501)
+    if (els.t3BtnBackFromFoodPreheat) {
+      els.t3BtnBackFromFoodPreheat.addEventListener("click", () => {
+        playSound("touch");
+        clearT3Timers();
+        showT3Screen("beefType");
+      });
+    }
+    if (els.t3BtnEditFoodPreheat) {
+      els.t3BtnEditFoodPreheat.addEventListener("click", () => {
+        playSound("touch");
+        clearT3Timers();
+        showT3Screen("beefType");
+      });
+    }
+    if (els.t3BtnBackFromFoodComplete) {
+      els.t3BtnBackFromFoodComplete.addEventListener("click", () => {
+        playSound("touch");
+        clearT3Timers();
+        showT3Screen("beefType");
+      });
+    }
+    if (els.t3BtnEditFoodComplete) {
+      els.t3BtnEditFoodComplete.addEventListener("click", () => {
+        playSound("touch");
+        clearT3Timers();
+        showT3Screen("beefType");
+      });
+    }
+
+    // Food Burner Status Screen (Figma 2327:15934)
+    if (els.t3BtnBackFromFoodBurnerStatus) {
+      els.t3BtnBackFromFoodBurnerStatus.addEventListener("click", () => {
+        playSound("touch");
+        showT3Screen("start");
+      });
+    }
+    if (els.t3HotspotFrontLeftBurner) {
+      els.t3HotspotFrontLeftBurner.addEventListener("click", () => {
+        playSound("touch");
+        showT3Screen("beefType");
+      });
+    }
+    if (els.t3HotspotRearLeftBurner) {
+      els.t3HotspotRearLeftBurner.addEventListener("click", () => {
+        playSound("touch");
+        showT3Screen("tempRun");
       });
     }
 
