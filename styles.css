@@ -2730,6 +2730,71 @@ html, body {
   transform: scale(0.95);
 }
 
+#t3BtnEditPreheatFromComplete {
+  left: 680px;
+  top: 308px;
+  width: 92px;
+  height: 42px;
+}
+
+/* Preheated Screen Dynamic Large Target Temperature Display (Figma Node 2294-11878) */
+.t3-completed-temp-display {
+  position: absolute;
+  left: 624px;
+  top: 153px;
+  width: 204px;
+  height: 80px;
+  display: flex;
+  align-items: baseline;
+  justify-content: center;
+  z-index: 10;
+  pointer-events: none;
+}
+
+.t3-completed-temp-num {
+  font-family: var(--font-display), "Profile Display", system-ui, sans-serif;
+  font-size: 80px;
+  font-weight: 500;
+  color: #ffffff;
+  line-height: 1;
+  letter-spacing: -1px;
+}
+
+.t3-completed-temp-unit {
+  font-family: var(--font-display), "Profile Display", system-ui, sans-serif;
+  font-size: 26px;
+  font-weight: 600;
+  color: #ffffff;
+  margin-left: 2px;
+  line-height: 1;
+  vertical-align: super;
+  transform: translateY(-32px);
+}
+
+/* Rear Left Active Burner Card Temperature Readout (Figma Node 2310:12347) */
+.t3-burner-status-temp-display {
+  position: absolute;
+  left: 155px;
+  top: 132px;
+  width: 148px;
+  height: 34px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  z-index: 10;
+  pointer-events: none;
+}
+
+.t3-burner-status-temp-val {
+  font-family: var(--font-text), "Profile Text", "Profile Display", system-ui, sans-serif;
+  font-size: 28px;
+  font-weight: 600;
+  color: #ffffff;
+  line-height: 1.2;
+  letter-spacing: 0.56px;
+  text-align: right;
+}
+
 /* ============================================== */
 /* PREHEAT COMPLETE SCREEN TOAST (FIGMA 2348-17541)*/
 /* ============================================== */

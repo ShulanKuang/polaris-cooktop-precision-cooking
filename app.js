@@ -889,6 +889,15 @@
       els.screenBottomStrip.style.display = showActivityBar ? "block" : "none";
     }
 
+    if (stage === "completed") {
+      const targetTemp = state.task3TargetTemp || 375;
+      if (els.t3CompleteTarget) els.t3CompleteTarget.textContent = targetTemp;
+    }
+    if (stage === "burnerStatus") {
+      const targetTemp = state.task3TargetTemp || 375;
+      if (els.t3BurnerStatusTemp) els.t3BurnerStatusTemp.textContent = `${targetTemp}°F`;
+    }
+
     if (stage === "start") {
       clearT3Timers();
       [1, 2, 3, 4, 5].forEach(i => {
