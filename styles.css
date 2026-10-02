@@ -2316,20 +2316,24 @@ html, body {
 /* TASK 3A TOAST BANNER (Starting Precision Cooking in 3s) */
 .t3-toast-card {
   position: absolute;
-  bottom: 15px;
+  bottom: 14px;
   left: 180px;
   width: 750px;
   height: 60px;
   background: #ffffff;
   border-radius: 6px;
-  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.45);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.45);
   display: flex;
   align-items: center;
   justify-content: space-between;
   padding: 0 20px 0 24px;
   box-sizing: border-box;
-  z-index: 105;
+  z-index: 108;
   animation: toastSlideUp 0.28s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.t3-toast-card[hidden] {
+  display: none !important;
 }
 
 .t3-toast-card.is-dismissing {
@@ -2338,22 +2342,22 @@ html, body {
 
 @keyframes toastSlideUp {
   from {
-    transform: translateY(80px);
+    transform: translate3d(0, 80px, 0);
     opacity: 0;
   }
   to {
-    transform: translateY(0);
+    transform: translate3d(0, 0, 0);
     opacity: 1;
   }
 }
 
 @keyframes toastSlideDown {
   from {
-    transform: translateY(0);
+    transform: translate3d(0, 0, 0);
     opacity: 1;
   }
   to {
-    transform: translateY(80px);
+    transform: translate3d(0, 80px, 0);
     opacity: 0;
   }
 }
@@ -2375,13 +2379,13 @@ html, body {
 .t3-toast-actions {
   display: flex;
   align-items: center;
-  gap: 24px;
+  gap: 20px;
 }
 
 .t3-toast-dismiss {
   background: transparent;
   border: none;
-  color: #a02b8f;
+  color: #b837a2;
   font-family: var(--font-text);
   font-size: 18px;
   font-weight: 600;
@@ -2391,26 +2395,55 @@ html, body {
   transition: opacity 0.15s;
 }
 .t3-toast-dismiss:active {
-  opacity: 0.7;
+  opacity: 0.6;
 }
 
 .t3-toast-close {
   background: transparent;
   border: none;
-  color: #a02b8f;
-  font-size: 20px;
-  font-weight: 500;
+  color: #b837a2;
+  width: 36px;
+  height: 36px;
   cursor: pointer;
-  padding: 6px;
+  padding: 0;
   display: flex;
   align-items: center;
   justify-content: center;
   border-radius: 50%;
-  transition: opacity 0.15s;
-  line-height: 1;
+  transition: opacity 0.15s, background-color 0.15s;
 }
 .t3-toast-close:active {
-  opacity: 0.7;
+  opacity: 0.6;
+  background-color: rgba(184, 55, 162, 0.12);
+}
+
+/* SCREEN SLIDE TRANSITIONS (PRECISION COOKING SPOTLIGHT) */
+.t3-screen.is-sliding-in-right {
+  animation: screenSlideInFromRight 0.38s cubic-bezier(0.16, 1, 0.3, 1) forwards !important;
+  z-index: 110;
+}
+
+@keyframes screenSlideInFromRight {
+  from {
+    transform: translate3d(100%, 0, 0);
+  }
+  to {
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+.t3-screen.is-sliding-out-right {
+  animation: screenSlideOutToRight 0.32s cubic-bezier(0.16, 1, 0.3, 1) forwards !important;
+  z-index: 110;
+}
+
+@keyframes screenSlideOutToRight {
+  from {
+    transform: translate3d(0, 0, 0);
+  }
+  to {
+    transform: translate3d(100%, 0, 0);
+  }
 }
 
 /* Knob Hint Toast */

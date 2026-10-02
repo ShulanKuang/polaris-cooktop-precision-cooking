@@ -6,7 +6,7 @@
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <title>Polaris Cooktop Precision Cooking Prototype</title>
-  <link rel="stylesheet" href="./styles.css?v=20261002-all-burners-roller">
+  <link rel="stylesheet" href="./styles.css?v=20261002-toast-3s-slide">
 </head>
 <body>
   <div class="test-environment">
@@ -413,6 +413,21 @@
                 </div>
               </div>
 
+              <!-- TOAST POPUP: Starting Precision Cooking in 3s (countdown 3s -> 2s -> 1s) -->
+              <div class="t3-toast-card" id="t3ToastCard" hidden>
+                <div class="t3-toast-text">
+                  Starting Precision Cooking in <span class="t3-toast-num" id="t3ToastNum">3</span>s.
+                </div>
+                <div class="t3-toast-actions">
+                  <button type="button" class="t3-toast-dismiss" id="t3ToastDismiss">Don’t show again</button>
+                  <button type="button" class="t3-toast-close" id="t3ToastClose" aria-label="Go directly to Precision Cooking">
+                    <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+                      <path d="M13.5 4.5L4.5 13.5M4.5 4.5L13.5 13.5" stroke="#b837a2" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                  </button>
+                </div>
+              </div>
+
               <!-- Explore button hotspot (x: 154, y: 240, w: 149, h: 70) -->
               <button type="button" class="t3-explore-hotspot" id="t3BtnExplore" aria-label="Explore Precision Cooking"></button>
               <!-- Rear Left burner hotspot -->
@@ -421,20 +436,9 @@
               <div class="t3-knob-hint" id="t3KnobHint" hidden>Turn any knob below to PRC to begin</div>
             </div>
 
-            <!-- 2. SCREEN: 3A-TURNKNOB (REAR LEFT ON PRC WITH COUNTDOWN TOAST) -->
+            <!-- 2. SCREEN: 3A-TURNKNOB (RESERVED) -->
             <div class="t3-screen" id="t3ScreenTurnKnob" hidden>
               <img class="t3-screen-bg" src="./assets/task3a-turnknob.png" alt="Cooktop Rear Left Burner Active">
-              
-              <!-- TOAST POPUP: Starting Precision Cooking in 3s (countdown 3s -> 2s -> 1s) -->
-              <div class="t3-toast-card" id="t3ToastCard">
-                <div class="t3-toast-text">
-                  Starting Precision Cooking in <span class="t3-toast-num" id="t3ToastNum">3</span>s.
-                </div>
-                <div class="t3-toast-actions">
-                  <button type="button" class="t3-toast-dismiss" id="t3ToastDismiss">Don’t show again</button>
-                  <button type="button" class="t3-toast-close" id="t3ToastClose" aria-label="Close Toast">✕</button>
-                </div>
-              </div>
             </div>
 
             <!-- 3. SCREEN: 3A-PCSPOTLIGHT (PRECISION COOKING SPOTLIGHT) -->
@@ -623,6 +627,6 @@
     </footer>
   </div>
 
-  <script src="./app.js?v=20261002-all-burners-roller"></script>
+  <script src="./app.js?v=20261002-toast-3s-slide"></script>
 </body>
 </html>

@@ -835,6 +835,7 @@
         if (k) updateT3BurnerFromKnob(i, k.angle, false);
       });
       if (els.t3ToastCard) {
+        els.t3ToastCard.hidden = true;
         els.t3ToastCard.classList.remove("is-dismissing");
       }
       if (els.t3ToastNum) {
@@ -942,20 +943,39 @@
         it.classList.toggle("is-selected", idx === 11);
       });
 
-      // Delay 2s here on PRC, then advance to next screen (Spotlight)
+      // 3s delay on PRC with countdown toast, then slide in Spotlight
       if (!t3PrcDelayTimers[index]) {
+        if (els.t3ToastCard) {
+          els.t3ToastCard.hidden = false;
+          els.t3ToastCard.classList.remove("is-dismissing");
+        }
+        let seconds = 3;
+        if (els.t3ToastNum) {
+          els.t3ToastNum.textContent = String(seconds);
+        }
+
+        if (t3CountdownInterval) {
+          clearInterval(t3CountdownInterval);
+        }
+        t3CountdownInterval = setInterval(() => {
+          seconds--;
+          if (seconds >= 1) {
+            if (els.t3ToastNum) els.t3ToastNum.textContent = String(seconds);
+            playSound("tick");
+          } else {
+            clearInterval(t3CountdownInterval);
+            t3CountdownInterval = null;
+          }
+        }, 1000);
+
         t3PrcDelayTimers[index] = setTimeout(() => {
           t3PrcDelayTimers[index] = null;
-          playSound("toggleOn");
-          showT3Screen("spotlight");
-        }, 2000);
+          transitionToT3Spotlight();
+        }, 3000);
       }
     } else if (isMinToMax) {
       // 2. Turning from Min to Max: dedicated burner changes number 1-10 equally divided
-      if (t3PrcDelayTimers[index]) {
-        clearTimeout(t3PrcDelayTimers[index]);
-        t3PrcDelayTimers[index] = null;
-      }
+      dismissPrcTimerAndToast(index);
 
       roller.classList.add("is-active");
 
@@ -980,10 +1000,7 @@
       });
     } else if (isOff) {
       // 3. Knob at OFF (0 deg)
-      if (t3PrcDelayTimers[index]) {
-        clearTimeout(t3PrcDelayTimers[index]);
-        t3PrcDelayTimers[index] = null;
-      }
+      dismissPrcTimerAndToast(index);
       currentT3BurnerLevels[index] = "off";
 
       strip.style.transform = `translateY(${baseOffset}px)`;
@@ -995,42 +1012,66 @@
 
       roller.classList.remove("is-active");
     } else {
-      if (t3PrcDelayTimers[index]) {
-        clearTimeout(t3PrcDelayTimers[index]);
-        t3PrcDelayTimers[index] = null;
-      }
+      dismissPrcTimerAndToast(index);
+    }
+  }
+
+  function dismissPrcTimerAndToast(index) {
+    if (index && t3PrcDelayTimers[index]) {
+      clearTimeout(t3PrcDelayTimers[index]);
+      t3PrcDelayTimers[index] = null;
+    }
+    if (t3CountdownInterval) {
+      clearInterval(t3CountdownInterval);
+      t3CountdownInterval = null;
+    }
+    if (els.t3ToastCard && !els.t3ToastCard.hidden) {
+      els.t3ToastCard.classList.add("is-dismissing");
+      setTimeout(() => {
+        if (els.t3ToastCard) {
+          els.t3ToastCard.hidden = true;
+          els.t3ToastCard.classList.remove("is-dismissing");
+        }
+      }, 220);
+    }
+  }
+
+  function transitionToT3Spotlight() {
+    clearT3Timers();
+
+    // Dismiss toast
+    if (els.t3ToastCard && !els.t3ToastCard.hidden) {
+      els.t3ToastCard.classList.add("is-dismissing");
+      setTimeout(() => {
+        if (els.t3ToastCard) {
+          els.t3ToastCard.hidden = true;
+          els.t3ToastCard.classList.remove("is-dismissing");
+        }
+      }, 220);
+    }
+
+    playSound("toggleOn");
+
+    // Perform smooth slide-in transition from right
+    if (els.t3ScreenSpotlight && els.t3ScreenStart) {
+      t3Stage = "spotlight";
+      els.t3ScreenSpotlight.hidden = false;
+      els.t3ScreenSpotlight.classList.remove("is-sliding-out-right");
+      els.t3ScreenSpotlight.classList.add("is-sliding-in-right");
+
+      setTimeout(() => {
+        els.t3ScreenSpotlight.classList.remove("is-sliding-in-right");
+        if (t3Stage === "spotlight") {
+          els.t3ScreenStart.hidden = true;
+        }
+      }, 380);
+    } else {
+      showT3Screen("spotlight");
     }
   }
 
   function startT3ACountdown() {
-    clearT3Timers();
-    showT3Screen("turnknob");
-
-    if (els.t3ToastCard) {
-      els.t3ToastCard.classList.remove("is-dismissing");
-    }
-    let seconds = 3;
-    if (els.t3ToastNum) {
-      els.t3ToastNum.textContent = seconds;
-    }
-
-    t3CountdownInterval = setInterval(() => {
-      seconds--;
-      if (seconds >= 1) {
-        if (els.t3ToastNum) els.t3ToastNum.textContent = seconds;
-        playSound("tick");
-      } else {
-        clearInterval(t3CountdownInterval);
-        t3CountdownInterval = null;
-      }
-    }, 1000);
-
-    // 3 seconds holding time -> directly transition to Precision Cooking Spotlight
-    t3HoldingTimeout = setTimeout(() => {
-      clearT3Timers();
-      playSound("toggleOn");
-      showT3Screen("spotlight");
-    }, 3000);
+    transitionToT3Spotlight();
   }
 
   // TASK 3B: PREHEAT AND COMPLETION TIMERS
@@ -1111,12 +1152,28 @@
   function cancelT3A() {
     clearT3Timers();
     const knobToReset = activePrcKnobIndex || 1;
-    if (els.t3ToastCard) {
+
+    if (els.t3ToastCard && !els.t3ToastCard.hidden) {
       els.t3ToastCard.classList.add("is-dismissing");
       setTimeout(() => {
-        showT3Screen("start");
+        if (els.t3ToastCard) {
+          els.t3ToastCard.hidden = true;
+          els.t3ToastCard.classList.remove("is-dismissing");
+        }
+      }, 220);
+    }
+
+    if (els.t3ScreenSpotlight && !els.t3ScreenSpotlight.hidden && els.t3ScreenStart) {
+      t3Stage = "start";
+      els.t3ScreenStart.hidden = false;
+      els.t3ScreenSpotlight.classList.remove("is-sliding-in-right");
+      els.t3ScreenSpotlight.classList.add("is-sliding-out-right");
+
+      setTimeout(() => {
+        els.t3ScreenSpotlight.classList.remove("is-sliding-out-right");
+        els.t3ScreenSpotlight.hidden = true;
         setKnobAngle(knobToReset, 0, true, true);
-      }, 200);
+      }, 320);
     } else {
       showT3Screen("start");
       setKnobAngle(knobToReset, 0, true, true);
@@ -1727,19 +1784,19 @@
       });
     }
 
-    // Toast Actions
+    // Toast Actions: X button immediately advances to Precision Cooking without 3s countdown
     if (els.t3ToastClose) {
       els.t3ToastClose.addEventListener("click", (e) => {
         e.stopPropagation();
-        cancelT3A();
+        playSound("touch");
+        transitionToT3Spotlight();
       });
     }
     if (els.t3ToastDismiss) {
       els.t3ToastDismiss.addEventListener("click", (e) => {
         e.stopPropagation();
-        clearT3Timers();
-        playSound("toggleOn");
-        showT3Screen("spotlight");
+        playSound("touch");
+        transitionToT3Spotlight();
       });
     }
 
