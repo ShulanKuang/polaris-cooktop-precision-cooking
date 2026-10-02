@@ -30,7 +30,7 @@ This is an interactive high-fidelity web prototype deployed on an **iPad Pro 13"
 3. **Task 3: Usability Flow & Physical Knobs Manifold** (`?task=3#task3`)
    - **Task 3A: Precision Cooking Startup Flow**:
      - **Start Screen (`task2-start-new.png`)**: All burners OFF, clean cooktop without Precision Cooking card per Figma node `2345:16560`.
-     - **Knob Turning Animation (Min to Max)**: Turning Knob 1 clockwise rolls the rear-left burner display through levels 1 to 10 inside the dashed white ring with haptic tick audio.
+     - **Knob Turning Animation (Min to Max)**: Turning Knob 1 clockwise rolls the rear-left burner display through levels 1 to 10 equally divided across the entire arc from MIN ($55^\circ$) to MAX ($270^\circ$, 9 o'clock) inside the dashed white ring with haptic tick audio.
      - **Knob 1 to PRC**: Turning Knob 1 to `PRC` detent (-56°) illuminates Knob 1 LED and displays the white Precision Cooking Temperature Icon centered within the dashed ring.
      - **2s Delay & Transition**: Holds the temperature icon for 2 seconds, then automatically advances to the Precision Cooking Spotlight screen.
      - **Cancel / Reset**: Turning Knob 1 back to OFF (0°) or clicking `< Cooktop` resets the burner roller and turns Knob 1 OFF.
@@ -58,7 +58,8 @@ This is an interactive high-fidelity web prototype deployed on an **iPad Pro 13"
    - **5 Rotatable Knobs**:
      - Touch targets: `calc(232 / 2000 * 100cqw)`
      - Dynamic center calculation: `target.getBoundingClientRect()`
-     - Magnetic Detents: Snaps cleanly to `OFF` (0°) and `PRC` (-56°)
+     - Magnetic Detents: Snaps cleanly to `OFF` (0°), `PRC` (-56°), and power levels 1–10 ($55^\circ \to 270^\circ$ in 9 equal intervals of $23.89^\circ$)
+     - End-stop enforcement: stops at MAX ($270^\circ$, 9 o'clock) clockwise and PRC ($-56^\circ$) counter-clockwise
      - Click/tap toggles between OFF and PRC
      - Glowing LED indicators: `assets/knob-light-figma.png`
 

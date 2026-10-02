@@ -861,8 +861,8 @@
       return;
     }
 
-    const isPRC = (angle < -25 && angle > -75);
-    const isMinToMax = (angle >= 25 && angle <= 165);
+    const isPRC = (angle < -20 && angle > -80);
+    const isMinToMax = (angle >= 20 && angle <= 285);
     const isOff = (Math.abs(angle) <= 12);
 
     if (animate) {
@@ -894,7 +894,7 @@
         }, 2000);
       }
     } else if (isMinToMax) {
-      // 2. Turning from Min to Max: dedicated burner changes number 1-10
+      // 2. Turning from Min to Max: dedicated burner changes number 1-10 equally divided
       if (t3PrcDelayTimer) {
         clearTimeout(t3PrcDelayTimer);
         t3PrcDelayTimer = null;
@@ -902,9 +902,10 @@
 
       els.t3BurnerRoller1.classList.add("is-active");
 
-      // Angle: Min is ~35 deg, Max is ~145 deg
-      const clamped = Math.max(30, Math.min(150, angle));
-      const level = Math.max(1, Math.min(10, Math.round(1 + ((clamped - 30) / 120) * 9)));
+      // Angle: MIN tick is at 55 deg, MAX tick is at 270 deg (arc span = 215 deg)
+      const clamped = Math.max(55, Math.min(270, angle));
+      const progress = (clamped - 55) / (270 - 55);
+      const level = Math.max(1, Math.min(10, Math.round(1 + progress * 9)));
 
       if (level !== currentT3BurnerLevel) {
         currentT3BurnerLevel = level;
@@ -1364,7 +1365,7 @@
           renderBurnerState(k.burner);
         } else {
           // If turned towards PRC (-56 deg)
-          if (angle < -25 && angle > -75) {
+          if (angle < -20 && angle > -80) {
             state.burners[k.burner].state = "precision";
             if (!state.burners[k.burner].temp && !state.burners[k.burner].mode) {
               state.burners[k.burner].temp = 375;
@@ -1421,16 +1422,47 @@
         const dy = e.clientY - cy;
 
         // Angle from 12 o'clock (-dy = up, dx = right)
-        let deg = Math.atan2(dx, -dy) * (180 / Math.PI);
+        const rawDeg = Math.atan2(dx, -dy) * (180 / Math.PI);
+        const cwDeg = (rawDeg + 360) % 360;
 
-        // Snap thresholds:
-        // Within 10 degrees of OFF (0 deg) -> snap to 0
-        if (Math.abs(deg) < 10) {
-          deg = 0;
-        }
-        // Within 12 degrees of PRC (-56 deg) -> snap to -56
-        else if (Math.abs(deg - (-56)) < 12) {
-          deg = -56;
+        let deg = 0;
+
+        // Center Knob (Index 3) - Only OFF (0) and ON (45)
+        if (index === 3) {
+          if (cwDeg >= 15 && cwDeg <= 120) {
+            deg = 45;
+          } else {
+            deg = 0;
+          }
+        } else {
+          // Knobs 1, 2, 4, 5: OFF (0°), PRC (-56° / 304°), MIN (55°), MAX (270°)
+          const prevAngle = k.angle;
+
+          if (cwDeg <= 12 || cwDeg >= 350) {
+            // Dead center OFF (12 o'clock)
+            deg = 0;
+          } else if (cwDeg >= 282 && cwDeg < 350) {
+            // Counter-clockwise side (PRC zone)
+            const ccw = cwDeg - 360; // -78 to -10
+            if (prevAngle >= 150) {
+              // User was at or approaching MAX (270), respect physical end-stop
+              deg = 270;
+            } else if (Math.abs(ccw - (-56)) < 12) {
+              deg = -56;
+            } else {
+              deg = Math.max(-75, ccw);
+            }
+          } else {
+            // Clockwise side (MIN 55° to MAX 270°)
+            if (prevAngle < -30 && cwDeg > 220) {
+              // User was at PRC (-56), respect physical end-stop before MAX
+              deg = -56;
+            } else if (cwDeg > 270) {
+              deg = 270; // Clamped at MAX
+            } else {
+              deg = cwDeg; // 12° to 270°
+            }
+          }
         }
 
         setKnobAngle(index, deg, false, true);
@@ -1452,15 +1484,20 @@
         } else {
           // Snap to nearest detent on release
           let snapDeg = k.angle;
-          if (Math.abs(snapDeg) < 16) {
-            snapDeg = 0;
-          } else if (Math.abs(snapDeg - (-56)) < 20) {
-            snapDeg = -56;
-          } else if (snapDeg >= 25 && snapDeg <= 165) {
-            // Snap to nearest discrete 1-10 level angle
-            const clamped = Math.max(30, Math.min(150, snapDeg));
-            const level = Math.max(1, Math.min(10, Math.round(1 + ((clamped - 30) / 120) * 9)));
-            snapDeg = 30 + (level - 1) * (120 / 9);
+          if (index === 3) {
+            snapDeg = snapDeg > 20 ? 45 : 0;
+          } else {
+            if (Math.abs(snapDeg) < 16) {
+              snapDeg = 0;
+            } else if (snapDeg < -20 || Math.abs(snapDeg - (-56)) < 20) {
+              snapDeg = -56;
+            } else if (snapDeg >= 20) {
+              // Snap to nearest discrete 1-10 level angle (55° to 270°)
+              const clamped = Math.max(55, Math.min(270, snapDeg));
+              const progress = (clamped - 55) / (270 - 55);
+              const level = Math.max(1, Math.min(10, Math.round(1 + progress * 9)));
+              snapDeg = 55 + (level - 1) * ((270 - 55) / 9);
+            }
           }
           playSound("touch");
           setKnobAngle(index, snapDeg, true, true);
@@ -1481,11 +1518,31 @@
         } else if (e.key === "ArrowLeft") {
           e.preventDefault();
           playSound("touch");
-          setKnobAngle(index, Math.max(-90, k.angle - 10), true, true);
+          if (k.angle <= 0) {
+            setKnobAngle(index, -56, true, true);
+          } else if (k.angle <= 55) {
+            setKnobAngle(index, 0, true, true);
+          } else {
+            const clamped = Math.max(55, Math.min(270, k.angle));
+            const progress = (clamped - 55) / (270 - 55);
+            const level = Math.max(1, Math.round(1 + progress * 9) - 1);
+            const prevDeg = 55 + (level - 1) * ((270 - 55) / 9);
+            setKnobAngle(index, prevDeg, true, true);
+          }
         } else if (e.key === "ArrowRight") {
           e.preventDefault();
           playSound("touch");
-          setKnobAngle(index, Math.min(45, k.angle + 10), true, true);
+          if (k.angle === -56) {
+            setKnobAngle(index, 0, true, true);
+          } else if (k.angle <= 0) {
+            setKnobAngle(index, 55, true, true);
+          } else {
+            const clamped = Math.max(55, Math.min(270, k.angle));
+            const progress = (clamped - 55) / (270 - 55);
+            const level = Math.min(10, Math.round(1 + progress * 9) + 1);
+            const nextDeg = 55 + (level - 1) * ((270 - 55) / 9);
+            setKnobAngle(index, nextDeg, true, true);
+          }
         }
       });
     });
