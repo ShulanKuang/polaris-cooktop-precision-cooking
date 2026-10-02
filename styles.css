@@ -2097,7 +2097,8 @@ html, body {
   display: flex;
   align-items: center;
   justify-content: center;
-  pointer-events: none;
+  pointer-events: auto;
+  cursor: pointer;
   opacity: 0;
   transition: opacity 0.2s ease;
   z-index: 105;

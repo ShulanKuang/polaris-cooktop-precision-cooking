@@ -304,12 +304,13 @@
       if (els.screenBottomStrip) els.screenBottomStrip.hidden = false;
     }
 
-    // Task 3 Knobs Manifold (Only visible in Task 3, 80px below screen)
+    // Cooktop Knobs Manifold (Visible in Task 2 and Task 3, 80px below screen)
+    const hasKnobs = (taskId === 2 || taskId === 3);
     if (els.cooktopManifoldPanel) {
-      els.cooktopManifoldPanel.hidden = (taskId !== 3);
+      els.cooktopManifoldPanel.hidden = !hasKnobs;
     }
     if (els.cooktopWrapper) {
-      els.cooktopWrapper.classList.toggle("is-task-3", taskId === 3);
+      els.cooktopWrapper.classList.toggle("is-task-3", hasKnobs);
     }
 
     // Reset drawer
@@ -328,13 +329,19 @@
   function showT2Explore(silent = false) {
     if (!silent) playSound("touch");
     state.task2.screen = "explore";
-    if (els.t2ScreenExplore) els.t2ScreenExplore.hidden = false;
-    if (els.t2ScreenPrecision) els.t2ScreenPrecision.hidden = true;
+    if (els.viewTask2) els.viewTask2.hidden = true;
+    if (els.viewTask3) els.viewTask3.hidden = false;
+    if (activePrcKnobIndex) {
+      setKnobAngle(activePrcKnobIndex, 0, true, true);
+    }
+    showT3Screen("start");
   }
 
   function showT2Precision(tabName = "spotlight", tempMode = "picker", silent = false) {
     if (!silent) playSound("touch");
     state.task2.screen = "precision";
+    if (els.viewTask3) els.viewTask3.hidden = true;
+    if (els.viewTask2) els.viewTask2.hidden = false;
     if (els.t2ScreenExplore) els.t2ScreenExplore.hidden = true;
     if (els.t2ScreenPrecision) els.t2ScreenPrecision.hidden = false;
     setT2Tab(tabName, tempMode, true);
@@ -866,7 +873,7 @@
   }
 
   function updateT3BurnerFromKnob(index, angle, animate = false) {
-    if (state.currentTask !== 3) return;
+    if (state.currentTask !== 3 && state.currentTask !== 2) return;
 
     const burnerConfigs = {
       1: { roller: els.t3BurnerRoller1, strip: els.t3BurnerStrip1, type: "standard", itemH: 38, baseOffset: 45 },
@@ -1082,6 +1089,11 @@
     }
 
     playSound("toggleOn");
+
+    if (state.currentTask === 2) {
+      showT2Precision("spotlight", "picker");
+      return;
+    }
 
     // Perform smooth synchronized push-slide transition from right
     if (els.t3ScreenSpotlight && els.t3ScreenStart) {
@@ -1548,8 +1560,8 @@
       }
     }
 
-    // TASK 3A PRECISION COOKING WORKFLOW TRIGGER
-    if (state.currentTask === 3) {
+    // TASK 2 & TASK 3 PRECISION COOKING WORKFLOW TRIGGER
+    if (state.currentTask === 3 || state.currentTask === 2) {
       updateT3BurnerFromKnob(index, angle, animate);
     }
 
@@ -1842,12 +1854,20 @@
         setKnobAngle(1, -56, true, true);
       });
     }
-    if (els.t3HotspotRearLeft) {
-      els.t3HotspotRearLeft.addEventListener("click", () => {
-        playSound("touch");
-        setKnobAngle(1, -56, true, true);
-      });
-    }
+    // Tapping directly on any screen burner triggers its dedicated knob and animations
+    [1, 2, 3, 4, 5].forEach(i => {
+      const roller = els[`t3BurnerRoller${i}`];
+      if (roller) {
+        roller.addEventListener("click", (e) => {
+          e.stopPropagation();
+          playSound("touch");
+          const k = knobsState[i - 1];
+          const isOff = !k || Math.abs(k.angle) <= 5;
+          const targetAngle = isOff ? (i === 3 ? 45 : -56) : 0;
+          setKnobAngle(i, targetAngle, true, true);
+        });
+      }
+    });
 
     // Toast Actions: X button immediately advances to Precision Cooking without 3s countdown
     if (els.t3ToastClose) {
