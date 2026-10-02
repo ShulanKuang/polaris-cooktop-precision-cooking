@@ -2968,7 +2968,13 @@ html, body {
   padding: 0 16px 0 28px;
   z-index: 15;
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
-  pointer-events: none;
+  pointer-events: auto;
+  cursor: pointer;
+  transition: transform 0.15s ease, opacity 0.15s ease;
+}
+.t3-start-active-burner1:active {
+  opacity: 0.88;
+  transform: scale(0.98);
 }
 .t3-start-card-info {
   display: flex;

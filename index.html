@@ -6,7 +6,7 @@
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <title>Polaris Cooktop Precision Cooking Prototype</title>
-  <link rel="stylesheet" href="./styles.css?v=20261002-v5-task3c-food-mode">
+  <link rel="stylesheet" href="./styles.css?v=20261002-v6-burner-status-live-knobs">
 </head>
 <body>
   <div class="test-environment">
@@ -76,14 +76,17 @@
         </div>
       </div>
 
-      <!-- TASK 3 ONLY: SUB-FLOW SWITCHER (3B: Temp vs 3C: Food Mode) -->
+      <!-- TASK 3 ONLY: SUB-FLOW SWITCHER (3B: Temp vs Status 500°F vs 3C: Food Mode) -->
       <div class="t3-subflow-controls" id="t3SubflowControls" hidden>
         <span class="glance-label">Task 3 Flow:</span>
         <button type="button" class="glance-btn is-active" id="btnT3FlowTemp">
-          3B: Temp (Knob 1)
+          3B: Temp Flow
+        </button>
+        <button type="button" class="glance-btn" id="btnT3FlowStatus">
+          Status (500°F)
         </button>
         <button type="button" class="glance-btn" id="btnT3FlowFood">
-          3C: Food (Knob 2)
+          3C: Food Flow
         </button>
       </div>
     </section>
@@ -269,6 +272,8 @@
             <!-- 1. SCREEN: 3A-START (ALL BURNERS OFF) -->
             <div class="t3-screen" id="t3ScreenStart">
               <img class="t3-screen-bg" src="./assets/task3a-start.png" alt="Cooktop Home - All Burners Off">
+              <!-- Back button (< Cooktop) -->
+              <button type="button" class="t3-back-btn" id="t3BtnBackFromStart" aria-label="Back to Cooktop"></button>
               <!-- Dynamic Animated Burner Rollers (All 5 Screen Burners) -->
               <!-- 1. Front Left (Knob 1) -->
               <div class="t3-burner-roller burner-fl" id="t3BurnerRoller1" aria-hidden="true">
@@ -753,6 +758,6 @@
     </footer>
   </div>
 
-  <script src="./app.js?v=20261002-v5-task3c-food-mode"></script>
+  <script src="./app.js?v=20261002-v6-burner-status-live-knobs"></script>
 </body>
 </html>
