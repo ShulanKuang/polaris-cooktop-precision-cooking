@@ -180,6 +180,7 @@
     t3ToastPreheatComplete: document.getElementById("t3ToastPreheatComplete"),
     t3ToastCompleteOk: document.getElementById("t3ToastCompleteOk"),
     t3ToastCompleteClose: document.getElementById("t3ToastCompleteClose"),
+    t3BtnEditPreheatFromComplete: document.getElementById("t3BtnEditPreheatFromComplete"),
 
     t3ScreenBurnerStatus: document.getElementById("t3ScreenBurnerStatus"),
     t3BtnBackFromBurnerStatus: document.getElementById("t3BtnBackFromBurnerStatus"),
@@ -825,6 +826,10 @@
     if (els.t3ScreenPreheatComplete) els.t3ScreenPreheatComplete.hidden = (stage !== "completed");
     if (els.t3ScreenBurnerStatus) els.t3ScreenBurnerStatus.hidden = (stage !== "burnerStatus");
     if (els.t3ScreenTempRun) els.t3ScreenTempRun.hidden = (stage !== "tempRun");
+    if (stage !== "completed" && els.t3ToastPreheatComplete) {
+      els.t3ToastPreheatComplete.classList.remove("is-visible");
+      els.t3ToastPreheatComplete.classList.remove("is-dismissing");
+    }
 
     // Activity bar only shows up starting from preheat screen!
     // Before this or before user clicks start, activity bar must not show up.
@@ -1193,6 +1198,19 @@
     showT3Screen("completed");
     playSound("toggleOn");
 
+    // Pop up preheat complete toast with spring animation!
+    if (els.t3ToastPreheatComplete) {
+      els.t3ToastPreheatComplete.classList.remove("is-visible");
+      els.t3ToastPreheatComplete.classList.remove("is-dismissing");
+      requestAnimationFrame(() => {
+        setTimeout(() => {
+          if (t3Stage === "completed" && els.t3ToastPreheatComplete) {
+            els.t3ToastPreheatComplete.classList.add("is-visible");
+          }
+        }, 50);
+      });
+    }
+
     const targetTemp = state.task3TargetTemp || 375;
     if (els.t3CompleteTarget) {
       els.t3CompleteTarget.textContent = targetTemp;
@@ -1207,10 +1225,11 @@
   function finishT3PreheatToBurnerStatus() {
     clearT3Timers();
     if (els.t3ToastPreheatComplete) {
+      els.t3ToastPreheatComplete.classList.remove("is-visible");
       els.t3ToastPreheatComplete.classList.add("is-dismissing");
       setTimeout(() => {
         showT3Screen("burnerStatus");
-      }, 200);
+      }, 250);
     } else {
       showT3Screen("burnerStatus");
     }
@@ -2026,16 +2045,36 @@
       });
     }
     if (els.t3ToastCompleteOk) {
-      els.t3ToastCompleteOk.addEventListener("click", (e) => {
-        e.stopPropagation();
+      const handleOk = (e) => {
+        if (e) e.stopPropagation();
         finishT3PreheatToBurnerStatus();
-      });
+      };
+      els.t3ToastCompleteOk.addEventListener("click", handleOk);
+      els.t3ToastCompleteOk.addEventListener("touchstart", handleOk, { passive: true });
     }
     if (els.t3ToastCompleteClose) {
-      els.t3ToastCompleteClose.addEventListener("click", (e) => {
-        e.stopPropagation();
+      const handleClose = (e) => {
+        if (e) e.stopPropagation();
         finishT3PreheatToBurnerStatus();
-      });
+      };
+      els.t3ToastCompleteClose.addEventListener("click", handleClose);
+      els.t3ToastCompleteClose.addEventListener("touchstart", handleClose, { passive: true });
+    }
+    if (els.t3BtnEditPreheatFromComplete) {
+      const handleEdit = (e) => {
+        if (e) e.stopPropagation();
+        playSound("touch");
+        clearT3Timers();
+        showT3Screen("temperature");
+        requestAnimationFrame(() => {
+          scrollToT3Temp(state.task3TargetTemp || 375, false);
+          setTimeout(() => {
+            scrollToT3Temp(state.task3TargetTemp || 375, false);
+          }, 60);
+        });
+      };
+      els.t3BtnEditPreheatFromComplete.addEventListener("click", handleEdit);
+      els.t3BtnEditPreheatFromComplete.addEventListener("touchstart", handleEdit, { passive: true });
     }
 
     // Burner Status Screen: Back Button & Active Burner Card Hotspot
@@ -2097,17 +2136,25 @@
       });
     }
 
+    const navBack = document.getElementById("navBackBtn");
     const navCooktop = document.getElementById("navCooktopBtn");
-    if (navCooktop) {
-      navCooktop.addEventListener("click", () => {
-        playSound("touch");
-        if (state.currentTask === 3 && t3Stage !== "start") {
-          cancelT3A();
-        } else if (state.currentTask === 2) {
-          showT2Explore(true);
-        }
-      });
-    }
+    const navHome = document.getElementById("navHomeBtn");
+
+    const onNavReturn = (e) => {
+      if (e) e.preventDefault();
+      playSound("touch");
+      if (state.currentTask === 3 && t3Stage !== "start") {
+        cancelT3A();
+      } else if (state.currentTask === 2) {
+        showT2Explore(true);
+      }
+    };
+
+    [navBack, navCooktop, navHome].forEach((btn) => {
+      if (!btn) return;
+      btn.addEventListener("click", onNavReturn);
+      btn.addEventListener("touchstart", onNavReturn, { passive: false });
+    });
 
     // Scale Switcher (Physical 1:1 for iPad Pro 13" vs 100% Canvas)
     if (els.btnScalePhysical) {

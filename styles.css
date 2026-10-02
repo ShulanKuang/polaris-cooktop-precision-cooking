@@ -744,12 +744,6 @@ html, body {
   height: 384px;
   background: #141417;
   border-right: 1px solid #222427;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  align-items: center;
-  padding: 14px 0 16px 0;
-  box-sizing: border-box;
   z-index: 200 !important;
   pointer-events: auto;
   user-select: none;
@@ -768,47 +762,43 @@ html, body {
   z-index: 1;
 }
 
-.rail-apps {
-  position: relative;
-  z-index: 2;
-  display: flex;
-  flex-direction: column;
-  gap: 18px;
-  align-items: center;
-}
-
-.nav-icon {
-  position: relative;
-  z-index: 2;
-  width: 44px;
-  height: 44px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 10px;
-  opacity: 0.85;
-  transition: opacity 0.15s, transform 0.12s;
+.nav-rail-hotspot {
+  position: absolute;
+  left: 0;
+  width: 90px;
+  background: transparent;
+  border: none;
+  padding: 0;
+  margin: 0;
   cursor: pointer;
-}
-.nav-icon:active {
-  transform: scale(0.92);
-}
-
-.nav-icon img {
-  width: 24px;
-  height: 24px;
-  display: block;
-  pointer-events: none;
+  outline: none;
+  z-index: 2;
+  -webkit-tap-highlight-color: transparent;
 }
 
-.nav-icon.is-selected {
-  opacity: 1;
+.nav-rail-back {
+  top: 0;
+  height: 68px;
 }
 
-.cooktop-active-img {
-  width: 28px;
-  height: 28px;
-  display: block;
+.nav-rail-cooktop {
+  top: 72px;
+  height: 68px;
+}
+
+.nav-rail-oven-upper {
+  top: 144px;
+  height: 68px;
+}
+
+.nav-rail-oven-lower {
+  top: 216px;
+  height: 68px;
+}
+
+.nav-rail-home {
+  top: 290px;
+  height: 94px;
 }
 
 /* ============================================== */
@@ -2740,73 +2730,92 @@ html, body {
   transform: scale(0.95);
 }
 
-/* Completed Screen Large Temperature Readout */
-.t3-completed-temp-display {
+/* ============================================== */
+/* PREHEAT COMPLETE SCREEN TOAST (FIGMA 2348-17541)*/
+/* ============================================== */
+.t3-toast-complete-card {
+  position: absolute;
+  bottom: 21px;
+  left: 50%;
+  transform: translate3d(-50%, 120px, 0);
+  -webkit-transform: translate3d(-50%, 120px, 0);
+  width: 600px;
+  height: 60px;
+  background: #ffffff;
+  border-radius: 4px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.45);
+  display: block;
+  padding: 0;
+  box-sizing: border-box;
+  z-index: 108;
+  opacity: 0;
+  pointer-events: none;
+  transition: transform 0.32s cubic-bezier(0.16, 1, 0.3, 1), -webkit-transform 0.32s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.25s ease;
+  -webkit-transition: transform 0.32s cubic-bezier(0.16, 1, 0.3, 1), -webkit-transform 0.32s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.25s ease;
+  will-change: transform, opacity;
+  overflow: hidden;
+}
+
+.t3-toast-complete-card.is-visible {
+  transform: translate3d(-50%, 0, 0) !important;
+  -webkit-transform: translate3d(-50%, 0, 0) !important;
+  opacity: 1 !important;
+  pointer-events: auto !important;
+}
+
+.t3-toast-complete-card.is-dismissing {
+  transform: translate3d(-50%, 120px, 0) !important;
+  -webkit-transform: translate3d(-50%, 120px, 0) !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+}
+
+.t3-toast-complete-img {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 600px;
+  height: 60px;
+  display: block;
+  pointer-events: none;
+  user-select: none;
+  -webkit-user-drag: none;
+}
+
+.t3-toast-complete-ok-btn {
+  position: absolute;
+  left: 468px;
+  top: 6px;
+  width: 70px;
+  height: 48px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  outline: none;
+  border-radius: 4px;
+  z-index: 2;
+  -webkit-tap-highlight-color: transparent;
+}
+.t3-toast-complete-ok-btn:active {
+  background: rgba(184, 55, 162, 0.15);
+}
+
+.t3-toast-complete-close-btn {
   position: absolute;
   left: 540px;
-  top: 158px;
-  width: 196px;
-  height: 66px;
-  display: flex;
-  align-items: baseline;
-  justify-content: center;
-  z-index: 10;
-  pointer-events: none;
-}
-
-.t3-temp-val-num-large {
-  font-family: var(--font-display), "Profile Display", system-ui, sans-serif;
-  font-size: 72px;
-  font-weight: 700;
-  color: #ffffff;
-  line-height: 1;
-  letter-spacing: -1px;
-}
-
-.t3-temp-val-unit-large {
-  font-family: var(--font-display), "Profile Display", system-ui, sans-serif;
-  font-size: 32px;
-  font-weight: 700;
-  color: #ffffff;
-  margin-left: 4px;
-  line-height: 1;
-  vertical-align: super;
-  transform: translateY(-22px);
-}
-
-/* Toast Action Hotspots over authentic Figma toast in completed screen */
-.t3-toast-hotspot-ok {
-  position: absolute;
-  left: 647px;
-  top: 310px;
-  width: 54px;
-  height: 44px;
+  top: 6px;
+  width: 52px;
+  height: 48px;
   background: transparent;
   border: none;
   cursor: pointer;
   outline: none;
-  border-radius: 6px;
-  z-index: 30;
+  border-radius: 50%;
+  z-index: 2;
+  -webkit-tap-highlight-color: transparent;
 }
-.t3-toast-hotspot-ok:active {
-  background: rgba(160, 43, 143, 0.15);
-}
-
-.t3-toast-hotspot-close {
-  position: absolute;
-  left: 711px;
-  top: 310px;
-  width: 44px;
-  height: 44px;
-  background: transparent;
-  border: none;
-  cursor: pointer;
-  outline: none;
-  border-radius: 6px;
-  z-index: 30;
-}
-.t3-toast-hotspot-close:active {
-  background: rgba(160, 43, 143, 0.15);
+.t3-toast-complete-close-btn:active {
+  background: rgba(184, 55, 162, 0.15);
 }
 
 /* Burner Status Overview Screen Active Hotspot */

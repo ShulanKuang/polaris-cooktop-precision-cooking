@@ -6,7 +6,7 @@
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <title>Polaris Cooktop Precision Cooking Prototype</title>
-  <link rel="stylesheet" href="./styles.css?v=20261002-pinned-nav-centered-toast">
+  <link rel="stylesheet" href="./styles.css?v=20261002-clean-navbar-preheat-spring-toast">
 </head>
 <body>
   <div class="test-environment">
@@ -465,21 +465,21 @@
               <button type="button" class="t3-btn-edit-preheat" id="t3BtnEditPreheat" aria-label="Edit Temperature"></button>
             </div>
 
-            <!-- 6. SCREEN: 3B-TEMP EXPAND COMPLETED (PREHEATED WITH 3S TOAST) -->
+            <!-- 6. SCREEN: 3B-TEMP EXPAND COMPLETED (PREHEATED WITH SPRING TOAST FIGMA 2348-17501 & 2348-17541) -->
             <div class="t3-screen" id="t3ScreenPreheatComplete" hidden>
-              <img class="t3-screen-bg" src="./assets/task3b-temp-expand-completed-clean.png" alt="Temperature Preheated Complete">
+              <img class="t3-screen-bg" src="./assets/task3b-temp-expand-completed-clean.png" alt="Preheat Complete">
               <!-- Back button (< Cooktop) -->
               <button type="button" class="t3-back-btn" id="t3BtnBackFromComplete" aria-label="Back to Cooktop"></button>
 
-              <!-- Center Target Temperature Display -->
-              <div class="t3-completed-temp-display">
-                <span class="t3-temp-val-num-large" id="t3CompleteTarget">375</span>
-                <span class="t3-temp-val-unit-large">°F</span>
-              </div>
+              <!-- Edit Temperature Pill Button -->
+              <button type="button" class="t3-btn-edit-preheat" id="t3BtnEditPreheatFromComplete" aria-label="Edit Temperature"></button>
 
-              <!-- Toast Action Hotspots (aligned over OK and ✕ in the Figma toast) -->
-              <button type="button" class="t3-toast-hotspot-ok" id="t3ToastCompleteOk" aria-label="OK"></button>
-              <button type="button" class="t3-toast-hotspot-close" id="t3ToastCompleteClose" aria-label="Close Toast"></button>
+              <!-- Preheat Complete Toast (Figma Node 2348-17541 with Spring Motion Animation) -->
+              <div class="t3-toast-card t3-toast-complete-card" id="t3ToastPreheatComplete">
+                <img class="t3-toast-complete-img" src="./assets/toast-preheat-complete.png" alt="Preheat complete. OK ✕">
+                <button type="button" class="t3-toast-complete-ok-btn" id="t3ToastCompleteOk" aria-label="OK"></button>
+                <button type="button" class="t3-toast-complete-close-btn" id="t3ToastCompleteClose" aria-label="Close Toast"></button>
+              </div>
             </div>
 
             <!-- 7. SCREEN: 3B-BURNER STATUS (COOKTOP OVERVIEW WITH 375°F ACTIVE) -->
@@ -515,25 +515,12 @@
           <!-- LEFT NAVIGATION RAIL (PINNED 90px NAVBAR OVER ALL SCREENS) -->
           <aside class="screen-rail" id="screenRail" aria-label="Cooktop navigation">
             <img class="screen-rail-bg" src="./assets/navbar-pinned-90px.png" alt="" aria-hidden="true">
-            <div class="nav-icon nav-summary" id="navSummaryBtn" title="Summary">
-              <img src="./figma-assets/nav-summary-top.svg" alt="Summary">
-            </div>
-            <div class="rail-apps">
-              <div class="nav-icon nav-app nav-cooktop is-selected" id="navCooktopBtn" title="Cooktop">
-                <span class="cooktop-icon-active">
-                  <img class="cooktop-active-img" src="./figma-assets/cooktop-selected-active.svg" alt="Cooktop">
-                </span>
-              </div>
-              <div class="nav-icon nav-app" id="navOvenUpperBtn" title="Upper Oven">
-                <img src="./figma-assets/nav-oven-upper.svg" alt="Upper Oven">
-              </div>
-              <div class="nav-icon nav-app" id="navOvenLowerBtn" title="Lower Oven">
-                <img src="./figma-assets/nav-oven-lower.svg" alt="Lower Oven">
-              </div>
-            </div>
-            <div class="nav-icon nav-home" id="navHomeBtn" title="Home">
-              <img src="./figma-assets/nav-home-bottom.svg" alt="Home">
-            </div>
+            <!-- Invisible Touch Hotspots over the authentic Figma navbar icons -->
+            <button type="button" class="nav-rail-hotspot nav-rail-back" id="navBackBtn" aria-label="Back"></button>
+            <button type="button" class="nav-rail-hotspot nav-rail-cooktop" id="navCooktopBtn" aria-label="Cooktop"></button>
+            <button type="button" class="nav-rail-hotspot nav-rail-oven-upper" id="navOvenUpperBtn" aria-label="Upper Oven"></button>
+            <button type="button" class="nav-rail-hotspot nav-rail-oven-lower" id="navOvenLowerBtn" aria-label="Lower Oven"></button>
+            <button type="button" class="nav-rail-hotspot nav-rail-home" id="navHomeBtn" aria-label="Home"></button>
           </aside>
 
           <!-- TOP STATUS BAR -->
@@ -630,6 +617,6 @@
     </footer>
   </div>
 
-  <script src="./app.js?v=20261002-pinned-nav-centered-toast"></script>
+  <script src="./app.js?v=20261002-clean-navbar-preheat-spring-toast"></script>
 </body>
 </html>
