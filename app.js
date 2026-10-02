@@ -263,7 +263,7 @@
       if (els.task1FullScreen) els.task1FullScreen.hidden = false;
       if (els.viewTask2) els.viewTask2.hidden = true;
       if (els.viewTask3) els.viewTask3.hidden = true;
-      if (els.screenRail) els.screenRail.hidden = false;
+      if (els.screenRail) els.screenRail.hidden = true;
       if (els.topStatus) els.topStatus.hidden = true;
       if (els.screenCanvas) els.screenCanvas.hidden = true;
       if (els.screenBottomStrip) els.screenBottomStrip.hidden = true;
@@ -588,10 +588,14 @@
   function flashGlance(durationMs) {
     if (state.shutterTimer) clearTimeout(state.shutterTimer);
 
-    // Uncover immediately
+    // Uncover immediately (including navbar)
     if (els.task1StandbyCover) {
       els.task1StandbyCover.classList.add("is-revealed");
       els.task1StandbyCover.style.display = "none";
+    }
+    if (state.currentTask === 1 && els.screenRail) {
+      els.screenRail.hidden = false;
+      updateNavbarState();
     }
     if (els.glanceStatusPill) els.glanceStatusPill.classList.add("is-active");
     if (els.pillStatusText) {
@@ -610,6 +614,9 @@
     if (els.task1StandbyCover) {
       els.task1StandbyCover.classList.remove("is-revealed");
       els.task1StandbyCover.style.display = "flex";
+    }
+    if (state.currentTask === 1 && els.screenRail) {
+      els.screenRail.hidden = true;
     }
     if (els.glanceStatusPill) els.glanceStatusPill.classList.remove("is-active");
     if (els.pillStatusText) els.pillStatusText.textContent = "Hidden";
@@ -632,6 +639,10 @@
       if (els.task1StandbyCover) {
         els.task1StandbyCover.classList.add("is-revealed");
         els.task1StandbyCover.style.display = "none";
+      }
+      if (state.currentTask === 1 && els.screenRail) {
+        els.screenRail.hidden = false;
+        updateNavbarState();
       }
       if (els.glanceStatusPill) els.glanceStatusPill.classList.add("is-active");
       if (els.pillStatusText) els.pillStatusText.textContent = "Preview (On)";
