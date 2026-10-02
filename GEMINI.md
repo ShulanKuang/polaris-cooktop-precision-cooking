@@ -70,7 +70,9 @@ This is an interactive high-fidelity web prototype deployed on an **iPad Pro 13"
      - Touch targets: `calc(232 / 2000 * 100cqw)`
      - Dynamic center calculation: `target.getBoundingClientRect()`
      - Magnetic Detents: Snaps cleanly to `OFF` (0°), `PRC` (-56°), and power levels 1–10 ($55^\circ \to 270^\circ$ in 9 equal intervals of $23.89^\circ$)
-     - End-stop enforcement: stops at MAX ($270^\circ$, 9 o'clock) clockwise and PRC ($-56^\circ$) counter-clockwise
+     - Continuous Rotation & Detents: Knobs turn freely clockwise through OFF (0°) -> MIN (55°) ... MAX (270°) -> PRC (-56°) -> OFF (0°) without locking at Level 10/MAX!
+     - Counter-clockwise rotation from OFF turns directly to PRC (-56°) -> MAX (270°) ... MIN (55°) -> OFF (0°).
+     - Toast Popup & 1s Quiet Delay: Entering PRC waits 1s quietly, then toast quickly raises up from bottom with 3s countdown before smooth synchronized screen slide to Spotlight.
      - Click/tap toggles between OFF and PRC
      - Glowing LED indicators: `assets/knob-light-figma.png`
 

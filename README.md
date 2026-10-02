@@ -57,14 +57,15 @@ The prototype includes an external researcher toolbar positioned above the appli
 
 ### 1. Startup via Physical Knob
 - **Standby (`Task3A-start`)**: All burners OFF. Manifold panel sits beneath display with 5 clean, unlit knobs.
-- **Knob Turning (Min to Max)**: Turning any standard knob (1, 2, 4, 5) clockwise rolls the dedicated burner display through power levels **1 to 10** equally divided across the entire arc from MIN ($55^\circ$) to MAX ($270^\circ$, 9 o'clock) inside an authentic dashed white ring with haptic tick audio.
-- **Turn Knob to PRC**: Dragging or tapping any PRC-enabled knob to $-56^\circ$ (`PRC` detent):
+- **Continuous Knob Turning (Min to Max & PRC)**: Turning any standard knob (1, 2, 4, 5) clockwise rolls the dedicated burner display through power levels **1 to 10** equally divided across the entire arc from MIN (55 deg) to MAX (270 deg). Users can seamlessly continue turning clockwise past Level 10/MAX directly into **PRC** (-56 deg) without getting locked at MAX!
+- **Turn Knob to PRC (1s Quiet Delay + Toast Quick Raise-Up)**:
   - Knob LED indicator illuminates white.
-  - Dedicated burner displays the glowing white **Precision Cooking Temperature Icon**.
-  - **3-Second Countdown Toast**: A white toast card pops up from the bottom edge (`14px` above the bottom edge, matching Figma node `2294-11451`): `"Starting Precision Cooking in 3s."` with a live 1s countdown ticker ($3 \to 2 \to 1$).
-  - **✕ Button Direct Skip**: Clicking the vector `✕` button on the toast immediately cancels the countdown and advances directly to Spotlight without delay.
-  - **Smooth Slide-in Transition**: When advancing (either upon timer completion or `✕` tap), the Precision Cooking Spotlight screen smoothly slides into view from the right (`0.38s cubic-bezier(0.16, 1, 0.3, 1)`).
-- **Cancel / Reset**: Turning the active knob back to OFF ($0^\circ$) or tapping `< Cooktop` smoothly slides Spotlight back out to the right, resets the burner roller, and returns the knob to OFF.
+  - Dedicated burner immediately displays the glowing white **Precision Cooking Temperature Icon**.
+  - **1s Quiet Delay**: The screen stays quiet on the home view for 1.0s without displaying the toast.
+  - **Toast Quick Raise-Up**: At t = 1.0s, the white toast card quickly raises up from the bottom edge ( above bottom edge, ): "Starting Precision Cooking in 3s."
+  - **3-Second Countdown**: Live countdown ticker ticks 3 -> 2 -> 1 with audio ticks.
+  - **Direct Skip**: Clicking the vector close button or "Don’t show again" immediately advances directly to Spotlight without waiting.
+  - **Synchronized Screen Push-Slide Transition**: Advancing to Spotlight executes a synchronized screen push-slide ( pushes left 0% -> -25% while  slides in from right 100% -> 0% with elevation shadow in 0.40s).
 
 ### 2. Temperature Selection & Preheating
 - **Navigate to Temperature**: Tapping the temperature section or tab opens `Task3B-PCTemperature`.

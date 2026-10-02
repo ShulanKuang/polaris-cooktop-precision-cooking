@@ -803,7 +803,7 @@
   let t3CountdownInterval = null;
   let t3HoldingTimeout = null;
   let t3PreheatInterval = null;
-  const t3PrcDelayTimers = { 1: null, 2: null, 3: null, 4: null, 5: null };
+  const t3PrcQuietTimers = { 1: null, 2: null, 3: null, 4: null, 5: null };
   const currentT3BurnerLevels = { 1: "off", 2: "off", 3: "off", 4: "off", 5: "off" };
   let activePrcKnobIndex = 1;
   let t3Stage = "start"; // "start" | "turnknob" | "spotlight" | "temperature" | "preheat" | "completed" | "burnerStatus"
@@ -836,7 +836,7 @@
       });
       if (els.t3ToastCard) {
         els.t3ToastCard.hidden = true;
-        els.t3ToastCard.classList.remove("is-dismissing");
+        els.t3ToastCard.classList.remove("is-raising-up", "is-dismissing");
       }
       if (els.t3ToastNum) {
         els.t3ToastNum.textContent = "3";
@@ -846,9 +846,9 @@
 
   function clearT3Timers() {
     [1, 2, 3, 4, 5].forEach(i => {
-      if (t3PrcDelayTimers[i]) {
-        clearTimeout(t3PrcDelayTimers[i]);
-        t3PrcDelayTimers[i] = null;
+      if (t3PrcQuietTimers[i]) {
+        clearTimeout(t3PrcQuietTimers[i]);
+        t3PrcQuietTimers[i] = null;
       }
     });
     if (t3CountdownInterval) {
@@ -943,35 +943,20 @@
         it.classList.toggle("is-selected", idx === 11);
       });
 
-      // 3s delay on PRC with countdown toast, then slide in Spotlight
-      if (!t3PrcDelayTimers[index]) {
+      // 1s quiet delay on PRC, then quick raise up toast with 3s countdown, then slide in Spotlight
+      if (!t3PrcQuietTimers[index] && !t3CountdownInterval && !t3HoldingTimeout) {
         if (els.t3ToastCard) {
-          els.t3ToastCard.hidden = false;
-          els.t3ToastCard.classList.remove("is-dismissing");
+          els.t3ToastCard.hidden = true;
+          els.t3ToastCard.classList.remove("is-raising-up", "is-dismissing");
         }
-        let seconds = 3;
         if (els.t3ToastNum) {
-          els.t3ToastNum.textContent = String(seconds);
+          els.t3ToastNum.textContent = "3";
         }
 
-        if (t3CountdownInterval) {
-          clearInterval(t3CountdownInterval);
-        }
-        t3CountdownInterval = setInterval(() => {
-          seconds--;
-          if (seconds >= 1) {
-            if (els.t3ToastNum) els.t3ToastNum.textContent = String(seconds);
-            playSound("tick");
-          } else {
-            clearInterval(t3CountdownInterval);
-            t3CountdownInterval = null;
-          }
+        t3PrcQuietTimers[index] = setTimeout(() => {
+          t3PrcQuietTimers[index] = null;
+          showT3PrcToastAndStartCountdown();
         }, 1000);
-
-        t3PrcDelayTimers[index] = setTimeout(() => {
-          t3PrcDelayTimers[index] = null;
-          transitionToT3Spotlight();
-        }, 3000);
       }
     } else if (isMinToMax) {
       // 2. Turning from Min to Max: dedicated burner changes number 1-10 equally divided
@@ -1016,23 +1001,68 @@
     }
   }
 
-  function dismissPrcTimerAndToast(index) {
-    if (index && t3PrcDelayTimers[index]) {
-      clearTimeout(t3PrcDelayTimers[index]);
-      t3PrcDelayTimers[index] = null;
+  function showT3PrcToastAndStartCountdown() {
+    if (els.t3ToastCard) {
+      els.t3ToastCard.hidden = false;
+      els.t3ToastCard.classList.remove("is-dismissing");
+      els.t3ToastCard.classList.remove("is-raising-up");
+      void els.t3ToastCard.offsetWidth; // Force CSS reflow to ensure animation runs fresh
+      els.t3ToastCard.classList.add("is-raising-up");
     }
+
+    let seconds = 3;
+    if (els.t3ToastNum) {
+      els.t3ToastNum.textContent = String(seconds);
+    }
+
+    if (t3CountdownInterval) clearInterval(t3CountdownInterval);
+    t3CountdownInterval = setInterval(() => {
+      seconds--;
+      if (seconds >= 1) {
+        if (els.t3ToastNum) els.t3ToastNum.textContent = String(seconds);
+        playSound("tick");
+      } else {
+        clearInterval(t3CountdownInterval);
+        t3CountdownInterval = null;
+      }
+    }, 1000);
+
+    if (t3HoldingTimeout) clearTimeout(t3HoldingTimeout);
+    t3HoldingTimeout = setTimeout(() => {
+      t3HoldingTimeout = null;
+      transitionToT3Spotlight();
+    }, 3000);
+  }
+
+  function dismissPrcTimerAndToast(index) {
+    if (index && t3PrcQuietTimers[index]) {
+      clearTimeout(t3PrcQuietTimers[index]);
+      t3PrcQuietTimers[index] = null;
+    }
+    [1, 2, 3, 4, 5].forEach(i => {
+      if (t3PrcQuietTimers[i]) {
+        clearTimeout(t3PrcQuietTimers[i]);
+        t3PrcQuietTimers[i] = null;
+      }
+    });
+
     if (t3CountdownInterval) {
       clearInterval(t3CountdownInterval);
       t3CountdownInterval = null;
     }
+    if (t3HoldingTimeout) {
+      clearTimeout(t3HoldingTimeout);
+      t3HoldingTimeout = null;
+    }
     if (els.t3ToastCard && !els.t3ToastCard.hidden) {
+      els.t3ToastCard.classList.remove("is-raising-up");
       els.t3ToastCard.classList.add("is-dismissing");
       setTimeout(() => {
         if (els.t3ToastCard) {
           els.t3ToastCard.hidden = true;
           els.t3ToastCard.classList.remove("is-dismissing");
         }
-      }, 220);
+      }, 200);
     }
   }
 
@@ -1041,30 +1071,44 @@
 
     // Dismiss toast
     if (els.t3ToastCard && !els.t3ToastCard.hidden) {
+      els.t3ToastCard.classList.remove("is-raising-up");
       els.t3ToastCard.classList.add("is-dismissing");
       setTimeout(() => {
         if (els.t3ToastCard) {
           els.t3ToastCard.hidden = true;
           els.t3ToastCard.classList.remove("is-dismissing");
         }
-      }, 220);
+      }, 200);
     }
 
     playSound("toggleOn");
 
-    // Perform smooth slide-in transition from right
+    // Perform smooth synchronized push-slide transition from right
     if (els.t3ScreenSpotlight && els.t3ScreenStart) {
       t3Stage = "spotlight";
+
+      els.t3ScreenStart.hidden = false;
+      els.t3ScreenStart.classList.remove("is-sliding-in-right", "is-sliding-out-right", "is-pushing-out-left", "is-popping-in-left");
+
       els.t3ScreenSpotlight.hidden = false;
-      els.t3ScreenSpotlight.classList.remove("is-sliding-out-right");
+      els.t3ScreenSpotlight.classList.remove("is-sliding-in-right", "is-sliding-out-right", "is-pushing-out-left", "is-popping-in-left");
+
+      // Force layout reflow so WebKit starts keyframes from 0% synchronously
+      void els.t3ScreenSpotlight.offsetWidth;
+      void els.t3ScreenStart.offsetWidth;
+
       els.t3ScreenSpotlight.classList.add("is-sliding-in-right");
+      els.t3ScreenStart.classList.add("is-pushing-out-left");
 
       setTimeout(() => {
         els.t3ScreenSpotlight.classList.remove("is-sliding-in-right");
+        els.t3ScreenStart.classList.remove("is-pushing-out-left");
         if (t3Stage === "spotlight") {
           els.t3ScreenStart.hidden = true;
+          els.t3ScreenStart.style.transform = "";
+          els.t3ScreenStart.style.opacity = "";
         }
-      }, 380);
+      }, 420);
     } else {
       showT3Screen("spotlight");
     }
@@ -1154,26 +1198,38 @@
     const knobToReset = activePrcKnobIndex || 1;
 
     if (els.t3ToastCard && !els.t3ToastCard.hidden) {
+      els.t3ToastCard.classList.remove("is-raising-up");
       els.t3ToastCard.classList.add("is-dismissing");
       setTimeout(() => {
         if (els.t3ToastCard) {
           els.t3ToastCard.hidden = true;
           els.t3ToastCard.classList.remove("is-dismissing");
         }
-      }, 220);
+      }, 200);
     }
 
     if (els.t3ScreenSpotlight && !els.t3ScreenSpotlight.hidden && els.t3ScreenStart) {
       t3Stage = "start";
+
       els.t3ScreenStart.hidden = false;
-      els.t3ScreenSpotlight.classList.remove("is-sliding-in-right");
+      els.t3ScreenStart.classList.remove("is-sliding-in-right", "is-sliding-out-right", "is-pushing-out-left", "is-popping-in-left");
+      els.t3ScreenSpotlight.classList.remove("is-sliding-in-right", "is-sliding-out-right", "is-pushing-out-left", "is-popping-in-left");
+
+      // Force layout reflow
+      void els.t3ScreenSpotlight.offsetWidth;
+      void els.t3ScreenStart.offsetWidth;
+
       els.t3ScreenSpotlight.classList.add("is-sliding-out-right");
+      els.t3ScreenStart.classList.add("is-popping-in-left");
 
       setTimeout(() => {
         els.t3ScreenSpotlight.classList.remove("is-sliding-out-right");
+        els.t3ScreenStart.classList.remove("is-popping-in-left");
         els.t3ScreenSpotlight.hidden = true;
+        els.t3ScreenStart.style.transform = "";
+        els.t3ScreenStart.style.opacity = "";
         setKnobAngle(knobToReset, 0, true, true);
-      }, 320);
+      }, 380);
     } else {
       showT3Screen("start");
       setKnobAngle(knobToReset, 0, true, true);
@@ -1551,32 +1607,16 @@
           }
         } else {
           // Knobs 1, 2, 4, 5: OFF (0°), PRC (-56° / 304°), MIN (55°), MAX (270°)
-          const prevAngle = k.angle;
-
-          if (cwDeg <= 12 || cwDeg >= 350) {
+          if (cwDeg <= 15 || cwDeg >= 348) {
             // Dead center OFF (12 o'clock)
             deg = 0;
-          } else if (cwDeg >= 282 && cwDeg < 350) {
-            // Counter-clockwise side (PRC zone)
-            const ccw = cwDeg - 360; // -78 to -10
-            if (prevAngle >= 150) {
-              // User was at or approaching MAX (270), respect physical end-stop
-              deg = 270;
-            } else if (Math.abs(ccw - (-56)) < 12) {
-              deg = -56;
-            } else {
-              deg = Math.max(-75, ccw);
-            }
+          } else if (cwDeg >= 280 && cwDeg < 348) {
+            // PRC zone (~10 o'clock, 304 deg)
+            // Allow turning directly into PRC from either direction without getting locked at MAX!
+            deg = -56;
           } else {
-            // Clockwise side (MIN 55° to MAX 270°)
-            if (prevAngle < -30 && cwDeg > 220) {
-              // User was at PRC (-56), respect physical end-stop before MAX
-              deg = -56;
-            } else if (cwDeg > 270) {
-              deg = 270; // Clamped at MAX
-            } else {
-              deg = cwDeg; // 12° to 270°
-            }
+            // Power zone (15° to 280°): rolls through MIN (55°) to MAX (270°)
+            deg = Math.max(55, Math.min(270, cwDeg));
           }
         }
 
@@ -1602,11 +1642,11 @@
           if (index === 3) {
             snapDeg = snapDeg > 20 ? 45 : 0;
           } else {
-            if (Math.abs(snapDeg) < 16) {
-              snapDeg = 0;
-            } else if (snapDeg < -20 || Math.abs(snapDeg - (-56)) < 20) {
+            if (snapDeg === -56 || snapDeg < -20 || (snapDeg >= 280 && snapDeg < 348)) {
               snapDeg = -56;
-            } else if (snapDeg >= 20) {
+            } else if (Math.abs(snapDeg) <= 15 || snapDeg >= 348) {
+              snapDeg = 0;
+            } else {
               // Snap to nearest discrete 1-10 level angle (55° to 270°)
               const clamped = Math.max(55, Math.min(270, snapDeg));
               const progress = (clamped - 55) / (270 - 55);
@@ -1633,30 +1673,55 @@
         } else if (e.key === "ArrowLeft") {
           e.preventDefault();
           playSound("touch");
-          if (k.angle <= 0) {
-            setKnobAngle(index, -56, true, true);
-          } else if (k.angle <= 55) {
+          if (index === 3) {
             setKnobAngle(index, 0, true, true);
           } else {
-            const clamped = Math.max(55, Math.min(270, k.angle));
-            const progress = (clamped - 55) / (270 - 55);
-            const level = Math.max(1, Math.round(1 + progress * 9) - 1);
-            const prevDeg = 55 + (level - 1) * ((270 - 55) / 9);
-            setKnobAngle(index, prevDeg, true, true);
+            if (k.angle === -56) {
+              // From PRC, turning left continues to Level 10 (270°)
+              setKnobAngle(index, 270, true, true);
+            } else if (k.angle <= 0) {
+              // From OFF, turning left goes to PRC (-56°)
+              setKnobAngle(index, -56, true, true);
+            } else if (k.angle <= 55) {
+              // From MIN, turning left goes to OFF (0°)
+              setKnobAngle(index, 0, true, true);
+            } else {
+              const clamped = Math.max(55, Math.min(270, k.angle));
+              const progress = (clamped - 55) / (270 - 55);
+              const level = Math.max(1, Math.round(1 + progress * 9) - 1);
+              if (level === 1 && k.angle <= 55) {
+                setKnobAngle(index, 0, true, true);
+              } else {
+                const prevDeg = 55 + (level - 1) * ((270 - 55) / 9);
+                setKnobAngle(index, prevDeg, true, true);
+              }
+            }
           }
         } else if (e.key === "ArrowRight") {
           e.preventDefault();
           playSound("touch");
-          if (k.angle === -56) {
-            setKnobAngle(index, 0, true, true);
-          } else if (k.angle <= 0) {
-            setKnobAngle(index, 55, true, true);
+          if (index === 3) {
+            setKnobAngle(index, 45, true, true);
           } else {
-            const clamped = Math.max(55, Math.min(270, k.angle));
-            const progress = (clamped - 55) / (270 - 55);
-            const level = Math.min(10, Math.round(1 + progress * 9) + 1);
-            const nextDeg = 55 + (level - 1) * ((270 - 55) / 9);
-            setKnobAngle(index, nextDeg, true, true);
+            if (k.angle === -56) {
+              // From PRC, turning right goes to OFF (0°)
+              setKnobAngle(index, 0, true, true);
+            } else if (k.angle <= 0) {
+              // From OFF, turning right goes to MIN (55° / level 1)
+              setKnobAngle(index, 55, true, true);
+            } else {
+              const clamped = Math.max(55, Math.min(270, k.angle));
+              const progress = (clamped - 55) / (270 - 55);
+              const currentLevel = Math.round(1 + progress * 9);
+              if (currentLevel >= 10) {
+                // At Level 10 / MAX, turning right continues to PRC (-56°)!
+                setKnobAngle(index, -56, true, true);
+              } else {
+                const nextLevel = currentLevel + 1;
+                const nextDeg = 55 + (nextLevel - 1) * ((270 - 55) / 9);
+                setKnobAngle(index, nextDeg, true, true);
+              }
+            }
           }
         }
       });

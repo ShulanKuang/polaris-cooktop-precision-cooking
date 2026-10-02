@@ -2329,35 +2329,43 @@ html, body {
   padding: 0 20px 0 24px;
   box-sizing: border-box;
   z-index: 108;
-  animation: toastSlideUp 0.28s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  will-change: transform, opacity;
 }
 
 .t3-toast-card[hidden] {
   display: none !important;
 }
 
-.t3-toast-card.is-dismissing {
-  animation: toastSlideDown 0.22s ease-in forwards;
+/* Quick raise up from bottom animation */
+.t3-toast-card.is-raising-up {
+  animation: toastQuickRaiseUp 0.26s cubic-bezier(0.16, 1, 0.3, 1) forwards !important;
 }
 
-@keyframes toastSlideUp {
-  from {
-    transform: translate3d(0, 80px, 0);
+.t3-toast-card.is-dismissing {
+  animation: toastQuickDismiss 0.20s cubic-bezier(0.4, 0, 1, 1) forwards !important;
+}
+
+@keyframes toastQuickRaiseUp {
+  0% {
+    transform: translate3d(0, 100px, 0);
     opacity: 0;
   }
-  to {
+  35% {
+    opacity: 1;
+  }
+  100% {
     transform: translate3d(0, 0, 0);
     opacity: 1;
   }
 }
 
-@keyframes toastSlideDown {
-  from {
+@keyframes toastQuickDismiss {
+  0% {
     transform: translate3d(0, 0, 0);
     opacity: 1;
   }
-  to {
-    transform: translate3d(0, 80px, 0);
+  100% {
+    transform: translate3d(0, 100px, 0);
     opacity: 0;
   }
 }
@@ -2419,30 +2427,66 @@ html, body {
 
 /* SCREEN SLIDE TRANSITIONS (PRECISION COOKING SPOTLIGHT) */
 .t3-screen.is-sliding-in-right {
-  animation: screenSlideInFromRight 0.38s cubic-bezier(0.16, 1, 0.3, 1) forwards !important;
+  animation: screenSlideInFromRight 0.40s cubic-bezier(0.16, 1, 0.3, 1) forwards !important;
   z-index: 110;
-}
-
-@keyframes screenSlideInFromRight {
-  from {
-    transform: translate3d(100%, 0, 0);
-  }
-  to {
-    transform: translate3d(0, 0, 0);
-  }
+  box-shadow: -14px 0 40px rgba(0, 0, 0, 0.7);
+  will-change: transform;
 }
 
 .t3-screen.is-sliding-out-right {
-  animation: screenSlideOutToRight 0.32s cubic-bezier(0.16, 1, 0.3, 1) forwards !important;
+  animation: screenSlideOutToRight 0.36s cubic-bezier(0.16, 1, 0.3, 1) forwards !important;
   z-index: 110;
+  box-shadow: -14px 0 40px rgba(0, 0, 0, 0.7);
+  will-change: transform;
+}
+
+.t3-screen.is-pushing-out-left {
+  animation: screenPushOutLeft 0.40s cubic-bezier(0.16, 1, 0.3, 1) forwards !important;
+  will-change: transform, opacity;
+}
+
+.t3-screen.is-popping-in-left {
+  animation: screenPopInLeft 0.36s cubic-bezier(0.16, 1, 0.3, 1) forwards !important;
+  will-change: transform, opacity;
+}
+
+@keyframes screenSlideInFromRight {
+  0% {
+    transform: translate3d(100%, 0, 0);
+  }
+  100% {
+    transform: translate3d(0, 0, 0);
+  }
 }
 
 @keyframes screenSlideOutToRight {
-  from {
+  0% {
     transform: translate3d(0, 0, 0);
   }
-  to {
+  100% {
     transform: translate3d(100%, 0, 0);
+  }
+}
+
+@keyframes screenPushOutLeft {
+  0% {
+    transform: translate3d(0, 0, 0);
+    opacity: 1;
+  }
+  100% {
+    transform: translate3d(-25%, 0, 0);
+    opacity: 0.5;
+  }
+}
+
+@keyframes screenPopInLeft {
+  0% {
+    transform: translate3d(-25%, 0, 0);
+    opacity: 0.5;
+  }
+  100% {
+    transform: translate3d(0, 0, 0);
+    opacity: 1;
   }
 }
 
