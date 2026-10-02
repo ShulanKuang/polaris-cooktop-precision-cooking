@@ -1276,10 +1276,10 @@
       els.t3CompleteTarget.textContent = targetTemp;
     }
 
-    // Stay on this screen for 30s before going to burnerStatus (or user clicks OK or ✕)
+    // Auto-advance to burnerStatus after 4s (or user clicks OK or ✕)
     t3HoldingTimeout = setTimeout(() => {
       finishT3PreheatToBurnerStatus();
-    }, 30000);
+    }, 4000);
   }
 
   function finishT3PreheatToBurnerStatus() {
@@ -2051,9 +2051,16 @@
 
     // Temperature Screen: START button -> Triggers Activity Bar & Preheating!
     if (els.t3BtnStartTemp) {
-      els.t3BtnStartTemp.addEventListener("click", () => {
+      let lastStartTime = 0;
+      const handleStart = (e) => {
+        if (e) e.preventDefault();
+        const now = Date.now();
+        if (now - lastStartTime < 400) return;
+        lastStartTime = now;
         startT3Preheat();
-      });
+      };
+      els.t3BtnStartTemp.addEventListener("click", handleStart);
+      els.t3BtnStartTemp.addEventListener("touchstart", handleStart, { passive: false });
     }
 
     // Preheat Screen: Back & Edit Buttons
@@ -2166,10 +2173,16 @@
       });
     }
     if (els.t3BtnUpdateTemp) {
-      els.t3BtnUpdateTemp.addEventListener("click", () => {
-        playSound("toggleOn");
-        showT3Screen("burnerStatus");
-      });
+      let lastUpdateTime = 0;
+      const handleUpdate = (e) => {
+        if (e) e.preventDefault();
+        const now = Date.now();
+        if (now - lastUpdateTime < 400) return;
+        lastUpdateTime = now;
+        startT3Preheat();
+      };
+      els.t3BtnUpdateTemp.addEventListener("click", handleUpdate);
+      els.t3BtnUpdateTemp.addEventListener("touchstart", handleUpdate, { passive: false });
     }
     if (els.t3BtnKeypadTemp) {
       els.t3BtnKeypadTemp.addEventListener("click", () => {
