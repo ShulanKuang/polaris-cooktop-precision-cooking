@@ -1612,7 +1612,7 @@ html, body {
 /* Tab Group Navigation */
 .t2-tab-group {
   position: absolute;
-  left: 210px;
+  left: 226px;
   top: 96px;
   width: 515px;
   height: 46px;
@@ -1657,18 +1657,21 @@ html, body {
 .t2-panel {
   position: absolute;
   inset: 0;
-  width: 1024px;
+  width: 934px;
   height: 384px;
 }
 
 .t2-panel-bg {
   position: absolute;
-  inset: 0;
+  left: -90px;
+  top: 0;
   width: 1024px;
   height: 384px;
-  pointer-events: none;
+  max-width: none;
+  display: block;
   user-select: none;
   -webkit-user-drag: none;
+  pointer-events: none;
 }
 
 /* Spotlight Clickable Hotspots */
@@ -1686,22 +1689,22 @@ html, body {
   transform: scale(0.97);
 }
 .t2-spotlight-steak {
-  left: 154px;
+  left: 50px;
   top: 170px;
-  width: 385px;
-  height: 98px;
+  width: 416px;
+  height: 120px;
 }
 .t2-spotlight-bacon {
-  left: 580px;
+  left: 508px;
   top: 170px;
   width: 180px;
-  height: 98px;
+  height: 120px;
 }
 .t2-spotlight-beef {
-  left: 775px;
+  left: 708px;
   top: 170px;
   width: 180px;
-  height: 98px;
+  height: 120px;
 }
 
 /* Scroll Container for Food & Technique */
@@ -1709,7 +1712,7 @@ html, body {
   position: absolute;
   left: 0;
   top: 0;
-  width: 1024px;
+  width: 934px;
   height: 179px;
   overflow: hidden;
   z-index: 15;
@@ -1717,15 +1720,20 @@ html, body {
 }
 .t2-crop-header-img {
   position: absolute;
-  left: 0;
+  left: -90px;
   top: 0;
   width: 1024px;
   height: 384px;
+  max-width: none;
+  display: block;
+  user-select: none;
+  -webkit-user-drag: none;
+  pointer-events: none;
 }
 
 .t2-options-scroll-container {
   position: absolute;
-  left: 176px;
+  left: 86px;
   top: 179px;
   width: 776px;
   height: 205px;
@@ -1831,17 +1839,20 @@ html, body {
 .t2-temp-mode {
   position: absolute;
   inset: 0;
-  width: 1024px;
+  width: 934px;
   height: 384px;
 }
 .t2-temp-bg {
   position: absolute;
-  inset: 0;
+  left: -90px;
+  top: 0;
   width: 1024px;
   height: 384px;
-  pointer-events: none;
+  max-width: none;
+  display: block;
   user-select: none;
   -webkit-user-drag: none;
+  pointer-events: none;
 }
 
 .t2-temp-start-btn {
@@ -1858,13 +1869,13 @@ html, body {
   transform: scale(0.96);
 }
 .t2-picker-start {
-  left: 490px;
+  left: 400px;
   top: 295px;
   width: 140px;
   height: 68px;
 }
 .t2-digipad-start {
-  left: 254px;
+  left: 164px;
   top: 295px;
   width: 142px;
   height: 68px;
@@ -1884,13 +1895,13 @@ html, body {
   transform: scale(0.92);
 }
 .t2-switch-to-digipad {
-  left: 658px;
+  left: 568px;
   top: 298px;
   width: 66px;
   height: 66px;
 }
 .t2-switch-to-picker {
-  left: 423px;
+  left: 333px;
   top: 298px;
   width: 66px;
   height: 66px;
@@ -1899,7 +1910,7 @@ html, body {
 /* Dynamic Horizontal Temperature Carousel Wheel */
 .t2-picker-wheel-container {
   position: absolute;
-  left: 140px;
+  left: 50px;
   top: 150px;
   width: 840px;
   height: 116px;
@@ -1990,7 +2001,7 @@ html, body {
 /* Digipad Dynamic Display */
 .t2-digipad-display-container {
   position: absolute;
-  left: 170px;
+  left: 80px;
   top: 155px;
   width: 310px;
   height: 100px;
@@ -2030,7 +2041,7 @@ html, body {
 /* Digipad Interactive Keypad */
 .t2-digipad-keypad {
   position: absolute;
-  left: 560px;
+  left: 470px;
   top: 160px;
   width: 395px;
   height: 205px;
@@ -2731,18 +2742,24 @@ html, body {
 }
 
 #t3BtnEditPreheatFromComplete {
-  left: 680px;
+  position: absolute;
+  left: 590px;
   top: 308px;
   width: 92px;
   height: 42px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  z-index: 20;
+  outline: none;
 }
 
 /* Preheated Screen Dynamic Large Target Temperature Display (Figma Node 2294-11878) */
 .t3-completed-temp-display {
   position: absolute;
-  left: 624px;
-  top: 153px;
-  width: 204px;
+  left: 400px;
+  top: 148px;
+  width: 472px;
   height: 80px;
   display: flex;
   align-items: baseline;
@@ -2774,7 +2791,7 @@ html, body {
 /* Rear Left Active Burner Card Temperature Readout (Figma Node 2310:12347) */
 .t3-burner-status-temp-display {
   position: absolute;
-  left: 155px;
+  left: 65px;
   top: 132px;
   width: 148px;
   height: 34px;
