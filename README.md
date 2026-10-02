@@ -8,7 +8,7 @@ Interactive prototype for the **October 2026 Polaris Cooktop Precision Cooking U
 
 Click below to open and test the prototype directly:
 
-* **[Live Web Prototype Link](https://yellow-baths-camp.loca.lt/?task=3#task3)**  
+* **[Live Web Prototype Link](https://empty-cities-add.loca.lt/?task=3#task3)**  
   *(If prompted for a tunnel password / Endpoint IP, enter: `4.53.66.82`)*
 
 * **Local iPad / Lab Wi-Fi Link**: `http://10.35.122.114:8080/?task=3#task3`  
