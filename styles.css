@@ -2953,55 +2953,67 @@ html, body {
 /* Active Burner 1 Running Card on Start Screen (Figma 2315:14540) */
 .t3-start-active-burner1 {
   position: absolute;
-  left: 38px;
-  top: 76px;
-  width: 290px;
-  height: 126px;
-  background: rgba(30, 32, 38, 0.85);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border-radius: 63px 20px 20px 63px;
-  border: 1px solid rgba(255, 255, 255, 0.12);
+  left: 45.5px;
+  top: 72px;
+  width: 316px;
+  height: 128px;
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  padding: 0 16px 0 28px;
   z-index: 15;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
   pointer-events: auto;
   cursor: pointer;
+  background: transparent;
   transition: transform 0.15s ease, opacity 0.15s ease;
 }
 .t3-start-active-burner1:active {
-  opacity: 0.88;
-  transform: scale(0.98);
+  opacity: 0.9;
+  transform: scale(0.985);
 }
 .t3-start-card-info {
+  width: 188px;
+  height: 128px;
+  box-sizing: border-box;
+  background: rgba(45, 48, 56, 0.52);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border-radius: 12px 0 0 12px;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-right: none;
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  justify-content: center;
+  align-items: flex-end;
+  padding-right: 18px;
+  gap: 2px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
 }
 .t3-start-card-label {
   font-family: var(--font-display), "SamsungOne", "Segoe UI", sans-serif;
-  font-size: 15px;
-  color: rgba(255, 255, 255, 0.75);
+  font-size: 20px;
+  color: #ffffff;
   font-weight: 500;
+  line-height: 1.25;
+  text-align: right;
+  letter-spacing: -0.2px;
 }
 .t3-start-card-val {
   font-family: var(--font-display), "SamsungOne", "Segoe UI", sans-serif;
-  font-size: 26px;
+  font-size: 28px;
   color: #ffffff;
   font-weight: 700;
+  line-height: 1.2;
+  text-align: right;
 }
 .t3-start-card-icon {
-  width: 104px;
-  height: 104px;
+  width: 128px;
+  height: 128px;
+  min-width: 128px;
   border-radius: 50%;
-  background: #e2e2e4;
+  background: #d9d8d7;
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
 }
 
 /* ============================================== */
