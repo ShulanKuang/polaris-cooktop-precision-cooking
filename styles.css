@@ -2950,16 +2950,14 @@ html, body {
   transform: scale(0.94);
 }
 
-/* Active Burner 1 Running Card on Start Screen (Figma 2315:14540) */
+/* Active Burner 1 Running Card on Start Screen (Figma 2315:14540 & 2310:12162) */
 .t3-start-active-burner1 {
   position: absolute;
   left: 45.5px;
   top: 72px;
   width: 316px;
   height: 128px;
-  display: flex;
-  align-items: center;
-  z-index: 15;
+  z-index: 120;
   pointer-events: auto;
   cursor: pointer;
   background: transparent;
@@ -2970,26 +2968,30 @@ html, body {
   transform: scale(0.985);
 }
 .t3-start-card-info {
-  width: 188px;
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 252px;
   height: 128px;
   box-sizing: border-box;
-  background: rgba(45, 48, 56, 0.52);
-  backdrop-filter: blur(24px);
-  -webkit-backdrop-filter: blur(24px);
+  background: rgba(97, 100, 107, 0.20);
+  backdrop-filter: blur(30px);
+  -webkit-backdrop-filter: blur(30px);
   border-radius: 12px 0 0 12px;
-  border: 1px solid rgba(255, 255, 255, 0.16);
+  border: 1px solid rgba(255, 255, 255, 0.22);
   border-right: none;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: flex-end;
-  padding-right: 18px;
+  padding-right: 82px;
   gap: 2px;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
+  z-index: 1;
 }
 .t3-start-card-label {
-  font-family: var(--font-display), "SamsungOne", "Segoe UI", sans-serif;
-  font-size: 20px;
+  font-family: "Profile Text", var(--font-display), "SamsungOne", "Segoe UI", sans-serif;
+  font-size: 22px;
   color: #ffffff;
   font-weight: 500;
   line-height: 1.25;
@@ -2997,14 +2999,18 @@ html, body {
   letter-spacing: -0.2px;
 }
 .t3-start-card-val {
-  font-family: var(--font-display), "SamsungOne", "Segoe UI", sans-serif;
+  font-family: "Profile Text", var(--font-display), "SamsungOne", "Segoe UI", sans-serif;
   font-size: 28px;
   color: #ffffff;
-  font-weight: 700;
+  font-weight: 600;
   line-height: 1.2;
   text-align: right;
+  letter-spacing: 0.5px;
 }
 .t3-start-card-icon {
+  position: absolute;
+  left: 188px;
+  top: 0;
   width: 128px;
   height: 128px;
   min-width: 128px;
@@ -3014,6 +3020,7 @@ html, body {
   align-items: center;
   justify-content: center;
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
+  z-index: 2;
 }
 
 /* ============================================== */

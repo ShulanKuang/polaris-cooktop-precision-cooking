@@ -991,12 +991,13 @@
       [1, 2, 3, 4, 5].forEach(i => {
         setKnobAngle(i, 0, false, false);
         currentT3BurnerLevels[i] = "off";
+        resetT3BurnerToOff(i);
       });
       currentT3BurnerLevels[2] = "prc";
       activePrcKnobIndex = null;
-      [1, 3, 4, 5].forEach(i => {
-        resetT3BurnerToOff(i);
-      });
+      if (els.t3BurnerRoller2) {
+        els.t3BurnerRoller2.classList.remove("is-active");
+      }
 
       if (els.t3ToastCard) {
         els.t3ToastCard.hidden = true;
@@ -2403,9 +2404,9 @@
         playSound("touch");
         showT3Screen("tempRun");
         requestAnimationFrame(() => {
-          scrollToT3RunTemp(state.task3TargetTemp || 500, false);
+          scrollToT3RunTemp(state.task3TargetTemp || 375, false);
           setTimeout(() => {
-            scrollToT3RunTemp(state.task3TargetTemp || 500, false);
+            scrollToT3RunTemp(state.task3TargetTemp || 375, false);
           }, 60);
         });
       });
@@ -2418,9 +2419,9 @@
         playSound("touch");
         showT3Screen("tempRun");
         requestAnimationFrame(() => {
-          scrollToT3RunTemp(state.task3TargetTemp || 500, false);
+          scrollToT3RunTemp(state.task3TargetTemp || 375, false);
           setTimeout(() => {
-            scrollToT3RunTemp(state.task3TargetTemp || 500, false);
+            scrollToT3RunTemp(state.task3TargetTemp || 375, false);
           }, 60);
         });
       };
