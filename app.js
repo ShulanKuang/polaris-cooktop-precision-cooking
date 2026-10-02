@@ -73,6 +73,7 @@
     task1FullScreen: document.getElementById("task1FullScreen"),
     task1StandbyCover: document.getElementById("task1StandbyCover"),
     screenRail: document.getElementById("screenRail") || document.querySelector(".screen-rail"),
+    screenRailBg: document.getElementById("screenRailBg") || document.querySelector(".screen-rail-bg"),
     topStatus: document.getElementById("topStatus") || document.querySelector(".top-status"),
     screenCanvas: document.getElementById("screenCanvas"),
     screenBottomStrip: document.getElementById("screenBottomStrip"),
@@ -261,7 +262,8 @@
     if (taskId === 1) {
       if (els.task1FullScreen) els.task1FullScreen.hidden = false;
       if (els.viewTask2) els.viewTask2.hidden = true;
-      if (els.screenRail) els.screenRail.hidden = true;
+      if (els.viewTask3) els.viewTask3.hidden = true;
+      if (els.screenRail) els.screenRail.hidden = false;
       if (els.topStatus) els.topStatus.hidden = true;
       if (els.screenCanvas) els.screenCanvas.hidden = true;
       if (els.screenBottomStrip) els.screenBottomStrip.hidden = true;
@@ -304,6 +306,8 @@
       if (els.screenCanvas) els.screenCanvas.hidden = false;
       if (els.screenBottomStrip) els.screenBottomStrip.hidden = false;
     }
+
+    updateNavbarState();
 
     // Cooktop Knobs Manifold (Visible in Task 2 and Task 3, 80px below screen)
     const hasKnobs = (taskId === 2 || taskId === 3);
@@ -808,6 +812,14 @@
   // ==============================================
   // TASK 3: PRECISION COOKING FLOW (FIGMA ARTBOARDS)
   // ==============================================
+  const knobsState = [
+    { index: 1, burner: "front-left", angle: 0, isOn: false },
+    { index: 2, burner: "rear-left", angle: 0, isOn: false },
+    { index: 3, burner: "center", angle: 0, isOn: false },
+    { index: 4, burner: "top-right", angle: 0, isOn: false },
+    { index: 5, burner: "front-right", angle: 0, isOn: false }
+  ];
+
   let t3CountdownInterval = null;
   let t3HoldingTimeout = null;
   let t3PreheatInterval = null;
@@ -815,6 +827,32 @@
   const currentT3BurnerLevels = { 1: "off", 2: "off", 3: "off", 4: "off", 5: "off" };
   let activePrcKnobIndex = 1;
   let t3Stage = "start"; // "start" | "turnknob" | "spotlight" | "temperature" | "preheat" | "completed" | "burnerStatus"
+
+  function isAnyBurnerRunning() {
+    if (state.currentTask === 1) return true;
+    if (state.currentTask === 2) return false;
+    if (state.currentTask === 3) {
+      if (
+        t3Stage === "preheat" ||
+        t3Stage === "completed" ||
+        t3Stage === "burnerStatus" ||
+        t3Stage === "tempRun"
+      ) {
+        return true;
+      }
+      return knobsState.some((k) => k && k.angle > 5);
+    }
+    return false;
+  }
+
+  function updateNavbarState() {
+    if (!els.screenRailBg) return;
+    const running = isAnyBurnerRunning();
+    const targetSrc = running ? "./assets/navbar-running-90px.png" : "./assets/navbar-pinned-90px.png";
+    if (els.screenRailBg.getAttribute("src") !== targetSrc) {
+      els.screenRailBg.src = targetSrc;
+    }
+  }
 
   function showT3Screen(stage) {
     t3Stage = stage;
@@ -854,6 +892,8 @@
         els.t3ToastNum.textContent = "3";
       }
     }
+
+    updateNavbarState();
   }
 
   function clearT3Timers() {
@@ -1569,14 +1609,6 @@
   // ==============================================
   // TASK 3: COOKTOP KNOBS MANIFOLD & ROTATABLE DIALS
   // ==============================================
-  const knobsState = [
-    { index: 1, burner: "front-left", angle: 0, isOn: false },
-    { index: 2, burner: "rear-left", angle: 0, isOn: false },
-    { index: 3, burner: "center", angle: 0, isOn: false },
-    { index: 4, burner: "top-right", angle: 0, isOn: false },
-    { index: 5, burner: "front-right", angle: 0, isOn: false }
-  ];
-
   function setKnobAngle(index, angle, animate = false, updateBurner = true) {
     const k = knobsState[index - 1];
     if (!k) return;
@@ -1616,6 +1648,8 @@
         }
       }
     }
+
+    updateNavbarState();
 
     // TASK 2 & TASK 3 PRECISION COOKING WORKFLOW TRIGGER
     if (state.currentTask === 3 || state.currentTask === 2) {
