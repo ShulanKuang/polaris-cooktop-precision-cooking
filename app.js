@@ -48,7 +48,7 @@
       digipadBuffer: "370",
       hasEditedKeypad: false
     },
-    task3TargetTemp: 500
+    task3TargetTemp: 375
   };
 
   // DOM ELEMENTS
@@ -284,7 +284,7 @@
     },
     3: {
       title: "Task 3: Precision Cooking Flow",
-      prompt: "Turn any PRC-enabled knob to PRC (1s delay -> 3s countdown toast -> Spotlight). Tap Temperature tab -> pick temp (e.g. 500°F) -> click START. Live 5s preheat -> complete toast -> Burner status. Turn another burner knob to see live level setting animation, or turn to PRC for Food mode."
+      prompt: "Turn any PRC-enabled knob to PRC (1s delay -> 3s countdown toast -> Spotlight). Tap Temperature tab -> pick temp (e.g. 375°F) -> click START. Live 5s preheat -> complete toast -> Burner status. Turn another burner knob to see live level setting animation, or turn to PRC for Food mode."
     },
     4: {
       title: "Task 4: End & Turn Off",
@@ -969,11 +969,11 @@
     }
 
     if (stage === "completed") {
-      const targetTemp = state.task3TargetTemp || 500;
+      const targetTemp = state.task3TargetTemp || 375;
       if (els.t3CompleteTarget) els.t3CompleteTarget.textContent = targetTemp;
     }
     if (stage === "burnerStatus") {
-      const targetTemp = state.task3TargetTemp || 500;
+      const targetTemp = state.task3TargetTemp || 375;
       if (els.tStartActiveBurner1) {
         els.tStartActiveBurner1.hidden = false;
         if (els.tStartBurner1Temp) {
@@ -984,20 +984,30 @@
         els.t3BurnerStatusTemp.textContent = `${targetTemp}°F`;
       }
       clearT3Timers();
+
+      // On Burner Status (Figma 2310:12162): Rear Left is running with tStartActiveBurner1.
+      // All other burners (Front Left 1, Center 3, Main 4, Front Right 5) start at "OFF"
+      // until the user turns another knob!
       [1, 2, 3, 4, 5].forEach(i => {
-        const k = knobsState[i - 1];
-        if (k) updateT3BurnerFromKnob(i, k.angle, false);
+        setKnobAngle(i, 0, false, false);
+        currentT3BurnerLevels[i] = "off";
       });
+      currentT3BurnerLevels[2] = "prc";
+      activePrcKnobIndex = null;
+      [1, 3, 4, 5].forEach(i => {
+        resetT3BurnerToOff(i);
+      });
+
       if (els.t3ToastCard) {
         els.t3ToastCard.hidden = true;
-        els.t3ToastCard.classList.remove("is-raising-up", "is-dismissing");
+        els.t3ToastCard.classList.remove("is-visible", "is-raising-up", "is-dismissing");
       }
       if (els.t3ToastNum) {
         els.t3ToastNum.textContent = "3";
       }
     }
     if (stage === "foodBurnerStatus") {
-      const targetTemp = state.task3TargetTemp || 500;
+      const targetTemp = state.task3TargetTemp || 375;
       if (els.t3FoodBurnerStatusTemp1) els.t3FoodBurnerStatusTemp1.textContent = `${targetTemp}°F`;
     }
 
@@ -1006,17 +1016,19 @@
       if (els.tStartActiveBurner1) {
         els.tStartActiveBurner1.hidden = !isFoodFlow;
         if (els.tStartBurner1Temp) {
-          els.tStartBurner1Temp.textContent = `${state.task3TargetTemp || 500}°F`;
+          els.tStartBurner1Temp.textContent = `${state.task3TargetTemp || 375}°F`;
         }
       }
       clearT3Timers();
       [1, 2, 3, 4, 5].forEach(i => {
-        const k = knobsState[i - 1];
-        if (k) updateT3BurnerFromKnob(i, k.angle, false);
+        setKnobAngle(i, 0, false, false);
+        currentT3BurnerLevels[i] = "off";
+        resetT3BurnerToOff(i);
       });
+      activePrcKnobIndex = null;
       if (els.t3ToastCard) {
         els.t3ToastCard.hidden = true;
-        els.t3ToastCard.classList.remove("is-raising-up", "is-dismissing");
+        els.t3ToastCard.classList.remove("is-visible", "is-raising-up", "is-dismissing");
       }
       if (els.t3ToastNum) {
         els.t3ToastNum.textContent = "3";
@@ -1024,6 +1036,26 @@
     }
 
     updateNavbarState();
+  }
+
+  function resetT3BurnerToOff(i) {
+    const burnerConfigs = {
+      1: { roller: els.t3BurnerRoller1, strip: els.t3BurnerStrip1, itemH: 38, baseOffset: 45 },
+      2: { roller: els.t3BurnerRoller2, strip: els.t3BurnerStrip2, itemH: 38, baseOffset: 45 },
+      3: { roller: els.t3BurnerRoller3, strip: els.t3BurnerStrip3, itemH: 36, baseOffset: 35 },
+      4: { roller: els.t3BurnerRoller4, strip: els.t3BurnerStrip4, itemH: 52, baseOffset: 62 },
+      5: { roller: els.t3BurnerRoller5, strip: els.t3BurnerStrip5, itemH: 38, baseOffset: 45 }
+    };
+    const cfg = burnerConfigs[i];
+    if (!cfg || !cfg.roller || !cfg.strip) return;
+    cfg.strip.style.webkitTransform = `translate3d(0, ${cfg.baseOffset}px, 0)`;
+    cfg.strip.style.transform = `translate3d(0, ${cfg.baseOffset}px, 0)`;
+    const items = cfg.strip.querySelectorAll(".t3-burner-roller-item");
+    items.forEach(it => {
+      const idx = parseInt(it.dataset.index, 10);
+      it.classList.toggle("is-selected", idx === 0);
+    });
+    cfg.roller.classList.remove("is-active");
   }
 
   function clearT3Timers() {
@@ -1396,7 +1428,7 @@
       });
     }
 
-    const targetTemp = state.task3TargetTemp || 500;
+    const targetTemp = state.task3TargetTemp || 375;
     if (els.t3CompleteTarget) {
       els.t3CompleteTarget.textContent = targetTemp;
     }
@@ -2443,6 +2475,7 @@
       els.btnT3FlowTemp.addEventListener("click", () => {
         playSound("touch");
         state.task3Mode = "temperature";
+        state.task3TargetTemp = 375;
         els.btnT3FlowTemp.classList.add("is-active");
         if (els.btnT3FlowFood) els.btnT3FlowFood.classList.remove("is-active");
         if (els.btnT3FlowStatus) els.btnT3FlowStatus.classList.remove("is-active");
@@ -2457,7 +2490,7 @@
       els.btnT3FlowStatus.addEventListener("click", () => {
         playSound("touch");
         state.task3Mode = "temperature";
-        state.task3TargetTemp = 500;
+        state.task3TargetTemp = 375;
         els.btnT3FlowStatus.classList.add("is-active");
         if (els.btnT3FlowTemp) els.btnT3FlowTemp.classList.remove("is-active");
         if (els.btnT3FlowFood) els.btnT3FlowFood.classList.remove("is-active");
