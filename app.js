@@ -917,7 +917,7 @@
       ) {
         return true;
       }
-      return knobsState.some((k) => k && k.angle > 5);
+      return knobsState.some((k) => k && (k.angle > 5 || k.angle < -20));
     }
     return false;
   }
@@ -986,18 +986,26 @@
       clearT3Timers();
 
       // On Burner Status (Figma 2310:12162): Rear Left is running with tStartActiveBurner1.
-      // All other burners (Front Left 1, Center 3, Main 4, Front Right 5) start at "OFF"
-      // until the user turns another knob!
-      [1, 2, 3, 4, 5].forEach(i => {
-        setKnobAngle(i, 0, false, false);
-        currentT3BurnerLevels[i] = "off";
-        resetT3BurnerToOff(i);
-      });
+      // The knob shouldn't auto turn off: Knob 2 stays ON at PRC (-56°) if user didn't turn it off!
+      if (!knobsState[1] || Math.abs(knobsState[1].angle) <= 5) {
+        setKnobAngle(2, -56, false, false);
+      }
       currentT3BurnerLevels[2] = "prc";
-      activePrcKnobIndex = null;
+      activePrcKnobIndex = 2;
+
+      // Reset DOM setting roller for burner 2 so it is hidden and doesn't cover running status card
+      resetT3BurnerToOff(2);
       if (els.t3BurnerRoller2) {
         els.t3BurnerRoller2.classList.remove("is-active");
       }
+
+      // Do NOT turn off any other knobs that the user may have turned on!
+      [1, 3, 4, 5].forEach(i => {
+        if (!currentT3BurnerLevels[i] || currentT3BurnerLevels[i] === "off") {
+          currentT3BurnerLevels[i] = "off";
+          resetT3BurnerToOff(i);
+        }
+      });
 
       if (els.t3ToastCard) {
         els.t3ToastCard.hidden = true;
@@ -1010,6 +1018,11 @@
     if (stage === "foodBurnerStatus") {
       const targetTemp = state.task3TargetTemp || 375;
       if (els.t3FoodBurnerStatusTemp1) els.t3FoodBurnerStatusTemp1.textContent = `${targetTemp}°F`;
+      // In foodBurnerStatus (Figma 2327:15934): BOTH Rear Left and Front Left are running!
+      if (!knobsState[1] || Math.abs(knobsState[1].angle) <= 5) setKnobAngle(2, -56, false, false);
+      if (!knobsState[0] || Math.abs(knobsState[0].angle) <= 5) setKnobAngle(1, -56, false, false);
+      currentT3BurnerLevels[2] = "prc";
+      currentT3BurnerLevels[1] = "prc";
     }
 
     if (stage === "start") {
@@ -1021,12 +1034,22 @@
         }
       }
       clearT3Timers();
-      [1, 2, 3, 4, 5].forEach(i => {
-        setKnobAngle(i, 0, false, false);
-        currentT3BurnerLevels[i] = "off";
-        resetT3BurnerToOff(i);
-      });
-      activePrcKnobIndex = null;
+      if (!isFoodFlow) {
+        [1, 2, 3, 4, 5].forEach(i => {
+          setKnobAngle(i, 0, false, false);
+          currentT3BurnerLevels[i] = "off";
+          resetT3BurnerToOff(i);
+        });
+        activePrcKnobIndex = null;
+      } else {
+        // In Food flow, Rear Left is running: Knob 2 stays ON!
+        if (!knobsState[1] || Math.abs(knobsState[1].angle) <= 5) {
+          setKnobAngle(2, -56, false, false);
+        }
+        currentT3BurnerLevels[2] = "prc";
+        resetT3BurnerToOff(2);
+        if (els.t3BurnerRoller2) els.t3BurnerRoller2.classList.remove("is-active");
+      }
       if (els.t3ToastCard) {
         els.t3ToastCard.hidden = true;
         els.t3ToastCard.classList.remove("is-visible", "is-raising-up", "is-dismissing");
@@ -1085,15 +1108,27 @@
 
     const isBurnerStatus = (t3Stage === "burnerStatus");
 
-    // When on burnerStatus: Rear Left is running with tStartActiveBurner1.
-    // If user turns Knob 2 (the second knob) or Knob 1: operate Front Left (index 1)!
-    let targetIndex = index;
-    if (isBurnerStatus || (t3Stage === "start" && state.task3Mode === "food")) {
-      if (index === 2) {
-        targetIndex = 1; // Map Knob 2 to the visible Front Left burner so it animates!
+    // Standard (1, 2, 5) and Main (4) Burners: OFF (0°), PRC (-56°), MIN (55°) to MAX (270°)
+    const isPRC = (angle < -20 && angle > -80);
+    const isMinToMax = (angle >= 20 && angle <= 285);
+    const isOff = (Math.abs(angle) <= 12);
+
+    // On burnerStatus: Rear Left (Knob 2) is running.
+    // If user turns Knob 2 to OFF, turn off Rear Left!
+    if (isBurnerStatus && index === 2) {
+      if (isOff) {
+        currentT3BurnerLevels[2] = "off";
+        if (els.tStartActiveBurner1) els.tStartActiveBurner1.hidden = true;
+        updateNavbarState();
+      } else if (isPRC) {
+        currentT3BurnerLevels[2] = "prc";
+        if (els.tStartActiveBurner1) els.tStartActiveBurner1.hidden = false;
+        updateNavbarState();
       }
+      return;
     }
 
+    const targetIndex = index;
     const burnerConfigs = {
       1: { roller: els.t3BurnerRoller1, strip: els.t3BurnerStrip1, type: "standard", itemH: 38, baseOffset: 45 },
       2: { roller: els.t3BurnerRoller2, strip: els.t3BurnerStrip2, type: "standard", itemH: 38, baseOffset: 45 },
@@ -1144,11 +1179,6 @@
       }
       return;
     }
-
-    // Standard (1, 2, 5) and Main (4) Burners: OFF (0°), PRC (-56°), MIN (55°) to MAX (270°)
-    const isPRC = (angle < -20 && angle > -80);
-    const isMinToMax = (angle >= 20 && angle <= 285);
-    const isOff = (Math.abs(angle) <= 12);
 
     if (isPRC) {
       // 1. Pointing at PRC (-56 deg): dedicated burner shows temperature icon
@@ -2495,7 +2525,8 @@
         els.btnT3FlowStatus.classList.add("is-active");
         if (els.btnT3FlowTemp) els.btnT3FlowTemp.classList.remove("is-active");
         if (els.btnT3FlowFood) els.btnT3FlowFood.classList.remove("is-active");
-        [1, 2, 3, 4, 5].forEach(i => setKnobAngle(i, 0, false, true));
+        setKnobAngle(2, -56, false, false);
+        [1, 3, 4, 5].forEach(i => setKnobAngle(i, 0, false, false));
         showT3Screen("burnerStatus");
       });
     }
@@ -2507,10 +2538,10 @@
         els.btnT3FlowFood.classList.add("is-active");
         if (els.btnT3FlowTemp) els.btnT3FlowTemp.classList.remove("is-active");
         if (els.btnT3FlowStatus) els.btnT3FlowStatus.classList.remove("is-active");
-        showT3Screen("start");
-        // Turn Knob 2 to PRC
+        setKnobAngle(2, -56, false, false);
+        showT3Screen("burnerStatus");
         setTimeout(() => {
-          setKnobAngle(2, -56, true, true);
+          setKnobAngle(1, -56, true, true);
         }, 300);
       });
     }
