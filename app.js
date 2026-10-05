@@ -315,51 +315,138 @@
   // ==============================================
   // SCREEN BADGE & QUICK JUMPER SYNC
   // ==============================================
-  function updateScreenBadge(screenName) {
-    let cleanBadge = screenName;
-    let selectVal = "";
+  function detectCurrentVisibleScreen() {
+    if (els.task1FullScreen && !els.task1FullScreen.hidden && els.task1FullScreen.style.display !== "none") {
+      return "1-awareness";
+    }
 
-    if (state.currentTask === 3) {
-      const t3PrefixMap = {
-        start: "3-start",
-        burnerStatus: "3-burnerStatus",
-        turnknob: "3A-turnknob",
-        spotlight: "3A-spotlight",
-        temperature: "3B-temperature",
-        preheat: "3B-preheat",
-        completed: "3B-completed",
-        tempRun: "3B-tempRun",
-        technique: "3C-technique",
-        techniquePreheat: "3C-techniquePreheat",
-        techniqueComplete: "3C-techniqueComplete",
-        foodOptions: "3C-foodOptions",
-        beefType: "3C-beefType",
-        beefDoneness: "3C-beefDoneness",
-        beefThickness: "3C-beefThickness",
-        foodPreheat: "3C-foodPreheat",
-        foodComplete: "3C-foodComplete",
-        foodBurnerStatus: "3C-foodBurnerStatus"
-      };
-      cleanBadge = t3PrefixMap[screenName] || `3-${screenName}`;
-      selectVal = `t3:${screenName}`;
-    } else if (state.currentTask === 2) {
-      cleanBadge = `2-${screenName}`;
-      selectVal = `t2:${screenName}`;
-    } else if (state.currentTask === 1) {
-      cleanBadge = "1-awareness";
-      selectVal = "t1:awareness";
+    if (els.viewTask2 && !els.viewTask2.hidden && els.viewTask2.style.display !== "none") {
+      if (els.t2ScreenPrecision && !els.t2ScreenPrecision.hidden && els.t2ScreenPrecision.style.display !== "none") {
+        if (els.t2PanelSpotlight && !els.t2PanelSpotlight.hidden) return "2-spotlight";
+        if (els.t2PanelTechnique && !els.t2PanelTechnique.hidden) return "2-technique";
+        if (els.t2PanelFood && !els.t2PanelFood.hidden) return "2-food";
+        if (els.t2PanelTemperature && !els.t2PanelTemperature.hidden) {
+          if (els.t2TempModeDigipad && !els.t2TempModeDigipad.hidden) return "2-digipad";
+          return "2-temperature";
+        }
+        return `2-${state.task2.tab || "spotlight"}`;
+      }
+      return "2-explore";
+    }
+
+    if (els.viewTask3 && !els.viewTask3.hidden && els.viewTask3.style.display !== "none") {
+      const screenMap = [
+        { el: els.t3ScreenTurnKnob, name: "3A-turnknob" },
+        { el: els.t3ScreenSpotlight, name: "3A-spotlight" },
+        { el: els.t3ScreenTechnique, name: "3C-technique" },
+        { el: els.t3ScreenTechniquePreheat, name: "3C-techniquePreheat" },
+        { el: els.t3ScreenTechniqueComplete, name: "3C-techniqueComplete" },
+        { el: els.t3ScreenFoodOptions, name: "3C-foodOptions" },
+        { el: els.t3ScreenBeefType, name: "3C-beefType" },
+        { el: els.t3ScreenBeefDoneness, name: "3C-beefDoneness" },
+        { el: els.t3ScreenBeefThickness, name: "3C-beefThickness" },
+        { el: els.t3ScreenFoodPreheat, name: "3C-foodPreheat" },
+        { el: els.t3ScreenFoodComplete, name: "3C-foodComplete" },
+        { el: els.t3ScreenFoodBurnerStatus, name: "3C-foodBurnerStatus" },
+        { el: els.t3ScreenTemperature, name: "3B-temperature" },
+        { el: els.t3ScreenPreheat, name: "3B-preheat" },
+        { el: els.t3ScreenPreheatComplete, name: "3B-completed" },
+        { el: els.t3ScreenTempRun, name: "3B-tempRun" },
+        { el: els.t3ScreenStart, name: (t3Stage === "burnerStatus" ? "3-burnerStatus" : "3-start") }
+      ];
+
+      for (const item of screenMap) {
+        if (item.el && !item.el.hidden && item.el.style.display !== "none") {
+          return item.name;
+        }
+      }
+      return `3-${t3Stage || "start"}`;
+    }
+
+    return "3-start";
+  }
+
+  function updateScreenBadge(screenName) {
+    let cleanBadge = "";
+    if (screenName) {
+      if (state.currentTask === 3) {
+        const t3PrefixMap = {
+          start: "3-start",
+          burnerStatus: "3-burnerStatus",
+          turnknob: "3A-turnknob",
+          spotlight: "3A-spotlight",
+          temperature: "3B-temperature",
+          preheat: "3B-preheat",
+          completed: "3B-completed",
+          tempRun: "3B-tempRun",
+          technique: "3C-technique",
+          techniquePreheat: "3C-techniquePreheat",
+          techniqueComplete: "3C-techniqueComplete",
+          foodOptions: "3C-foodOptions",
+          beefType: "3C-beefType",
+          beefDoneness: "3C-beefDoneness",
+          beefThickness: "3C-beefThickness",
+          foodPreheat: "3C-foodPreheat",
+          foodComplete: "3C-foodComplete",
+          foodBurnerStatus: "3C-foodBurnerStatus"
+        };
+        cleanBadge = t3PrefixMap[screenName] || `3-${screenName}`;
+      } else if (state.currentTask === 2) {
+        cleanBadge = `2-${screenName}`;
+      } else if (state.currentTask === 1) {
+        cleanBadge = "1-awareness";
+      }
+    } else {
+      cleanBadge = detectCurrentVisibleScreen();
     }
 
     if (els.screenBadgePill) {
-      els.screenBadgePill.textContent = cleanBadge;
-    }
-
-    if (els.screenJumperSelect && selectVal) {
-      const opt = els.screenJumperSelect.querySelector(`option[value="${selectVal}"]`);
-      if (opt) {
-        els.screenJumperSelect.value = selectVal;
+      if (els.screenBadgePill.textContent !== cleanBadge) {
+        els.screenBadgePill.textContent = cleanBadge;
+        els.screenBadgePill.classList.remove("is-updated");
+        void els.screenBadgePill.offsetWidth;
+        els.screenBadgePill.classList.add("is-updated");
       }
     }
+
+    if (els.screenJumperSelect) {
+      let selectVal = "";
+      if (cleanBadge.startsWith("3")) {
+        const raw = cleanBadge.replace(/^3[A-C]?-/, "");
+        selectVal = `t3:${raw}`;
+      } else if (cleanBadge.startsWith("2")) {
+        const raw = cleanBadge.replace(/^2-/, "");
+        selectVal = `t2:${raw}`;
+      } else if (cleanBadge.startsWith("1")) {
+        selectVal = "t1:awareness";
+      }
+
+      if (selectVal && els.screenJumperSelect.value !== selectVal) {
+        const opt = els.screenJumperSelect.querySelector(`option[value="${selectVal}"]`);
+        if (opt) {
+          els.screenJumperSelect.value = selectVal;
+        }
+      }
+    }
+  }
+
+  function initScreenObserver() {
+    const target = els.cooktopWrapper || document.getElementById("cooktopWrapper");
+    if (!target) return;
+
+    let debounceTimer = null;
+    const observer = new MutationObserver(() => {
+      if (debounceTimer) cancelAnimationFrame(debounceTimer);
+      debounceTimer = requestAnimationFrame(() => {
+        updateScreenBadge();
+      });
+    });
+
+    observer.observe(target, {
+      attributes: true,
+      attributeFilter: ["hidden", "style", "class"],
+      subtree: true
+    });
   }
 
   // SWITCH TASK
@@ -1447,6 +1534,7 @@
     // Perform smooth synchronized GPU push-slide transition from right
     if (els.t3ScreenSpotlight && els.t3ScreenStart) {
       t3Stage = "spotlight";
+      updateScreenBadge("spotlight");
 
       // 1. Prepare start screen: visible at 0, opacity 1
       els.t3ScreenStart.hidden = false;
@@ -1766,6 +1854,7 @@
 
     if (els.t3ScreenSpotlight && !els.t3ScreenSpotlight.hidden && els.t3ScreenStart) {
       t3Stage = "start";
+      updateScreenBadge("start");
 
       // 1. Prepare start screen positioned slightly to the left (-25%) with opacity 0.4
       els.t3ScreenStart.hidden = false;
@@ -3106,23 +3195,47 @@
     }
 
     if (els.screenBadgeContainer) {
-      const copyScreenId = () => {
-        const text = els.screenBadgePill ? els.screenBadgePill.textContent : "";
+      const copyScreenId = (e) => {
+        if (e && e.type === "touchstart") {
+          e.preventDefault();
+        }
+        const text = detectCurrentVisibleScreen();
+        if (els.screenBadgePill) {
+          els.screenBadgePill.textContent = text;
+        }
         if (text) {
           if (navigator.clipboard && navigator.clipboard.writeText) {
-            navigator.clipboard.writeText(text).catch(() => {});
+            navigator.clipboard.writeText(text).catch(() => {
+              fallbackCopy(text);
+            });
+          } else {
+            fallbackCopy(text);
           }
           if (els.screenCopyHint) {
             els.screenCopyHint.classList.add("is-shown");
-            setTimeout(() => els.screenCopyHint.classList.remove("is-shown"), 1200);
+            setTimeout(() => {
+              if (els.screenCopyHint) els.screenCopyHint.classList.remove("is-shown");
+            }, 1200);
           }
         }
       };
+
+      const fallbackCopy = (str) => {
+        try {
+          const ta = document.createElement("textarea");
+          ta.value = str;
+          ta.style.position = "fixed";
+          ta.style.opacity = "0";
+          document.body.appendChild(ta);
+          ta.focus();
+          ta.select();
+          document.execCommand("copy");
+          document.body.removeChild(ta);
+        } catch (err) {}
+      };
+
       els.screenBadgeContainer.addEventListener("click", copyScreenId);
-      els.screenBadgeContainer.addEventListener("touchstart", (e) => {
-        e.preventDefault();
-        copyScreenId();
-      }, { passive: false });
+      els.screenBadgeContainer.addEventListener("touchend", copyScreenId);
     }
   }
 
@@ -3159,6 +3272,7 @@
   }
   setupListeners();
   initRunningActivityBar();
+  initScreenObserver();
 
   // Restore active task from URL or localStorage, default to Task 3 for current testing
   const urlParams = new URLSearchParams(window.location.search);
