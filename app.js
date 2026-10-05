@@ -948,6 +948,31 @@
 
   function showT3Screen(stage) {
     t3Stage = stage;
+    if (els.viewTask3) els.viewTask3.hidden = false;
+    if (els.viewTask2) els.viewTask2.hidden = true;
+    if (els.viewTask1) els.viewTask1.hidden = true;
+
+    // Reset lingering animation styles on start and spotlight screens
+    if (stage !== "start" && stage !== "burnerStatus") {
+      if (els.t3ScreenStart) {
+        els.t3ScreenStart.style.transition = "";
+        els.t3ScreenStart.style.webkitTransition = "";
+        els.t3ScreenStart.style.transform = "";
+        els.t3ScreenStart.style.webkitTransform = "";
+        els.t3ScreenStart.style.opacity = "";
+      }
+    }
+    if (stage !== "spotlight") {
+      if (els.t3ScreenSpotlight) {
+        els.t3ScreenSpotlight.style.transition = "";
+        els.t3ScreenSpotlight.style.webkitTransition = "";
+        els.t3ScreenSpotlight.style.transform = "";
+        els.t3ScreenSpotlight.style.webkitTransform = "";
+        els.t3ScreenSpotlight.style.boxShadow = "";
+        els.t3ScreenSpotlight.style.zIndex = "";
+      }
+    }
+
     const isCooktopOverview = (stage === "start" || stage === "burnerStatus");
     if (els.t3ScreenStart) els.t3ScreenStart.hidden = !isCooktopOverview;
     if (els.t3ScreenTurnKnob) els.t3ScreenTurnKnob.hidden = (stage !== "turnknob");
@@ -2253,18 +2278,32 @@
     }
 
     // Task 2 Tab Bar
-    if (els.t2TabSpotlight) {
-      els.t2TabSpotlight.addEventListener("click", () => setT2Tab("spotlight"));
-    }
-    if (els.t2TabTechnique) {
-      els.t2TabTechnique.addEventListener("click", () => setT2Tab("technique"));
-    }
-    if (els.t2TabFood) {
-      els.t2TabFood.addEventListener("click", () => setT2Tab("food"));
-    }
-    if (els.t2TabTemperature) {
-      els.t2TabTemperature.addEventListener("click", () => setT2Tab("temperature"));
-    }
+    let lastT2TabTime = 0;
+    const bindT2TabBtn = (btn) => {
+      const tabTarget = btn.dataset.t2tab;
+      if (!tabTarget) return;
+
+      const triggerTab = (e) => {
+        if (e) {
+          if (e.type === "touchstart" || e.type === "pointerdown") {
+            e.preventDefault();
+          }
+          e.stopPropagation();
+        }
+        btn.classList.add("is-active-press");
+        setTimeout(() => btn.classList.remove("is-active-press"), 150);
+        const now = Date.now();
+        if (now - lastT2TabTime < 200) return;
+        lastT2TabTime = now;
+        playSound("touch");
+        setT2Tab(tabTarget);
+      };
+
+      btn.addEventListener("click", triggerTab);
+      btn.addEventListener("touchstart", triggerTab, { passive: false });
+      btn.addEventListener("pointerdown", triggerTab);
+    };
+    document.querySelectorAll(".t2-tab-btn").forEach(bindT2TabBtn);
 
     // Task 2 Temperature Mode Switchers
     if (els.t2BtnToDigipad) {
@@ -2403,29 +2442,9 @@
     initT3PickerWheel();
     initT3RunPickerWheel();
 
-    // Spotlight -> Click Temperature Tab -> Go to PCTemperature Screen
-    if (els.t3TabBtnTemperature) {
-      els.t3TabBtnTemperature.addEventListener("click", () => {
-        playSound("touch");
-        showT3Screen("temperature");
-        requestAnimationFrame(() => {
-          scrollToT3Temp(state.task3TargetTemp || 375, false);
-          setTimeout(() => {
-            scrollToT3Temp(state.task3TargetTemp || 375, false);
-          }, 60);
-        });
-      });
-    }
-
-    // Temperature Screen: Back button (< Cooktop) & Spotlight Tab
+    // Temperature Screen: Back button (< Cooktop)
     if (els.t3BtnBackFromTemp) {
       els.t3BtnBackFromTemp.addEventListener("click", () => {
-        playSound("touch");
-        showT3Screen("spotlight");
-      });
-    }
-    if (els.t3TabBtnSpotlightFromTemp) {
-      els.t3TabBtnSpotlightFromTemp.addEventListener("click", () => {
         playSound("touch");
         showT3Screen("spotlight");
       });
@@ -2684,21 +2703,33 @@
       }
     }
 
-    // Attach click to all .t3-tab-btn elements across screens
-    document.querySelectorAll(".t3-tab-btn").forEach(btn => {
-      btn.addEventListener("click", () => {
-        playSound("touch");
-        switchT3Tab(btn.dataset.t3tab);
-      });
-    });
+    // Attach unified pointerdown / touchstart / click listeners to all .t3-tab-btn elements across screens
+    let lastT3TabTime = 0;
+    const bindT3TabBtn = (btn) => {
+      const tabTarget = btn.dataset.t3tab;
+      if (!tabTarget) return;
 
-    // Food Tab Button on Spotlight screen
-    if (els.t3TabBtnFood) {
-      els.t3TabBtnFood.addEventListener("click", () => {
+      const triggerTab = (e) => {
+        if (e) {
+          if (e.type === "touchstart" || e.type === "pointerdown") {
+            e.preventDefault();
+          }
+          e.stopPropagation();
+        }
+        btn.classList.add("is-active-press");
+        setTimeout(() => btn.classList.remove("is-active-press"), 150);
+        const now = Date.now();
+        if (now - lastT3TabTime < 200) return;
+        lastT3TabTime = now;
         playSound("touch");
-        switchT3Tab("food");
-      });
-    }
+        switchT3Tab(tabTarget);
+      };
+
+      btn.addEventListener("click", triggerTab);
+      btn.addEventListener("touchstart", triggerTab, { passive: false });
+      btn.addEventListener("pointerdown", triggerTab);
+    };
+    document.querySelectorAll(".t3-tab-btn").forEach(bindT3TabBtn);
 
     // Food Options Screen Back Button (< Cooktop)
     if (els.t3BtnBackFromFoodOptions) {
@@ -3008,6 +3039,8 @@
     setKnobAngle,
     setTask,
     showT3Screen,
-    updateT3BurnerFromKnob
+    updateT3BurnerFromKnob,
+    showT2Precision,
+    setT2Tab
   };
 })();
