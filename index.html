@@ -76,7 +76,7 @@
         </div>
       </div>
 
-      <!-- TASK 3 ONLY: SUB-FLOW SWITCHER (3B: Temp vs Status 500°F vs 3C: Food Mode) -->
+      <!-- TASK 3 ONLY: SUB-FLOW SWITCHER (3B: Temp vs Status 375°F vs 3C: Food Mode vs 3E: Technique) -->
       <div class="t3-subflow-controls" id="t3SubflowControls" hidden>
         <span class="glance-label">Task 3 Flow:</span>
         <button type="button" class="glance-btn is-active" id="btnT3FlowTemp">
@@ -87,6 +87,9 @@
         </button>
         <button type="button" class="glance-btn" id="btnT3FlowFood">
           3C: Food Flow
+        </button>
+        <button type="button" class="glance-btn" id="btnT3FlowTech">
+          3E: Tech Flow
         </button>
       </div>
 
@@ -109,9 +112,9 @@
               <option value="t3:preheat">3B-preheat (Preheating In Progress)</option>
               <option value="t3:completed">3B-completed (Preheat Complete Toast)</option>
               <option value="t3:tempRun">3B-tempRun (Update Temp Screen)</option>
-              <option value="t3:technique">3C-technique (Technique Options 8 Tiles)</option>
-              <option value="t3:techniquePreheat">3C-techniquePreheat (Technique Preheating)</option>
-              <option value="t3:techniqueComplete">3C-techniqueComplete (Technique Complete)</option>
+              <option value="t3:technique">3E-technique (Technique Options 8 Tiles)</option>
+              <option value="t3:techniquePreheat">3E-techniquePreheat (Caramelize Preheating)</option>
+              <option value="t3:techniqueComplete">3E-techniqueComplete (Caramelize Preheated)</option>
               <option value="t3:foodOptions">3C-foodOptions (Food Options 8 Tiles)</option>
               <option value="t3:beefType">3C-beefType (Beef Cuts Selection)</option>
               <option value="t3:beefDoneness">3C-beefDoneness (Doneness Selection)</option>
@@ -477,6 +480,8 @@
               <button type="button" class="t3-explore-hotspot" id="t3BtnExplore" aria-label="Explore Precision Cooking"></button>
               <!-- Rear Left burner hotspot -->
               <button type="button" class="t3-burner-hotspot" id="t3HotspotRearLeft" aria-label="Rear Left Burner"></button>
+              <!-- Right Front Main Burner hotspot -->
+              <button type="button" class="t3-burner-hotspot t3-burner-hotspot-main" id="t3HotspotMainBurner" aria-label="Right Front Main Burner"></button>
               <!-- Subtle hint banner if participant taps on screen instead of turning knob -->
               <div class="t3-knob-hint" id="t3KnobHint" hidden>Turn any knob below to PRC to begin</div>
             </div>
@@ -992,20 +997,20 @@
               <button type="button" class="t3-active-burner-hotspot" id="t3HotspotRearLeftBurner" aria-label="Rear Left Temperature Burner"></button>
             </div>
 
-            <!-- 16. SCREEN: 3C-TECHNIQUE-PREHEAT (CARAMELIZE PREHEATING - FIGMA 2348:17716) -->
+            <!-- 16. SCREEN: 3E-TECHNIQUE-PREHEAT (CARAMELIZE PREHEATING - FIGMA 2348:17716) -->
             <div class="t3-screen" id="t3ScreenTechniquePreheat" hidden>
               <img class="t3-screen-bg" src="./assets/task3c/2348_17716_clean.png" alt="Technique Preheating">
               <!-- Back button (< Cooktop) -->
               <button type="button" class="t3-back-btn" id="t3BtnBackFromTechPreheat" aria-label="Back to Cooktop"></button>
               <!-- Dynamic Current Temperature (counts up from 182 to 375) -->
-              <div class="t3-food-preheat-current-display">
+              <div class="t3-tech-preheat-current-display">
                 <span class="t3-food-preheat-current-val" id="t3TechPreheatCurrent">182</span>
               </div>
               <!-- Edit button -->
               <button type="button" class="t3-food-edit-btn" id="t3BtnEditTechPreheat" aria-label="Edit Technique Settings"></button>
             </div>
 
-            <!-- 17. SCREEN: 3C-TECHNIQUE-COMPLETE (CARAMELIZE PREHEATED - FIGMA 2348:17836) -->
+            <!-- 17. SCREEN: 3E-TECHNIQUE-COMPLETE (CARAMELIZE PREHEATED - FIGMA 2348:17836) -->
             <div class="t3-screen" id="t3ScreenTechniqueComplete" hidden>
               <img class="t3-screen-bg" src="./assets/task3c/2348_17836_clean.png" alt="Technique Preheated">
               <!-- Back button (< Cooktop) -->

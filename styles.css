@@ -2329,6 +2329,14 @@ html, body {
   border-radius: 50%;
 }
 
+.t3-burner-hotspot.t3-burner-hotspot-main {
+  left: 431.5px;
+  top: 169px;
+  width: 176px;
+  height: 176px;
+  border-radius: 50%;
+}
+
 /* ============================================== */
 /* DYNAMIC ANIMATED BURNER ROLLERS (ALL 5 BURNERS) */
 /* ============================================== */
@@ -3018,10 +3026,10 @@ html, body {
 /* ============================================== */
 .t3-toast-complete-card {
   position: absolute;
-  bottom: 21px;
-  left: 50%;
-  transform: translate3d(-50%, 120px, 0);
-  -webkit-transform: translate3d(-50%, 120px, 0);
+  bottom: 18px;
+  left: 267px;
+  transform: translate3d(0, 120px, 0);
+  -webkit-transform: translate3d(0, 120px, 0);
   width: 600px;
   height: 60px;
   background: #ffffff;
@@ -3040,15 +3048,15 @@ html, body {
 }
 
 .t3-toast-complete-card.is-visible {
-  transform: translate3d(-50%, 0, 0) !important;
-  -webkit-transform: translate3d(-50%, 0, 0) !important;
+  transform: translate3d(0, 0, 0) !important;
+  -webkit-transform: translate3d(0, 0, 0) !important;
   opacity: 1 !important;
   pointer-events: auto !important;
 }
 
 .t3-toast-complete-card.is-dismissing {
-  transform: translate3d(-50%, 120px, 0) !important;
-  -webkit-transform: translate3d(-50%, 120px, 0) !important;
+  transform: translate3d(0, 120px, 0) !important;
+  -webkit-transform: translate3d(0, 120px, 0) !important;
   opacity: 0 !important;
   pointer-events: none !important;
 }
@@ -3279,12 +3287,13 @@ html, body {
 /* (Obsolete flat mock hotspot styles removed to ensure modular beef components render accurately) */
 
 /* Food Preheating Current Temperature Display */
-.t3-food-preheat-current-display {
+.t3-food-preheat-current-display,
+.t3-tech-preheat-current-display {
   position: absolute;
-  left: 450px;
-  top: 180px;
-  width: 110px;
-  height: 75px;
+  left: 458px;
+  top: 181px;
+  width: 120px;
+  height: 67px;
   display: flex;
   align-items: center;
   justify-content: flex-end;
@@ -3292,7 +3301,8 @@ html, body {
   font-size: 56px;
   font-weight: 700;
   color: #ffffff;
-  letter-spacing: -0.5px;
+  letter-spacing: -1px;
+  line-height: 67px;
   z-index: 10;
   pointer-events: none;
 }

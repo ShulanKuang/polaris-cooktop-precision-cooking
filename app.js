@@ -161,6 +161,7 @@
     t3ScreenSpotlight: document.getElementById("t3ScreenSpotlight"),
     t3BtnExplore: document.getElementById("t3BtnExplore"),
     t3HotspotRearLeft: document.getElementById("t3HotspotRearLeft"),
+    t3HotspotMainBurner: document.getElementById("t3HotspotMainBurner"),
     t3KnobHint: document.getElementById("t3KnobHint"),
     t3ToastCard: document.getElementById("t3ToastCard"),
     t3ToastNum: document.getElementById("t3ToastNum"),
@@ -279,6 +280,7 @@
     btnT3FlowTemp: document.getElementById("btnT3FlowTemp"),
     btnT3FlowStatus: document.getElementById("btnT3FlowStatus"),
     btnT3FlowFood: document.getElementById("btnT3FlowFood"),
+    btnT3FlowTech: document.getElementById("btnT3FlowTech"),
     t3BtnBackFromStart: document.getElementById("t3BtnBackFromStart"),
 
     clockReadout: document.getElementById("clockReadout"),
@@ -345,9 +347,9 @@
       const screenMap = [
         { el: els.t3ScreenTurnKnob, name: "3A-turnknob" },
         { el: els.t3ScreenSpotlight, name: "3A-spotlight" },
-        { el: els.t3ScreenTechnique, name: "3C-technique" },
-        { el: els.t3ScreenTechniquePreheat, name: "3C-techniquePreheat" },
-        { el: els.t3ScreenTechniqueComplete, name: "3C-techniqueComplete" },
+        { el: els.t3ScreenTechnique, name: "3E-technique" },
+        { el: els.t3ScreenTechniquePreheat, name: "3E-techniquePreheat" },
+        { el: els.t3ScreenTechniqueComplete, name: "3E-techniqueComplete" },
         { el: els.t3ScreenFoodOptions, name: "3C-foodOptions" },
         { el: els.t3ScreenBeefType, name: "3C-beefType" },
         { el: els.t3ScreenBeefDoneness, name: "3C-beefDoneness" },
@@ -386,9 +388,9 @@
           preheat: "3B-preheat",
           completed: "3B-completed",
           tempRun: "3B-tempRun",
-          technique: "3C-technique",
-          techniquePreheat: "3C-techniquePreheat",
-          techniqueComplete: "3C-techniqueComplete",
+          technique: "3E-technique",
+          techniquePreheat: "3E-techniquePreheat",
+          techniqueComplete: "3E-techniqueComplete",
           foodOptions: "3C-foodOptions",
           beefType: "3C-beefType",
           beefDoneness: "3C-beefDoneness",
@@ -419,7 +421,7 @@
     if (els.screenJumperSelect) {
       let selectVal = "";
       if (cleanBadge.startsWith("3")) {
-        const raw = cleanBadge.replace(/^3[A-C]?-/, "");
+        const raw = cleanBadge.replace(/^3[A-Z]?-/, "");
         selectVal = `t3:${raw}`;
       } else if (cleanBadge.startsWith("2")) {
         const raw = cleanBadge.replace(/^2-/, "");
@@ -1962,10 +1964,7 @@
       });
     }
 
-    // Auto-advance to burnerStatus after 4s (or user clicks OK or ✕)
-    t3HoldingTimeout = setTimeout(() => {
-      finishT3TechniqueToBurnerStatus();
-    }, 4000);
+    // Toast remains visible until user taps OK or ✕, or interacts with the cooktop
   }
 
   function finishT3TechniqueToBurnerStatus() {
@@ -1973,18 +1972,8 @@
     if (els.t3ToastPreheatComplete) {
       els.t3ToastPreheatComplete.classList.remove("is-visible");
       els.t3ToastPreheatComplete.classList.add("is-dismissing");
-      setTimeout(() => {
-        showT3Screen("burnerStatus");
-      }, 250);
-    } else {
-      showT3Screen("burnerStatus");
     }
     playSound("touch");
-
-    const targetTemp = 375;
-    if (els.t3BurnerStatusTemp) {
-      els.t3BurnerStatusTemp.textContent = `${targetTemp}°F`;
-    }
   }
 
   function cancelT3A() {
@@ -2661,7 +2650,7 @@
         }
         // If inside Task 3 Technique Grid
         else if (tile.closest("#t3TechniqueScroll")) {
-          const tech = tile.dataset.technique || tile.querySelector(".text").textContent.replace(/\s+/g, " ").trim();
+          const tech = tile.dataset.technique || tile.querySelector(".buttontile-title, .text")?.textContent?.trim() || "Caramelize";
           setTimeout(() => {
             startT3TechniquePreheat(tech);
           }, 250);
@@ -2693,6 +2682,17 @@
         });
       }
     });
+
+    if (els.t3HotspotMainBurner) {
+      els.t3HotspotMainBurner.addEventListener("click", (e) => {
+        e.stopPropagation();
+        playSound("touch");
+        const k = knobsState[3];
+        const isOff = !k || Math.abs(k.angle) <= 5;
+        const targetAngle = isOff ? -56 : 0;
+        setKnobAngle(4, targetAngle, true, true);
+      });
+    }
 
     // Toast Actions: X button immediately advances to Precision Cooking without 3s countdown
     if (els.t3ToastClose) {
@@ -2939,6 +2939,7 @@
         els.btnT3FlowTemp.classList.add("is-active");
         if (els.btnT3FlowFood) els.btnT3FlowFood.classList.remove("is-active");
         if (els.btnT3FlowStatus) els.btnT3FlowStatus.classList.remove("is-active");
+        if (els.btnT3FlowTech) els.btnT3FlowTech.classList.remove("is-active");
         if (els.tStartActiveBurner1) els.tStartActiveBurner1.hidden = true;
         setKnobAngle(1, 0, false, true);
         setKnobAngle(2, 0, false, true);
@@ -2954,6 +2955,7 @@
         els.btnT3FlowStatus.classList.add("is-active");
         if (els.btnT3FlowTemp) els.btnT3FlowTemp.classList.remove("is-active");
         if (els.btnT3FlowFood) els.btnT3FlowFood.classList.remove("is-active");
+        if (els.btnT3FlowTech) els.btnT3FlowTech.classList.remove("is-active");
         setKnobAngle(2, -56, false, false);
         [1, 3, 4, 5].forEach(i => setKnobAngle(i, 0, false, false));
         showT3Screen("burnerStatus");
@@ -2967,10 +2969,28 @@
         els.btnT3FlowFood.classList.add("is-active");
         if (els.btnT3FlowTemp) els.btnT3FlowTemp.classList.remove("is-active");
         if (els.btnT3FlowStatus) els.btnT3FlowStatus.classList.remove("is-active");
+        if (els.btnT3FlowTech) els.btnT3FlowTech.classList.remove("is-active");
         setKnobAngle(2, -56, false, false);
         showT3Screen("burnerStatus");
         setTimeout(() => {
           setKnobAngle(1, -56, true, true);
+        }, 300);
+      });
+    }
+
+    if (els.btnT3FlowTech) {
+      els.btnT3FlowTech.addEventListener("click", () => {
+        playSound("touch");
+        state.task3Mode = "technique";
+        els.btnT3FlowTech.classList.add("is-active");
+        if (els.btnT3FlowTemp) els.btnT3FlowTemp.classList.remove("is-active");
+        if (els.btnT3FlowStatus) els.btnT3FlowStatus.classList.remove("is-active");
+        if (els.btnT3FlowFood) els.btnT3FlowFood.classList.remove("is-active");
+        if (els.tStartActiveBurner1) els.tStartActiveBurner1.hidden = true;
+        [1, 2, 3, 5].forEach(i => setKnobAngle(i, 0, false, false));
+        showT3Screen("start");
+        setTimeout(() => {
+          setKnobAngle(4, -56, true, true);
         }, 300);
       });
     }
@@ -3530,6 +3550,14 @@
             if (els.t3ToastPreheatComplete) els.t3ToastPreheatComplete.classList.add("is-visible");
           } else if (stage === "tempRun") {
             showT3Screen("tempRun");
+          } else if (stage === "techniquePreheat") {
+            setKnobAngle(4, -56, false, false);
+            [1, 2, 3, 5].forEach(i => setKnobAngle(i, 0, false, false));
+            startT3TechniquePreheat("Caramelize");
+          } else if (stage === "techniqueComplete") {
+            setKnobAngle(4, -56, false, false);
+            [1, 2, 3, 5].forEach(i => setKnobAngle(i, 0, false, false));
+            showT3Screen("techniqueComplete");
           } else {
             showT3Screen(stage);
           }
