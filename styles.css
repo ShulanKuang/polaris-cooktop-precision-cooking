@@ -797,7 +797,7 @@ html, body {
   inset: 0;
   width: 1024px;
   height: 384px;
-  z-index: 100;
+  z-index: 600;
   overflow: hidden;
   background: #000;
 }
@@ -817,7 +817,7 @@ html, body {
   position: absolute;
   inset: 0;
   background: #0c0d10;
-  z-index: 250;
+  z-index: 700 !important;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -979,6 +979,10 @@ html, body {
 .cooktop-hot-indicator {
   width: 130px;
   height: 24px;
+  min-width: 130px;
+  max-width: 130px;
+  min-height: 24px;
+  max-height: 24px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -987,6 +991,7 @@ html, body {
   transform: scale(0.92);
   transition: opacity 0.22s cubic-bezier(0.16, 1, 0.3, 1), transform 0.22s cubic-bezier(0.16, 1, 0.3, 1);
   pointer-events: none !important;
+  filter: drop-shadow(0 0 5px rgba(255, 0, 0, 0.6));
 }
 
 .cooktop-hot-indicator[hidden] {
@@ -1002,7 +1007,7 @@ html, body {
   width: 130px;
   height: 24px;
   display: block;
-  object-fit: contain;
+  object-fit: fill;
   pointer-events: none !important;
   user-select: none;
   -webkit-user-select: none;
