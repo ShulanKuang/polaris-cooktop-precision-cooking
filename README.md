@@ -108,6 +108,25 @@ The prototype includes an external researcher toolbar positioned above the appli
   - Knobs reflect the physical state of the cooktop dials and never auto-turn off across screen transitions.
   - Both Knob 2 ($-56^\circ$) and Knob 1 ($-56^\circ$) remain illuminated and active simultaneously.
   - Knobs only turn off when the user explicitly rotates or taps them back to $0^\circ$ (OFF).
+  - When all active knobs are turned off, the screen burner readouts show OFF, the activity bar shuts off, and the interface smoothly resets back to `3-start`.
+
+### 4. Caramelize Technique Flow from Main Burner (Task 3E)
+- **Direct Main Burner Trigger**: Turning Knob 4 (Right Front 176px Main Burner) to PRC detent ($-56^\circ$) or clicking the main burner graphic hotspot on `3-start`:
+  - Illuminates Knob 4's white halo LED and sets roller 4 to PRC.
+  - Activates the gradient **Activity Bar** at the bottom.
+  - Displays the red **COOKTOP HOT** indicator pill ($130 \times 24\text{px}$, Figma `2315:14060`) in the 48px top status bar.
+  - Triggers the 3-second countdown toast (*"Switching to precision cooking in 3s... Cancel"*).
+  - Automatically transitions to Spotlight (`3A-spotlight`) upon countdown completion.
+- **Technique Tab Navigation**: Tapping the **Technique** tab on the navigation bar switches to the 8-tile Technique grid (`3E-technique`).
+- **Caramelize Selection & Direct Preheating**:
+  - Selecting the **Caramelize** mode tile immediately launches the Caramelize Preheating screen (Figma `2348:17716`).
+  - Dynamic Current temperature ramps up from **182°F** to **375°F** with clean, glitch-free typography and exact baseline alignment with the Target 375°F column.
+- **Preheat Complete Transition & Toast Notification**:
+  - When the temperature reaches **375°F**, transitions to the Preheated screen (Figma `2348:17836`).
+  - **Preheat complete** toast (Figma `2348:17877`) smoothly slides up from the bottom with spring motion.
+  - Clicking **OK** or **✕** dismisses the toast while maintaining the Preheated state.
+  - Turning Knob 4 back to **OFF** turns off the burner, deactivates the activity bar, and cleanly returns to `3-start`.
+
 ---
 
 ## 🎛️ Manifold & Knobs Geometry (1.5× Enlarged)

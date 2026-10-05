@@ -76,11 +76,18 @@ This is an interactive high-fidelity web prototype deployed on an **iPad Pro 13"
        7. **Confirmation Screen (`2348:17304`)**: Summary & START button.
        8. **Dual Preheating Screen (`2348:17501`)**: Both Rear-Left (375°F) and Front-Left (Steak Med Rare) preheating.
        9. **Dual Active Burner Status Overview (`2327:15934`)**: Full overview with both burners running simultaneously.
+   - **Task 3E: Caramelize Technique Flow from Main Burner**:
+     - **Trigger via Right Front Main Burner (Knob 4)**: Turning Knob 4 to $-56^\circ$ (PRC) or tapping the 176px main burner on `3-start` illuminates the Knob 4 LED, activates the activity bar, activates the $130 \times 24\text{px}$ `COOKTOP HOT` status bar indicator (Figma `2315:14060`), and pops up the 3s countdown toast.
+     - **Technique Tab Navigation**: Selecting the Technique tab presents the 8-tile Technique grid (`3E-technique`).
+     - **Caramelize Direct Preheating (`2348:17716`)**: Tapping Caramelize begins dynamic temperature ramp ($182^\circ\text{F} \to 375^\circ\text{F}$). The Current number is positioned at `left: 458px; top: 181px; width: 120px; height: 67px;` with line-height 67px, aligning with the Figma `°F` baseline.
+     - **Preheated Complete Screen (`2348:17836`) & Toast (`2348:17877`)**: When reaching $375^\circ\text{F}$, transitions to the completed screen and triggers the bottom toast popup. Dismissing via OK/✕ keeps screen stable on `techniqueComplete`.
+     - **Reset to Standby**: Turning Knob 4 back to OFF clears burner status, shuts down activity bar, and resets to `3-start`.
    - **Physical Knobs State Persistence Rule (Strict Hardware Metaphor)**:
      - Physical cooktop knobs do not mechanically reset themselves. Knobs **NEVER auto-turn off** across screen transitions, timer completions, or preheating.
      - Any actively running burner keeps its knob turned to $-56^\circ$ (PRC) with its white LED indicator illuminated.
      - When multiple burners are running (e.g. Task 3C), all corresponding physical knobs remain ON simultaneously.
      - Knobs only turn OFF when the user explicitly rotates or taps them back to $0^\circ$ (OFF).
+     - When all active knobs are turned off, the screen burner readouts show OFF, the activity bar shuts off, and the interface smoothly resets back to `3-start`.
    - **Physical Cooktop Manifold**: Located 80px below the screen, stretching across the full width of the iPad Pro.
    - **1.5× Scaled Manifold Image (`assets/manifold-new-clean.png`)**:
      - Rendered from Figma vector frame at **2× Retina (4000 × 864 px)** based on 2000 × 432 px artboard.
