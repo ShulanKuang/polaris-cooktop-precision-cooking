@@ -6,16 +6,23 @@ Interactive prototype for the **October 2026 Polaris Cooktop Precision Cooking U
 
 ## 🚀 Live Interactive Prototype Links
 
-Click below to open and test the prototype directly:
+Choose any of the following methods to open and test the prototype directly:
 
-* **[Live Web Prototype Link](https://empty-cities-add.loca.lt/?task=3#task3)**  
-  *(If prompted for a tunnel password / Endpoint IP, enter: `4.53.66.82`)*
+* **🌟 [Permanent GitHub Pages Link](https://shulankuang.github.io/polaris-cooktop-precision-cooking/?task=3#task3)**  
+  *(Permanent cloud-hosted link that never expires and requires no password. To enable on your repo: go to **Settings** → **Pages** → under **Source**, choose **GitHub Actions** or **Deploy from a branch (`main` / root)**).*
 
-* **Local iPad / Lab Wi-Fi Link**: `http://10.35.122.114:8080/?task=3#task3`  
-  *(Recommended for zero latency when on the same Wi-Fi network as the host machine)*
+* **⚡ [Live Web Tunnel Link (Active Now)](https://huge-zoos-build.loca.lt/?task=3#task3)**  
+  *(Live web mirror directly from this machine. If prompted for a tunnel password / Endpoint IP, enter: `4.53.66.82`)*
 
-* **Direct Browser**:  
-  Clone or download this repository, and open `index.html` in Safari, Chrome, or Edge.
+* **📶 Local iPad / Lab Wi-Fi Link**: `http://10.35.122.114:8080/?task=3#task3`  
+  *(Recommended for zero-latency in-person testing when your iPad is connected to the same Wi-Fi network as this computer)*
+
+* **💻 Direct Local Browser**:  
+  Clone or download this repository, and open [`index.html`](index.html) directly in Safari, Chrome, or Edge. You can also run:
+  ```bash
+  python3 -m http.server 8080
+  ```
+  and visit `http://localhost:8080/?task=3#task3`.
 
 ---
 
