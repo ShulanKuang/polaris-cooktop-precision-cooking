@@ -935,57 +935,102 @@ html, body {
 }
 
 /* ============================================== */
-/* TOP STATUS BAR */
+/* TOP STATUS BAR (FIGMA NODE 2323:15134) - 48PX TALL */
 /* ============================================== */
 .top-status {
   position: absolute;
   top: 0;
   left: 90px;
   right: 0;
-  height: 38px;
+  height: 48px;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0 24px;
+  padding: 0 16px 0 24px;
   z-index: 150;
+  pointer-events: none;
+  box-sizing: border-box;
+}
+
+.top-status[hidden] {
+  display: none !important;
 }
 
 .status-pull {
-  width: 42px;
-  height: 4px;
-  background: rgba(255, 255, 255, 0.24);
-  border-radius: 2px;
-  margin-left: 20px;
+  position: absolute;
+  left: 50%;
+  top: 21px;
+  transform: translateX(-50%);
+  width: 64px;
+  height: 6px;
+  background: rgba(255, 255, 255, 0.4);
+  border-radius: 3px;
+  pointer-events: none;
 }
 
 .status-right {
   display: flex;
   align-items: center;
   gap: 12px;
+  margin-left: auto;
+  height: 100%;
 }
 
-.beta-tag {
-  font-family: var(--font-display);
-  font-size: 10px;
-  font-weight: 700;
-  letter-spacing: 0.8px;
-  color: #fff;
-  background: #464850;
-  padding: 2px 7px;
-  border-radius: 4px;
+.cooktop-hot-indicator {
+  width: 130px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 4px;
+  opacity: 0;
+  transform: scale(0.92);
+  transition: opacity 0.22s cubic-bezier(0.16, 1, 0.3, 1), transform 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+  pointer-events: none !important;
+}
+
+.cooktop-hot-indicator[hidden] {
+  display: none !important;
+}
+
+.cooktop-hot-indicator.is-visible {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.cooktop-hot-img {
+  width: 130px;
+  height: 24px;
+  display: block;
+  object-fit: contain;
+  pointer-events: none !important;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.beta-tag-img {
+  width: 54px;
+  height: 23px;
+  display: block;
+  pointer-events: none;
 }
 
 .wifi-icon {
-  width: 16px;
-  height: 16px;
-  opacity: 0.85;
+  width: 20px;
+  height: 15px;
+  display: block;
+  opacity: 0.95;
+  pointer-events: none;
 }
 
 .time-readout {
-  font-family: var(--font-text);
-  font-size: 13px;
+  font-family: var(--font-text, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif);
+  font-size: 16px;
   font-weight: 500;
-  color: var(--text-primary);
+  color: #ffffff;
+  letter-spacing: 0.2px;
+  line-height: 1;
+  pointer-events: none;
 }
 
 /* ============================================== */
@@ -1666,40 +1711,6 @@ html, body {
   height: 12px;
   z-index: 500 !important;
   pointer-events: none !important;
-}
-
-/* ============================================== */
-/* COOKTOP HOT RED STATUS INDICATOR (FIGMA 2315:14550) */
-/* ============================================== */
-.cooktop-hot-indicator {
-  position: absolute;
-  top: 8px;
-  left: 684px;
-  width: 138px;
-  height: 32px;
-  z-index: 250;
-  pointer-events: none !important;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  opacity: 0;
-  transform: scale(0.92);
-  transition: opacity 0.22s cubic-bezier(0.16, 1, 0.3, 1), transform 0.22s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-.cooktop-hot-indicator.is-visible {
-  opacity: 1;
-  transform: scale(1);
-}
-
-.cooktop-hot-img {
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
-  pointer-events: none !important;
-  user-select: none;
-  -webkit-user-select: none;
-  -webkit-user-drag: none;
 }
 
 /* FOOTER */

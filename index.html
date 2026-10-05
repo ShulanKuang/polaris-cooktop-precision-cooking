@@ -1023,19 +1023,18 @@
             <button type="button" class="nav-rail-hotspot nav-rail-home" id="navHomeBtn" aria-label="Home"></button>
           </aside>
 
-          <!-- TOP STATUS BAR -->
-          <div class="top-status" id="topStatus" aria-hidden="true">
+          <!-- TOP STATUS BAR (FIGMA NODE 2323:15134) - 48PX TALL -->
+          <div class="top-status" id="topStatus" aria-hidden="true" hidden>
             <div class="status-pull"></div>
             <div class="status-right">
-              <span class="beta-tag">BETA</span>
-              <img class="status-icon wifi-icon" src="./figma-assets/wifi-on.svg" alt="WiFi">
+              <!-- COOKTOP HOT RED STATUS INDICATOR (FIGMA NODE 2315:14550 / 2356:18454) NEXT TO BETA ICON -->
+              <div class="cooktop-hot-indicator" id="cooktopHotIndicator" aria-label="Cooktop Hot" hidden>
+                <img class="cooktop-hot-img" src="./assets/cooktop-hot.png" alt="COOKTOP HOT">
+              </div>
+              <img class="beta-tag-img" src="./assets/beta-tag.svg" alt="BETA">
+              <img class="status-icon wifi-icon" src="./assets/wifi-on.svg" alt="WiFi">
               <span class="time-readout" id="clockReadout">10:32 AM</span>
             </div>
-          </div>
-
-          <!-- COOKTOP HOT RED STATUS INDICATOR (FIGMA NODE 2315:14550) -->
-          <div class="cooktop-hot-indicator" id="cooktopHotIndicator" aria-label="Cooktop Hot" hidden>
-            <img class="cooktop-hot-img" src="./assets/cooktop-hot.png" alt="COOKTOP HOT">
           </div>
 
           <!-- HIDDEN CANVAS PLACEHOLDER -->

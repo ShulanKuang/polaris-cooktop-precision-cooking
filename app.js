@@ -1076,6 +1076,9 @@
     // Check if Task 3 is in an active cooking stage
     if (state.currentTask === 3) {
       if (
+        t3Stage === "beefType" ||
+        t3Stage === "beefDoneness" ||
+        t3Stage === "beefThickness" ||
         t3Stage === "preheat" ||
         t3Stage === "completed" ||
         t3Stage === "burnerStatus" ||
@@ -1193,6 +1196,12 @@
     // Task 3C Technique screens:
     if (els.t3ScreenTechniquePreheat) els.t3ScreenTechniquePreheat.hidden = (stage !== "techniquePreheat");
     if (els.t3ScreenTechniqueComplete) els.t3ScreenTechniqueComplete.hidden = (stage !== "techniqueComplete");
+
+    // Top status bar visibility (Figma 2323:15134) - 48px tall status bar on 3C-beefType, doneness, and thickness screens
+    const needsTopStatus = (stage === "beefType" || stage === "beefDoneness" || stage === "beefThickness");
+    if (els.topStatus) {
+      els.topStatus.hidden = !needsTopStatus;
+    }
 
     if (stage !== "completed" && stage !== "foodComplete" && stage !== "techniqueComplete" && els.t3ToastPreheatComplete) {
       els.t3ToastPreheatComplete.classList.remove("is-visible");
