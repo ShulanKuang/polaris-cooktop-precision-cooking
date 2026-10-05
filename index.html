@@ -689,50 +689,267 @@
 
             <!-- 10. SCREEN: 3C-BEEF-TYPE (SELECT TYPE: STEAK, GROUND, PATTIES - FIGMA 2323:15099) -->
             <div class="t3-screen" id="t3ScreenBeefType" hidden>
-              <img class="t3-screen-bg" src="./assets/task3c/2323_15099.png" alt="Select Type">
-              <!-- Back button (< Cooktop | Beef) -->
-              <button type="button" class="t3-back-btn" id="t3BtnBackFromBeefType" aria-label="Back to Food Options"></button>
-              <!-- Left sidebar item hotspots -->
-              <button type="button" class="t3-recipe-nav-item t3-recipe-nav-type" id="t3RecipeNavType" aria-label="Type: Steak"></button>
-              <button type="button" class="t3-recipe-nav-item t3-recipe-nav-doneness" id="t3RecipeNavDoneness" aria-label="Doneness: Med Rare"></button>
-              <button type="button" class="t3-recipe-nav-item t3-recipe-nav-thickness" id="t3RecipeNavThickness" aria-label="Thickness"></button>
-              <!-- Type options -->
-              <button type="button" class="t3-type-option-btn t3-type-steak" id="t3BtnTypeSteak" aria-label="Steak"></button>
-              <!-- START Button -->
-              <button type="button" class="t3-recipe-start-btn" id="t3BtnBeefTypeStart" aria-label="Start Precision Cooking"></button>
+              <!-- Sidepanel Drawer (Figma 2323:15104) -->
+              <div class="t3-drawer-collapsible">
+                <div class="t3-drawer-content">
+                  <!-- Pinned Header: Back button + 5-Burner layout icon -->
+                  <div class="t3-drawer-pinned-header">
+                    <button type="button" class="t3-drawer-back-btn" id="t3BtnBackFromBeefType" aria-label="Back to Food Options">
+                      <svg class="t3-drawer-back-arrow" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#ffffff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="15 18 9 12 15 6"></polyline>
+                      </svg>
+                      <span class="t3-drawer-title"><span class="title-crumb-gray">Cooktop</span> <span class="title-crumb-sep">|</span> <span class="title-crumb-white">Beef</span></span>
+                    </button>
+                    <div class="t3-drawer-burner-icon" aria-label="Burner Top Left Active">
+                      <img src="./assets/drawer/burner-top-left.svg" alt="Top Left Burner" class="t3-burner-mini-img">
+                    </div>
+                  </div>
+                  <!-- Scrollable Option Tiles: Type, Doneness, Thickness -->
+                  <div class="t3-drawer-scrollable-options">
+                    <button type="button" class="t3-drawer-tile is-active" data-drawer-nav="beefType" aria-label="Type: Steak">
+                      <span class="t3-drawer-tile-label">Type</span>
+                      <span class="t3-drawer-tile-val t3-tile-val-type">Steak</span>
+                    </button>
+                    <button type="button" class="t3-drawer-tile" data-drawer-nav="beefDoneness" aria-label="Doneness: Med Rare">
+                      <span class="t3-drawer-tile-label">Doneness</span>
+                      <span class="t3-drawer-tile-val t3-tile-val-doneness">Med Rare</span>
+                    </button>
+                    <button type="button" class="t3-drawer-tile" data-drawer-nav="beefThickness" aria-label="Thickness: 0.5 in">
+                      <span class="t3-drawer-tile-label">Thickness</span>
+                      <span class="t3-drawer-tile-val t3-tile-val-thickness">0.5 in</span>
+                    </button>
+                  </div>
+                </div>
+                <!-- Right handle bar with arrow < -->
+                <div class="t3-drawer-handle">
+                  <div class="t3-drawer-handle-bar"></div>
+                  <div class="t3-drawer-handle-pill">
+                    <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="#ffffff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                      <polyline points="15 18 9 12 15 6"></polyline>
+                    </svg>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Main Content Area: Select Type -->
+              <div class="t3-beef-type-main">
+                <img class="t3-beef-skillet-bg" src="./assets/doneness/2323_15124.png" alt="Steak Skillet">
+                <div class="t3-beef-type-header">
+                  <h2 class="t3-beef-screen-title">Select Type</h2>
+                </div>
+                <div class="t3-beef-type-options">
+                  <button type="button" class="t3-type-btn" data-beef-type="Ground">Ground</button>
+                  <button type="button" class="t3-type-btn" data-beef-type="Patties">Patties</button>
+                  <button type="button" class="t3-type-btn is-active" data-beef-type="Steak" id="t3BtnTypeSteak">Steak</button>
+                </div>
+                <button type="button" class="t3-recipe-start-btn" id="t3BtnBeefTypeStart" aria-label="Start Precision Cooking">START</button>
+              </div>
             </div>
 
             <!-- 11. SCREEN: 3C-BEEF-DONENESS (SELECT DONENESS - FIGMA 2323:14983 / 2323:15041) -->
             <div class="t3-screen" id="t3ScreenBeefDoneness" hidden>
-              <img class="t3-screen-bg" id="t3BeefDonenessBg" src="./assets/task3c/2323_14983.png" alt="Select Doneness">
-              <!-- Back button (< Cooktop | Beef) -->
-              <button type="button" class="t3-back-btn" id="t3BtnBackFromBeefDoneness" aria-label="Back to Select Type"></button>
-              <!-- Left sidebar item hotspots -->
-              <button type="button" class="t3-recipe-nav-item t3-recipe-nav-type" id="t3RecipeNavType2" aria-label="Type: Steak"></button>
-              <button type="button" class="t3-recipe-nav-item t3-recipe-nav-doneness" id="t3RecipeNavDoneness2" aria-label="Doneness: Med Rare"></button>
-              <button type="button" class="t3-recipe-nav-item t3-recipe-nav-thickness" id="t3RecipeNavThickness2" aria-label="Thickness"></button>
-              <!-- Info / Photo toggle button (bottom right) -->
-              <button type="button" class="t3-doneness-info-toggle" id="t3BtnDonenessToggle" aria-label="Toggle Description"></button>
-              <!-- Doneness card hotspot -->
-              <button type="button" class="t3-doneness-card t3-doneness-med-rare" id="t3BtnDonenessMedRare" aria-label="Med Rare"></button>
-              <!-- START Button -->
-              <button type="button" class="t3-recipe-start-btn" id="t3BtnBeefDonenessStart" aria-label="Start Precision Cooking"></button>
+              <!-- Sidepanel Drawer (Figma 2323:15104) -->
+              <div class="t3-drawer-collapsible">
+                <div class="t3-drawer-content">
+                  <!-- Pinned Header: Back button + 5-Burner layout icon -->
+                  <div class="t3-drawer-pinned-header">
+                    <button type="button" class="t3-drawer-back-btn" id="t3BtnBackFromBeefDoneness" aria-label="Back to Food Options">
+                      <svg class="t3-drawer-back-arrow" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#ffffff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="15 18 9 12 15 6"></polyline>
+                      </svg>
+                      <span class="t3-drawer-title"><span class="title-crumb-gray">Cooktop</span> <span class="title-crumb-sep">|</span> <span class="title-crumb-white">Beef</span></span>
+                    </button>
+                    <div class="t3-drawer-burner-icon" aria-label="Burner Top Left Active">
+                      <img src="./assets/drawer/burner-top-left.svg" alt="Top Left Burner" class="t3-burner-mini-img">
+                    </div>
+                  </div>
+                  <!-- Scrollable Option Tiles: Type, Doneness, Thickness -->
+                  <div class="t3-drawer-scrollable-options">
+                    <button type="button" class="t3-drawer-tile" data-drawer-nav="beefType" aria-label="Type: Steak">
+                      <span class="t3-drawer-tile-label">Type</span>
+                      <span class="t3-drawer-tile-val t3-tile-val-type">Steak</span>
+                    </button>
+                    <button type="button" class="t3-drawer-tile is-active" data-drawer-nav="beefDoneness" aria-label="Doneness: Med Rare">
+                      <span class="t3-drawer-tile-label">Doneness</span>
+                      <span class="t3-drawer-tile-val t3-tile-val-doneness">Med Rare</span>
+                    </button>
+                    <button type="button" class="t3-drawer-tile" data-drawer-nav="beefThickness" aria-label="Thickness: 0.5 in">
+                      <span class="t3-drawer-tile-label">Thickness</span>
+                      <span class="t3-drawer-tile-val t3-tile-val-thickness">0.5 in</span>
+                    </button>
+                  </div>
+                </div>
+                <!-- Right handle bar with arrow < -->
+                <div class="t3-drawer-handle">
+                  <div class="t3-drawer-handle-bar"></div>
+                  <div class="t3-drawer-handle-pill">
+                    <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="#ffffff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                      <polyline points="15 18 9 12 15 6"></polyline>
+                    </svg>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Main Content Area: Select Doneness -->
+              <div class="t3-beef-doneness-main">
+                <div class="t3-doneness-header">
+                  <h2 class="t3-beef-screen-title">Select Doneness</h2>
+                </div>
+
+                <!-- Horizontal Scrollable Cards Carousel -->
+                <div class="t3-doneness-carousel-container" id="t3DonenessCarouselContainer">
+                  <div class="t3-doneness-carousel is-photo-mode" id="t3DonenessCarousel">
+                    <!-- 1. Rare -->
+                    <div class="t3-doneness-card" data-index="0" data-doneness="Rare">
+                      <div class="t3-card-check"><img src="./assets/doneness/checkmark.png" alt="Checked"></div>
+                      <div class="t3-card-title">Rare</div>
+                      <div class="t3-card-photo-body">
+                        <img src="./assets/doneness/steak-rare.png" alt="Rare steak" class="t3-steak-photo-img">
+                      </div>
+                      <div class="t3-card-text-body">
+                        Cool to warm, red center with a soft and tender texture
+                      </div>
+                    </div>
+                    <!-- 2. Med Rare (Default selected) -->
+                    <div class="t3-doneness-card is-selected" data-index="1" data-doneness="Med Rare" id="t3BtnDonenessMedRare">
+                      <div class="t3-card-check"><img src="./assets/doneness/checkmark.png" alt="Checked"></div>
+                      <div class="t3-card-title">Med Rare</div>
+                      <div class="t3-card-photo-body">
+                        <img src="./assets/doneness/steak-med-rare.png" alt="Med Rare steak" class="t3-steak-photo-img">
+                      </div>
+                      <div class="t3-card-text-body">
+                        Warm, red center with a soft and tender texture
+                      </div>
+                    </div>
+                    <!-- 3. Medium -->
+                    <div class="t3-doneness-card" data-index="2" data-doneness="Medium">
+                      <div class="t3-card-check"><img src="./assets/doneness/checkmark.png" alt="Checked"></div>
+                      <div class="t3-card-title">Medium</div>
+                      <div class="t3-card-photo-body">
+                        <img src="./assets/doneness/steak-medium.png" alt="Medium steak" class="t3-steak-photo-img">
+                      </div>
+                      <div class="t3-card-text-body">
+                        Light red to pink center with a soft texture
+                      </div>
+                    </div>
+                    <!-- 4. Med Well -->
+                    <div class="t3-doneness-card" data-index="3" data-doneness="Med Well">
+                      <div class="t3-card-check"><img src="./assets/doneness/checkmark.png" alt="Checked"></div>
+                      <div class="t3-card-title">Med Well</div>
+                      <div class="t3-card-photo-body">
+                        <img src="./assets/doneness/steak-med-well.png" alt="Med Well steak" class="t3-steak-photo-img">
+                      </div>
+                      <div class="t3-card-text-body">
+                        Slightly pink center with slightly firm texture
+                      </div>
+                    </div>
+                    <!-- 5. Well -->
+                    <div class="t3-doneness-card" data-index="4" data-doneness="Well">
+                      <div class="t3-card-check"><img src="./assets/doneness/checkmark.png" alt="Checked"></div>
+                      <div class="t3-card-title">Well</div>
+                      <div class="t3-card-photo-body">
+                        <img src="./assets/doneness/steak-well.png" alt="Well steak" class="t3-steak-photo-img">
+                      </div>
+                      <div class="t3-card-text-body">
+                        Gray to brown center with a firm texture
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Pagination Dots (5 dots) -->
+                <div class="t3-doneness-pagination" id="t3DonenessPagination">
+                  <button type="button" class="t3-doneness-dot" data-dot="0" aria-label="Page 1: Rare"></button>
+                  <button type="button" class="t3-doneness-dot is-active" data-dot="1" aria-label="Page 2: Med Rare"></button>
+                  <button type="button" class="t3-doneness-dot" data-dot="2" aria-label="Page 3: Medium"></button>
+                  <button type="button" class="t3-doneness-dot" data-dot="3" aria-label="Page 4: Med Well"></button>
+                  <button type="button" class="t3-doneness-dot" data-dot="4" aria-label="Page 5: Well"></button>
+                </div>
+
+                <!-- Footer: START button and Toggle (Photo / Description) -->
+                <div class="t3-doneness-footer">
+                  <button type="button" class="t3-recipe-start-btn" id="t3BtnBeefDonenessStart" aria-label="Start Precision Cooking">START</button>
+                  <button type="button" class="t3-doneness-toggle-btn" id="t3BtnDonenessToggle" aria-label="Toggle Description">
+                    <!-- Info icon (shown in photo mode) -->
+                    <svg class="t3-toggle-svg-info" viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <circle cx="12" cy="12" r="10"></circle>
+                      <line x1="12" y1="16" x2="12" y2="12"></line>
+                      <line x1="12" y1="8" x2="12.01" y2="8"></line>
+                    </svg>
+                    <!-- Photo icon (shown in text mode) -->
+                    <svg class="t3-toggle-svg-photo" viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" hidden>
+                      <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                      <circle cx="8.5" cy="8.5" r="1.5"></circle>
+                      <polyline points="21 15 16 10 5 21"></polyline>
+                    </svg>
+                  </button>
+                </div>
+              </div>
             </div>
 
             <!-- 12. SCREEN: 3C-BEEF-THICKNESS (SELECT THICKNESS - FIGMA 2323:15136) -->
             <div class="t3-screen" id="t3ScreenBeefThickness" hidden>
-              <img class="t3-screen-bg" src="./assets/task3c/2323_15136.png" alt="Select Thickness">
-              <!-- Back button (< Cooktop | Beef) -->
-              <button type="button" class="t3-back-btn" id="t3BtnBackFromBeefThickness" aria-label="Back to Select Doneness"></button>
-              <!-- Left sidebar item hotspots -->
-              <button type="button" class="t3-recipe-nav-item t3-recipe-nav-type" id="t3RecipeNavType3" aria-label="Type: Steak"></button>
-              <button type="button" class="t3-recipe-nav-item t3-recipe-nav-doneness" id="t3RecipeNavDoneness3" aria-label="Doneness: Med Rare"></button>
-              <button type="button" class="t3-recipe-nav-item t3-recipe-nav-thickness" id="t3RecipeNavThickness3" aria-label="Thickness"></button>
-              <!-- Stepper buttons: Minus, Plus -->
-              <button type="button" class="t3-thickness-btn t3-thickness-minus" id="t3BtnThicknessMinus" aria-label="Decrease Thickness"></button>
-              <button type="button" class="t3-thickness-btn t3-thickness-plus" id="t3BtnThicknessPlus" aria-label="Increase Thickness"></button>
-              <!-- START Button -->
-              <button type="button" class="t3-recipe-start-btn t3-recipe-start-thickness" id="t3BtnBeefThicknessStart" aria-label="Start Precision Cooking"></button>
+              <!-- Sidepanel Drawer (Figma 2323:15104) -->
+              <div class="t3-drawer-collapsible">
+                <div class="t3-drawer-content">
+                  <!-- Pinned Header: Back button + 5-Burner layout icon -->
+                  <div class="t3-drawer-pinned-header">
+                    <button type="button" class="t3-drawer-back-btn" id="t3BtnBackFromBeefThickness" aria-label="Back to Food Options">
+                      <svg class="t3-drawer-back-arrow" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#ffffff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="15 18 9 12 15 6"></polyline>
+                      </svg>
+                      <span class="t3-drawer-title"><span class="title-crumb-gray">Cooktop</span> <span class="title-crumb-sep">|</span> <span class="title-crumb-white">Beef</span></span>
+                    </button>
+                    <div class="t3-drawer-burner-icon" aria-label="Burner Top Left Active">
+                      <img src="./assets/drawer/burner-top-left.svg" alt="Top Left Burner" class="t3-burner-mini-img">
+                    </div>
+                  </div>
+                  <!-- Scrollable Option Tiles: Type, Doneness, Thickness -->
+                  <div class="t3-drawer-scrollable-options">
+                    <button type="button" class="t3-drawer-tile" data-drawer-nav="beefType" aria-label="Type: Steak">
+                      <span class="t3-drawer-tile-label">Type</span>
+                      <span class="t3-drawer-tile-val t3-tile-val-type">Steak</span>
+                    </button>
+                    <button type="button" class="t3-drawer-tile" data-drawer-nav="beefDoneness" aria-label="Doneness: Med Rare">
+                      <span class="t3-drawer-tile-label">Doneness</span>
+                      <span class="t3-drawer-tile-val t3-tile-val-doneness">Med Rare</span>
+                    </button>
+                    <button type="button" class="t3-drawer-tile is-active" data-drawer-nav="beefThickness" aria-label="Thickness: 0.5 in">
+                      <span class="t3-drawer-tile-label">Thickness</span>
+                      <span class="t3-drawer-tile-val t3-tile-val-thickness">0.5 in</span>
+                    </button>
+                  </div>
+                </div>
+                <!-- Right handle bar with arrow < -->
+                <div class="t3-drawer-handle">
+                  <div class="t3-drawer-handle-bar"></div>
+                  <div class="t3-drawer-handle-pill">
+                    <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="#ffffff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                      <polyline points="15 18 9 12 15 6"></polyline>
+                    </svg>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Main Content Area: Select Thickness -->
+              <div class="t3-beef-thickness-main">
+                <div class="t3-thickness-header">
+                  <h2 class="t3-beef-screen-title">Select Thickness</h2>
+                </div>
+                <div class="t3-thickness-stepper-row">
+                  <button type="button" class="t3-thickness-step-btn" id="t3BtnThicknessMinus" aria-label="Decrease Thickness">
+                    <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="#ffffff" stroke-width="3" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                  </button>
+                  <div class="t3-thickness-display">
+                    <span class="t3-thickness-number" id="t3ThicknessNumber">0.5</span>
+                    <span class="t3-thickness-unit">inch</span>
+                  </div>
+                  <button type="button" class="t3-thickness-step-btn" id="t3BtnThicknessPlus" aria-label="Increase Thickness">
+                    <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="#ffffff" stroke-width="3" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                  </button>
+                </div>
+                <button type="button" class="t3-recipe-start-btn" id="t3BtnBeefThicknessStart" aria-label="Start Precision Cooking">START</button>
+              </div>
             </div>
 
             <!-- 13. SCREEN: 3C-FOOD-PREHEAT (STEAK MED RARE PREHEATING RAMP UP - FIGMA 2348:17304) -->

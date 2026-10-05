@@ -48,7 +48,10 @@
       digipadBuffer: "370",
       hasEditedKeypad: false
     },
-    task3TargetTemp: 375
+    task3TargetTemp: 375,
+    task3BeefType: "Steak",
+    task3BeefDoneness: "Med Rare",
+    task3BeefThickness: 0.5
   };
 
   // DOM ELEMENTS
@@ -1244,6 +1247,11 @@
       }
       if (els.t3ToastNum) {
         els.t3ToastNum.textContent = "3";
+      }
+    }
+    if (stage === "beefType" || stage === "beefDoneness" || stage === "beefThickness") {
+      if (typeof window.__onEnterBeefScreen === "function") {
+        window.__onEnterBeefScreen(stage);
       }
     }
     if (stage === "foodBurnerStatus") {
@@ -2981,114 +2989,337 @@
       });
     }
 
-    // Select Type Screen (Figma 2323:15099)
-    if (els.t3BtnBackFromBeefType) {
-      els.t3BtnBackFromBeefType.addEventListener("click", () => {
-        playSound("touch");
-        showT3Screen("foodOptions");
-      });
-    }
-    if (els.t3BtnTypeSteak) {
-      els.t3BtnTypeSteak.addEventListener("click", () => {
-        playSound("touch");
-        showT3Screen("beefDoneness");
-      });
-    }
-    if (els.t3RecipeNavDoneness) {
-      els.t3RecipeNavDoneness.addEventListener("click", () => {
-        playSound("touch");
-        showT3Screen("beefDoneness");
-      });
-    }
-    if (els.t3RecipeNavThickness) {
-      els.t3RecipeNavThickness.addEventListener("click", () => {
-        playSound("touch");
-        showT3Screen("beefThickness");
-      });
-    }
-    if (els.t3BtnBeefTypeStart) {
-      els.t3BtnBeefTypeStart.addEventListener("click", () => {
-        startT3FoodPreheat();
-      });
-    }
+    // =========================================================================
+    // TASK 3C: BEEF FLOW (SELECT TYPE, SELECT DONENESS, SELECT THICKNESS)
+    // Figma 2323:15104 (Sidepanel Drawer), 2323:14992 / 2323:15050 (Doneness Cards)
+    // =========================================================================
 
-    // Select Doneness Screen (Figma 2323:14983 & 2323:15041)
-    let isDonenessDescriptionView = false;
-    if (els.t3BtnBackFromBeefDoneness) {
-      els.t3BtnBackFromBeefDoneness.addEventListener("click", () => {
-        playSound("touch");
-        showT3Screen("beefType");
-      });
-    }
-    if (els.t3RecipeNavType2) {
-      els.t3RecipeNavType2.addEventListener("click", () => {
-        playSound("touch");
-        showT3Screen("beefType");
-      });
-    }
-    if (els.t3RecipeNavThickness2) {
-      els.t3RecipeNavThickness2.addEventListener("click", () => {
-        playSound("touch");
-        showT3Screen("beefThickness");
-      });
-    }
-    if (els.t3BtnDonenessToggle) {
-      els.t3BtnDonenessToggle.addEventListener("click", () => {
-        playSound("touch");
-        isDonenessDescriptionView = !isDonenessDescriptionView;
-        if (els.t3BeefDonenessBg) {
-          els.t3BeefDonenessBg.src = isDonenessDescriptionView
-            ? "./assets/task3c/2323_15041.png"
-            : "./assets/task3c/2323_14983.png";
+    const DONENESS_LEVELS = [
+      { id: "rare", name: "Rare", index: 0 },
+      { id: "med-rare", name: "Med Rare", index: 1 },
+      { id: "medium", name: "Medium", index: 2 },
+      { id: "med-well", name: "Med Well", index: 3 },
+      { id: "well", name: "Well", index: 4 }
+    ];
+
+    function syncBeefDrawers() {
+      const beefType = state.task3BeefType || "Steak";
+      const doneness = state.task3BeefDoneness || "Med Rare";
+      const thickness = `${state.task3BeefThickness || 0.5} in`;
+
+      document.querySelectorAll(".t3-tile-val-type").forEach(el => { el.textContent = beefType; });
+      document.querySelectorAll(".t3-tile-val-doneness").forEach(el => { el.textContent = doneness; });
+      document.querySelectorAll(".t3-tile-val-thickness").forEach(el => { el.textContent = thickness; });
+
+      // Sync active state on tiles per screen
+      const activeScreens = [
+        { id: "t3ScreenBeefType", nav: "beefType" },
+        { id: "t3ScreenBeefDoneness", nav: "beefDoneness" },
+        { id: "t3ScreenBeefThickness", nav: "beefThickness" }
+      ];
+
+      activeScreens.forEach(scr => {
+        const scrEl = document.getElementById(scr.id);
+        if (scrEl) {
+          scrEl.querySelectorAll(".t3-drawer-tile").forEach(tile => {
+            const isMatch = tile.getAttribute("data-drawer-nav") === scr.nav;
+            tile.classList.toggle("is-active", isMatch);
+            if (isMatch && scr.nav === "beefThickness") {
+              const scrollBox = scrEl.querySelector(".t3-drawer-scrollable-options");
+              if (scrollBox) scrollBox.scrollTop = scrollBox.scrollHeight;
+            }
+          });
         }
       });
     }
-    if (els.t3BtnDonenessMedRare) {
-      els.t3BtnDonenessMedRare.addEventListener("click", () => {
-        playSound("touch");
-        showT3Screen("beefThickness");
+
+    function selectDonenessCard(index, smoothScroll = true) {
+      const carousel = document.getElementById("t3DonenessCarousel");
+      if (!carousel) return;
+      const cards = carousel.querySelectorAll(".t3-doneness-card");
+      if (index < 0 || index >= cards.length) return;
+
+      cards.forEach((c, i) => {
+        c.classList.toggle("is-selected", i === index);
+      });
+
+      const donenessName = cards[index].getAttribute("data-doneness") || "Med Rare";
+      state.task3BeefDoneness = donenessName;
+      syncBeefDrawers();
+
+      updatePaginationDots(index);
+
+      if (smoothScroll) {
+        scrollCarouselToCard(index, true);
+      }
+    }
+
+    function scrollCarouselToCard(index, smooth = true) {
+      const carousel = document.getElementById("t3DonenessCarousel");
+      if (!carousel) return;
+      const cards = carousel.querySelectorAll(".t3-doneness-card");
+      if (!cards[index]) return;
+
+      const card = cards[index];
+      const cardLeft = card.offsetLeft;
+      const cardWidth = card.offsetWidth;
+      const carouselWidth = carousel.clientWidth;
+      const targetScrollLeft = cardLeft - (carouselWidth / 2) + (cardWidth / 2);
+
+      carousel.scrollTo({
+        left: targetScrollLeft,
+        behavior: smooth ? "smooth" : "auto"
       });
     }
-    if (els.t3BtnBeefDonenessStart) {
-      els.t3BtnBeefDonenessStart.addEventListener("click", () => {
+
+    function updateActiveDonenessDotFromScroll() {
+      const carousel = document.getElementById("t3DonenessCarousel");
+      if (!carousel) return;
+      const cards = carousel.querySelectorAll(".t3-doneness-card");
+      if (!cards.length) return;
+
+      const carouselCenter = carousel.scrollLeft + (carousel.clientWidth / 2);
+      let closestIndex = 0;
+      let minDiff = Infinity;
+
+      cards.forEach((card, idx) => {
+        const cardCenter = card.offsetLeft + (card.offsetWidth / 2);
+        const diff = Math.abs(carouselCenter - cardCenter);
+        if (diff < minDiff) {
+          minDiff = diff;
+          closestIndex = idx;
+        }
+      });
+
+      updatePaginationDots(closestIndex);
+    }
+
+    function updatePaginationDots(activeIndex) {
+      const dots = document.querySelectorAll(".t3-doneness-dot");
+      dots.forEach((dot, idx) => {
+        dot.classList.toggle("is-active", idx === activeIndex);
+      });
+    }
+
+    window.__onEnterBeefScreen = function(stage) {
+      syncBeefDrawers();
+      if (stage === "beefDoneness") {
+        setTimeout(() => {
+          const selectedIdx = DONENESS_LEVELS.findIndex(d => d.name === (state.task3BeefDoneness || "Med Rare"));
+          selectDonenessCard(selectedIdx >= 0 ? selectedIdx : 1, false);
+        }, 30);
+      } else if (stage === "beefThickness") {
+        const thickNum = document.getElementById("t3ThicknessNumber");
+        if (thickNum) thickNum.textContent = (state.task3BeefThickness || 0.5).toString();
+      }
+    };
+
+    // 1. Drawer Option Tiles Click (Type, Doneness, Thickness)
+    document.querySelectorAll(".t3-drawer-tile").forEach(tile => {
+      tile.addEventListener("click", () => {
+        playSound("touch");
+        const targetNav = tile.getAttribute("data-drawer-nav");
+        if (targetNav) {
+          showT3Screen(targetNav);
+        }
+      });
+    });
+
+    // 2. Drawer Back Button Click (< Cooktop | Beef)
+    document.querySelectorAll(".t3-drawer-back-btn").forEach(btn => {
+      btn.addEventListener("click", () => {
+        playSound("touch");
+        showT3Screen("foodOptions");
+      });
+    });
+
+    // 3. Drawer Collapse Handle Click
+    document.querySelectorAll(".t3-drawer-handle-pill").forEach(pill => {
+      pill.addEventListener("click", (e) => {
+        e.stopPropagation();
+        playSound("touch");
+        const drawer = pill.closest(".t3-drawer-collapsible");
+        if (drawer) {
+          drawer.classList.toggle("is-collapsed");
+        }
+      });
+    });
+
+    // 4. Drawer Scrollable Container Smooth Mouse Drag & Wheel
+    document.querySelectorAll(".t3-drawer-scrollable-options").forEach(scrollBox => {
+      let isDown = false;
+      let startY = 0;
+      let scrollTop = 0;
+
+      scrollBox.addEventListener("mousedown", (e) => {
+        isDown = true;
+        startY = e.pageY - scrollBox.offsetTop;
+        scrollTop = scrollBox.scrollTop;
+      });
+      scrollBox.addEventListener("mouseleave", () => { isDown = false; });
+      scrollBox.addEventListener("mouseup", () => { isDown = false; });
+      scrollBox.addEventListener("mousemove", (e) => {
+        if (!isDown) return;
+        e.preventDefault();
+        const y = e.pageY - scrollBox.offsetTop;
+        const walk = (y - startY) * 1.5;
+        scrollBox.scrollTop = scrollTop - walk;
+      });
+    });
+
+    // 5. Select Type Screen Type Buttons (Ground, Patties, Steak)
+    document.querySelectorAll(".t3-type-btn").forEach(btn => {
+      btn.addEventListener("click", () => {
+        playSound("touch");
+        document.querySelectorAll(".t3-type-btn").forEach(b => b.classList.remove("is-active"));
+        btn.classList.add("is-active");
+        state.task3BeefType = btn.getAttribute("data-beef-type") || "Steak";
+        syncBeefDrawers();
+      });
+    });
+
+    const btnBeefTypeStart = document.getElementById("t3BtnBeefTypeStart");
+    if (btnBeefTypeStart) {
+      btnBeefTypeStart.addEventListener("click", () => {
+        playSound("touch");
+        showT3Screen("beefDoneness");
+      });
+    }
+
+    // 6. Select Doneness Horizontal Carousel & Cards
+    const donenessCarousel = document.getElementById("t3DonenessCarousel");
+    const donenessDotsContainer = document.getElementById("t3DonenessPagination");
+    const donenessToggleBtn = document.getElementById("t3BtnDonenessToggle");
+    const donenessStartBtn = document.getElementById("t3BtnBeefDonenessStart");
+
+    if (donenessCarousel) {
+      // Horizontal mouse drag support
+      let isDown = false;
+      let startX = 0;
+      let scrollLeft = 0;
+      let hasDragged = false;
+
+      donenessCarousel.addEventListener("mousedown", (e) => {
+        isDown = true;
+        hasDragged = false;
+        startX = e.pageX - donenessCarousel.offsetLeft;
+        scrollLeft = donenessCarousel.scrollLeft;
+      });
+
+      window.addEventListener("mouseup", () => {
+        if (isDown) {
+          isDown = false;
+          setTimeout(() => { hasDragged = false; }, 50);
+        }
+      });
+
+      donenessCarousel.addEventListener("mousemove", (e) => {
+        if (!isDown) return;
+        const x = e.pageX - donenessCarousel.offsetLeft;
+        const walk = (x - startX) * 1.4;
+        if (Math.abs(walk) > 6) hasDragged = true;
+        donenessCarousel.scrollLeft = scrollLeft - walk;
+      });
+
+      // Update pagination dots dynamically on horizontal scroll
+      let scrollDebounce = null;
+      donenessCarousel.addEventListener("scroll", () => {
+        if (scrollDebounce) cancelAnimationFrame(scrollDebounce);
+        scrollDebounce = requestAnimationFrame(() => {
+          updateActiveDonenessDotFromScroll();
+        });
+      }, { passive: true });
+
+      // Card click selection
+      const cards = donenessCarousel.querySelectorAll(".t3-doneness-card");
+      cards.forEach((card, idx) => {
+        card.addEventListener("click", () => {
+          if (hasDragged) return;
+          playSound("touch");
+          selectDonenessCard(idx, true);
+        });
+      });
+    }
+
+    // Pagination dots click
+    if (donenessDotsContainer) {
+      const dots = donenessDotsContainer.querySelectorAll(".t3-doneness-dot");
+      dots.forEach((dot, idx) => {
+        dot.addEventListener("click", () => {
+          playSound("touch");
+          scrollCarouselToCard(idx, true);
+        });
+      });
+    }
+
+    // Toggle button (Photo Mode vs Text Description Mode)
+    if (donenessToggleBtn) {
+      donenessToggleBtn.addEventListener("click", () => {
+        playSound("touch");
+        const isPhotoMode = donenessCarousel && !donenessCarousel.classList.contains("is-text-mode");
+        if (donenessCarousel) {
+          if (isPhotoMode) {
+            donenessCarousel.classList.remove("is-photo-mode");
+            donenessCarousel.classList.add("is-text-mode");
+          } else {
+            donenessCarousel.classList.remove("is-text-mode");
+            donenessCarousel.classList.add("is-photo-mode");
+          }
+        }
+        const svgInfo = donenessToggleBtn.querySelector(".t3-toggle-svg-info");
+        const svgPhoto = donenessToggleBtn.querySelector(".t3-toggle-svg-photo");
+        if (svgInfo && svgPhoto) {
+          svgInfo.hidden = isPhotoMode;
+          svgPhoto.hidden = !isPhotoMode;
+        }
+      });
+    }
+
+    // Doneness START Button
+    if (donenessStartBtn) {
+      donenessStartBtn.addEventListener("click", () => {
+        playSound("touch");
         startT3FoodPreheat();
       });
     }
 
-    // Select Thickness Screen (Figma 2323:15136)
-    if (els.t3BtnBackFromBeefThickness) {
-      els.t3BtnBackFromBeefThickness.addEventListener("click", () => {
-        playSound("touch");
-        showT3Screen("beefDoneness");
-      });
-    }
-    if (els.t3RecipeNavType3) {
-      els.t3RecipeNavType3.addEventListener("click", () => {
-        playSound("touch");
-        showT3Screen("beefType");
-      });
-    }
-    if (els.t3RecipeNavDoneness3) {
-      els.t3RecipeNavDoneness3.addEventListener("click", () => {
-        playSound("touch");
-        showT3Screen("beefDoneness");
-      });
-    }
-    if (els.t3BtnThicknessMinus) {
-      els.t3BtnThicknessMinus.addEventListener("click", () => {
+    // 7. Select Thickness Stepper
+    const btnThicknessMinus = document.getElementById("t3BtnThicknessMinus");
+    const btnThicknessPlus = document.getElementById("t3BtnThicknessPlus");
+    const thicknessDisplayNum = document.getElementById("t3ThicknessNumber");
+    const btnThicknessStart = document.getElementById("t3BtnBeefThicknessStart");
+
+    if (btnThicknessMinus) {
+      btnThicknessMinus.addEventListener("click", () => {
         playSound("tick");
+        let val = parseFloat(state.task3BeefThickness || 0.5);
+        val = Math.max(0.25, Math.round((val - 0.125) * 1000) / 1000);
+        state.task3BeefThickness = val;
+        if (thicknessDisplayNum) thicknessDisplayNum.textContent = val.toString();
+        syncBeefDrawers();
       });
     }
-    if (els.t3BtnThicknessPlus) {
-      els.t3BtnThicknessPlus.addEventListener("click", () => {
+
+    if (btnThicknessPlus) {
+      btnThicknessPlus.addEventListener("click", () => {
         playSound("tick");
+        let val = parseFloat(state.task3BeefThickness || 0.5);
+        val = Math.min(3.0, Math.round((val + 0.125) * 1000) / 1000);
+        state.task3BeefThickness = val;
+        if (thicknessDisplayNum) thicknessDisplayNum.textContent = val.toString();
+        syncBeefDrawers();
       });
     }
-    if (els.t3BtnBeefThicknessStart) {
-      els.t3BtnBeefThicknessStart.addEventListener("click", () => {
+
+    if (btnThicknessStart) {
+      btnThicknessStart.addEventListener("click", () => {
+        playSound("touch");
         startT3FoodPreheat();
       });
     }
+
+    // Initial sync
+    syncBeefDrawers();
 
     // Food Preheat & Complete Screens (Figma 2348:17304 & 2348:17501)
     if (els.t3BtnBackFromFoodPreheat) {
