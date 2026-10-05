@@ -89,6 +89,50 @@
           3C: Food Flow
         </button>
       </div>
+
+      <!-- UNIVERSAL SCREEN INSPECTOR & QUICK JUMPER -->
+      <div class="screen-inspector-controls" id="screenInspectorControls">
+        <div class="screen-badge-container" id="screenBadgeContainer" title="Click to copy screen ID">
+          <span class="screen-badge-label">Screen:</span>
+          <code class="screen-badge-pill" id="screenBadgePill">3-start</code>
+          <span class="screen-copy-hint" id="screenCopyHint">Copied!</span>
+        </div>
+        <div class="screen-jumper-container">
+          <label for="screenJumperSelect" class="screen-jumper-label">Jump:</label>
+          <select id="screenJumperSelect" class="screen-jumper-select" aria-label="Jump to screen">
+            <optgroup label="Task 3: Usability Flow">
+              <option value="t3:start">3-start (Cooktop Overview - OFF)</option>
+              <option value="t3:burnerStatus">3-burnerStatus (1 Burner at 375°F)</option>
+              <option value="t3:turnknob">3A-turnknob (Knob Turn Level Setting)</option>
+              <option value="t3:spotlight">3A-spotlight (Precision Spotlight Screen)</option>
+              <option value="t3:temperature">3B-temperature (Temperature Picker)</option>
+              <option value="t3:preheat">3B-preheat (Preheating In Progress)</option>
+              <option value="t3:completed">3B-completed (Preheat Complete Toast)</option>
+              <option value="t3:tempRun">3B-tempRun (Update Temp Screen)</option>
+              <option value="t3:technique">3C-technique (Technique Options 8 Tiles)</option>
+              <option value="t3:techniquePreheat">3C-techniquePreheat (Technique Preheating)</option>
+              <option value="t3:techniqueComplete">3C-techniqueComplete (Technique Complete)</option>
+              <option value="t3:foodOptions">3C-foodOptions (Food Options 8 Tiles)</option>
+              <option value="t3:beefType">3C-beefType (Beef Cuts Selection)</option>
+              <option value="t3:beefDoneness">3C-beefDoneness (Doneness Selection)</option>
+              <option value="t3:beefThickness">3C-beefThickness (Thickness Selection)</option>
+              <option value="t3:foodPreheat">3C-foodPreheat (Food Preheating)</option>
+              <option value="t3:foodComplete">3C-foodComplete (Food Preheat Complete)</option>
+              <option value="t3:foodBurnerStatus">3C-foodBurnerStatus (Food Cooking Overview)</option>
+            </optgroup>
+            <optgroup label="Task 2: Concept Evaluation">
+              <option value="t2:explore">2-explore (Task 2 Start Screen)</option>
+              <option value="t2:spotlight">2-spotlight (Task 2 Spotlight)</option>
+              <option value="t2:technique">2-technique (Task 2 Technique Options)</option>
+              <option value="t2:food">2-food (Task 2 Food Options)</option>
+              <option value="t2:temperature">2-temperature (Task 2 Temp Picker)</option>
+            </optgroup>
+            <optgroup label="Task 1: Awareness Test">
+              <option value="t1:awareness">1-awareness (Full Awareness Screen)</option>
+            </optgroup>
+          </select>
+        </div>
+      </div>
     </section>
 
     <!-- MAIN COOKTOP CONTAINER (CENTERED ON IPAD) -->

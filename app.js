@@ -64,6 +64,13 @@
     glanceStatusPill: document.getElementById("glanceStatusPill"),
     pillStatusText: document.getElementById("pillStatusText"),
 
+    // Screen Inspector & Jumper
+    screenInspectorControls: document.getElementById("screenInspectorControls"),
+    screenBadgeContainer: document.getElementById("screenBadgeContainer"),
+    screenBadgePill: document.getElementById("screenBadgePill"),
+    screenCopyHint: document.getElementById("screenCopyHint"),
+    screenJumperSelect: document.getElementById("screenJumperSelect"),
+
     // Toolbar & Physical Scale
 
     btnScalePhysical: document.getElementById("btnScalePhysical"),
@@ -305,6 +312,56 @@
     }
   };
 
+  // ==============================================
+  // SCREEN BADGE & QUICK JUMPER SYNC
+  // ==============================================
+  function updateScreenBadge(screenName) {
+    let cleanBadge = screenName;
+    let selectVal = "";
+
+    if (state.currentTask === 3) {
+      const t3PrefixMap = {
+        start: "3-start",
+        burnerStatus: "3-burnerStatus",
+        turnknob: "3A-turnknob",
+        spotlight: "3A-spotlight",
+        temperature: "3B-temperature",
+        preheat: "3B-preheat",
+        completed: "3B-completed",
+        tempRun: "3B-tempRun",
+        technique: "3C-technique",
+        techniquePreheat: "3C-techniquePreheat",
+        techniqueComplete: "3C-techniqueComplete",
+        foodOptions: "3C-foodOptions",
+        beefType: "3C-beefType",
+        beefDoneness: "3C-beefDoneness",
+        beefThickness: "3C-beefThickness",
+        foodPreheat: "3C-foodPreheat",
+        foodComplete: "3C-foodComplete",
+        foodBurnerStatus: "3C-foodBurnerStatus"
+      };
+      cleanBadge = t3PrefixMap[screenName] || `3-${screenName}`;
+      selectVal = `t3:${screenName}`;
+    } else if (state.currentTask === 2) {
+      cleanBadge = `2-${screenName}`;
+      selectVal = `t2:${screenName}`;
+    } else if (state.currentTask === 1) {
+      cleanBadge = "1-awareness";
+      selectVal = "t1:awareness";
+    }
+
+    if (els.screenBadgePill) {
+      els.screenBadgePill.textContent = cleanBadge;
+    }
+
+    if (els.screenJumperSelect && selectVal) {
+      const opt = els.screenJumperSelect.querySelector(`option[value="${selectVal}"]`);
+      if (opt) {
+        els.screenJumperSelect.value = selectVal;
+      }
+    }
+  }
+
   // SWITCH TASK
   function setTask(taskId) {
     playSound("touch");
@@ -346,6 +403,7 @@
 
       // Always start with screen covered in standby
       coverTask1Screen();
+      updateScreenBadge("awareness");
     } else if (taskId === 2) {
       if (els.task1FullScreen) els.task1FullScreen.hidden = true;
       if (els.viewTask2) els.viewTask2.hidden = false;
@@ -416,6 +474,7 @@
       setKnobAngle(activePrcKnobIndex, 0, true, true);
     }
     showT3Screen("start");
+    updateScreenBadge("explore");
   }
 
   function showT2Precision(tabName = "spotlight", tempMode = "picker", silent = false) {
@@ -464,6 +523,8 @@
         }
       }, 50);
     }
+
+    updateScreenBadge(tabName);
   }
 
   // TASK 2 TEMPERATURE WHEEL & DIGIPAD LOGIC (200°F - 500°F, 10° increments)
@@ -1106,6 +1167,7 @@
     }
 
     updateNavbarState();
+    updateScreenBadge(stage);
   }
 
   function resetT3BurnerToOff(i) {
@@ -2989,6 +3051,79 @@
     if (els.btnScaleNative) {
       els.btnScaleNative.addEventListener("click", () => setAppScale(1.0, "native"));
     }
+    // Screen Jumper & Screen Badge Copy
+    if (els.screenJumperSelect) {
+      els.screenJumperSelect.addEventListener("change", (e) => {
+        const val = e.target.value;
+        const [taskPrefix, stage] = val.split(":");
+        if (taskPrefix === "t3") {
+          if (state.currentTask !== 3) {
+            setTask(3);
+          }
+          if (stage === "burnerStatus") {
+            setKnobAngle(2, -56, false, false);
+            [1, 3, 4, 5].forEach(i => setKnobAngle(i, 0, false, false));
+            showT3Screen("burnerStatus");
+          } else if (stage === "start") {
+            state.task3Mode = "temp";
+            [1, 2, 3, 4, 5].forEach(i => setKnobAngle(i, 0, false, false));
+            showT3Screen("start");
+          } else if (stage === "foodBurnerStatus") {
+            state.task3Mode = "food";
+            setKnobAngle(2, -56, false, false);
+            setKnobAngle(1, -56, false, false);
+            showT3Screen("foodBurnerStatus");
+          } else if (stage === "turnknob") {
+            showT3Screen("turnknob");
+          } else if (stage === "temperature") {
+            showT3Screen("temperature");
+            requestAnimationFrame(() => scrollToT3Temp(state.task3TargetTemp || 375, false));
+          } else if (stage === "preheat") {
+            showT3Screen("preheat");
+          } else if (stage === "completed") {
+            showT3Screen("completed");
+            if (els.t3ToastPreheatComplete) els.t3ToastPreheatComplete.classList.add("is-visible");
+          } else if (stage === "tempRun") {
+            showT3Screen("tempRun");
+          } else {
+            showT3Screen(stage);
+          }
+        } else if (taskPrefix === "t2") {
+          if (state.currentTask !== 2) {
+            setTask(2);
+          }
+          if (stage === "explore") {
+            showT2Explore();
+          } else {
+            showT2Precision(stage);
+          }
+        } else if (taskPrefix === "t1") {
+          if (state.currentTask !== 1) {
+            setTask(1);
+          }
+        }
+      });
+    }
+
+    if (els.screenBadgeContainer) {
+      const copyScreenId = () => {
+        const text = els.screenBadgePill ? els.screenBadgePill.textContent : "";
+        if (text) {
+          if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText(text).catch(() => {});
+          }
+          if (els.screenCopyHint) {
+            els.screenCopyHint.classList.add("is-shown");
+            setTimeout(() => els.screenCopyHint.classList.remove("is-shown"), 1200);
+          }
+        }
+      };
+      els.screenBadgeContainer.addEventListener("click", copyScreenId);
+      els.screenBadgeContainer.addEventListener("touchstart", (e) => {
+        e.preventDefault();
+        copyScreenId();
+      }, { passive: false });
+    }
   }
 
   // RUNNING ACTIVITY BAR RUNNER (Guarantees active liquid flow even if Safari CSS animation is throttled)
@@ -3041,6 +3176,7 @@
     showT3Screen,
     updateT3BurnerFromKnob,
     showT2Precision,
-    setT2Tab
+    setT2Tab,
+    updateScreenBadge
   };
 })();
