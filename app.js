@@ -84,6 +84,7 @@
     topStatus: document.getElementById("topStatus") || document.querySelector(".top-status"),
     screenCanvas: document.getElementById("screenCanvas"),
     screenBottomStrip: document.getElementById("screenBottomStrip"),
+    cooktopHotIndicator: document.getElementById("cooktopHotIndicator"),
 
     // Task 2 DOM elements
     viewTask2: document.getElementById("viewTask2"),
@@ -487,6 +488,10 @@
       if (els.topStatus) els.topStatus.hidden = true;
       if (els.screenCanvas) els.screenCanvas.hidden = true;
       if (els.screenBottomStrip) els.screenBottomStrip.hidden = true;
+      if (els.cooktopHotIndicator) {
+        els.cooktopHotIndicator.hidden = true;
+        els.cooktopHotIndicator.classList.remove("is-visible");
+      }
 
       // Always start with screen covered in standby
       coverTask1Screen();
@@ -497,13 +502,10 @@
       if (els.screenRail) els.screenRail.hidden = false;
       if (els.topStatus) els.topStatus.hidden = true;
       if (els.screenCanvas) els.screenCanvas.hidden = true;
-      if (els.screenBottomStrip) {
-        els.screenBottomStrip.hidden = true;
-        els.screenBottomStrip.style.display = "none";
-      }
 
       // Initialize Task 2 to explore view
       showT2Explore(true);
+      updateCooktopActiveState();
     } else if (taskId === 3) {
       if (els.task1FullScreen) els.task1FullScreen.hidden = true;
       if (els.viewTask2) els.viewTask2.hidden = true;
@@ -511,13 +513,10 @@
       if (els.screenRail) els.screenRail.hidden = false;
       if (els.topStatus) els.topStatus.hidden = true;
       if (els.screenCanvas) els.screenCanvas.hidden = true;
-      if (els.screenBottomStrip) {
-        els.screenBottomStrip.hidden = true;
-        els.screenBottomStrip.style.display = "none";
-      }
 
       // Initialize Task 3 to start screen
       showT3Screen("start");
+      updateCooktopActiveState();
     } else {
       if (els.task1FullScreen) els.task1FullScreen.hidden = true;
       if (els.viewTask2) els.viewTask2.hidden = true;
@@ -572,6 +571,7 @@
     if (els.t2ScreenExplore) els.t2ScreenExplore.hidden = true;
     if (els.t2ScreenPrecision) els.t2ScreenPrecision.hidden = false;
     setT2Tab(tabName, tempMode, true);
+    updateCooktopActiveState();
   }
 
   function setT2Tab(tabName, tempMode = null, silent = false) {
@@ -1063,9 +1063,14 @@
   let activePrcKnobIndex = 1;
   let t3Stage = "start"; // "start" | "turnknob" | "spotlight" | "temperature" | "preheat" | "completed" | "burnerStatus"
 
-  function isAnyBurnerRunning() {
-    if (state.currentTask === 1) return true;
-    if (state.currentTask === 2) return false;
+  function isAnyKnobOrBurnerActive() {
+    if (state.currentTask === 1) return false;
+
+    // Check if ANY knob is turned on (angle > 5 or angle < -20 or isOn)
+    const anyKnobOn = knobsState.some((k) => k && (Math.abs(k.angle) > 5 || k.isOn));
+    if (anyKnobOn) return true;
+
+    // Check if Task 3 is in an active cooking stage
     if (state.currentTask === 3) {
       if (
         t3Stage === "preheat" ||
@@ -1080,9 +1085,21 @@
       ) {
         return true;
       }
-      return knobsState.some((k) => k && (k.angle > 5 || k.angle < -20));
     }
+
+    // Check if Task 2 is in precision flow
+    if (state.currentTask === 2) {
+      if (state.task2 && state.task2.screen === "precision") {
+        return true;
+      }
+    }
+
     return false;
+  }
+
+  function isAnyBurnerRunning() {
+    if (state.currentTask === 1) return true;
+    return isAnyKnobOrBurnerActive();
   }
 
   function updateNavbarState() {
@@ -1092,6 +1109,35 @@
     if (els.screenRailBg.getAttribute("src") !== targetSrc) {
       els.screenRailBg.src = targetSrc;
     }
+  }
+
+  function updateCooktopActiveState() {
+    const isActive = isAnyKnobOrBurnerActive();
+
+    // 1. Activity Bar (Above anything else, even above navbar)
+    if (els.screenBottomStrip) {
+      if (state.currentTask === 1) {
+        els.screenBottomStrip.hidden = true;
+        els.screenBottomStrip.style.display = "none";
+      } else {
+        els.screenBottomStrip.hidden = !isActive;
+        els.screenBottomStrip.style.display = isActive ? "block" : "none";
+      }
+    }
+
+    // 2. Cooktop Hot Red Color Indicator in top status bar (Figma node 2315:14550)
+    if (els.cooktopHotIndicator) {
+      if (state.currentTask === 1) {
+        els.cooktopHotIndicator.hidden = true;
+        els.cooktopHotIndicator.classList.remove("is-visible");
+      } else {
+        els.cooktopHotIndicator.hidden = !isActive;
+        els.cooktopHotIndicator.classList.toggle("is-visible", isActive);
+      }
+    }
+
+    // 3. Left Navbar running state
+    updateNavbarState();
   }
 
   function showT3Screen(stage) {
@@ -1150,17 +1196,8 @@
       els.t3ToastPreheatComplete.classList.remove("is-dismissing");
     }
 
-    // Activity bar only shows up starting from preheat screen!
-    // When on burnerStatus, tempRun, food preheat/complete/status, or technique, activity bar continues running!
-    const showActivityBar = (
-      stage === "preheat" || stage === "completed" || stage === "burnerStatus" || stage === "tempRun" ||
-      stage === "foodPreheat" || stage === "foodComplete" || stage === "foodBurnerStatus" ||
-      stage === "techniquePreheat" || stage === "techniqueComplete"
-    );
-    if (els.screenBottomStrip) {
-      els.screenBottomStrip.hidden = !showActivityBar;
-      els.screenBottomStrip.style.display = showActivityBar ? "block" : "none";
-    }
+    // Activity bar & Cooktop Hot indicator are active whenever any knob is turned on or cooking runs
+    updateCooktopActiveState();
 
     if (stage === "completed") {
       const targetTemp = state.task3TargetTemp || 375;
@@ -1253,7 +1290,7 @@
       }
     }
 
-    updateNavbarState();
+    updateCooktopActiveState();
     updateScreenBadge(stage);
   }
 
@@ -1535,6 +1572,7 @@
     if (els.t3ScreenSpotlight && els.t3ScreenStart) {
       t3Stage = "spotlight";
       updateScreenBadge("spotlight");
+      updateCooktopActiveState();
 
       // 1. Prepare start screen: visible at 0, opacity 1
       els.t3ScreenStart.hidden = false;
@@ -1855,6 +1893,7 @@
     if (els.t3ScreenSpotlight && !els.t3ScreenSpotlight.hidden && els.t3ScreenStart) {
       t3Stage = "start";
       updateScreenBadge("start");
+      updateCooktopActiveState();
 
       // 1. Prepare start screen positioned slightly to the left (-25%) with opacity 0.4
       els.t3ScreenStart.hidden = false;
@@ -2216,11 +2255,12 @@
       }
     }
 
-    updateNavbarState();
+    updateCooktopActiveState();
 
     // TASK 2 & TASK 3 PRECISION COOKING WORKFLOW TRIGGER
     if (state.currentTask === 3 || state.currentTask === 2) {
       updateT3BurnerFromKnob(index, angle, animate);
+      updateCooktopActiveState();
     }
 
     if (target) {
@@ -3291,6 +3331,7 @@
     updateT3BurnerFromKnob,
     showT2Precision,
     setT2Tab,
-    updateScreenBadge
+    updateScreenBadge,
+    updateCooktopActiveState
   };
 })();

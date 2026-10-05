@@ -6,7 +6,7 @@
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <title>Polaris Cooktop Precision Cooking Prototype</title>
-  <link rel="stylesheet" href="./styles.css?v=20261005-screen-inspector-v3">
+  <link rel="stylesheet" href="./styles.css?v=20261005-cooktop-hot-v4">
 </head>
 <body>
   <div class="test-environment">
@@ -817,11 +817,16 @@
             </div>
           </div>
 
+          <!-- COOKTOP HOT RED STATUS INDICATOR (FIGMA NODE 2315:14550) -->
+          <div class="cooktop-hot-indicator" id="cooktopHotIndicator" aria-label="Cooktop Hot" hidden>
+            <img class="cooktop-hot-img" src="./assets/cooktop-hot.png" alt="COOKTOP HOT">
+          </div>
+
           <!-- HIDDEN CANVAS PLACEHOLDER -->
           <div class="screen-canvas" id="screenCanvas" hidden></div>
 
-          <!-- BOTTOM STATUS COLOR STRIP -->
-          <div class="screen-bottom-strip running-activity-bar" id="screenBottomStrip">
+          <!-- BOTTOM STATUS COLOR STRIP (ABOVE ALL SCREENS AND NAVBAR) -->
+          <div class="screen-bottom-strip running-activity-bar" id="screenBottomStrip" hidden>
             <div class="activity-bar-runner"></div>
           </div>
         </div> <!-- /.cooktop-screen (1024x384) -->
@@ -901,6 +906,6 @@
     </footer>
   </div>
 
-  <script src="./app.js?v=20261005-screen-inspector-v3"></script>
+  <script src="./app.js?v=20261005-cooktop-hot-v4"></script>
 </body>
 </html>
