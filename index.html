@@ -453,9 +453,52 @@
               <button type="button" class="t3-hotspot t3-spotlight-bacon" id="t3SpotlightBacon" aria-label="Frequently Used: Bacon"></button>
               <button type="button" class="t3-hotspot t3-spotlight-beef" id="t3SpotlightBeef" aria-label="Frequently Used: Beef"></button>
 
-              <!-- Temperature & Food Tab Nav Buttons -->
-              <button type="button" class="t3-tab-nav-btn t3-tab-food" id="t3TabBtnFood" aria-label="Food Tab"></button>
-              <button type="button" class="t3-tab-nav-btn t3-tab-temperature" id="t3TabBtnTemperature" aria-label="Temperature Tab"></button>
+              <!-- TAB GROUP: Spotlight / Technique / Food / Temperature -->
+              <nav class="t3-tab-group" id="t3TabGroupSpotlight">
+                <button type="button" class="t3-tab-btn" data-t3tab="spotlight" id="t3TabBtnSpotlight" aria-label="Spotlight Tab"></button>
+                <button type="button" class="t3-tab-btn" data-t3tab="technique" id="t3TabBtnTechnique" aria-label="Technique Tab"></button>
+                <button type="button" class="t3-tab-btn" data-t3tab="food" id="t3TabBtnFood" aria-label="Food Tab"></button>
+                <button type="button" class="t3-tab-btn" data-t3tab="temperature" id="t3TabBtnTemperature" aria-label="Temperature Tab"></button>
+              </nav>
+            </div>
+
+            <!-- SCREEN: 3C-TECHNIQUE-OPTIONS (COOKTOP PRECISION COOKING TECHNIQUE GRID - FIGMA 2327:16289) -->
+            <div class="t3-screen" id="t3ScreenTechnique" hidden>
+              <img class="t3-screen-bg" src="./assets/pc-bg.png" alt="Precision Cooking Background">
+              <div class="t3-crop-header">
+                <img class="t3-crop-header-img" src="./assets/task3c/2327_16289.png" alt="Technique Header">
+              </div>
+              <!-- Back button (< Cooktop) -->
+              <button type="button" class="t3-back-btn" id="t3BtnBackFromTechnique" aria-label="Back to Cooktop"></button>
+              <!-- TAB GROUP -->
+              <nav class="t3-tab-group" id="t3TabGroupTechnique">
+                <button type="button" class="t3-tab-btn" data-t3tab="spotlight" id="t3TabSpotlightFromTech" aria-label="Spotlight Tab"></button>
+                <button type="button" class="t3-tab-btn" data-t3tab="technique" id="t3TabTechFromTech" aria-label="Technique Tab"></button>
+                <button type="button" class="t3-tab-btn" data-t3tab="food" id="t3TabFoodFromTech" aria-label="Food Tab"></button>
+                <button type="button" class="t3-tab-btn" data-t3tab="temperature" id="t3TabTempFromTech" aria-label="Temperature Tab"></button>
+              </nav>
+              <!-- Scroll Container for Technique Options -->
+              <div class="t3-options-scroll-container" id="t3TechniqueScroll">
+                <div class="t3-tiles-grid">
+                  <button type="button" class="buttontile" data-technique="Poaching"><span class="text">Poaching</span></button>
+                  <button type="button" class="buttontile" data-technique="Custards"><span class="text">Custards</span></button>
+                  <button type="button" class="buttontile" data-technique="Simmer"><span class="text">Simmer</span></button>
+                  <button type="button" class="buttontile" data-technique="Steaming"><span class="text">Steaming</span></button>
+
+                  <button type="button" class="buttontile" data-technique="Braising"><span class="text">Braising</span></button>
+                  <button type="button" class="buttontile" data-technique="Slow Cooking"><span class="text">Slow<br>Cooking</span></button>
+                  <button type="button" class="buttontile" data-technique="Candy Making"><span class="text">Candy Making</span></button>
+                  <button type="button" class="buttontile" data-technique="Caramelize"><span class="text">Caramelize</span></button>
+
+                  <button type="button" class="buttontile" data-technique="Sauté"><span class="text">Sauté</span></button>
+                  <button type="button" class="buttontile" data-technique="Slow Cooking"><span class="text">Slow<br>Cooking</span></button>
+                  <button type="button" class="buttontile" data-technique="Brown"><span class="text">Brown</span></button>
+                  <button type="button" class="buttontile" data-technique="Pan Fry"><span class="text">Pan Fry</span></button>
+
+                  <button type="button" class="buttontile" data-technique="Sear"><span class="text">Sear</span></button>
+                  <button type="button" class="buttontile" data-technique="Slow Cooking"><span class="text">Slow<br>Cooking</span></button>
+                </div>
+              </div>
             </div>
 
             <!-- 4. SCREEN: 3B-PCTEMPERATURE (HORIZONTAL PICKER & START BUTTON) -->
@@ -464,8 +507,13 @@
               <!-- Back button (< Cooktop) -->
               <button type="button" class="t3-back-btn" id="t3BtnBackFromTemp" aria-label="Back to Cooktop"></button>
 
-              <!-- Tab to Spotlight -->
-              <button type="button" class="t3-tab-nav-btn t3-tab-spotlight" id="t3TabBtnSpotlightFromTemp" aria-label="Spotlight Tab"></button>
+              <!-- TAB GROUP: Spotlight / Technique / Food / Temperature -->
+              <nav class="t3-tab-group" id="t3TabGroupTemperature">
+                <button type="button" class="t3-tab-btn" data-t3tab="spotlight" id="t3TabBtnSpotlightFromTemp" aria-label="Spotlight Tab"></button>
+                <button type="button" class="t3-tab-btn" data-t3tab="technique" id="t3TabBtnTechFromTemp" aria-label="Technique Tab"></button>
+                <button type="button" class="t3-tab-btn" data-t3tab="food" id="t3TabBtnFoodFromTemp" aria-label="Food Tab"></button>
+                <button type="button" class="t3-tab-btn" data-t3tab="temperature" id="t3TabBtnTempFromTemp" aria-label="Temperature Tab"></button>
+              </nav>
 
               <!-- Dynamic Horizontal Temperature Carousel (200°F - 500°F in 25° increments, centered at 375°F) -->
               <div class="t3-picker-wheel-container" id="t3PickerWheelContainer">
@@ -556,14 +604,43 @@
 
             <!-- 9. SCREEN: 3C-FOOD-OPTIONS (COOKTOP PRECISION COOKING FOOD GRID - FIGMA 2315:14683) -->
             <div class="t3-screen" id="t3ScreenFoodOptions" hidden>
-              <img class="t3-screen-bg" src="./assets/task3c/2315_14683.png" alt="Precision Cooking Food Options">
+              <img class="t3-screen-bg" src="./assets/pc-bg.png" alt="Precision Cooking Background">
+              <div class="t3-crop-header">
+                <img class="t3-crop-header-img" src="./assets/task3c/2315_14683.png" alt="Food Header">
+              </div>
               <!-- Back button (< Cooktop) -->
               <button type="button" class="t3-back-btn" id="t3BtnBackFromFoodOptions" aria-label="Back to Cooktop"></button>
-              <!-- Tab Navigation Buttons -->
-              <button type="button" class="t3-tab-nav-btn t3-tab-spotlight" id="t3TabFoodToSpotlight" aria-label="Spotlight Tab"></button>
-              <button type="button" class="t3-tab-nav-btn t3-tab-temperature" id="t3TabFoodToTemp" aria-label="Temperature Tab"></button>
-              <!-- Food Option Tiles -->
-              <button type="button" class="t3-food-tile-btn t3-food-beef" id="t3BtnFoodBeef" aria-label="Beef Option"></button>
+              <!-- TAB GROUP -->
+              <nav class="t3-tab-group" id="t3TabGroupFood">
+                <button type="button" class="t3-tab-btn" data-t3tab="spotlight" id="t3TabFoodToSpotlight" aria-label="Spotlight Tab"></button>
+                <button type="button" class="t3-tab-btn" data-t3tab="technique" id="t3TabFoodToTech" aria-label="Technique Tab"></button>
+                <button type="button" class="t3-tab-btn" data-t3tab="food" id="t3TabFoodToFood" aria-label="Food Tab"></button>
+                <button type="button" class="t3-tab-btn" data-t3tab="temperature" id="t3TabFoodToTemp" aria-label="Temperature Tab"></button>
+              </nav>
+              <!-- Scroll Container for Food Options -->
+              <div class="t3-options-scroll-container" id="t3FoodScroll">
+                <div class="t3-tiles-grid">
+                  <button type="button" class="buttontile" data-food="Bacon"><span class="text">Bacon</span></button>
+                  <button type="button" class="buttontile" data-food="Beef"><span class="text">Beef</span></button>
+                  <button type="button" class="buttontile" data-food="Butter"><span class="text">Butter</span></button>
+                  <button type="button" class="buttontile" data-food="Chicken"><span class="text">Chicken</span></button>
+
+                  <button type="button" class="buttontile" data-food="Chocolate"><span class="text">Chocolate</span></button>
+                  <button type="button" class="buttontile" data-food="Crepes"><span class="text">Crepes</span></button>
+                  <button type="button" class="buttontile" data-food="Eggs"><span class="text">Eggs</span></button>
+                  <button type="button" class="buttontile" data-food="French Toast"><span class="text">French<br>Toast</span></button>
+
+                  <button type="button" class="buttontile" data-food="Grilled Sandwich"><span class="text">Grilled Sandwich</span></button>
+                  <button type="button" class="buttontile" data-food="Pancakes"><span class="text">Pancakes</span></button>
+                  <button type="button" class="buttontile" data-food="Pork"><span class="text">Pork</span></button>
+                  <button type="button" class="buttontile" data-food="Potatoes"><span class="text">Potatoes</span></button>
+
+                  <button type="button" class="buttontile" data-food="Sausage"><span class="text">Sausage</span></button>
+                  <button type="button" class="buttontile" data-food="Seafood"><span class="text">Seafood</span></button>
+                  <button type="button" class="buttontile" data-food="Chocolate Fondue"><span class="text">Chocolate Fondue</span></button>
+                  <button type="button" class="buttontile" data-food="Beans"><span class="text">Beans</span></button>
+                </div>
+              </div>
             </div>
 
             <!-- 10. SCREEN: 3C-BEEF-TYPE (SELECT TYPE: STEAK, GROUND, PATTIES - FIGMA 2323:15099) -->
@@ -649,6 +726,28 @@
               <button type="button" class="t3-front-left-burner-hotspot" id="t3HotspotFrontLeftBurner" aria-label="Front Left Steak Burner"></button>
               <!-- Rear Left Temperature Burner Hotspot -->
               <button type="button" class="t3-active-burner-hotspot" id="t3HotspotRearLeftBurner" aria-label="Rear Left Temperature Burner"></button>
+            </div>
+
+            <!-- 16. SCREEN: 3C-TECHNIQUE-PREHEAT (CARAMELIZE PREHEATING - FIGMA 2348:17716) -->
+            <div class="t3-screen" id="t3ScreenTechniquePreheat" hidden>
+              <img class="t3-screen-bg" src="./assets/task3c/2348_17716_clean.png" alt="Technique Preheating">
+              <!-- Back button (< Cooktop) -->
+              <button type="button" class="t3-back-btn" id="t3BtnBackFromTechPreheat" aria-label="Back to Cooktop"></button>
+              <!-- Dynamic Current Temperature (counts up from 182 to 375) -->
+              <div class="t3-food-preheat-current-display">
+                <span class="t3-food-preheat-current-val" id="t3TechPreheatCurrent">182</span>
+              </div>
+              <!-- Edit button -->
+              <button type="button" class="t3-food-edit-btn" id="t3BtnEditTechPreheat" aria-label="Edit Technique Settings"></button>
+            </div>
+
+            <!-- 17. SCREEN: 3C-TECHNIQUE-COMPLETE (CARAMELIZE PREHEATED - FIGMA 2348:17836) -->
+            <div class="t3-screen" id="t3ScreenTechniqueComplete" hidden>
+              <img class="t3-screen-bg" src="./assets/task3c/2348_17836_clean.png" alt="Technique Preheated">
+              <!-- Back button (< Cooktop) -->
+              <button type="button" class="t3-back-btn" id="t3BtnBackFromTechComplete" aria-label="Back to Cooktop"></button>
+              <!-- Edit button -->
+              <button type="button" class="t3-food-edit-btn" id="t3BtnEditTechComplete" aria-label="Edit Technique Settings"></button>
             </div>
 
           </div> <!-- /.task3-full-screen -->
