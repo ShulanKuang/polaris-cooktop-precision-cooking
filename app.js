@@ -256,6 +256,9 @@
     t3ScreenFoodBurnerStatus: document.getElementById("t3ScreenFoodBurnerStatus"),
     t3BtnBackFromFoodBurnerStatus: document.getElementById("t3BtnBackFromFoodBurnerStatus"),
     t3FoodBurnerStatusTemp1: document.getElementById("t3FoodBurnerStatusTemp1"),
+    t3FoodBurnerStatusTempDisplay: document.getElementById("t3FoodBurnerStatusTempDisplay"),
+    t3FoodBurnerOffRL: document.getElementById("t3FoodBurnerOffRL"),
+    t3FoodBurnerOffFL: document.getElementById("t3FoodBurnerOffFL"),
     t3HotspotFrontLeftBurner: document.getElementById("t3HotspotFrontLeftBurner"),
     t3HotspotRearLeftBurner: document.getElementById("t3HotspotRearLeftBurner"),
 
@@ -1075,17 +1078,24 @@
 
     // Check if Task 3 is in an active cooking stage
     if (state.currentTask === 3) {
+      if (t3Stage === "foodBurnerStatus") {
+        const k1On = knobsState[0] && Math.abs(knobsState[0].angle) > 12;
+        const k2On = knobsState[1] && Math.abs(knobsState[1].angle) > 12;
+        return k1On || k2On;
+      }
+      if (t3Stage === "burnerStatus") {
+        const k2On = knobsState[1] && Math.abs(knobsState[1].angle) > 12;
+        return k2On;
+      }
       if (
         t3Stage === "beefType" ||
         t3Stage === "beefDoneness" ||
         t3Stage === "beefThickness" ||
         t3Stage === "preheat" ||
         t3Stage === "completed" ||
-        t3Stage === "burnerStatus" ||
         t3Stage === "tempRun" ||
         t3Stage === "foodPreheat" ||
         t3Stage === "foodComplete" ||
-        t3Stage === "foodBurnerStatus" ||
         t3Stage === "techniquePreheat" ||
         t3Stage === "techniqueComplete"
       ) {
@@ -1279,6 +1289,12 @@
       if (!knobsState[0] || Math.abs(knobsState[0].angle) <= 5) setKnobAngle(1, -56, false, false);
       currentT3BurnerLevels[2] = "prc";
       currentT3BurnerLevels[1] = "prc";
+
+      if (els.t3FoodBurnerOffRL) els.t3FoodBurnerOffRL.hidden = true;
+      if (els.t3FoodBurnerOffFL) els.t3FoodBurnerOffFL.hidden = true;
+      if (els.t3FoodBurnerStatusTempDisplay) els.t3FoodBurnerStatusTempDisplay.style.display = "";
+      if (els.t3HotspotRearLeftBurner) els.t3HotspotRearLeftBurner.style.pointerEvents = "auto";
+      if (els.t3HotspotFrontLeftBurner) els.t3HotspotFrontLeftBurner.style.pointerEvents = "auto";
     }
 
     if (stage === "start") {
@@ -1360,15 +1376,76 @@
     }
   }
 
+  function updateFoodBurnerStatusDisplay() {
+    if (t3Stage !== "foodBurnerStatus") return;
+
+    const isKnob1Off = !knobsState[0] || Math.abs(knobsState[0].angle) <= 12;
+    const isKnob2Off = !knobsState[1] || Math.abs(knobsState[1].angle) <= 12;
+
+    // 1. Front Left (Knob 1)
+    if (els.t3FoodBurnerOffFL) {
+      els.t3FoodBurnerOffFL.hidden = !isKnob1Off;
+    }
+    if (els.t3HotspotFrontLeftBurner) {
+      els.t3HotspotFrontLeftBurner.style.pointerEvents = isKnob1Off ? "none" : "auto";
+    }
+
+    // 2. Rear Left (Knob 2)
+    if (els.t3FoodBurnerOffRL) {
+      els.t3FoodBurnerOffRL.hidden = !isKnob2Off;
+    }
+    if (els.t3FoodBurnerStatusTempDisplay) {
+      els.t3FoodBurnerStatusTempDisplay.style.display = isKnob2Off ? "none" : "";
+    }
+    if (els.t3HotspotRearLeftBurner) {
+      els.t3HotspotRearLeftBurner.style.pointerEvents = isKnob2Off ? "none" : "auto";
+    }
+
+    // 3. When ALL TWO knobs are turned off:
+    // "When all two knob turned off, the activity bar should off as well. When all off back to screen 3-start."
+    if (isKnob1Off && isKnob2Off) {
+      state.task3Mode = "temp";
+      currentT3BurnerLevels[1] = "off";
+      currentT3BurnerLevels[2] = "off";
+      if (els.tStartActiveBurner1) els.tStartActiveBurner1.hidden = true;
+      showT3Screen("start");
+      return;
+    }
+
+    updateCooktopActiveState();
+    updateNavbarState();
+  }
+
   function updateT3BurnerFromKnob(index, angle, animate = false) {
     if (state.currentTask !== 3 && state.currentTask !== 2) return;
 
     const isBurnerStatus = (t3Stage === "burnerStatus");
+    const isFoodBurnerStatus = (t3Stage === "foodBurnerStatus");
 
     // Standard (1, 2, 5) and Main (4) Burners: OFF (0°), PRC (-56°), MIN (55°) to MAX (270°)
     const isPRC = (angle < -20 && angle > -80);
     const isMinToMax = (angle >= 20 && angle <= 285);
     const isOff = (Math.abs(angle) <= 12);
+
+    // On foodBurnerStatus (Figma 2327:15934): Two active burners (Knob 1 Front Left, Knob 2 Rear Left).
+    // When turn knob off, screen burner shows off. When all two knobs turn off, activity bar off, back to 3-start.
+    if (isFoodBurnerStatus) {
+      if (index === 1) {
+        if (isOff) {
+          currentT3BurnerLevels[1] = "off";
+        } else if (isPRC || isMinToMax) {
+          currentT3BurnerLevels[1] = "prc";
+        }
+      } else if (index === 2) {
+        if (isOff) {
+          currentT3BurnerLevels[2] = "off";
+        } else if (isPRC || isMinToMax) {
+          currentT3BurnerLevels[2] = "prc";
+        }
+      }
+      updateFoodBurnerStatusDisplay();
+      return;
+    }
 
     // On burnerStatus: Rear Left (Knob 2) is running.
     // If user turns Knob 2 to OFF, turn off Rear Left!

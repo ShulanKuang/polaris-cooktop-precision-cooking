@@ -3331,6 +3331,40 @@ html, body {
   z-index: 20;
 }
 
+/* 3C-FoodBurnerStatus Burner OFF Overlays (Figma 2327:15934) */
+.t3-food-burner-off-rl {
+  position: absolute;
+  left: 20px;
+  top: 60px;
+  width: 350px;
+  height: 150px;
+  z-index: 15;
+  pointer-events: none;
+}
+
+.t3-food-burner-off-fl {
+  position: absolute;
+  left: 20px;
+  top: 210px;
+  width: 360px;
+  height: 150px;
+  z-index: 15;
+  pointer-events: none;
+}
+
+.t3-food-burner-off-rl[hidden],
+.t3-food-burner-off-fl[hidden] {
+  display: none !important;
+}
+
+.t3-food-burner-off-img {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: fill;
+  pointer-events: none;
+}
+
 /* ============================================== */
 /* TASK 3 TAB GROUP & TECHNIQUE FLOW STYLES       */
 /* ============================================== */

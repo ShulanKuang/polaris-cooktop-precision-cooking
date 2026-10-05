@@ -971,8 +971,19 @@
               <img class="t3-screen-bg" src="./assets/task3c/2327_15934_clean.png" alt="Cooktop Burner Status with Steak Med Rare">
               <!-- Back button (< Cooktop) -->
               <button type="button" class="t3-back-btn" id="t3BtnBackFromFoodBurnerStatus" aria-label="Back to Cooktop"></button>
+              
+              <!-- Rear Left Burner OFF Overlay (shown when Knob 2 is turned off) -->
+              <div class="t3-food-burner-off-rl" id="t3FoodBurnerOffRL" hidden aria-hidden="true">
+                <img src="./assets/task3c/burner-rear-left-off.png" alt="" class="t3-food-burner-off-img">
+              </div>
+
+              <!-- Front Left Burner OFF Overlay (shown when Knob 1 is turned off) -->
+              <div class="t3-food-burner-off-fl" id="t3FoodBurnerOffFL" hidden aria-hidden="true">
+                <img src="./assets/task3c/burner-front-left-off.png" alt="" class="t3-food-burner-off-img">
+              </div>
+
               <!-- Rear Left Burner Readout -->
-              <div class="t3-burner-status-temp-display">
+              <div class="t3-burner-status-temp-display" id="t3FoodBurnerStatusTempDisplay">
                 <span class="t3-burner-status-temp-val" id="t3FoodBurnerStatusTemp1">375°F</span>
               </div>
               <!-- Front Left Steak Burner Hotspot -->
