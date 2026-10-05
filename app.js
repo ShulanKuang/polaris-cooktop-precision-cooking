@@ -3141,17 +3141,8 @@
       });
     });
 
-    // 3. Drawer Collapse Handle Click
-    document.querySelectorAll(".t3-drawer-handle-pill").forEach(pill => {
-      pill.addEventListener("click", (e) => {
-        e.stopPropagation();
-        playSound("touch");
-        const drawer = pill.closest(".t3-drawer-collapsible");
-        if (drawer) {
-          drawer.classList.toggle("is-collapsed");
-        }
-      });
-    });
+    // 3. Side Panel Handle (Figma 2581:7152) - Disabled, Non-collapsible
+
 
     // 4. Drawer Scrollable Container Smooth Mouse Drag & Wheel
     document.querySelectorAll(".t3-drawer-scrollable-options").forEach(scrollBox => {
