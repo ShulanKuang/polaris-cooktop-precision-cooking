@@ -695,7 +695,7 @@
                   <!-- Pinned Header: Back button + 5-Burner layout icon -->
                   <div class="t3-drawer-pinned-header">
                     <button type="button" class="t3-drawer-back-btn" id="t3BtnBackFromBeefType" aria-label="Back to Food Options">
-                      <svg class="t3-drawer-back-arrow" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#ffffff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                      <svg class="t3-drawer-back-arrow" viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="#ffffff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                         <polyline points="15 18 9 12 15 6"></polyline>
                       </svg>
                       <span class="t3-drawer-title"><span class="title-crumb-gray">Cooktop</span> <span class="title-crumb-sep">|</span> <span class="title-crumb-white">Beef</span></span>
@@ -731,16 +731,20 @@
                 </div>
               </div>
 
-              <!-- Main Content Area: Select Type -->
+              <!-- Main Content Area: Select Type (Figma 2323:15099) -->
               <div class="t3-beef-type-main">
                 <img class="t3-beef-skillet-bg" src="./assets/doneness/2323_15124.png" alt="Steak Skillet">
                 <div class="t3-beef-type-header">
                   <h2 class="t3-beef-screen-title">Select Type</h2>
                 </div>
-                <div class="t3-beef-type-options">
-                  <button type="button" class="t3-type-btn" data-beef-type="Ground">Ground</button>
-                  <button type="button" class="t3-type-btn" data-beef-type="Patties">Patties</button>
-                  <button type="button" class="t3-type-btn is-active" data-beef-type="Steak" id="t3BtnTypeSteak">Steak</button>
+                <div class="t3-beef-type-rows">
+                  <div class="t3-beef-type-row-1">
+                    <button type="button" class="t3-type-btn" data-beef-type="Ground">Ground</button>
+                    <button type="button" class="t3-type-btn" data-beef-type="Patties">Patties</button>
+                  </div>
+                  <div class="t3-beef-type-row-2">
+                    <button type="button" class="t3-type-btn is-active" data-beef-type="Steak" id="t3BtnTypeSteak">Steak</button>
+                  </div>
                 </div>
                 <button type="button" class="t3-recipe-start-btn" id="t3BtnBeefTypeStart" aria-label="Start Precision Cooking">START</button>
               </div>
@@ -754,7 +758,7 @@
                   <!-- Pinned Header: Back button + 5-Burner layout icon -->
                   <div class="t3-drawer-pinned-header">
                     <button type="button" class="t3-drawer-back-btn" id="t3BtnBackFromBeefDoneness" aria-label="Back to Food Options">
-                      <svg class="t3-drawer-back-arrow" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#ffffff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                      <svg class="t3-drawer-back-arrow" viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="#ffffff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                         <polyline points="15 18 9 12 15 6"></polyline>
                       </svg>
                       <span class="t3-drawer-title"><span class="title-crumb-gray">Cooktop</span> <span class="title-crumb-sep">|</span> <span class="title-crumb-white">Beef</span></span>
@@ -801,29 +805,35 @@
                   <div class="t3-doneness-carousel is-photo-mode" id="t3DonenessCarousel">
                     <!-- 1. Rare -->
                     <div class="t3-doneness-card" data-index="0" data-doneness="Rare">
-                      <div class="t3-card-check"><img src="./assets/doneness/checkmark.png" alt="Checked"></div>
+                      <div class="t3-card-check">
+                        <svg viewBox="0 0 32 32" width="32" height="32"><circle cx="16" cy="16" r="16" fill="#ffffff"/><polyline points="9 16 14 21 23 11" fill="none" stroke="#1f2024" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                      </div>
                       <div class="t3-card-title">Rare</div>
                       <div class="t3-card-photo-body">
                         <img src="./assets/doneness/steak-rare.png" alt="Rare steak" class="t3-steak-photo-img">
                       </div>
                       <div class="t3-card-text-body">
-                        Cool to warm, red center with a soft and tender texture
+                        Cool red center with a very soft texture
                       </div>
                     </div>
                     <!-- 2. Med Rare (Default selected) -->
                     <div class="t3-doneness-card is-selected" data-index="1" data-doneness="Med Rare" id="t3BtnDonenessMedRare">
-                      <div class="t3-card-check"><img src="./assets/doneness/checkmark.png" alt="Checked"></div>
+                      <div class="t3-card-check">
+                        <svg viewBox="0 0 32 32" width="32" height="32"><circle cx="16" cy="16" r="16" fill="#ffffff"/><polyline points="9 16 14 21 23 11" fill="none" stroke="#1f2024" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                      </div>
                       <div class="t3-card-title">Med Rare</div>
                       <div class="t3-card-photo-body">
                         <img src="./assets/doneness/steak-med-rare.png" alt="Med Rare steak" class="t3-steak-photo-img">
                       </div>
                       <div class="t3-card-text-body">
-                        Warm, red center with a soft and tender texture
+                        Warm red center with a soft, tender texture
                       </div>
                     </div>
                     <!-- 3. Medium -->
                     <div class="t3-doneness-card" data-index="2" data-doneness="Medium">
-                      <div class="t3-card-check"><img src="./assets/doneness/checkmark.png" alt="Checked"></div>
+                      <div class="t3-card-check">
+                        <svg viewBox="0 0 32 32" width="32" height="32"><circle cx="16" cy="16" r="16" fill="#ffffff"/><polyline points="9 16 14 21 23 11" fill="none" stroke="#1f2024" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                      </div>
                       <div class="t3-card-title">Medium</div>
                       <div class="t3-card-photo-body">
                         <img src="./assets/doneness/steak-medium.png" alt="Medium steak" class="t3-steak-photo-img">
@@ -834,24 +844,28 @@
                     </div>
                     <!-- 4. Med Well -->
                     <div class="t3-doneness-card" data-index="3" data-doneness="Med Well">
-                      <div class="t3-card-check"><img src="./assets/doneness/checkmark.png" alt="Checked"></div>
+                      <div class="t3-card-check">
+                        <svg viewBox="0 0 32 32" width="32" height="32"><circle cx="16" cy="16" r="16" fill="#ffffff"/><polyline points="9 16 14 21 23 11" fill="none" stroke="#1f2024" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                      </div>
                       <div class="t3-card-title">Med Well</div>
                       <div class="t3-card-photo-body">
                         <img src="./assets/doneness/steak-med-well.png" alt="Med Well steak" class="t3-steak-photo-img">
                       </div>
                       <div class="t3-card-text-body">
-                        Slightly pink center with slightly firm texture
+                        Slightly pink center with a slightly firm texture
                       </div>
                     </div>
                     <!-- 5. Well -->
                     <div class="t3-doneness-card" data-index="4" data-doneness="Well">
-                      <div class="t3-card-check"><img src="./assets/doneness/checkmark.png" alt="Checked"></div>
+                      <div class="t3-card-check">
+                        <svg viewBox="0 0 32 32" width="32" height="32"><circle cx="16" cy="16" r="16" fill="#ffffff"/><polyline points="9 16 14 21 23 11" fill="none" stroke="#1f2024" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                      </div>
                       <div class="t3-card-title">Well</div>
                       <div class="t3-card-photo-body">
                         <img src="./assets/doneness/steak-well.png" alt="Well steak" class="t3-steak-photo-img">
                       </div>
                       <div class="t3-card-text-body">
-                        Gray to brown center with a firm texture
+                        Brown center with a firm texture
                       </div>
                     </div>
                   </div>
@@ -871,10 +885,10 @@
                   <button type="button" class="t3-recipe-start-btn" id="t3BtnBeefDonenessStart" aria-label="Start Precision Cooking">START</button>
                   <button type="button" class="t3-doneness-toggle-btn" id="t3BtnDonenessToggle" aria-label="Toggle Description">
                     <!-- Info icon (shown in photo mode) -->
-                    <svg class="t3-toggle-svg-info" viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <svg class="t3-toggle-svg-info" viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                       <circle cx="12" cy="12" r="10"></circle>
                       <line x1="12" y1="16" x2="12" y2="12"></line>
-                      <line x1="12" y1="8" x2="12.01" y2="8"></line>
+                      <circle cx="12" cy="8" r="1" fill="#ffffff"></circle>
                     </svg>
                     <!-- Photo icon (shown in text mode) -->
                     <svg class="t3-toggle-svg-photo" viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" hidden>
@@ -895,7 +909,7 @@
                   <!-- Pinned Header: Back button + 5-Burner layout icon -->
                   <div class="t3-drawer-pinned-header">
                     <button type="button" class="t3-drawer-back-btn" id="t3BtnBackFromBeefThickness" aria-label="Back to Food Options">
-                      <svg class="t3-drawer-back-arrow" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#ffffff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                      <svg class="t3-drawer-back-arrow" viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="#ffffff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                         <polyline points="15 18 9 12 15 6"></polyline>
                       </svg>
                       <span class="t3-drawer-title"><span class="title-crumb-gray">Cooktop</span> <span class="title-crumb-sep">|</span> <span class="title-crumb-white">Beef</span></span>
@@ -938,14 +952,14 @@
                 </div>
                 <div class="t3-thickness-stepper-row">
                   <button type="button" class="t3-thickness-step-btn" id="t3BtnThicknessMinus" aria-label="Decrease Thickness">
-                    <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="#ffffff" stroke-width="3" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                    <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="#ffffff" stroke-width="3" stroke-linecap="round"><line x1="4" y1="12" x2="20" y2="12"></line></svg>
                   </button>
                   <div class="t3-thickness-display">
                     <span class="t3-thickness-number" id="t3ThicknessNumber">0.5</span>
                     <span class="t3-thickness-unit">inch</span>
                   </div>
                   <button type="button" class="t3-thickness-step-btn" id="t3BtnThicknessPlus" aria-label="Increase Thickness">
-                    <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="#ffffff" stroke-width="3" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                    <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="#ffffff" stroke-width="3" stroke-linecap="round"><line x1="12" y1="4" x2="12" y2="20"></line><line x1="4" y1="12" x2="20" y2="12"></line></svg>
                   </button>
                 </div>
                 <button type="button" class="t3-recipe-start-btn" id="t3BtnBeefThicknessStart" aria-label="Start Precision Cooking">START</button>
