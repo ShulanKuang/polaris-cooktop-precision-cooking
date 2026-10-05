@@ -3281,12 +3281,12 @@ html, body {
   pointer-events: none;
 }
 
-/* Food Edit Button */
+/* Food Edit Button (Figma 2348:17540) */
 .t3-food-edit-btn {
   position: absolute;
-  left: 580px;
-  top: 300px;
-  width: 110px;
+  left: 690px;
+  top: 299px;
+  width: 91px;
   height: 48px;
   background: transparent;
   border: none;

@@ -604,13 +604,6 @@
 
               <!-- Edit Temperature Pill Button -->
               <button type="button" class="t3-btn-edit-preheat" id="t3BtnEditPreheatFromComplete" aria-label="Edit Temperature"></button>
-
-              <!-- Preheat Complete Toast (Figma Node 2348-17541 with Spring Motion Animation) -->
-              <div class="t3-toast-card t3-toast-complete-card" id="t3ToastPreheatComplete">
-                <img class="t3-toast-complete-img" src="./assets/toast-preheat-complete.png" alt="Preheat complete. OK ✕">
-                <button type="button" class="t3-toast-complete-ok-btn" id="t3ToastCompleteOk" aria-label="OK"></button>
-                <button type="button" class="t3-toast-complete-close-btn" id="t3ToastCompleteClose" aria-label="Close Toast"></button>
-              </div>
             </div>
 
             <!-- 7. SCREEN: 3B-BURNER STATUS (COOKTOP OVERVIEW WITH TARGET TEMPERATURE) -->
@@ -1023,6 +1016,13 @@
               <button type="button" class="t3-back-btn" id="t3BtnBackFromTechComplete" aria-label="Back to Cooktop"></button>
               <!-- Edit button -->
               <button type="button" class="t3-food-edit-btn" id="t3BtnEditTechComplete" aria-label="Edit Technique Settings"></button>
+            </div>
+
+            <!-- PREHEAT COMPLETE TOAST (FIGMA 2348-17541 WITH SPRING MOTION ANIMATION - SHARED ACROSS COMPLETION SCREENS) -->
+            <div class="t3-toast-card t3-toast-complete-card" id="t3ToastPreheatComplete">
+              <img class="t3-toast-complete-img" src="./assets/toast-preheat-complete.png" alt="Preheat complete. OK ✕">
+              <button type="button" class="t3-toast-complete-ok-btn" id="t3ToastCompleteOk" aria-label="OK"></button>
+              <button type="button" class="t3-toast-complete-close-btn" id="t3ToastCompleteClose" aria-label="Close Toast"></button>
             </div>
 
           </div> <!-- /.task3-full-screen -->

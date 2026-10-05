@@ -1197,6 +1197,14 @@
     if (stage !== "completed" && stage !== "foodComplete" && stage !== "techniqueComplete" && els.t3ToastPreheatComplete) {
       els.t3ToastPreheatComplete.classList.remove("is-visible");
       els.t3ToastPreheatComplete.classList.remove("is-dismissing");
+    } else if ((stage === "completed" || stage === "foodComplete" || stage === "techniqueComplete") && els.t3ToastPreheatComplete) {
+      requestAnimationFrame(() => {
+        setTimeout(() => {
+          if ((t3Stage === "completed" || t3Stage === "foodComplete" || t3Stage === "techniqueComplete") && els.t3ToastPreheatComplete) {
+            els.t3ToastPreheatComplete.classList.add("is-visible");
+          }
+        }, 50);
+      });
     }
 
     // Activity bar & Cooktop Hot indicator are active whenever any knob is turned on or cooking runs
@@ -3565,4 +3573,5 @@
     updateScreenBadge,
     updateCooktopActiveState
   };
+  window.PolarisApp = window.__polaris;
 })();
