@@ -160,7 +160,7 @@ This is an interactive high-fidelity web prototype deployed on an **iPad Pro 13"
 ## 🚀 5. Testing & Deployment Environment
 - **Local Server**: `python3 -m http.server 8080 -d /Users/a240165853/Documents/PolarisPrototypeCooktopPrecisionCooking`
 - **Tunnel Command**: `npx --yes localtunnel --port 8080`
-- **Current Live URL**: `https://empty-cities-add.loca.lt/?task=3#task3`
+- **Current Live URL**: `https://cruel-pugs-rush.loca.lt/?task=3#task3`
 - **Tunnel Password / Endpoint IP**: `4.53.66.82`
 
 ---
