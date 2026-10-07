@@ -11,7 +11,7 @@ Choose any of the following methods to open and test the prototype directly:
 * **🌟 [Permanent GitHub Pages Link](https://shulankuang.github.io/polaris-cooktop-precision-cooking/?task=3#task3)**  
   *(Permanent cloud-hosted link that never expires and requires no password. To enable on your repo: go to **Settings** → **Pages** → under **Source**, choose **GitHub Actions** or **Deploy from a branch (`main` / root)**).*
 
-* **⚡ [Live Web Tunnel Link (Active Now)](https://cruel-pugs-rush.loca.lt/?task=3#task3)**  
+* **⚡ [Live Web Tunnel Link (Active Now)](https://busy-baths-search.loca.lt/?task=3#task3)**  
   *(Live web mirror directly from this machine. If prompted for a tunnel password / Endpoint IP, enter: `4.53.66.82`)*
 
 * **📶 Local iPad / Lab Wi-Fi Link**: `http://10.35.122.114:8080/?task=3#task3`  
