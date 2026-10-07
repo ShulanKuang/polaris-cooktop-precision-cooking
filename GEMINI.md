@@ -41,11 +41,28 @@ This is an interactive high-fidelity web prototype deployed on an **iPad Pro 13"
        - **Knob 3 (Center)** $\rightarrow$ **Rear-Center Burner (106px)**: `left: 469px; top: 73px; width: 106px; height: 106px;` (ON/OFF rotary switch, $0^\circ \to 45^\circ$)
        - **Knob 4 (Mid-Right)** $\rightarrow$ **Main Burner (176px)**: `left: 521.5px; top: 169px; width: 176px; height: 176px;` ($1.375\times$ scaled strip, 52px item height, 47px bold selected numerals, scaled $42\times 55\text{px}$ thermometer SVG)
        - **Knob 5 (Far Right)** $\rightarrow$ **Rear-Right Burner (128px)**: `left: 663px; top: 72px; width: 128px; height: 128px;`
-     - **Equally Divided Power Levels (1–10)**: Turning Knobs 1, 2, 4, or 5 clockwise rolls the dedicated burner display through power levels 1 to 10 equally divided across the entire arc from MIN ($55^\circ$) to MAX ($270^\circ$, 9 o'clock) inside the dashed white ring with haptic tick audio.
+     - **Equally Divided Power Levels (1–10) & 8px Magenta Arc Animation**:
+       - Turning Knobs 1, 2, 4, or 5 clockwise rolls the dedicated burner display through power levels 1 to 10 equally divided across the entire arc from MIN ($55^\circ$) to MAX ($270^\circ$, 9 o'clock) inside the dashed white ring with haptic tick audio.
+       - **Stop at Power Level (1–10)**: When the knob stops at any power level, a **1.0s quiet delay** runs (debounced so moving the knob resets the timer).
+       - **3s Arc Animation**: At 1.0s, an **8px magenta arc** sweeps clockwise around the burner perimeter for **3.0 seconds** (Figma `2990:6407` $\to$ `2990:6457`).
+       - **Confirmed Active State**: At 3.0s, the burner enters confirmed status:
+         - Background turns to a solid light grey disc (`#D9D8D7`).
+         - Numeral turns dark charcoal (`#303238`, font-weight 700).
+         - Dashed border and arc disappear.
+         - Audio chime plays (`toggleOn`).
+       - **Stays on Screen**: The interface **does NOT transition** to any other screen; it stays on the cooktop start screen showing only the confirmed selected number.
+       - **Neighboring Numbers Masked**: Adjacent numbers are hidden (`opacity: 0`), displaying only the single selected numeral.
+       - Turning the knob to another power level removes the confirmed state and restarts the 1.0s quiet delay for the new level. Turning to OFF immediately resets the burner to idle.
      - **Knob 3 ON/OFF Behavior**: Rotates $0^\circ \to 45^\circ$. Below $25^\circ$, Burner 3 shows OFF / unlit; at $\ge 25^\circ$, it illuminates active and displays bold white "ON" inside the 106px dashed ring.
-     - **PRC Rotation, 3s Countdown Toast & Smooth Slide-in Motion**:
+     - **PRC Rotation, 8px Arc & Smooth Slide-in Motion**:
        - Turning any PRC-enabled knob (1, 2, 4, 5) to `PRC` detent ($-56^\circ$) illuminates the knob LED and displays the glowing white Precision Cooking Temperature Icon inside that burner.
-       - Simultaneously pops up the white countdown toast card from the bottom edge (`bottom: 14px; left: 180px; width: 750px; height: 60px;`, matching Figma node `2294-11451`) displaying `"Starting Precision Cooking in 3s."` with a live 1-second countdown ticker ($3 \to 2 \to 1$).
+       - **Knob 1 (Front Left)**:
+         - Waits **1.0s quiet delay**.
+         - Runs **8px magenta arc** clockwise around burner for **3.0 seconds**.
+         - At 3.0s, transitions to confirmed state (solid `#D9D8D7` disc, dark `#303238` icon, Figma `2989:5712`) and plays `toggleOn` chime.
+         - After an exact **1.0s delay**, smoothly transits to Precision Cooking Spotlight screen.
+       - **Other PRC Burners**:
+         - Pops up the white countdown toast card from the bottom edge (`bottom: 14px; left: 180px; width: 750px; height: 60px;`, matching Figma node `2294-11451`) displaying `"Starting Precision Cooking in 3s."` with a live 1-second countdown ticker ($3 \to 2 \to 1$).
        - **✕ Button Direct Skip**: Clicking the vector cross button (`#t3ToastClose`) or "Don’t show again" (`#t3ToastDismiss`) immediately cancels the countdown and navigates directly to Precision Cooking Spotlight without waiting for the 3s timer.
        - **Smooth Slide-in Motion**: Transitions smoothly from right to left (`transform: translate3d(100%, 0, 0)` $\to$ `translate3d(0, 0, 0)` over `0.38s` with `cubic-bezier(0.16, 1, 0.3, 1)`) as the Precision Cooking Spotlight screen slides into view over the Cooktop start screen.
        - **Slide-out on Cancel**: Tapping `< Cooktop` smoothly slides Spotlight back out to the right (`0.32s`), revealing the Cooktop surface and resetting the knob back to OFF ($0^\circ$).
