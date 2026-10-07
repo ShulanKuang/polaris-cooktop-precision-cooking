@@ -13,7 +13,12 @@ This is an interactive high-fidelity web prototype deployed on an **iPad Pro 13"
    - **Glance Reveal**: Timed reveal buttons for `0.5s`, `1s`, `2s`, and `Preview`.
    - **Silent Rule**: Zero audio playback for Task 1 to prevent audio cues from biasing glance awareness.
    - **Status Pill**: Fixed `140px` width pill (`Hidden`, `Revealed (X.Xs)`, `Preview`) to eliminate layout shift.
-   - **Running Activity Bar**: GPU-accelerated $1024 \times 12\text{px}$ flowing magenta-to-blue gradient along the bottom edge.
+   - **Running Activity Bar**: GPU-accelerated $1024 \times 12\text{px}$ flowing magenta-to-blue gradient along the bottom edge (hidden under standby cover until revealed).
+   - **Awareness Screen Artwork (`assets/task1-awareness-screen.png` / Figma `2294:8399`)**:
+     - Background image flipped horizontally (cutting board and vegetables on right, black wild rice on left).
+     - Fill opacity set to 60% with darker background for maximum contrast and readability of status text.
+     - Dual active burner cards: Caramelize on Left, Bacon on Right.
+     - 48px top status bar with $130 \times 24\text{px}$ `COOKTOP HOT` badge (Figma `2315:14060`).
 
 2. **Task 2: Concept Evaluation** (`?task=2#task2`)
    - Evaluates participant comprehension across four Precision Cooking pillars:
