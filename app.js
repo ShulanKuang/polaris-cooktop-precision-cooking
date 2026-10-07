@@ -1360,6 +1360,7 @@
     cfg.roller.classList.remove("is-active");
   }
 
+  let t3Burner1PreArcTimer = null;
   let t3Burner1ArcTimer = null;
   let t3Burner1ConfirmTimer = null;
 
@@ -1370,45 +1371,55 @@
     const roller = els.t3BurnerRoller1;
     const arcCircle = roller.querySelector(".t3-burner-prc-arc-circle");
 
-    // Reset classes and stroke
+    // Enter precision mode: hide non-temp items immediately, reset arc & confirmed classes
+    roller.classList.add("is-prc-mode");
     roller.classList.remove("has-arc", "is-arcing", "is-confirmed");
     if (arcCircle) {
       arcCircle.style.transition = "none";
-      arcCircle.style.strokeDashoffset = "389.56";
+      arcCircle.style.strokeDashoffset = "376.99";
       void arcCircle.offsetWidth; // Force CSS reflow
     }
 
-    // Begin 3s magenta arc animation from 12 o'clock top point
-    roller.classList.add("has-arc");
-    requestAnimationFrame(() => {
-      if (!roller.classList.contains("has-arc")) return;
-      roller.classList.add("is-arcing");
-      if (arcCircle) {
-        arcCircle.style.transition = "stroke-dashoffset 3000ms linear";
-        arcCircle.style.strokeDashoffset = "0";
-      }
-    });
+    // 1s delay when knob turns to precision cooking position before the magenta arc starts to run
+    t3Burner1PreArcTimer = setTimeout(() => {
+      t3Burner1PreArcTimer = null;
 
-    // Exactly at 3.0s: arc finishes full circle -> transition to confirmed active state (Figma 2989:5712)
-    t3Burner1ArcTimer = setTimeout(() => {
-      t3Burner1ArcTimer = null;
-      roller.classList.remove("has-arc", "is-arcing");
-      roller.classList.add("is-confirmed");
-      if (arcCircle) {
-        arcCircle.style.transition = "none";
-        arcCircle.style.strokeDashoffset = "389.56";
-      }
-      playSound("toggleOn");
+      // Begin 3s magenta arc animation from 12 o'clock top point
+      roller.classList.add("has-arc");
+      requestAnimationFrame(() => {
+        if (!roller.classList.contains("has-arc")) return;
+        roller.classList.add("is-arcing");
+        if (arcCircle) {
+          arcCircle.style.transition = "stroke-dashoffset 3000ms linear";
+          arcCircle.style.strokeDashoffset = "0";
+        }
+      });
 
-      // 1.0s delay on confirmed state, then transit to next screen (Spotlight)
-      t3Burner1ConfirmTimer = setTimeout(() => {
-        t3Burner1ConfirmTimer = null;
-        transitionToT3Spotlight();
-      }, 1000);
-    }, 3000);
+      // Exactly at 3.0s after arc start: arc finishes full circle -> transition to confirmed active state (Figma 2989:5712)
+      t3Burner1ArcTimer = setTimeout(() => {
+        t3Burner1ArcTimer = null;
+        roller.classList.remove("has-arc", "is-arcing");
+        roller.classList.add("is-confirmed");
+        if (arcCircle) {
+          arcCircle.style.transition = "none";
+          arcCircle.style.strokeDashoffset = "376.99";
+        }
+        playSound("toggleOn");
+
+        // 1.0s delay on confirmed state, then transit to next screen (Spotlight)
+        t3Burner1ConfirmTimer = setTimeout(() => {
+          t3Burner1ConfirmTimer = null;
+          transitionToT3Spotlight();
+        }, 1000);
+      }, 3000);
+    }, 1000);
   }
 
   function cancelT3Burner1PrcArc() {
+    if (t3Burner1PreArcTimer) {
+      clearTimeout(t3Burner1PreArcTimer);
+      t3Burner1PreArcTimer = null;
+    }
     if (t3Burner1ArcTimer) {
       clearTimeout(t3Burner1ArcTimer);
       t3Burner1ArcTimer = null;
@@ -1418,11 +1429,11 @@
       t3Burner1ConfirmTimer = null;
     }
     if (els.t3BurnerRoller1) {
-      els.t3BurnerRoller1.classList.remove("has-arc", "is-arcing", "is-confirmed");
+      els.t3BurnerRoller1.classList.remove("is-prc-mode", "has-arc", "is-arcing", "is-confirmed");
       const arcCircle = els.t3BurnerRoller1.querySelector(".t3-burner-prc-arc-circle");
       if (arcCircle) {
         arcCircle.style.transition = "none";
-        arcCircle.style.strokeDashoffset = "389.56";
+        arcCircle.style.strokeDashoffset = "376.99";
       }
     }
   }
@@ -1611,7 +1622,7 @@
           els.t3ToastCard.classList.remove("is-visible", "is-dismissing");
           els.t3ToastCard.setAttribute("hidden", "");
         }
-        if (!t3Burner1ArcTimer && !t3Burner1ConfirmTimer) {
+        if (!t3Burner1PreArcTimer && !t3Burner1ArcTimer && !t3Burner1ConfirmTimer) {
           startT3Burner1PrcArc();
         }
       } else {

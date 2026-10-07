@@ -2420,6 +2420,7 @@ html, body {
 }
 
 /* Hide numbers while in precision mode so only the thermometer icon is visible */
+.t3-burner-roller.is-prc-mode .t3-burner-roller-item:not(.is-temp),
 .t3-burner-roller.has-arc .t3-burner-roller-item:not(.is-temp),
 .t3-burner-roller.is-confirmed .t3-burner-roller-item:not(.is-temp) {
   opacity: 0 !important;
@@ -2428,10 +2429,10 @@ html, body {
 .t3-burner-prc-arc-circle {
   fill: none;
   stroke: #cf42b7; /* Figma 2990:6419 solid magenta rgb(207, 66, 183) */
-  stroke-width: 4px;
+  stroke-width: 8px;
   stroke-linecap: butt;
-  stroke-dasharray: 389.56;
-  stroke-dashoffset: 389.56;
+  stroke-dasharray: 376.99;
+  stroke-dashoffset: 376.99;
 }
 
 /* Confirmed active state at 3s (Figma 2989:5712 & 2989:5720) */
