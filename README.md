@@ -8,11 +8,8 @@ Interactive prototype for the **October 2026 Polaris Cooktop Precision Cooking U
 
 Choose any of the following methods to open and test the prototype directly:
 
-* **🌟 [Permanent GitHub Pages Link](https://shulankuang.github.io/polaris-cooktop-precision-cooking/?task=3#task3)**  
-  *(Permanent cloud-hosted link that never expires and requires no password. To enable on your repo: go to **Settings** → **Pages** → under **Source**, choose **GitHub Actions** or **Deploy from a branch (`main` / root)**).*
-
 * **⚡ [Live Web Tunnel Link (Active Now)](https://busy-baths-search.loca.lt/?task=3#task3)**  
-  *(Live web mirror directly from this machine. If prompted for a tunnel password / Endpoint IP, enter: `4.53.66.82`)*
+  *(Live web mirror hosted directly from this machine for testing anywhere, even outside office Wi-Fi. If prompted for a tunnel password / Endpoint IP, enter: `4.53.66.82`)*
 
 * **📶 Local iPad / Lab Wi-Fi Link**: `http://10.35.122.114:8080/?task=3#task3`  
   *(Recommended for zero-latency in-person testing when your iPad is connected to the same Wi-Fi network as this computer)*
