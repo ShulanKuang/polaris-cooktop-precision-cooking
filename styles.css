@@ -2402,6 +2402,62 @@ html, body {
   pointer-events: none;
 }
 
+/* Precision Cooking 3s Magenta Arc Ring (Figma 2990:6407 -> 2990:6457) */
+.t3-burner-prc-arc {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 120;
+  transform: rotate(-90deg); /* 12 o'clock top origin */
+  opacity: 0;
+  transition: opacity 0.15s ease;
+}
+
+.t3-burner-roller.has-arc .t3-burner-prc-arc {
+  opacity: 1;
+}
+
+/* Hide numbers while in precision mode so only the thermometer icon is visible */
+.t3-burner-roller.has-arc .t3-burner-roller-item:not(.is-temp),
+.t3-burner-roller.is-confirmed .t3-burner-roller-item:not(.is-temp) {
+  opacity: 0 !important;
+}
+
+.t3-burner-prc-arc-circle {
+  fill: none;
+  stroke: #cf42b7; /* Figma 2990:6419 solid magenta rgb(207, 66, 183) */
+  stroke-width: 4px;
+  stroke-linecap: butt;
+  stroke-dasharray: 389.56;
+  stroke-dashoffset: 389.56;
+}
+
+/* Confirmed active state at 3s (Figma 2989:5712 & 2989:5720) */
+.t3-burner-roller.is-confirmed .t3-burner-roller-bg circle {
+  fill: #D9D8D7;
+  stroke: none;
+  stroke-dasharray: none;
+  transition: fill 0.15s ease;
+}
+
+.t3-burner-roller.is-confirmed .t3-burner-roller-item.is-selected {
+  color: #303238;
+}
+
+.t3-burner-roller.is-confirmed .t3-burner-roller-item.is-temp .t3-temp-icon {
+  fill: #303238;
+  color: #303238;
+  filter: none;
+  opacity: 1;
+}
+
+.t3-burner-roller.is-confirmed .t3-burner-prc-arc {
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
 .t3-burner-roller-strip {
   position: absolute;
   top: 0;

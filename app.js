@@ -1338,6 +1338,9 @@
   }
 
   function resetT3BurnerToOff(i) {
+    if (i === 1 || !i) {
+      cancelT3Burner1PrcArc();
+    }
     const burnerConfigs = {
       1: { roller: els.t3BurnerRoller1, strip: els.t3BurnerStrip1, itemH: 38, baseOffset: 45 },
       2: { roller: els.t3BurnerRoller2, strip: els.t3BurnerStrip2, itemH: 38, baseOffset: 45 },
@@ -1357,7 +1360,75 @@
     cfg.roller.classList.remove("is-active");
   }
 
+  let t3Burner1ArcTimer = null;
+  let t3Burner1ConfirmTimer = null;
+
+  function startT3Burner1PrcArc() {
+    cancelT3Burner1PrcArc();
+    if (!els.t3BurnerRoller1) return;
+
+    const roller = els.t3BurnerRoller1;
+    const arcCircle = roller.querySelector(".t3-burner-prc-arc-circle");
+
+    // Reset classes and stroke
+    roller.classList.remove("has-arc", "is-arcing", "is-confirmed");
+    if (arcCircle) {
+      arcCircle.style.transition = "none";
+      arcCircle.style.strokeDashoffset = "389.56";
+      void arcCircle.offsetWidth; // Force CSS reflow
+    }
+
+    // Begin 3s magenta arc animation from 12 o'clock top point
+    roller.classList.add("has-arc");
+    requestAnimationFrame(() => {
+      if (!roller.classList.contains("has-arc")) return;
+      roller.classList.add("is-arcing");
+      if (arcCircle) {
+        arcCircle.style.transition = "stroke-dashoffset 3000ms linear";
+        arcCircle.style.strokeDashoffset = "0";
+      }
+    });
+
+    // Exactly at 3.0s: arc finishes full circle -> transition to confirmed active state (Figma 2989:5712)
+    t3Burner1ArcTimer = setTimeout(() => {
+      t3Burner1ArcTimer = null;
+      roller.classList.remove("has-arc", "is-arcing");
+      roller.classList.add("is-confirmed");
+      if (arcCircle) {
+        arcCircle.style.transition = "none";
+        arcCircle.style.strokeDashoffset = "389.56";
+      }
+      playSound("toggleOn");
+
+      // 1.0s delay on confirmed state, then transit to next screen (Spotlight)
+      t3Burner1ConfirmTimer = setTimeout(() => {
+        t3Burner1ConfirmTimer = null;
+        transitionToT3Spotlight();
+      }, 1000);
+    }, 3000);
+  }
+
+  function cancelT3Burner1PrcArc() {
+    if (t3Burner1ArcTimer) {
+      clearTimeout(t3Burner1ArcTimer);
+      t3Burner1ArcTimer = null;
+    }
+    if (t3Burner1ConfirmTimer) {
+      clearTimeout(t3Burner1ConfirmTimer);
+      t3Burner1ConfirmTimer = null;
+    }
+    if (els.t3BurnerRoller1) {
+      els.t3BurnerRoller1.classList.remove("has-arc", "is-arcing", "is-confirmed");
+      const arcCircle = els.t3BurnerRoller1.querySelector(".t3-burner-prc-arc-circle");
+      if (arcCircle) {
+        arcCircle.style.transition = "none";
+        arcCircle.style.strokeDashoffset = "389.56";
+      }
+    }
+  }
+
   function clearT3Timers() {
+    cancelT3Burner1PrcArc();
     [1, 2, 3, 4, 5].forEach(i => {
       if (t3PrcQuietTimers[i]) {
         clearTimeout(t3PrcQuietTimers[i]);
@@ -1533,20 +1604,32 @@
         it.classList.toggle("is-selected", idx === 11);
       });
 
-      // 1s quiet delay on PRC, then quick raise up toast with 3s countdown, then slide in Spotlight
-      if (!t3PrcQuietTimers[targetIndex] && !t3CountdownInterval && !t3HoldingTimeout) {
+      if (targetIndex === 1) {
+        // Front Left Burner (Knob 1): 3s Magenta Arc Animation (Figma 2990:6407 -> 2990:6457 -> 2989:5712)
+        // No countdown toast
         if (els.t3ToastCard) {
           els.t3ToastCard.classList.remove("is-visible", "is-dismissing");
           els.t3ToastCard.setAttribute("hidden", "");
         }
-        if (els.t3ToastNum) {
-          els.t3ToastNum.textContent = "3";
+        if (!t3Burner1ArcTimer && !t3Burner1ConfirmTimer) {
+          startT3Burner1PrcArc();
         }
+      } else {
+        // Other burners: 1s quiet delay on PRC, then quick raise up toast with 3s countdown, then slide in Spotlight
+        if (!t3PrcQuietTimers[targetIndex] && !t3CountdownInterval && !t3HoldingTimeout) {
+          if (els.t3ToastCard) {
+            els.t3ToastCard.classList.remove("is-visible", "is-dismissing");
+            els.t3ToastCard.setAttribute("hidden", "");
+          }
+          if (els.t3ToastNum) {
+            els.t3ToastNum.textContent = "3";
+          }
 
-        t3PrcQuietTimers[targetIndex] = setTimeout(() => {
-          t3PrcQuietTimers[targetIndex] = null;
-          showT3PrcToastAndStartCountdown();
-        }, 1000);
+          t3PrcQuietTimers[targetIndex] = setTimeout(() => {
+            t3PrcQuietTimers[targetIndex] = null;
+            showT3PrcToastAndStartCountdown();
+          }, 1000);
+        }
       }
     } else if (isMinToMax) {
       // 2. Turning from Min to Max: dedicated burner changes number 1-10 equally divided
@@ -1626,6 +1709,9 @@
   }
 
   function dismissPrcTimerAndToast(index) {
+    if (index === 1 || !index) {
+      cancelT3Burner1PrcArc();
+    }
     if (index && t3PrcQuietTimers[index]) {
       clearTimeout(t3PrcQuietTimers[index]);
       t3PrcQuietTimers[index] = null;
@@ -2358,6 +2444,7 @@
       target.setAttribute("aria-valuenow", Math.round(angle));
     }
   }
+  window.setKnobAngle = setKnobAngle;
 
   function setupKnobsListeners() {
     knobsState.forEach((k, idx) => {
