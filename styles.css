@@ -2419,10 +2419,11 @@ html, body {
   opacity: 1;
 }
 
-/* Hide numbers while in precision mode so only the thermometer icon is visible */
+/* Only show the selected item while burner is active (hides adjacent numbers and icons) */
+.t3-burner-roller.is-active .t3-burner-roller-item:not(.is-selected),
 .t3-burner-roller.is-prc-mode .t3-burner-roller-item:not(.is-temp),
-.t3-burner-roller.has-arc .t3-burner-roller-item:not(.is-temp),
-.t3-burner-roller.is-confirmed .t3-burner-roller-item:not(.is-temp) {
+.t3-burner-roller.has-arc .t3-burner-roller-item:not(.is-selected),
+.t3-burner-roller.is-confirmed .t3-burner-roller-item:not(.is-selected) {
   opacity: 0 !important;
 }
 
@@ -2433,6 +2434,11 @@ html, body {
   stroke-linecap: butt;
   stroke-dasharray: 376.99;
   stroke-dashoffset: 376.99;
+}
+
+.t3-burner-roller.burner-main .t3-burner-prc-arc-circle {
+  stroke-dasharray: 527.79;
+  stroke-dashoffset: 527.79;
 }
 
 /* Confirmed active state at 3s (Figma 2989:5712 & 2989:5720) */

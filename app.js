@@ -1338,8 +1338,10 @@
   }
 
   function resetT3BurnerToOff(i) {
-    if (i === 1 || !i) {
-      cancelT3Burner1PrcArc();
+    if (i) {
+      cancelT3BurnerArc(i);
+    } else {
+      [1, 2, 4, 5].forEach(idx => cancelT3BurnerArc(idx));
     }
     const burnerConfigs = {
       1: { roller: els.t3BurnerRoller1, strip: els.t3BurnerStrip1, itemH: 38, baseOffset: 45 },
@@ -1360,29 +1362,83 @@
     cfg.roller.classList.remove("is-active");
   }
 
-  let t3Burner1PreArcTimer = null;
-  let t3Burner1ArcTimer = null;
-  let t3Burner1ConfirmTimer = null;
+  const t3BurnerArcTimers = {
+    1: { preArc: null, arc: null, confirm: null, lastConfirmedLevel: null },
+    2: { preArc: null, arc: null, confirm: null, lastConfirmedLevel: null },
+    4: { preArc: null, arc: null, confirm: null, lastConfirmedLevel: null },
+    5: { preArc: null, arc: null, confirm: null, lastConfirmedLevel: null }
+  };
 
-  function startT3Burner1PrcArc() {
-    cancelT3Burner1PrcArc();
-    if (!els.t3BurnerRoller1) return;
+  function getBurnerCircumference(index) {
+    return (index === 4) ? "527.79" : "376.99";
+  }
 
-    const roller = els.t3BurnerRoller1;
+  function cancelT3BurnerArc(index) {
+    const t = t3BurnerArcTimers[index];
+    if (t) {
+      if (t.preArc) {
+        clearTimeout(t.preArc);
+        t.preArc = null;
+      }
+      if (t.arc) {
+        clearTimeout(t.arc);
+        t.arc = null;
+      }
+      if (t.confirm) {
+        clearTimeout(t.confirm);
+        t.confirm = null;
+      }
+      t.lastConfirmedLevel = null;
+    }
+    const roller = document.getElementById(`t3BurnerRoller${index}`);
+    if (roller) {
+      roller.classList.remove("is-prc-mode", "has-arc", "is-arcing", "is-confirmed");
+      const arcCircle = roller.querySelector(".t3-burner-prc-arc-circle");
+      if (arcCircle) {
+        arcCircle.style.transition = "none";
+        arcCircle.style.strokeDashoffset = getBurnerCircumference(index);
+      }
+    }
+  }
+
+  function startT3BurnerArc(index, { transitToSpotlight = false } = {}) {
+    const t = t3BurnerArcTimers[index];
+    if (!t) return;
+
+    if (t.preArc) {
+      clearTimeout(t.preArc);
+      t.preArc = null;
+    }
+    if (t.arc) {
+      clearTimeout(t.arc);
+      t.arc = null;
+    }
+    if (t.confirm) {
+      clearTimeout(t.confirm);
+      t.confirm = null;
+    }
+
+    const roller = document.getElementById(`t3BurnerRoller${index}`);
+    if (!roller) return;
+
     const arcCircle = roller.querySelector(".t3-burner-prc-arc-circle");
+    const fullCirc = getBurnerCircumference(index);
 
-    // Enter precision mode: hide non-temp items immediately, reset arc & confirmed classes
-    roller.classList.add("is-prc-mode");
+    if (transitToSpotlight) {
+      roller.classList.add("is-prc-mode");
+    } else {
+      roller.classList.remove("is-prc-mode");
+    }
     roller.classList.remove("has-arc", "is-arcing", "is-confirmed");
     if (arcCircle) {
       arcCircle.style.transition = "none";
-      arcCircle.style.strokeDashoffset = "376.99";
+      arcCircle.style.strokeDashoffset = fullCirc;
       void arcCircle.offsetWidth; // Force CSS reflow
     }
 
-    // 1s delay when knob turns to precision cooking position before the magenta arc starts to run
-    t3Burner1PreArcTimer = setTimeout(() => {
-      t3Burner1PreArcTimer = null;
+    // 1s delay when knob turns/stops at position before magenta arc starts to run
+    t.preArc = setTimeout(() => {
+      t.preArc = null;
 
       // Begin 3s magenta arc animation from 12 o'clock top point
       roller.classList.add("has-arc");
@@ -1396,50 +1452,41 @@
       });
 
       // Exactly at 3.0s after arc start: arc finishes full circle -> transition to confirmed active state (Figma 2989:5712)
-      t3Burner1ArcTimer = setTimeout(() => {
-        t3Burner1ArcTimer = null;
+      t.arc = setTimeout(() => {
+        t.arc = null;
         roller.classList.remove("has-arc", "is-arcing");
         roller.classList.add("is-confirmed");
         if (arcCircle) {
           arcCircle.style.transition = "none";
-          arcCircle.style.strokeDashoffset = "376.99";
+          arcCircle.style.strokeDashoffset = fullCirc;
         }
         playSound("toggleOn");
 
-        // 1.0s delay on confirmed state, then transit to next screen (Spotlight)
-        t3Burner1ConfirmTimer = setTimeout(() => {
-          t3Burner1ConfirmTimer = null;
-          transitionToT3Spotlight();
-        }, 1000);
+        if (transitToSpotlight) {
+          // 1.0s delay on confirmed state, then transit to next screen (Spotlight)
+          t.confirm = setTimeout(() => {
+            t.confirm = null;
+            transitionToT3Spotlight();
+          }, 1000);
+        } else {
+          // For power levels 1-10: stay at this screen, showing confirmed selected number
+          t.lastConfirmedLevel = currentT3BurnerLevels[index];
+        }
       }, 3000);
     }, 1000);
   }
 
+  // Backwards compatibility aliases
+  function startT3Burner1PrcArc() {
+    startT3BurnerArc(1, { transitToSpotlight: true });
+  }
+
   function cancelT3Burner1PrcArc() {
-    if (t3Burner1PreArcTimer) {
-      clearTimeout(t3Burner1PreArcTimer);
-      t3Burner1PreArcTimer = null;
-    }
-    if (t3Burner1ArcTimer) {
-      clearTimeout(t3Burner1ArcTimer);
-      t3Burner1ArcTimer = null;
-    }
-    if (t3Burner1ConfirmTimer) {
-      clearTimeout(t3Burner1ConfirmTimer);
-      t3Burner1ConfirmTimer = null;
-    }
-    if (els.t3BurnerRoller1) {
-      els.t3BurnerRoller1.classList.remove("is-prc-mode", "has-arc", "is-arcing", "is-confirmed");
-      const arcCircle = els.t3BurnerRoller1.querySelector(".t3-burner-prc-arc-circle");
-      if (arcCircle) {
-        arcCircle.style.transition = "none";
-        arcCircle.style.strokeDashoffset = "376.99";
-      }
-    }
+    cancelT3BurnerArc(1);
   }
 
   function clearT3Timers() {
-    cancelT3Burner1PrcArc();
+    [1, 2, 4, 5].forEach(i => cancelT3BurnerArc(i));
     [1, 2, 3, 4, 5].forEach(i => {
       if (t3PrcQuietTimers[i]) {
         clearTimeout(t3PrcQuietTimers[i]);
@@ -1616,14 +1663,15 @@
       });
 
       if (targetIndex === 1) {
-        // Front Left Burner (Knob 1): 3s Magenta Arc Animation (Figma 2990:6407 -> 2990:6457 -> 2989:5712)
+        // Front Left Burner (Knob 1): 1s delay -> 3s Magenta Arc Animation (Figma 2990:6407 -> 2990:6457 -> 2989:5712) -> 1s delay -> Spotlight
         // No countdown toast
         if (els.t3ToastCard) {
           els.t3ToastCard.classList.remove("is-visible", "is-dismissing");
           els.t3ToastCard.setAttribute("hidden", "");
         }
-        if (!t3Burner1PreArcTimer && !t3Burner1ArcTimer && !t3Burner1ConfirmTimer) {
-          startT3Burner1PrcArc();
+        const t = t3BurnerArcTimers[1];
+        if (!t.preArc && !t.arc && !t.confirm && !roller.classList.contains("is-confirmed")) {
+          startT3BurnerArc(1, { transitToSpotlight: true });
         }
       } else {
         // Other burners: 1s quiet delay on PRC, then quick raise up toast with 3s countdown, then slide in Spotlight
@@ -1668,9 +1716,22 @@
         const idx = parseInt(it.dataset.index, 10);
         it.classList.toggle("is-selected", idx === level);
       });
+
+      // When the knob stops at a power level (levels 1-10):
+      // 1s quiet delay after knob stops moving -> 3s magenta arc -> confirmed state (solid #D9D8D7 disc, #303238 number) -> stay at this screen!
+      const t = t3BurnerArcTimers[targetIndex];
+      if (t) {
+        if (roller.classList.contains("is-confirmed") && t.lastConfirmedLevel === level) {
+          // Already confirmed at this exact level, do nothing
+        } else {
+          // Start/debounce 1s quiet delay so arc starts 1s after knob stops moving
+          startT3BurnerArc(targetIndex, { transitToSpotlight: false });
+        }
+      }
     } else if (isOff) {
       // 3. Knob at OFF (0 deg)
       dismissPrcTimerAndToast(targetIndex);
+      cancelT3BurnerArc(targetIndex);
       currentT3BurnerLevels[targetIndex] = "off";
 
       strip.style.webkitTransform = `translate3d(0, ${baseOffset}px, 0)`;
@@ -1684,6 +1745,7 @@
       roller.classList.remove("is-active");
     } else {
       dismissPrcTimerAndToast(targetIndex);
+      cancelT3BurnerArc(targetIndex);
     }
   }
 
@@ -1720,8 +1782,18 @@
   }
 
   function dismissPrcTimerAndToast(index) {
-    if (index === 1 || !index) {
-      cancelT3Burner1PrcArc();
+    if (index) {
+      const roller = document.getElementById(`t3BurnerRoller${index}`);
+      if (roller && roller.classList.contains("is-prc-mode")) {
+        cancelT3BurnerArc(index);
+      }
+    } else {
+      [1, 2, 4, 5].forEach(i => {
+        const roller = document.getElementById(`t3BurnerRoller${i}`);
+        if (roller && roller.classList.contains("is-prc-mode")) {
+          cancelT3BurnerArc(i);
+        }
+      });
     }
     if (index && t3PrcQuietTimers[index]) {
       clearTimeout(t3PrcQuietTimers[index]);
