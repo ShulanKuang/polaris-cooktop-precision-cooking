@@ -2419,10 +2419,12 @@ html, body {
   opacity: 1;
 }
 
-/* Only show the selected item while burner is active (hides adjacent numbers and icons) */
-.t3-burner-roller.is-active .t3-burner-roller-item:not(.is-selected),
-.t3-burner-roller.is-prc-mode .t3-burner-roller-item:not(.is-temp),
-.t3-burner-roller.has-arc .t3-burner-roller-item:not(.is-selected),
+/* In precision cooking mode, hide numbers so only thermometer icon is visible */
+.t3-burner-roller.is-prc-mode .t3-burner-roller-item:not(.is-temp) {
+  opacity: 0 !important;
+}
+
+/* In confirmed active state, only show the confirmed selected item on the solid grey disc */
 .t3-burner-roller.is-confirmed .t3-burner-roller-item:not(.is-selected) {
   opacity: 0 !important;
 }
@@ -2492,7 +2494,7 @@ html, body {
   color: #5C5F68;
   line-height: 1;
   box-sizing: border-box;
-  transition: color 0.15s ease, font-size 0.15s ease;
+  transition: color 0.15s ease, font-size 0.15s ease, opacity 0.2s ease;
   user-select: none;
 }
 

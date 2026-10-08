@@ -61,7 +61,7 @@ The prototype includes an external researcher toolbar positioned above the appli
 
 ### 1. Startup via Physical Knob
 - **Standby (`Task3A-start`)**: All burners OFF. Manifold panel sits beneath display with 5 clean, unlit knobs.
-- **Continuous Knob Turning (Min to Max & PRC)**: Turning any standard knob (1, 2, 4, 5) clockwise rolls the dedicated burner display through power levels **1 to 10** equally divided across the entire arc from MIN (55 deg) to MAX (270 deg). Users can seamlessly continue turning clockwise past Level 10/MAX directly into **PRC** (-56 deg) without getting locked at MAX!
+- **Continuous Knob Turning (Min to Max & PRC)**: Turning any standard knob (1, 2, 4, 5) clockwise rolls the dedicated burner display through power levels **1 to 10** equally divided across the entire arc from MIN (55 deg) to MAX (270 deg). While setting and moving the knob, previous and next numbers remain visible in gray above and below the selected number (e.g. 4 and 6 in gray when 5 is selected). Users can seamlessly continue turning clockwise past Level 10/MAX directly into **PRC** (-56 deg) without getting locked at MAX!
 - **Turn Knob to PRC (1s Quiet Delay + Toast Quick Raise-Up)**:
   - Knob LED indicator illuminates white.
   - Dedicated burner immediately displays the glowing white **Precision Cooking Temperature Icon**.

@@ -51,7 +51,7 @@ This is an interactive high-fidelity web prototype deployed on an **iPad Pro 13"
          - Dashed border and arc disappear.
          - Audio chime plays (`toggleOn`).
        - **Stays on Screen**: The interface **does NOT transition** to any other screen; it stays on the cooktop start screen showing only the confirmed selected number.
-       - **Neighboring Numbers Masked**: Adjacent numbers are hidden (`opacity: 0`), displaying only the single selected numeral.
+       - **Neighboring Numbers Display**: While setting, moving, and during the arc countdown, previous and next numbers remain visible in gray (`#5C5F68`) above and below the selected white number (e.g. 4 and 6 in gray when 5 is selected). Once confirmed at 3.0s, adjacent numbers smoothly fade out (`opacity: 0`), displaying only the single confirmed numeral on the solid light grey disc.
        - Turning the knob to another power level removes the confirmed state and restarts the 1.0s quiet delay for the new level. Turning to OFF immediately resets the burner to idle.
      - **Knob 3 ON/OFF Behavior**: Rotates $0^\circ \to 45^\circ$. Below $25^\circ$, Burner 3 shows OFF / unlit; at $\ge 25^\circ$, it illuminates active and displays bold white "ON" inside the 106px dashed ring.
      - **PRC Rotation, 8px Arc & Smooth Slide-in Motion**:
