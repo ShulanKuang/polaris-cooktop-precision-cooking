@@ -1487,6 +1487,7 @@
   const t3BurnerArcTimers = {
     1: { preArc: null, arc: null, confirm: null, lastConfirmedLevel: null },
     2: { preArc: null, arc: null, confirm: null, lastConfirmedLevel: null },
+    3: { preArc: null, arc: null, confirm: null, lastConfirmedLevel: null },
     4: { preArc: null, arc: null, confirm: null, lastConfirmedLevel: null },
     5: { preArc: null, arc: null, confirm: null, lastConfirmedLevel: null }
   };
@@ -1523,7 +1524,8 @@
     }
   }
 
-  function startT3BurnerArc(index, { transitToSpotlight = false } = {}) {
+  // Precision Cooking ONLY: 1s delay -> 2s Magenta Arc closing up quicker -> Confirmed active status (white background disc) -> 1s delay -> Spotlight
+  function startT3BurnerArc(index, { transitToSpotlight = true } = {}) {
     const t = t3BurnerArcTimers[index];
     if (!t) return;
 
@@ -1546,11 +1548,7 @@
     const arcCircle = roller.querySelector(".t3-burner-prc-arc-circle");
     const fullCirc = getBurnerCircumference(index);
 
-    if (transitToSpotlight) {
-      roller.classList.add("is-prc-mode");
-    } else {
-      roller.classList.remove("is-prc-mode");
-    }
+    roller.classList.add("is-prc-mode");
     roller.classList.remove("has-arc", "is-arcing", "is-confirmed");
     if (arcCircle) {
       arcCircle.style.transition = "none";
@@ -1558,22 +1556,22 @@
       void arcCircle.offsetWidth; // Force CSS reflow
     }
 
-    // 1s delay when knob turns/stops at position before magenta arc starts to run
+    // 1s delay when knob turns to Precision Cooking position before magenta arc starts to run
     t.preArc = setTimeout(() => {
       t.preArc = null;
 
-      // Begin 3s magenta arc animation from 12 o'clock top point
+      // Begin 2s magenta arc animation from 12 o'clock top point to close up quicker
       roller.classList.add("has-arc");
       requestAnimationFrame(() => {
         if (!roller.classList.contains("has-arc")) return;
         roller.classList.add("is-arcing");
         if (arcCircle) {
-          arcCircle.style.transition = "stroke-dashoffset 3000ms linear";
+          arcCircle.style.transition = "stroke-dashoffset 2000ms linear";
           arcCircle.style.strokeDashoffset = "0";
         }
       });
 
-      // Exactly at 3.0s after arc start: arc finishes full circle -> transition to confirmed active state (Figma 2989:5712)
+      // Exactly at 2.0s after arc start: arc finishes full circle -> transition to confirmed active state (white background disc with dark thermometer icon)
       t.arc = setTimeout(() => {
         t.arc = null;
         roller.classList.remove("has-arc", "is-arcing");
@@ -1590,11 +1588,47 @@
             t.confirm = null;
             transitionToT3Spotlight();
           }, 1000);
-        } else {
-          // For power levels 1-10: stay at this screen, showing confirmed selected number
-          t.lastConfirmedLevel = currentT3BurnerLevels[index];
         }
-      }, 3000);
+      }, 2000);
+    }, 1000);
+  }
+
+  // Power Levels 1-10 ONLY: 1s delay then directly go to active status (white background disc) with NO magenta arc
+  function startT3BurnerPowerConfirmation(index, level) {
+    const t = t3BurnerArcTimers[index];
+    if (!t) return;
+
+    if (t.preArc) {
+      clearTimeout(t.preArc);
+      t.preArc = null;
+    }
+    if (t.arc) {
+      clearTimeout(t.arc);
+      t.arc = null;
+    }
+    if (t.confirm) {
+      clearTimeout(t.confirm);
+      t.confirm = null;
+    }
+
+    const roller = document.getElementById(`t3BurnerRoller${index}`);
+    if (!roller) return;
+
+    // Ensure NO magenta arc or PRC classes are applied
+    roller.classList.remove("is-prc-mode", "has-arc", "is-arcing");
+    const arcCircle = roller.querySelector(".t3-burner-prc-arc-circle");
+    if (arcCircle) {
+      arcCircle.style.transition = "none";
+      arcCircle.style.strokeDashoffset = getBurnerCircumference(index);
+    }
+
+    // 1s quiet delay after knob stops moving at power level 1-10 before going to active status
+    t.confirm = setTimeout(() => {
+      t.confirm = null;
+      roller.classList.add("is-confirmed");
+      t.lastConfirmedLevel = level;
+      playSound("toggleOn");
+      // Stay permanently at this screen, showing confirmed selected number on white background!
     }, 1000);
   }
 
@@ -1608,7 +1642,7 @@
   }
 
   function clearT3Timers() {
-    [1, 2, 4, 5].forEach(i => cancelT3BurnerArc(i));
+    [1, 2, 3, 4, 5].forEach(i => cancelT3BurnerArc(i));
     [1, 2, 3, 4, 5].forEach(i => {
       if (t3PrcQuietTimers[i]) {
         clearTimeout(t3PrcQuietTimers[i]);
@@ -1793,32 +1827,16 @@
         it.classList.toggle("is-selected", idx === 11);
       });
 
-      if (targetIndex === 1) {
-        // Front Left Burner (Knob 1): 1s delay -> 3s Magenta Arc Animation (Figma 2990:6407 -> 2990:6457 -> 2989:5712) -> 1s delay -> Spotlight
+      if (targetIndex === 1 || targetIndex === 2 || targetIndex === 4 || targetIndex === 5) {
+        // Precision Cooking: 1s delay -> 2s Magenta Arc closing up -> 1s delay -> Spotlight
         // No countdown toast
         if (els.t3ToastCard) {
           els.t3ToastCard.classList.remove("is-visible", "is-dismissing");
           els.t3ToastCard.setAttribute("hidden", "");
         }
-        const t = t3BurnerArcTimers[1];
-        if (!t.preArc && !t.arc && !t.confirm && !roller.classList.contains("is-confirmed")) {
-          startT3BurnerArc(1, { transitToSpotlight: true });
-        }
-      } else {
-        // Other burners: 1s quiet delay on PRC, then quick raise up toast with 3s countdown, then slide in Spotlight
-        if (!t3PrcQuietTimers[targetIndex] && !t3CountdownInterval && !t3HoldingTimeout) {
-          if (els.t3ToastCard) {
-            els.t3ToastCard.classList.remove("is-visible", "is-dismissing");
-            els.t3ToastCard.setAttribute("hidden", "");
-          }
-          if (els.t3ToastNum) {
-            els.t3ToastNum.textContent = "3";
-          }
-
-          t3PrcQuietTimers[targetIndex] = setTimeout(() => {
-            t3PrcQuietTimers[targetIndex] = null;
-            showT3PrcToastAndStartCountdown();
-          }, 1000);
+        const t = t3BurnerArcTimers[targetIndex];
+        if (t && !t.preArc && !t.arc && !t.confirm && !roller.classList.contains("is-confirmed")) {
+          startT3BurnerArc(targetIndex, { transitToSpotlight: true });
         }
       }
     } else if (isMinToMax) {
@@ -1882,14 +1900,16 @@
       });
 
       // When the knob stops at a power level (levels 1-10):
-      // 1s quiet delay after knob stops moving -> 3s magenta arc -> confirmed state (solid #D9D8D7 disc, #303238 number) -> stay at this screen!
+      // 1s quiet delay after knob stops moving -> directly go to active status (white background disc, dark numeral) with NO magenta arc -> stay at this screen!
       const t = t3BurnerArcTimers[targetIndex];
       if (t) {
         if (roller.classList.contains("is-confirmed") && t.lastConfirmedLevel === level) {
           // Already confirmed at this exact level, do nothing
         } else {
-          // Start/debounce 1s quiet delay so arc starts 1s after knob stops moving
-          startT3BurnerArc(targetIndex, { transitToSpotlight: false });
+          // Un-confirm if level changed so moving number and gray neighbors are visible while rotating
+          roller.classList.remove("is-confirmed");
+          // Start/debounce 1s quiet delay before entering active white status
+          startT3BurnerPowerConfirmation(targetIndex, level);
         }
       }
     } else if (isOff) {
