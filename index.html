@@ -2,11 +2,11 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover, shrink-to-fit=no">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <title>Polaris Cooktop Precision Cooking Prototype</title>
-  <link rel="stylesheet" href="./styles.css?v=20261008-knob-sweep-audio">
+  <link rel="stylesheet" href="./styles.css?v=20261008-gesture-lockdown">
 </head>
 <body>
   <div class="test-environment">
@@ -18,13 +18,13 @@
       </div>
 
       <div class="toolbar-center">
-        <!-- 3 MAIN TASK SWITCHER BUTTONS -->
+        <!-- 3 MAIN TASK SWITCHER BUTTONS (Task 1 hidden from display per research review) -->
         <div class="task-switcher" role="group" aria-label="Switch test task">
-          <button type="button" class="task-btn is-active" id="btnTask1" data-task="1">
+          <button type="button" class="task-btn" id="btnTask1" data-task="1" style="display: none !important;">
             <span class="task-num">Task 1</span>
             <span class="task-label">Awareness Test</span>
           </button>
-          <button type="button" class="task-btn" id="btnTask2" data-task="2">
+          <button type="button" class="task-btn is-active" id="btnTask2" data-task="2">
             <span class="task-num">Task 2</span>
             <span class="task-label">Concept Evaluation</span>
           </button>
@@ -52,11 +52,11 @@
     <!-- RESEARCHER CHEAT SHEET & TASK 1 GLANCE BAR -->
     <section class="researcher-subbar" id="researcherSubbar">
       <div class="subbar-info">
-        <strong id="taskTitle">Task 1: Awareness Test</strong>
+        <strong id="taskTitle">Task 2: Precision Cooking Concept Evaluation</strong>
       </div>
 
-      <!-- TASK 1 ONLY: GLANCE TIMEOUT BUTTONS (0.5s / 1s / 2s) -->
-      <div class="glance-controls" id="glanceControls">
+      <!-- TASK 1 ONLY: GLANCE TIMEOUT BUTTONS (0.5s / 1s / 2s) - Hidden from display -->
+      <div class="glance-controls" id="glanceControls" style="display: none;" hidden>
         <span class="glance-label">Glance Reveal:</span>
         <button type="button" class="glance-btn glance-btn-primary" id="btnFlash05" data-duration="500">
           <span class="bolt">⚡</span> 0.5s
@@ -130,7 +130,8 @@
               <option value="t2:food">2-food (Task 2 Food Options)</option>
               <option value="t2:temperature">2-temperature (Task 2 Temp Picker)</option>
             </optgroup>
-            <optgroup label="Task 1: Awareness Test">
+            <!-- Task 1 awareness screens hidden from dropdown per research review -->
+            <optgroup label="Task 1: Awareness Test" id="optgroupTask1" style="display: none;">
               <option value="t1:awareness">1-awareness (Full Awareness Screen)</option>
             </optgroup>
           </select>
@@ -1153,6 +1154,6 @@
     </footer>
   </div>
 
-  <script src="./app.js?v=20261008-knob-sweep-audio"></script>
+  <script src="./app.js?v=20261008-gesture-lockdown"></script>
 </body>
 </html>

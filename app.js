@@ -628,6 +628,7 @@
     } else if (taskId === 2) {
       if (els.task1FullScreen) els.task1FullScreen.hidden = true;
       if (els.viewTask2) els.viewTask2.hidden = false;
+      if (els.viewTask3) els.viewTask3.hidden = true;
       if (els.screenRail) els.screenRail.hidden = false;
       if (els.topStatus) els.topStatus.hidden = true;
       if (els.screenCanvas) els.screenCanvas.hidden = true;
@@ -3988,6 +3989,62 @@
     requestAnimationFrame(loop);
   }
 
+  // TOUCH & GESTURE LOCKDOWN (PREVENTS ENLARGING & SHIFTING ON IPAD / TOUCH DEVICES)
+  function initGestureLockdown() {
+    // 1. Block Safari gesturestart/gesturechange/gestureend (pinch-to-zoom)
+    ["gesturestart", "gesturechange", "gestureend"].forEach(name => {
+      document.addEventListener(name, (e) => {
+        e.preventDefault();
+      }, { passive: false });
+    });
+
+    // 2. Block multi-touch gestures (2+ fingers zoom/pinch)
+    document.addEventListener("touchstart", (e) => {
+      if (e.touches && e.touches.length > 1) {
+        e.preventDefault();
+      }
+    }, { passive: false });
+
+    // 3. Block viewport dragging / bounce / shifting outside dedicated scrollable tracks
+    document.addEventListener("touchmove", (e) => {
+      if (e.touches && e.touches.length > 1) {
+        e.preventDefault();
+        return;
+      }
+      const targetEl = (e.target instanceof Element) ? e.target : (e.target && e.target.parentElement);
+      const scrollable = targetEl && typeof targetEl.closest === "function" ? targetEl.closest(
+        ".t3-picker-track, .t2-picker-track, .t2-options-scroll-container, .t2-tile-scroll-container, .t3-options-scroll-container, .t3-drawer-scrollable-options, .t3-doneness-carousel, .t3-recipe-cards-track"
+      ) : null;
+      if (!scrollable) {
+        e.preventDefault();
+      }
+    }, { passive: false });
+
+    // 4. Block double-tap to zoom
+    let lastTouchEndTime = 0;
+    document.addEventListener("touchend", (e) => {
+      const now = Date.now();
+      if (now - lastTouchEndTime <= 300) {
+        const targetEl = (e.target instanceof Element) ? e.target : (e.target && e.target.parentElement);
+        const isClickable = targetEl && typeof targetEl.closest === "function" ? targetEl.closest("button, select, input, a, [role='button'], .task-btn, .scale-btn") : false;
+        if (!isClickable) {
+          e.preventDefault();
+        }
+      }
+      lastTouchEndTime = now;
+    }, { passive: false });
+
+    // 5. Block double-click zoom
+    document.addEventListener("dblclick", (e) => {
+      e.preventDefault();
+    }, { passive: false });
+
+    // 6. Block long-press context menu / callout loupe
+    window.addEventListener("contextmenu", (e) => {
+      e.preventDefault();
+    });
+  }
+
   // INIT
   const savedScaleMode = localStorage.getItem("polaris_app_scale_mode") || "physical";
   if (savedScaleMode === "native") {
@@ -3996,15 +4053,19 @@
     setAppScale(0.8146, "physical");
   }
   setupListeners();
+  initGestureLockdown();
   initRunningActivityBar();
   initScreenObserver();
 
-  // Restore active task from URL or localStorage, default to Task 3 for current testing
+  // Restore active task from URL or localStorage (Task 1 hidden from display, promote to 2)
   const urlParams = new URLSearchParams(window.location.search);
   const taskFromParam = parseInt(urlParams.get("task"), 10);
   const taskFromHash = window.location.hash === "#task3" ? 3 : window.location.hash === "#task2" ? 2 : window.location.hash === "#task1" ? 1 : null;
   const taskFromStorage = parseInt(localStorage.getItem("polaris_active_task"), 10);
-  const initialTask = taskFromParam || taskFromHash || (taskFromStorage >= 2 ? taskFromStorage : 3);
+  let initialTask = taskFromParam || taskFromHash || (taskFromStorage >= 2 ? taskFromStorage : 2);
+  if (initialTask === 1) {
+    initialTask = 2; // Awareness test removed from display; promote to Task 2
+  }
   setTask(initialTask);
 
   window.__polaris = {

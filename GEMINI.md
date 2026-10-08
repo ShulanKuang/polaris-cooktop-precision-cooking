@@ -188,7 +188,19 @@ This is an interactive high-fidelity web prototype deployed on an **iPad Pro 13"
 
 ---
 
-## 🔄 6. How to Resume Work After Antigravity Restart
+
+## 🛡️ 6. Task 1 Display Removal & Touch/Gesture Lockdown (Oct 8, 2026)
+1. **Task 1 (Awareness Test) Display Removal**:
+   - Researcher confirmed the Awareness Test is not needed for the upcoming study session.
+   - Preserved 100% of the underlying code, markup, assets, and data structures (nothing deleted).
+   - Removed from active prototype display: `btnTask1` hidden via `style="display: none !important;"`, `optgroupTask1` hidden in dropdown, subbar title defaults to Task 2, initial task auto-promotes to Task 2 if not explicitly set to 3.
+2. **Comprehensive Touch & Gesture Lockdown (No Enlarging / No Shifting)**:
+   - Viewport meta updated: `minimum-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover, shrink-to-fit=no`.
+   - CSS fixed layout: `html, body { position: fixed; width: 100%; height: 100%; overflow: hidden; overscroll-behavior: none; touch-action: none; user-select: none; }`
+   - JS gesture interception: `gesturestart/change/end` prevent pinch-to-zoom; multi-touch `touchstart/touchmove` (> 1 touch) prevented; double-tap zoom guarded; `touchmove` outside dedicated scroll containers prevented; `contextmenu` suppressed.
+   - Dedicated scroll containers (`.t3-picker-track`, `.t2-picker-track`, `.t2-options-scroll-container`, `.t3-drawer-scrollable-options`, `.t3-doneness-carousel`, `.t3-recipe-cards-track`) retain smooth single-finger momentum scrolling with `overscroll-behavior: contain`.
+
+## 🔄 7. How to Resume Work After Antigravity Restart
 When opening a new conversation or restarting Antigravity:
 1. Open this workspace directory: `/Users/a240165853/Documents/PolarisPrototypeCooktopPrecisionCooking`.
 2. Antigravity automatically reads `GEMINI.md` to load full memory of the project.
@@ -198,3 +210,4 @@ When opening a new conversation or restarting Antigravity:
    npx --yes localtunnel --port 8080 &
    ```
 4. If Figma MCP is connected, you can directly query Figma components or tokens by node ID or frame name!
+
