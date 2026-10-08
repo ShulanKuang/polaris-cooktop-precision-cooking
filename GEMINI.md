@@ -56,7 +56,7 @@ This is an interactive high-fidelity web prototype deployed on an **iPad Pro 13"
        - Turning the knob to another power level removes the confirmed state and restarts the 1.0s quiet delay for the new level. Turning to OFF immediately resets the burner to idle.
      - **Knob 3 ON/OFF Behavior**: Rotates $0^\circ \to 45^\circ$. Below $25^\circ$, Burner 3 shows OFF / unlit; at $\ge 25^\circ$, it illuminates active and displays bold white "ON" inside the 106px dashed ring.
       - **Precision Cooking (PRC) 2s Magenta Arc & Smooth Slide-in Motion**:
-        - Turning any PRC-enabled knob (1, 2, 4, 5) to `PRC` detent ($-56^\circ$) illuminates the knob LED and displays the glowing white Precision Cooking Temperature Icon inside that burner.
+        - Turning or stopping at `PRC` detent ($-56^\circ$) from OFF or from any power level (1–10) reliably starts the PRC sequence: any pending power level confirmation or active power status is immediately cancelled, the knob LED illuminates, and the glowing white Precision Cooking Temperature Icon appears inside that burner.
         - Waits **1.0s quiet delay** before the arc begins.
         - Runs **8px magenta arc** clockwise around the burner closing up in **2.0 seconds** (Figma `2990:6407` $\to$ `2990:6457`).
         - At 2.0s, the circle closes completely and immediately transitions to confirmed active status (solid `#D9D8D7` disc, dark `#303238` thermometer icon, Figma `2989:5712`) and plays `toggleOn` chime.

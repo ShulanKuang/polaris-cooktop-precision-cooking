@@ -1541,6 +1541,7 @@
       clearTimeout(t.confirm);
       t.confirm = null;
     }
+    t.lastConfirmedLevel = null;
 
     const roller = document.getElementById(`t3BurnerRoller${index}`);
     if (!roller) return;
@@ -1559,6 +1560,7 @@
     // 1s delay when knob turns to Precision Cooking position before magenta arc starts to run
     t.preArc = setTimeout(() => {
       t.preArc = null;
+      if (currentT3BurnerLevels[index] !== "prc") return;
 
       // Begin 2s magenta arc animation from 12 o'clock top point to close up quicker
       roller.classList.add("has-arc");
@@ -1574,6 +1576,8 @@
       // Exactly at 2.0s after arc start: arc finishes full circle -> transition to confirmed active state (white background disc with dark thermometer icon)
       t.arc = setTimeout(() => {
         t.arc = null;
+        if (currentT3BurnerLevels[index] !== "prc") return;
+
         roller.classList.remove("has-arc", "is-arcing");
         roller.classList.add("is-confirmed");
         if (arcCircle) {
@@ -1586,6 +1590,7 @@
           // 1.0s delay on confirmed state, then transit to next screen (Spotlight)
           t.confirm = setTimeout(() => {
             t.confirm = null;
+            if (currentT3BurnerLevels[index] !== "prc") return;
             transitionToT3Spotlight();
           }, 1000);
         }
@@ -1625,6 +1630,7 @@
     // 1s quiet delay after knob stops moving at power level 1-10 before going to active status
     t.confirm = setTimeout(() => {
       t.confirm = null;
+      if (currentT3BurnerLevels[index] !== level) return;
       roller.classList.add("is-confirmed");
       t.lastConfirmedLevel = level;
       playSound("toggleOn");
@@ -1812,6 +1818,10 @@
           }
         }
         playTickSound();
+
+        // Arriving at PRC from a power level (or off):
+        // Cancel any pending power confirmation timer or confirmed active status
+        cancelT3BurnerArc(targetIndex);
       }
       currentT3BurnerLevels[targetIndex] = "prc";
       activePrcKnobIndex = index;
@@ -1835,7 +1845,9 @@
           els.t3ToastCard.setAttribute("hidden", "");
         }
         const t = t3BurnerArcTimers[targetIndex];
-        if (t && !t.preArc && !t.arc && !t.confirm && !roller.classList.contains("is-confirmed")) {
+        const isPrcConfirmed = roller.classList.contains("is-confirmed") && roller.classList.contains("is-prc-mode");
+        const isPrcArcRunning = t && (t.preArc || t.arc);
+        if (!isPrcConfirmed && !isPrcArcRunning) {
           startT3BurnerArc(targetIndex, { transitToSpotlight: true });
         }
       }
@@ -1851,6 +1863,9 @@
       const level = Math.max(1, Math.min(10, Math.round(1 + progress * 9)));
 
       const prevLevel = currentT3BurnerLevels[targetIndex];
+      if (prevLevel === "prc") {
+        cancelT3BurnerArc(targetIndex);
+      }
 
       if (level !== prevLevel) {
         // Collect all numbers passed by between prevLevel and new level

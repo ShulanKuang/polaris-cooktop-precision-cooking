@@ -80,6 +80,8 @@ To prevent unintentional viewport shifting, bounce, or accidental zooming when p
   - After 1.0s, the burner disc background transitions directly to the active white status (solid light grey `#D9D8D7` circle, dark `#303238` numeral, neighboring gray numbers hidden, and confirmation chime).
   - Stays permanently on the home start screen without navigating away.
 - **Turn Knob to Precision Cooking (PRC)**:
+  - Turning or stopping at PRC (whether directly counter-clockwise from OFF, or clockwise past power levels 1–10) always reliably triggers the precision cooking sequence.
+  - Any previous power level confirmation or pending timers are automatically cancelled.
   - Knob LED indicator illuminates white.
   - Dedicated burner displays the glowing white **Precision Cooking Temperature Icon**.
   - **1.0s Pre-Delay**: The screen stays quiet on the home view for 1.0s.
