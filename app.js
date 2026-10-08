@@ -2,6 +2,7 @@
   // SOUND EFFECTS ENGINE
   const SOUND_FILES = {
     touch: "./sounds/Touch.wav",
+    tick: "./sounds/Touch.wav", // Alias to selected sound (Touch.wav)
     increase: "./sounds/Increase.wav",
     decrease: "./sounds/Decrease.wav",
     toggleOn: "./sounds/ToggleOn.wav",
@@ -16,7 +17,127 @@
     audioCache[key] = audio;
   }
 
+  // Web Audio API buffer cache for zero-latency, overlapping scheduled playback
+  let audioCtx = null;
+  const audioBuffers = {};
+
+  function initAudioContext() {
+    if (!audioCtx) {
+      const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+      if (AudioContextClass) {
+        audioCtx = new AudioContextClass();
+      }
+    }
+    if (audioCtx && audioCtx.state === "suspended") {
+      audioCtx.resume().catch(() => {});
+    }
+  }
+
+  // Unlock AudioContext on first user interaction
+  const unlockAudio = () => {
+    initAudioContext();
+    window.removeEventListener("pointerdown", unlockAudio, true);
+    window.removeEventListener("touchstart", unlockAudio, true);
+    window.removeEventListener("click", unlockAudio, true);
+  };
+  window.addEventListener("pointerdown", unlockAudio, true);
+  window.addEventListener("touchstart", unlockAudio, true);
+  window.addEventListener("click", unlockAudio, true);
+
+  // Preload and decode Web Audio buffers
+  Object.entries(SOUND_FILES).forEach(([key, path]) => {
+    fetch(path)
+      .then(res => res.arrayBuffer())
+      .then(buf => {
+        initAudioContext();
+        if (audioCtx) {
+          audioCtx.decodeAudioData(buf.slice(0), (decoded) => {
+            audioBuffers[key] = decoded;
+          }, () => {});
+        }
+      })
+      .catch(() => {});
+  });
+
+  // Scheduled tick playback for rotary knob encoder feedback
+  let lastScheduledTickTime = 0;
+  let lastTickDirection = 0; // +1 for up, -1 for down
+  const TICK_INTERVAL = 0.038; // 38ms spacing between ticks (~26 clicks/sec)
+  const MAX_QUEUE_TICKS = 12; // allow up to 12 ticks queued ahead (~450ms)
+
+  function resetTickQueue() {
+    lastScheduledTickTime = 0;
+    lastTickDirection = 0;
+  }
+
+  function playTickSound(direction = 0) {
+    initAudioContext();
+    const useCtx = audioCtx && audioBuffers["touch"] && audioCtx.state !== "closed";
+    const now = (useCtx && audioCtx.state === "running") ? audioCtx.currentTime : (performance.now() / 1000);
+
+    // If direction changed (e.g. turned up then suddenly turned down), reset queue for immediate feedback
+    if (direction !== 0 && lastTickDirection !== 0 && direction !== lastTickDirection) {
+      lastScheduledTickTime = 0;
+    }
+    if (direction !== 0) {
+      lastTickDirection = direction;
+    }
+
+    // If last scheduled tick was in the past or clock domain shifted, reset to now
+    if (now - lastScheduledTickTime > TICK_INTERVAL || Math.abs(lastScheduledTickTime - now) > 2.0) {
+      lastScheduledTickTime = now - TICK_INTERVAL;
+    }
+
+    // If queue is full (>12 ticks ahead), drop extra ticks to prevent lagging
+    if (lastScheduledTickTime - now > MAX_QUEUE_TICKS * TICK_INTERVAL) {
+      return;
+    }
+
+    const playAt = Math.max(now, lastScheduledTickTime + TICK_INTERVAL);
+    lastScheduledTickTime = playAt;
+
+    window.__tickHistory = window.__tickHistory || [];
+    window.__tickHistory.push({ playAt, now, perf: performance.now(), direction });
+
+    if (useCtx) {
+      try {
+        const source = audioCtx.createBufferSource();
+        source.buffer = audioBuffers["touch"];
+        source.connect(audioCtx.destination);
+        const ctxStart = (audioCtx.state === "running") ? playAt : 0;
+        source.start(ctxStart);
+        return;
+      } catch (e) {}
+    }
+
+    // Fallback: HTML5 audio with setTimeout
+    const delayMs = Math.max(0, Math.round((playAt - now) * 1000));
+    setTimeout(() => {
+      try {
+        const sound = audioCache["touch"];
+        if (sound) {
+          const clone = sound.cloneNode();
+          clone.play().catch(() => {});
+        }
+      } catch (e) {}
+    }, delayMs);
+  }
+
   function playSound(type) {
+    if (type === "tick") {
+      playTickSound();
+      return;
+    }
+    initAudioContext();
+    if (audioCtx && audioBuffers[type]) {
+      try {
+        const source = audioCtx.createBufferSource();
+        source.buffer = audioBuffers[type];
+        source.connect(audioCtx.destination);
+        source.start(0);
+        return;
+      } catch (e) {}
+    }
     try {
       const sound = audioCache[type];
       if (sound) {
@@ -1648,6 +1769,15 @@
     if (isPRC) {
       // 1. Pointing at PRC (-56 deg): dedicated burner shows temperature icon
       roller.classList.add("is-active");
+      const prevLevel = currentT3BurnerLevels[targetIndex];
+      if (prevLevel !== "prc") {
+        if (typeof prevLevel === "number" && prevLevel < 10) {
+          for (let n = prevLevel + 1; n <= 10; n++) {
+            playTickSound();
+          }
+        }
+        playTickSound();
+      }
       currentT3BurnerLevels[targetIndex] = "prc";
       activePrcKnobIndex = index;
 
@@ -1701,9 +1831,42 @@
       const progress = (clamped - 55) / (270 - 55);
       const level = Math.max(1, Math.min(10, Math.round(1 + progress * 9)));
 
-      if (level !== currentT3BurnerLevels[targetIndex]) {
+      const prevLevel = currentT3BurnerLevels[targetIndex];
+
+      if (level !== prevLevel) {
+        // Collect all numbers passed by between prevLevel and new level
+        const passedNumbers = [];
+
+        if (prevLevel === "off") {
+          // Came clockwise from OFF: entered at level 1 and swept up to level
+          for (let n = 1; n <= level; n++) {
+            passedNumbers.push(n);
+          }
+        } else if (prevLevel === "prc") {
+          // Came counter-clockwise from PRC: entered at level 10 and swept down to level
+          for (let n = 10; n >= level; n--) {
+            passedNumbers.push(n);
+          }
+        } else if (typeof prevLevel === "number") {
+          if (level > prevLevel) {
+            for (let n = prevLevel + 1; n <= level; n++) {
+              passedNumbers.push(n);
+            }
+          } else if (level < prevLevel) {
+            for (let n = prevLevel - 1; n >= level; n--) {
+              passedNumbers.push(n);
+            }
+          }
+        } else {
+          passedNumbers.push(level);
+        }
+
         currentT3BurnerLevels[targetIndex] = level;
-        playSound("tick");
+
+        // Play the selected sound ("touch") for every number passed by
+        for (let i = 0; i < passedNumbers.length; i++) {
+          playTickSound();
+        }
       }
 
       // Translate strip to center index level
@@ -1732,6 +1895,13 @@
       // 3. Knob at OFF (0 deg)
       dismissPrcTimerAndToast(targetIndex);
       cancelT3BurnerArc(targetIndex);
+      lastScheduledTickTime = 0;
+      const prevLevel = currentT3BurnerLevels[targetIndex];
+      if (typeof prevLevel === "number" && prevLevel > 1) {
+        for (let n = prevLevel - 1; n >= 1; n--) {
+          playTickSound();
+        }
+      }
       currentT3BurnerLevels[targetIndex] = "off";
 
       strip.style.webkitTransform = `translate3d(0, ${baseOffset}px, 0)`;
@@ -2544,6 +2714,7 @@
       target.addEventListener("pointerdown", (e) => {
         e.preventDefault();
         target.setPointerCapture(e.pointerId);
+        resetTickQueue();
         isDragging = true;
         hasMoved = false;
         startX = e.clientX;
@@ -3846,7 +4017,12 @@
     showT2Precision,
     setT2Tab,
     updateScreenBadge,
-    updateCooktopActiveState
+    updateCooktopActiveState,
+    playSound,
+    playTickSound,
+    resetTickQueue,
+    getAudioCtx: () => audioCtx,
+    getAudioBuffers: () => audioBuffers
   };
   window.PolarisApp = window.__polaris;
 })();
