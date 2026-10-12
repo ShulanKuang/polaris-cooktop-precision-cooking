@@ -2197,8 +2197,10 @@
 
   let digipadInput = "375";
   let digipadIsFresh = true;
+  let digipadSourceScreen = "temperature";
 
-  function openT3Digipad() {
+  function openT3Digipad(source = "temperature") {
+    digipadSourceScreen = source;
     digipadInput = String(state.task3TargetTemp || 375);
     digipadIsFresh = true;
     if (els.t3DigipadTempNum) {
@@ -2213,10 +2215,17 @@
     if (temp > T3_TEMP_MAX) temp = 500;
     temp = Math.round(temp / T3_TEMP_STEP) * T3_TEMP_STEP;
     state.task3TargetTemp = temp;
-    showT3Screen("temperature");
-    requestAnimationFrame(() => {
-      scrollToT3Temp(temp, false);
-    });
+    if (digipadSourceScreen === "tempRun") {
+      showT3Screen("tempRun");
+      requestAnimationFrame(() => {
+        scrollToT3RunTemp(temp, false);
+      });
+    } else {
+      showT3Screen("temperature");
+      requestAnimationFrame(() => {
+        scrollToT3Temp(temp, false);
+      });
+    }
   }
 
   function handleDigipadKey(key) {
@@ -2815,6 +2824,9 @@
     }
   }
 
+  window.scrollToT3Temp = scrollToT3Temp;
+  window.scrollToT3RunTemp = scrollToT3RunTemp;
+
   // ==============================================
   // TASK 3: COOKTOP KNOBS MANIFOLD & ROTATABLE DIALS
   // ==============================================
@@ -3265,11 +3277,18 @@
       });
     }
 
-    // Digipad Screen: Back button (< Precision Cooking) -> slides back to Burners
+    // Digipad Screen: Back button (< Precision Cooking) -> slides back to Burners or tempRun
     if (els.t3BtnBackFromDigipad) {
       els.t3BtnBackFromDigipad.addEventListener("click", () => {
         playSound("touch");
-        cancelT3A();
+        if (digipadSourceScreen === "tempRun") {
+          showT3Screen("tempRun");
+          requestAnimationFrame(() => {
+            scrollToT3RunTemp(state.task3TargetTemp || 375, false);
+          });
+        } else {
+          cancelT3A();
+        }
       });
     }
 
@@ -3539,7 +3558,39 @@
     if (els.t3BtnKeypadTemp) {
       els.t3BtnKeypadTemp.addEventListener("click", () => {
         playSound("touch");
+        openT3Digipad("tempRun");
       });
+    }
+
+    // Tabs on TempRun screen (Figma 3017:26093)
+    const tabTempFromRun = document.getElementById("t3TabBtnTempFromTempRun");
+    const tabFoodFromRun = document.getElementById("t3TabBtnFoodFromTempRun");
+    const tabTechFromRun = document.getElementById("t3TabBtnTechFromTempRun");
+    const tabFavFromRun = document.getElementById("t3TabBtnFavFromTempRun");
+    const tabRecentFromRun = document.getElementById("t3TabBtnRecentFromTempRun");
+
+    if (tabTempFromRun) {
+      tabTempFromRun.addEventListener("click", () => {
+        playSound("touch");
+      });
+    }
+    if (tabFoodFromRun) {
+      tabFoodFromRun.addEventListener("click", () => {
+        playSound("touch");
+        showT3Screen("foodOptions");
+      });
+    }
+    if (tabTechFromRun) {
+      tabTechFromRun.addEventListener("click", () => {
+        playSound("touch");
+        showT3Screen("technique");
+      });
+    }
+    if (tabFavFromRun) {
+      tabFavFromRun.addEventListener("click", () => playSound("touch"));
+    }
+    if (tabRecentFromRun) {
+      tabRecentFromRun.addEventListener("click", () => playSound("touch"));
     }
 
     // ==============================================
@@ -4357,6 +4408,8 @@
     setT2Tab,
     updateScreenBadge,
     updateCooktopActiveState,
+    scrollToT3Temp,
+    scrollToT3RunTemp,
     playSound,
     playTickSound,
     resetTickQueue,
