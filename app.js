@@ -1479,7 +1479,7 @@
     const burnerConfigs = {
       1: { roller: els.t3BurnerRoller1, strip: els.t3BurnerStrip1, itemH: 38, baseOffset: 45 },
       2: { roller: els.t3BurnerRoller2, strip: els.t3BurnerStrip2, itemH: 38, baseOffset: 45 },
-      3: { roller: els.t3BurnerRoller3, strip: els.t3BurnerStrip3, itemH: 36, baseOffset: 35 },
+      3: { roller: els.t3BurnerRoller3, strip: els.t3BurnerStrip3, itemH: 36, baseOffset: 36 },
       4: { roller: els.t3BurnerRoller4, strip: els.t3BurnerStrip4, itemH: 52, baseOffset: 62 },
       5: { roller: els.t3BurnerRoller5, strip: els.t3BurnerStrip5, itemH: 38, baseOffset: 45 }
     };
@@ -1770,7 +1770,7 @@
     const burnerConfigs = {
       1: { roller: els.t3BurnerRoller1, strip: els.t3BurnerStrip1, type: "standard", itemH: 38, baseOffset: 45 },
       2: { roller: els.t3BurnerRoller2, strip: els.t3BurnerStrip2, type: "standard", itemH: 38, baseOffset: 45 },
-      3: { roller: els.t3BurnerRoller3, strip: els.t3BurnerStrip3, type: "onoff",    itemH: 36, baseOffset: 35 },
+      3: { roller: els.t3BurnerRoller3, strip: els.t3BurnerStrip3, type: "onoff",    itemH: 36, baseOffset: 36 },
       4: { roller: els.t3BurnerRoller4, strip: els.t3BurnerStrip4, type: "main",     itemH: 52, baseOffset: 62 },
       5: { roller: els.t3BurnerRoller5, strip: els.t3BurnerStrip5, type: "standard", itemH: 38, baseOffset: 45 }
     };
@@ -2520,16 +2520,17 @@
       }
 
       item.classList.remove("is-active", "is-neighbor-1", "is-neighbor-2");
-      if (dist < 65) {
-        // active
-      } else if (dist < 195) {
+      // Dist threshold with 180px items:
+      // Active item: dist < 90
+      // Single immediate neighbor on each side (350 and 400): 90 <= dist < 270
+      // Any further numbers (325, 300, 425, 450): dist >= 270 -> hidden (opacity 0)
+      if (dist >= 90 && dist < 270) {
         item.classList.add("is-neighbor-1");
-      } else if (dist < 325) {
-        item.classList.add("is-neighbor-2");
       }
     });
 
     if (closestItem) {
+      closestItem.classList.remove("is-neighbor-1");
       closestItem.classList.add("is-active");
       const tempVal = parseInt(closestItem.dataset.temp, 10);
       if (tempVal !== state.task3TargetTemp) {
@@ -2649,16 +2650,17 @@
       }
 
       item.classList.remove("is-active", "is-neighbor-1", "is-neighbor-2");
-      if (dist < 65) {
-        // active
-      } else if (dist < 195) {
+      // Dist threshold with 180px items:
+      // Active item: dist < 90
+      // Single immediate neighbor on each side (350 and 400): 90 <= dist < 270
+      // Any further numbers (325, 300, 425, 450): dist >= 270 -> hidden (opacity 0)
+      if (dist >= 90 && dist < 270) {
         item.classList.add("is-neighbor-1");
-      } else if (dist < 325) {
-        item.classList.add("is-neighbor-2");
       }
     });
 
     if (closestItem) {
+      closestItem.classList.remove("is-neighbor-1");
       closestItem.classList.add("is-active");
       const tempVal = parseInt(closestItem.dataset.temp, 10);
       if (tempVal !== state.task3TargetTemp) {

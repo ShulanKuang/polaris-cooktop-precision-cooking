@@ -2387,14 +2387,7 @@ input,
 
 /* Background Shadow Layer (Figma Node 3009:16749 / 2348:16766) */
 .t3-bg-shadow-layer {
-  position: absolute;
-  left: 0;
-  top: 0;
-  width: 934px;
-  height: 376px;
-  background: linear-gradient(180deg, rgba(0, 0, 0, 0.5) 0%, rgba(0, 0, 0, 0.5) 31px, rgba(0, 0, 0, 0) 85px);
-  pointer-events: none;
-  z-index: 50;
+  display: none; /* Shadow is already baked behind the status bar and text in task3a-start-burners.png; hidden here so status bar and Burners label stay bright and unobstructed */
 }
 
 /* Explore / Cooktop Surface Hotspot (Task 3A Start) */
@@ -2426,8 +2419,8 @@ input,
 }
 
 .t3-burner-hotspot.t3-burner-hotspot-main {
-  left: 431.5px;
-  top: 169px;
+  left: 433px;
+  top: 170px;
   width: 176px;
   height: 176px;
   border-radius: 50%;
@@ -2456,36 +2449,36 @@ input,
 
 /* Individual Burner Placements (coordinates shifted by -90px for 934px viewport) */
 .t3-burner-roller.burner-fl {
-  left: 233.5px;
-  top: 216px;
+  left: 229px;
+  top: 218px;
   width: 128px;
   height: 128px;
 }
 
 .t3-burner-roller.burner-rl {
-  left: 233.5px;
-  top: 72px;
+  left: 229px;
+  top: 70px;
   width: 128px;
   height: 128px;
 }
 
 .t3-burner-roller.burner-rc {
-  left: 379px;
-  top: 73px;
-  width: 106px;
-  height: 106px;
+  left: 377px;
+  top: 70px;
+  width: 108px;
+  height: 108px;
 }
 
 .t3-burner-roller.burner-main {
-  left: 431.5px;
-  top: 169px;
+  left: 433px;
+  top: 170px;
   width: 176px;
   height: 176px;
 }
 
 .t3-burner-roller.burner-rr {
-  left: 573px;
-  top: 72px;
+  left: 577px;
+  top: 70px;
   width: 128px;
   height: 128px;
 }
@@ -2937,7 +2930,7 @@ input,
   height: 52px;
 }
 
-/* Horizontal Temperature Carousel Picker (Identical structure and centering as Task 2) */
+/* Horizontal Temperature Carousel Picker (Only 3 numbers shown: 350, 375°F, 400 with enlarged spacing) */
 .t3-picker-wheel-container {
   position: absolute;
   left: 50px;
@@ -2959,7 +2952,7 @@ input,
   overflow-y: hidden;
   scroll-snap-type: x mandatory;
   -webkit-overflow-scrolling: touch;
-  padding: 0 calc(50% - 65px);
+  padding: 0 calc(50% - 90px);
   box-sizing: border-box;
   scrollbar-width: none;
 }
@@ -2968,8 +2961,8 @@ input,
 }
 
 .t3-picker-item {
-  flex: 0 0 130px;
-  width: 130px;
+  flex: 0 0 180px;
+  width: 180px;
   height: 100%;
   display: flex;
   align-items: center;
@@ -2979,18 +2972,26 @@ input,
   user-select: none;
   -webkit-user-select: none;
   position: relative;
-  transition: transform 0.12s ease;
+  transition: transform 0.15s ease, opacity 0.15s ease;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.t3-picker-item.is-active,
+.t3-picker-item.is-neighbor-1 {
+  opacity: 1;
+  pointer-events: auto;
 }
 
 .t3-item-num {
   font-family: var(--roux-typography-subtitle-small-font-family);
-  font-size: 32px;
-  font-weight: 500;
+  font-size: 46px;
+  font-weight: 700;
   color: #ffffff;
-  opacity: 0.35;
+  opacity: 0.75;
   letter-spacing: -0.5px;
   line-height: 1;
-  transition: font-size 0.12s ease, opacity 0.12s ease, font-weight 0.12s ease;
+  transition: font-size 0.15s ease, opacity 0.15s ease, font-weight 0.15s ease;
 }
 
 .t3-item-unit {
@@ -3002,19 +3003,13 @@ input,
   margin-top: -24px;
   line-height: 1;
   opacity: 0;
-  transition: opacity 0.12s ease;
-}
-
-.t3-picker-item.is-neighbor-2 .t3-item-num {
-  font-size: 32px;
-  font-weight: 400;
-  opacity: 0.45;
+  transition: opacity 0.15s ease;
 }
 
 .t3-picker-item.is-neighbor-1 .t3-item-num {
   font-size: 46px;
   font-weight: 700;
-  opacity: 0.8;
+  opacity: 0.75;
 }
 
 .t3-picker-item.is-active .t3-item-num {
