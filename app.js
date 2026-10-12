@@ -335,6 +335,7 @@
     t3BtnBackFromBurnerStatus: document.getElementById("t3BtnBackFromBurnerStatus"),
     t3BurnerStatusTemp: document.getElementById("t3BurnerStatusTemp"),
     t3HotspotActiveBurner: document.getElementById("t3HotspotActiveBurner"),
+    t3ActiveBurnerOverlay: document.getElementById("t3ActiveBurnerOverlay"),
     t3BurnerTextTile: document.getElementById("t3BurnerTextTile"),
     t3TileLiveTemp: document.getElementById("t3TileLiveTemp"),
     t3TileTargetText: document.getElementById("t3TileTargetText"),
@@ -2296,15 +2297,18 @@
           els.t3TileLiveTemp.textContent = `${targetTemp}°F`;
         }
 
-        // When target temp reached:
-        // 1. Label text changes to Figma 3051:42542 (hide preheat to line)
-        if (els.t3BurnerTextTile) {
-          els.t3BurnerTextTile.classList.add("is-complete");
-        }
-        // 2. Play completion chime
-        playSound("toggleOn");
-        // 3. Preheat complete toast pops up from bottom and stays for 10s (Figma 3051:42525)
-        showT3CompleteToast();
+        // 1-second delay when temp reaches target temp before changing to two row text card!
+        t3HoldingTimeout = setTimeout(() => {
+          t3HoldingTimeout = null;
+          // 1. Label text changes to two row text card (Figma 3051:42542, hide preheat to line)
+          if (els.t3BurnerTextTile) {
+            els.t3BurnerTextTile.classList.add("is-complete");
+          }
+          // 2. Play completion chime
+          playSound("toggleOn");
+          // 3. Preheat complete toast pops up from bottom and stays for 10s (Figma 3051:42525)
+          showT3CompleteToast();
+        }, 1000);
       }
     }, 50);
   }
@@ -3354,15 +3358,19 @@
       });
     }
 
-    // Active Burner Text Tile on Burner Status Screen (Figma 2310:12162 & 3051:42542)
-    if (els.t3BurnerTextTile) {
-      els.t3BurnerTextTile.addEventListener("click", () => {
-        playSound("touch");
-        showT3Screen("tempRun");
-        requestAnimationFrame(() => {
-          scrollToT3RunTemp(state.task3TargetTemp || 375, false);
-        });
+    // Active Burner Text Tile & Circle on Burner Status Screen (Figma 2310:12162 & 3051:42542)
+    const handleActiveBurnerClick = () => {
+      playSound("touch");
+      showT3Screen("tempRun");
+      requestAnimationFrame(() => {
+        scrollToT3RunTemp(state.task3TargetTemp || 375, false);
       });
+    };
+    if (els.t3BurnerTextTile) {
+      els.t3BurnerTextTile.addEventListener("click", handleActiveBurnerClick);
+    }
+    if (els.t3ActiveBurnerOverlay) {
+      els.t3ActiveBurnerOverlay.addEventListener("click", handleActiveBurnerClick);
     }
 
     // Preheat Screen: Back & Edit Buttons

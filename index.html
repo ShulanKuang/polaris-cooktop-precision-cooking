@@ -6,7 +6,7 @@
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <title>Polaris Cooktop Precision Cooking Prototype</title>
-  <link rel="stylesheet" href="./styles.css?v=20261012-v5-digipad-preheat-toast">
+  <link rel="stylesheet" href="./styles.css?v=20261012-v6-stroke-delay">
 </head>
 <body>
   <div class="test-environment">
@@ -689,6 +689,11 @@
                 <div class="t3-tile-target-text" id="t3TileTargetText">Preheat to 375°F</div>
               </div>
 
+              <!-- Active Burner Circle Overlay (Rear Left Burner Circle) -->
+              <div class="t3-active-burner-overlay" id="t3ActiveBurnerOverlay" role="button" aria-label="Rear Left Active Burner">
+                <img src="./assets/task3a-active-burner-circle.png" alt="" class="t3-active-burner-img" aria-hidden="true">
+              </div>
+
               <!-- Active Burner Hotspot -->
               <button type="button" class="t3-active-burner-hotspot" id="t3HotspotActiveBurner" aria-label="Rear Left Active Burner"></button>
 
@@ -1217,6 +1222,6 @@
     </footer>
   </div>
 
-  <script src="./app.js?v=20261012-v5-digipad-preheat-toast"></script>
+  <script src="./app.js?v=20261012-v6-stroke-delay"></script>
 </body>
 </html>
