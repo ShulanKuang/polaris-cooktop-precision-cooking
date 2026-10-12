@@ -301,6 +301,7 @@
     t3PickerWheelContainer: document.getElementById("t3PickerWheelContainer"),
     t3PickerTrack: document.getElementById("t3PickerTrack"),
     t3BtnStartTemp: document.getElementById("t3BtnStartTemp"),
+    t3BtnKeypadFromTemp: document.getElementById("t3BtnKeypadFromTemp"),
 
     t3ScreenPreheat: document.getElementById("t3ScreenPreheat"),
     t3BtnBackFromPreheat: document.getElementById("t3BtnBackFromPreheat"),
@@ -1306,6 +1307,16 @@
         els.t3ScreenSpotlight.style.zIndex = "";
       }
     }
+    if (stage !== "temperature") {
+      if (els.t3ScreenTemperature) {
+        els.t3ScreenTemperature.style.transition = "";
+        els.t3ScreenTemperature.style.webkitTransition = "";
+        els.t3ScreenTemperature.style.transform = "";
+        els.t3ScreenTemperature.style.webkitTransform = "";
+        els.t3ScreenTemperature.style.boxShadow = "";
+        els.t3ScreenTemperature.style.zIndex = "";
+      }
+    }
 
     const isCooktopOverview = (stage === "start" || stage === "burnerStatus");
     if (els.t3ScreenStart) els.t3ScreenStart.hidden = !isCooktopOverview;
@@ -1562,18 +1573,18 @@
       t.preArc = null;
       if (currentT3BurnerLevels[index] !== "prc") return;
 
-      // Begin 2s magenta arc animation from 12 o'clock top point to close up quicker
+      // Begin 3s magenta arc animation from 12 o'clock top point
       roller.classList.add("has-arc");
       requestAnimationFrame(() => {
         if (!roller.classList.contains("has-arc")) return;
         roller.classList.add("is-arcing");
         if (arcCircle) {
-          arcCircle.style.transition = "stroke-dashoffset 2000ms linear";
+          arcCircle.style.transition = "stroke-dashoffset 3000ms linear";
           arcCircle.style.strokeDashoffset = "0";
         }
       });
 
-      // Exactly at 2.0s after arc start: arc finishes full circle -> transition to confirmed active state (white background disc with dark thermometer icon)
+      // Exactly at 3.0s after arc start: arc finishes full circle -> transition to confirmed active state (white background disc with dark thermometer icon)
       t.arc = setTimeout(() => {
         t.arc = null;
         if (currentT3BurnerLevels[index] !== "prc") return;
@@ -1587,14 +1598,14 @@
         playSound("toggleOn");
 
         if (transitToSpotlight) {
-          // 1.0s delay on confirmed state, then transit to next screen (Spotlight)
+          // Confirmed state hold, then screen scroll switch to Temperature screen
           t.confirm = setTimeout(() => {
             t.confirm = null;
             if (currentT3BurnerLevels[index] !== "prc") return;
-            transitionToT3Spotlight();
-          }, 1000);
+            transitionToT3Temperature();
+          }, 800);
         }
-      }, 2000);
+      }, 3000);
     }, 1000);
   }
 
@@ -2032,7 +2043,7 @@
     }
   }
 
-  function transitionToT3Spotlight() {
+  function transitionToT3Temperature() {
     clearT3Timers();
     dismissPrcTimerAndToast();
 
@@ -2043,15 +2054,20 @@
     }
 
     if (state.currentTask === 2) {
-      showT2Precision("spotlight", "picker");
+      showT2Precision("temperature", "picker");
       return;
     }
 
-    // Perform smooth synchronized GPU push-slide transition from right
-    if (els.t3ScreenSpotlight && els.t3ScreenStart) {
-      t3Stage = "spotlight";
-      updateScreenBadge("spotlight");
+    // Perform smooth synchronized GPU push-slide transition from right directly into Temperature screen
+    if (els.t3ScreenTemperature && els.t3ScreenStart) {
+      t3Stage = "temperature";
+      updateScreenBadge("temperature");
       updateCooktopActiveState();
+
+      // Ensure picker is centered at target temp
+      requestAnimationFrame(() => {
+        scrollToT3Temp(state.task3TargetTemp || 375, false);
+      });
 
       // 1. Prepare start screen: visible at 0, opacity 1
       els.t3ScreenStart.hidden = false;
@@ -2062,17 +2078,17 @@
       els.t3ScreenStart.style.opacity = "1";
       els.t3ScreenStart.style.zIndex = "100";
 
-      // 2. Prepare spotlight screen: unhide and place at +100% off screen right
-      els.t3ScreenSpotlight.hidden = false;
-      els.t3ScreenSpotlight.style.transition = "none";
-      els.t3ScreenSpotlight.style.webkitTransition = "none";
-      els.t3ScreenSpotlight.style.transform = "translate3d(100%, 0, 0)";
-      els.t3ScreenSpotlight.style.webkitTransform = "translate3d(100%, 0, 0)";
-      els.t3ScreenSpotlight.style.boxShadow = "-16px 0 40px rgba(0, 0, 0, 0.75)";
-      els.t3ScreenSpotlight.style.zIndex = "110";
+      // 2. Prepare temperature screen: unhide and place at +100% off screen right
+      els.t3ScreenTemperature.hidden = false;
+      els.t3ScreenTemperature.style.transition = "none";
+      els.t3ScreenTemperature.style.webkitTransition = "none";
+      els.t3ScreenTemperature.style.transform = "translate3d(100%, 0, 0)";
+      els.t3ScreenTemperature.style.webkitTransform = "translate3d(100%, 0, 0)";
+      els.t3ScreenTemperature.style.boxShadow = "-16px 0 40px rgba(0, 0, 0, 0.75)";
+      els.t3ScreenTemperature.style.zIndex = "110";
 
       // 3. Force layout reflow so WebKit commits initial transforms
-      void els.t3ScreenSpotlight.offsetWidth;
+      void els.t3ScreenTemperature.offsetWidth;
       void els.t3ScreenStart.offsetWidth;
 
       // 4. Animate both screens in requestAnimationFrame
@@ -2080,10 +2096,10 @@
         const ease = "cubic-bezier(0.16, 1, 0.3, 1)";
         const dur = "0.45s";
 
-        els.t3ScreenSpotlight.style.transition = `transform ${dur} ${ease}`;
-        els.t3ScreenSpotlight.style.webkitTransition = `-webkit-transform ${dur} ${ease}`;
-        els.t3ScreenSpotlight.style.transform = "translate3d(0, 0, 0)";
-        els.t3ScreenSpotlight.style.webkitTransform = "translate3d(0, 0, 0)";
+        els.t3ScreenTemperature.style.transition = `transform ${dur} ${ease}`;
+        els.t3ScreenTemperature.style.webkitTransition = `-webkit-transform ${dur} ${ease}`;
+        els.t3ScreenTemperature.style.transform = "translate3d(0, 0, 0)";
+        els.t3ScreenTemperature.style.webkitTransform = "translate3d(0, 0, 0)";
 
         els.t3ScreenStart.style.transition = `transform ${dur} ${ease}, opacity ${dur} ease`;
         els.t3ScreenStart.style.webkitTransition = `-webkit-transform ${dur} ${ease}, opacity ${dur} ease`;
@@ -2092,25 +2108,33 @@
         els.t3ScreenStart.style.opacity = "0.4";
 
         setTimeout(() => {
-          if (t3Stage === "spotlight") {
+          if (t3Stage === "temperature") {
             els.t3ScreenStart.hidden = true;
             els.t3ScreenStart.style.transition = "";
             els.t3ScreenStart.style.webkitTransition = "";
             els.t3ScreenStart.style.transform = "";
             els.t3ScreenStart.style.webkitTransform = "";
             els.t3ScreenStart.style.opacity = "";
-            els.t3ScreenSpotlight.style.transition = "";
-            els.t3ScreenSpotlight.style.webkitTransition = "";
+            els.t3ScreenTemperature.style.transition = "";
+            els.t3ScreenTemperature.style.webkitTransition = "";
+            scrollToT3Temp(state.task3TargetTemp || 375, false);
           }
         }, 480);
       });
     } else {
-      showT3Screen("spotlight");
+      showT3Screen("temperature");
+      requestAnimationFrame(() => {
+        scrollToT3Temp(state.task3TargetTemp || 375, false);
+      });
     }
   }
 
+  function transitionToT3Spotlight() {
+    transitionToT3Temperature();
+  }
+
   function startT3ACountdown() {
-    transitionToT3Spotlight();
+    transitionToT3Temperature();
   }
 
   // TASK 3B: PREHEAT AND COMPLETION TIMERS
@@ -2356,7 +2380,11 @@
     dismissPrcTimerAndToast();
     const knobToReset = activePrcKnobIndex || 1;
 
-    if (els.t3ScreenSpotlight && !els.t3ScreenSpotlight.hidden && els.t3ScreenStart) {
+    const activeScreen = (els.t3ScreenTemperature && !els.t3ScreenTemperature.hidden)
+      ? els.t3ScreenTemperature
+      : (els.t3ScreenSpotlight && !els.t3ScreenSpotlight.hidden ? els.t3ScreenSpotlight : null);
+
+    if (activeScreen && els.t3ScreenStart) {
       t3Stage = "start";
       updateScreenBadge("start");
       updateCooktopActiveState();
@@ -2370,25 +2398,25 @@
       els.t3ScreenStart.style.opacity = "0.4";
       els.t3ScreenStart.style.zIndex = "100";
 
-      // 2. Spotlight is visible at (0, 0, 0)
-      els.t3ScreenSpotlight.hidden = false;
-      els.t3ScreenSpotlight.style.transition = "none";
-      els.t3ScreenSpotlight.style.webkitTransition = "none";
-      els.t3ScreenSpotlight.style.transform = "translate3d(0, 0, 0)";
-      els.t3ScreenSpotlight.style.webkitTransform = "translate3d(0, 0, 0)";
-      els.t3ScreenSpotlight.style.zIndex = "110";
+      // 2. Active screen is visible at (0, 0, 0)
+      activeScreen.hidden = false;
+      activeScreen.style.transition = "none";
+      activeScreen.style.webkitTransition = "none";
+      activeScreen.style.transform = "translate3d(0, 0, 0)";
+      activeScreen.style.webkitTransform = "translate3d(0, 0, 0)";
+      activeScreen.style.zIndex = "110";
 
-      void els.t3ScreenSpotlight.offsetWidth;
+      void activeScreen.offsetWidth;
       void els.t3ScreenStart.offsetWidth;
 
       requestAnimationFrame(() => {
         const ease = "cubic-bezier(0.16, 1, 0.3, 1)";
         const dur = "0.40s";
 
-        els.t3ScreenSpotlight.style.transition = `transform ${dur} ${ease}`;
-        els.t3ScreenSpotlight.style.webkitTransition = `-webkit-transform ${dur} ${ease}`;
-        els.t3ScreenSpotlight.style.transform = "translate3d(100%, 0, 0)";
-        els.t3ScreenSpotlight.style.webkitTransform = "translate3d(100%, 0, 0)";
+        activeScreen.style.transition = `transform ${dur} ${ease}`;
+        activeScreen.style.webkitTransition = `-webkit-transform ${dur} ${ease}`;
+        activeScreen.style.transform = "translate3d(100%, 0, 0)";
+        activeScreen.style.webkitTransform = "translate3d(100%, 0, 0)";
 
         els.t3ScreenStart.style.transition = `transform ${dur} ${ease}, opacity ${dur} ease`;
         els.t3ScreenStart.style.webkitTransition = `-webkit-transform ${dur} ${ease}, opacity ${dur} ease`;
@@ -2398,10 +2426,10 @@
 
         setTimeout(() => {
           showT3Screen("start");
-          els.t3ScreenSpotlight.style.transition = "";
-          els.t3ScreenSpotlight.style.webkitTransition = "";
-          els.t3ScreenSpotlight.style.transform = "";
-          els.t3ScreenSpotlight.style.webkitTransform = "";
+          activeScreen.style.transition = "";
+          activeScreen.style.webkitTransition = "";
+          activeScreen.style.transform = "";
+          activeScreen.style.webkitTransform = "";
           els.t3ScreenStart.style.transition = "";
           els.t3ScreenStart.style.webkitTransition = "";
           els.t3ScreenStart.style.transform = "";
@@ -3112,11 +3140,18 @@
     initT3PickerWheel();
     initT3RunPickerWheel();
 
-    // Temperature Screen: Back button (< Cooktop)
+    // Temperature Screen: Back button (< Precision Cooking) -> slides back to Burners
     if (els.t3BtnBackFromTemp) {
       els.t3BtnBackFromTemp.addEventListener("click", () => {
         playSound("touch");
-        showT3Screen("spotlight");
+        cancelT3A();
+      });
+    }
+
+    // Temperature Screen: Keypad switcher button
+    if (els.t3BtnKeypadFromTemp) {
+      els.t3BtnKeypadFromTemp.addEventListener("click", () => {
+        playSound("touch");
       });
     }
 
@@ -3390,6 +3425,8 @@
             scrollToT3Temp(state.task3TargetTemp || 375, false);
           }, 60);
         });
+      } else if (tabName === "favorite" || tabName === "recent") {
+        playSound("touch");
       }
     }
 

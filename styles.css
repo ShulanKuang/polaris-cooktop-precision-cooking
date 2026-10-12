@@ -2385,6 +2385,18 @@ input,
   pointer-events: none;
 }
 
+/* Background Shadow Layer (Figma Node 3009:16749 / 2348:16766) */
+.t3-bg-shadow-layer {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 934px;
+  height: 376px;
+  background: linear-gradient(180deg, rgba(0, 0, 0, 0.5) 0%, rgba(0, 0, 0, 0.5) 31px, rgba(0, 0, 0, 0) 85px);
+  pointer-events: none;
+  z-index: 50;
+}
+
 /* Explore / Cooktop Surface Hotspot (Task 3A Start) */
 .t3-explore-hotspot {
   position: absolute;
@@ -2994,44 +3006,67 @@ input,
 }
 
 .t3-picker-item.is-neighbor-2 .t3-item-num {
-  font-size: 36px;
-  font-weight: 500;
+  font-size: 32px;
+  font-weight: 400;
   opacity: 0.45;
 }
 
 .t3-picker-item.is-neighbor-1 .t3-item-num {
   font-size: 46px;
-  font-weight: 600;
+  font-weight: 700;
   opacity: 0.8;
 }
 
 .t3-picker-item.is-active .t3-item-num {
-  font-size: 68px;
-  font-weight: 700;
+  font-size: 88px;
+  font-weight: 500;
   opacity: 1;
   letter-spacing: -1px;
 }
 
 .t3-picker-item.is-active .t3-item-unit {
+  font-size: 40px;
+  font-weight: 700;
+  margin-left: 6px;
+  margin-top: -34px;
   opacity: 1;
 }
 
-/* Start Button on Temperature Screen */
+/* Start Button on Temperature Screen (Figma node 3017:25518) */
 .t3-temp-start-btn {
   position: absolute;
-  left: 400px;
-  top: 295px;
-  width: 140px;
-  height: 68px;
+  left: 399px;
+  top: 282px;
+  width: 135px;
+  height: 64px;
   background: transparent;
   border: none;
   cursor: pointer;
   outline: none;
-  border-radius: 34px;
+  border-radius: 32px;
   z-index: 25;
   transition: transform 0.12s ease;
 }
 .t3-temp-start-btn:active {
+  transform: scale(0.95);
+}
+
+/* Keypad Button on Temperature Screen (Figma node 3017:25518) */
+.t3-temp-keypad-btn {
+  position: absolute;
+  left: 566px;
+  top: 282px;
+  width: 64px;
+  height: 64px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  outline: none;
+  border-radius: 50%;
+  z-index: 25;
+  transition: transform 0.12s ease;
+}
+.t3-temp-keypad-btn:active {
   transform: scale(0.95);
 }
 
@@ -3579,6 +3614,37 @@ input,
 .t3-tab-btn[data-t3tab="temperature"] {
   left: 562px;
   width: 162px;
+}
+
+/* Figma 3017:25535 Updated 5-tab Group for Precision Cooking Temperature Screen */
+#t3TabGroupTemperature {
+  top: 68px;
+  height: 48px;
+}
+
+#t3TabGroupTemperature .t3-tab-btn[data-t3tab="temperature"] {
+  left: 146px;
+  width: 156px;
+}
+
+#t3TabGroupTemperature .t3-tab-btn[data-t3tab="food"] {
+  left: 310px;
+  width: 72px;
+}
+
+#t3TabGroupTemperature .t3-tab-btn[data-t3tab="technique"] {
+  left: 390px;
+  width: 126px;
+}
+
+#t3TabGroupTemperature .t3-tab-btn[data-t3tab="favorite"] {
+  left: 524px;
+  width: 108px;
+}
+
+#t3TabGroupTemperature .t3-tab-btn[data-t3tab="recent"] {
+  left: 640px;
+  width: 152px;
 }
 
 /* Back button (< Cooktop) across screens */

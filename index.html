@@ -6,7 +6,7 @@
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <title>Polaris Cooktop Precision Cooking Prototype</title>
-  <link rel="stylesheet" href="./styles.css?v=20261008-prc-arc-stop-fix">
+  <link rel="stylesheet" href="./styles.css?v=20261012-task3a-burners-pc-temp">
 </head>
 <body>
   <div class="test-environment">
@@ -104,11 +104,11 @@
           <label for="screenJumperSelect" class="screen-jumper-label">Jump:</label>
           <select id="screenJumperSelect" class="screen-jumper-select" aria-label="Jump to screen">
             <optgroup label="Task 3: Usability Flow">
-              <option value="t3:start">3-start (Cooktop Overview - OFF)</option>
+              <option value="t3:start">3-start (Burners Overview - OFF)</option>
               <option value="t3:burnerStatus">3-burnerStatus (1 Burner at 375°F)</option>
               <option value="t3:turnknob">3A-turnknob (Knob Turn Level Setting)</option>
               <option value="t3:spotlight">3A-spotlight (Precision Spotlight Screen)</option>
-              <option value="t3:temperature">3B-temperature (Temperature Picker)</option>
+              <option value="t3:temperature">3B-temperature (PC Temperature Picker)</option>
               <option value="t3:preheat">3B-preheat (Preheating In Progress)</option>
               <option value="t3:completed">3B-completed (Preheat Complete Toast)</option>
               <option value="t3:tempRun">3B-tempRun (Update Temp Screen)</option>
@@ -319,9 +319,10 @@
 
             <!-- 1. SCREEN: 3A-START (ALL BURNERS OFF) -->
             <div class="t3-screen" id="t3ScreenStart">
-              <img class="t3-screen-bg" src="./assets/task3a-start.png" alt="Cooktop Home - All Burners Off">
-              <!-- Back button (< Cooktop) -->
-              <button type="button" class="t3-back-btn" id="t3BtnBackFromStart" aria-label="Back to Cooktop"></button>
+              <img class="t3-screen-bg" src="./assets/task3a-start-burners.png" alt="Burners Home - All Burners Off">
+              <div class="t3-bg-shadow-layer" aria-hidden="true"></div>
+              <!-- Back button (< Burners) -->
+              <button type="button" class="t3-back-btn" id="t3BtnBackFromStart" aria-label="Back to Burners"></button>
               <!-- Dynamic Animated Burner Rollers (All 5 Screen Burners) -->
               <!-- 1. Front Left (Knob 1) -->
               <div class="t3-burner-roller burner-fl" id="t3BurnerRoller1" aria-hidden="true">
@@ -569,16 +570,17 @@
 
             <!-- 4. SCREEN: 3B-PCTEMPERATURE (HORIZONTAL PICKER & START BUTTON) -->
             <div class="t3-screen" id="t3ScreenTemperature" hidden>
-              <img class="t3-screen-bg" src="./assets/task3b-pc-temperature-clean.png" alt="Precision Cooking Temperature">
-              <!-- Back button (< Cooktop) -->
-              <button type="button" class="t3-back-btn" id="t3BtnBackFromTemp" aria-label="Back to Cooktop"></button>
+              <img class="t3-screen-bg" src="./assets/task3a-pc-temp-picker-bg.png" alt="Precision Cooking Temperature">
+              <!-- Back button (< Precision Cooking) -->
+              <button type="button" class="t3-back-btn" id="t3BtnBackFromTemp" aria-label="Back to Burners"></button>
 
-              <!-- TAB GROUP: Spotlight / Technique / Food / Temperature -->
+              <!-- TAB GROUP: Temperature / Food / Technique / Favorite / Recent used -->
               <nav class="t3-tab-group" id="t3TabGroupTemperature">
-                <button type="button" class="t3-tab-btn" data-t3tab="spotlight" id="t3TabBtnSpotlightFromTemp" aria-label="Spotlight Tab"></button>
-                <button type="button" class="t3-tab-btn" data-t3tab="technique" id="t3TabBtnTechFromTemp" aria-label="Technique Tab"></button>
-                <button type="button" class="t3-tab-btn" data-t3tab="food" id="t3TabBtnFoodFromTemp" aria-label="Food Tab"></button>
                 <button type="button" class="t3-tab-btn" data-t3tab="temperature" id="t3TabBtnTempFromTemp" aria-label="Temperature Tab"></button>
+                <button type="button" class="t3-tab-btn" data-t3tab="food" id="t3TabBtnFoodFromTemp" aria-label="Food Tab"></button>
+                <button type="button" class="t3-tab-btn" data-t3tab="technique" id="t3TabBtnTechFromTemp" aria-label="Technique Tab"></button>
+                <button type="button" class="t3-tab-btn" data-t3tab="favorite" id="t3TabBtnFavFromTemp" aria-label="Favorite Tab"></button>
+                <button type="button" class="t3-tab-btn" data-t3tab="recent" id="t3TabBtnRecentFromTemp" aria-label="Recent used Tab"></button>
               </nav>
 
               <!-- Dynamic Horizontal Temperature Carousel (200°F - 500°F in 25° increments, centered at 375°F) -->
@@ -588,6 +590,8 @@
 
               <!-- START Button -->
               <button type="button" class="t3-temp-start-btn" id="t3BtnStartTemp" aria-label="Start Temperature"></button>
+              <!-- Keypad Switcher Button -->
+              <button type="button" class="t3-temp-keypad-btn" id="t3BtnKeypadFromTemp" aria-label="Switch to Keypad"></button>
             </div>
 
             <!-- 5. SCREEN: 3B-TEMP EXPAND PREHEAT (LIVE GROWING TEMP OVER 5S) -->
@@ -1154,6 +1158,6 @@
     </footer>
   </div>
 
-  <script src="./app.js?v=20261008-prc-arc-stop-fix"></script>
+  <script src="./app.js?v=20261012-task3a-burners-pc-temp"></script>
 </body>
 </html>
