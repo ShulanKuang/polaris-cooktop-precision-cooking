@@ -6,7 +6,7 @@
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <title>Polaris Cooktop Precision Cooking Prototype</title>
-  <link rel="stylesheet" href="./styles.css?v=20261012-v4-burners-centered-3temp">
+  <link rel="stylesheet" href="./styles.css?v=20261012-v5-digipad-preheat-toast">
 </head>
 <body>
   <div class="test-environment">
@@ -109,6 +109,7 @@
               <option value="t3:turnknob">3A-turnknob (Knob Turn Level Setting)</option>
               <option value="t3:spotlight">3A-spotlight (Precision Spotlight Screen)</option>
               <option value="t3:temperature">3B-temperature (PC Temperature Picker)</option>
+              <option value="t3:digipad">3B-digipad (PC Temperature Digipad)</option>
               <option value="t3:preheat">3B-preheat (Preheating In Progress)</option>
               <option value="t3:completed">3B-completed (Preheat Complete Toast)</option>
               <option value="t3:tempRun">3B-tempRun (Update Temp Screen)</option>
@@ -593,6 +594,50 @@
               <button type="button" class="t3-temp-keypad-btn" id="t3BtnKeypadFromTemp" aria-label="Switch to Keypad"></button>
             </div>
 
+            <!-- 4B. SCREEN: 3B-DIGIPAD (PC TEMPERATURE DIGIPAD - FIGMA 3017:25641) -->
+            <div class="t3-screen" id="t3ScreenDigipad" hidden>
+              <img class="t3-screen-bg" src="./assets/task3b-temp-digipad.png" alt="Precision Cooking Temperature Keypad">
+              <!-- Back button (< Burners) -->
+              <button type="button" class="t3-back-btn" id="t3BtnBackFromDigipad" aria-label="Back to Burners"></button>
+
+              <!-- TAB GROUP: Temperature / Food / Technique / Favorite / Recent used -->
+              <nav class="t3-tab-group" id="t3TabGroupDigipad">
+                <button type="button" class="t3-tab-btn is-active" data-t3tab="temperature" id="t3TabBtnTempFromDigi" aria-label="Temperature Tab"></button>
+                <button type="button" class="t3-tab-btn" data-t3tab="food" id="t3TabBtnFoodFromDigi" aria-label="Food Tab"></button>
+                <button type="button" class="t3-tab-btn" data-t3tab="technique" id="t3TabBtnTechFromDigi" aria-label="Technique Tab"></button>
+                <button type="button" class="t3-tab-btn" data-t3tab="favorite" id="t3TabBtnFavFromDigi" aria-label="Favorite Tab"></button>
+                <button type="button" class="t3-tab-btn" data-t3tab="recent" id="t3TabBtnRecentFromDigi" aria-label="Recent used Tab"></button>
+              </nav>
+
+              <!-- Dynamic Temperature Display on Digipad Screen -->
+              <div class="t3-digipad-temp-display" id="t3DigipadTempDisplay">
+                <span class="t3-digipad-temp-num" id="t3DigipadTempNum">375</span>
+                <span class="t3-digipad-temp-unit">°F</span>
+              </div>
+
+              <!-- START Button on Digipad Screen -->
+              <button type="button" class="t3-digipad-start-btn" id="t3BtnStartDigipad" aria-label="Start Temperature"></button>
+
+              <!-- Switcher button: Switch back to Carousel Picker (< [] > icon) -->
+              <button type="button" class="t3-digipad-picker-btn" id="t3BtnPickerFromDigipad" aria-label="Switch to Temperature Picker"></button>
+
+              <!-- 3x4 Keypad interactive buttons -->
+              <div class="t3-digipad-key-grid" id="t3DigipadKeyGrid">
+                <button type="button" class="t3-digi-key" data-key="1" aria-label="1"></button>
+                <button type="button" class="t3-digi-key" data-key="2" aria-label="2"></button>
+                <button type="button" class="t3-digi-key" data-key="3" aria-label="3"></button>
+                <button type="button" class="t3-digi-key" data-key="4" aria-label="4"></button>
+                <button type="button" class="t3-digi-key" data-key="5" aria-label="5"></button>
+                <button type="button" class="t3-digi-key" data-key="6" aria-label="6"></button>
+                <button type="button" class="t3-digi-key" data-key="7" aria-label="7"></button>
+                <button type="button" class="t3-digi-key" data-key="8" aria-label="8"></button>
+                <button type="button" class="t3-digi-key" data-key="9" aria-label="9"></button>
+                <button type="button" class="t3-digi-key" data-key="clear" aria-label="Clear"></button>
+                <button type="button" class="t3-digi-key" data-key="0" aria-label="0"></button>
+                <button type="button" class="t3-digi-key" data-key="backspace" aria-label="Backspace"></button>
+              </div>
+            </div>
+
             <!-- 5. SCREEN: 3B-TEMP EXPAND PREHEAT (LIVE GROWING TEMP OVER 5S) -->
             <div class="t3-screen" id="t3ScreenPreheat" hidden>
               <img class="t3-screen-bg" src="./assets/task3b-temp-expand-preheat-clean.png" alt="Temperature Preheating">
@@ -631,19 +676,34 @@
               <button type="button" class="t3-btn-edit-preheat" id="t3BtnEditPreheatFromComplete" aria-label="Edit Temperature"></button>
             </div>
 
-            <!-- 7. SCREEN: 3B-BURNER STATUS (COOKTOP OVERVIEW WITH TARGET TEMPERATURE) -->
+            <!-- 7. SCREEN: 3B-BURNER STATUS (TASK 3A FIGMA 2310:12162 & 3051:42542 & 3051:42525) -->
             <div class="t3-screen" id="t3ScreenBurnerStatus" hidden>
-              <img class="t3-screen-bg" src="./assets/task3b-burner-status.png?v=20261002-v3-single-nav-centered-temp" alt="Cooktop Burner Status">
-              <!-- Back button (< Cooktop) -->
-              <button type="button" class="t3-back-btn" id="t3BtnBackFromBurnerStatus" aria-label="Back to Cooktop"></button>
+              <img class="t3-screen-bg" src="./assets/task3a-burner-status-preheat.png" alt="Cooktop Burner Status Preheating">
+              <!-- Back button (< Burners) -->
+              <button type="button" class="t3-back-btn" id="t3BtnBackFromBurnerStatus" aria-label="Back to Burners"></button>
 
-              <!-- Rear Left Active Burner Card Temperature Readout (Figma Node 2310-12347) -->
-              <div class="t3-burner-status-temp-display">
-                <span class="t3-burner-status-temp-val" id="t3BurnerStatusTemp">375°F</span>
+              <!-- Dynamic Active Burner Text Tile (Figma 2310:12344 Preheating -> 3051:42542 Complete) -->
+              <div class="t3-burner-text-tile" id="t3BurnerTextTile">
+                <div class="t3-tile-mode">Temperature</div>
+                <div class="t3-tile-live-temp" id="t3TileLiveTemp">178°F</div>
+                <div class="t3-tile-target-text" id="t3TileTargetText">Preheat to 375°F</div>
               </div>
 
               <!-- Active Burner Hotspot -->
               <button type="button" class="t3-active-burner-hotspot" id="t3HotspotActiveBurner" aria-label="Rear Left Active Burner"></button>
+
+              <!-- Preheat Complete Toast Popup (Figma 3051:42525) -->
+              <div class="t3-toast-preheat-complete" id="t3ToastComplete" aria-live="polite">
+                <span class="t3-toast-complete-text">Preheat complete.</span>
+                <div class="t3-toast-complete-actions">
+                  <button type="button" class="t3-toast-complete-btn-ok" id="t3ToastBtnOk">OK</button>
+                  <button type="button" class="t3-toast-complete-btn-close" id="t3ToastBtnClose" aria-label="Dismiss toast">
+                    <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                      <path d="M15 5L5 15M5 5L15 15" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                    </svg>
+                  </button>
+                </div>
+              </div>
             </div>
 
             <!-- 8. SCREEN: 3B-PCTEMPERATURERUN (RUNNING TEMP WITH UPDATE BUTTON & KEYPAD) -->
@@ -1157,6 +1217,6 @@
     </footer>
   </div>
 
-  <script src="./app.js?v=20261012-v4-burners-centered-3temp"></script>
+  <script src="./app.js?v=20261012-v5-digipad-preheat-toast"></script>
 </body>
 </html>

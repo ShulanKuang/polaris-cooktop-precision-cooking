@@ -303,6 +303,20 @@
     t3BtnStartTemp: document.getElementById("t3BtnStartTemp"),
     t3BtnKeypadFromTemp: document.getElementById("t3BtnKeypadFromTemp"),
 
+    // Task 3B: Digital Keypad Screen (Figma 3017:25641)
+    t3ScreenDigipad: document.getElementById("t3ScreenDigipad"),
+    t3BtnBackFromDigipad: document.getElementById("t3BtnBackFromDigipad"),
+    t3DigipadTempDisplay: document.getElementById("t3DigipadTempDisplay"),
+    t3DigipadTempNum: document.getElementById("t3DigipadTempNum"),
+    t3BtnStartDigipad: document.getElementById("t3BtnStartDigipad"),
+    t3BtnPickerFromDigipad: document.getElementById("t3BtnPickerFromDigipad"),
+    t3DigipadKeyGrid: document.getElementById("t3DigipadKeyGrid"),
+    t3TabBtnTempFromDigi: document.getElementById("t3TabBtnTempFromDigi"),
+    t3TabBtnFoodFromDigi: document.getElementById("t3TabBtnFoodFromDigi"),
+    t3TabBtnTechFromDigi: document.getElementById("t3TabBtnTechFromDigi"),
+    t3TabBtnFavFromDigi: document.getElementById("t3TabBtnFavFromDigi"),
+    t3TabBtnRecentFromDigi: document.getElementById("t3TabBtnRecentFromDigi"),
+
     t3ScreenPreheat: document.getElementById("t3ScreenPreheat"),
     t3BtnBackFromPreheat: document.getElementById("t3BtnBackFromPreheat"),
     t3PreheatCurrent: document.getElementById("t3PreheatCurrent"),
@@ -321,6 +335,12 @@
     t3BtnBackFromBurnerStatus: document.getElementById("t3BtnBackFromBurnerStatus"),
     t3BurnerStatusTemp: document.getElementById("t3BurnerStatusTemp"),
     t3HotspotActiveBurner: document.getElementById("t3HotspotActiveBurner"),
+    t3BurnerTextTile: document.getElementById("t3BurnerTextTile"),
+    t3TileLiveTemp: document.getElementById("t3TileLiveTemp"),
+    t3TileTargetText: document.getElementById("t3TileTargetText"),
+    t3ToastComplete: document.getElementById("t3ToastComplete"),
+    t3ToastBtnOk: document.getElementById("t3ToastBtnOk"),
+    t3ToastBtnClose: document.getElementById("t3ToastBtnClose"),
 
     t3ScreenTempRun: document.getElementById("t3ScreenTempRun"),
     t3BtnBackFromTempRun: document.getElementById("t3BtnBackFromTempRun"),
@@ -480,10 +500,12 @@
         { el: els.t3ScreenFoodComplete, name: "3C-foodComplete" },
         { el: els.t3ScreenFoodBurnerStatus, name: "3C-foodBurnerStatus" },
         { el: els.t3ScreenTemperature, name: "3B-temperature" },
+        { el: els.t3ScreenDigipad, name: "3B-digipad" },
         { el: els.t3ScreenPreheat, name: "3B-preheat" },
         { el: els.t3ScreenPreheatComplete, name: "3B-completed" },
+        { el: els.t3ScreenBurnerStatus, name: "3-burnerStatus" },
         { el: els.t3ScreenTempRun, name: "3B-tempRun" },
-        { el: els.t3ScreenStart, name: (t3Stage === "burnerStatus" ? "3-burnerStatus" : "3-start") }
+        { el: els.t3ScreenStart, name: "3-start" }
       ];
 
       for (const item of screenMap) {
@@ -507,6 +529,7 @@
           turnknob: "3A-turnknob",
           spotlight: "3A-spotlight",
           temperature: "3B-temperature",
+          digipad: "3B-digipad",
           preheat: "3B-preheat",
           completed: "3B-completed",
           tempRun: "3B-tempRun",
@@ -1318,16 +1341,21 @@
       }
     }
 
-    const isCooktopOverview = (stage === "start" || stage === "burnerStatus");
-    if (els.t3ScreenStart) els.t3ScreenStart.hidden = !isCooktopOverview;
+    const isStartOverview = (stage === "start");
+    if (els.t3ScreenStart) els.t3ScreenStart.hidden = !isStartOverview;
     if (els.t3ScreenTurnKnob) els.t3ScreenTurnKnob.hidden = (stage !== "turnknob");
     if (els.t3ScreenSpotlight) els.t3ScreenSpotlight.hidden = (stage !== "spotlight");
     if (els.t3ScreenTechnique) els.t3ScreenTechnique.hidden = (stage !== "technique");
     if (els.t3ScreenTemperature) els.t3ScreenTemperature.hidden = (stage !== "temperature");
+    if (els.t3ScreenDigipad) els.t3ScreenDigipad.hidden = (stage !== "digipad");
     if (els.t3ScreenPreheat) els.t3ScreenPreheat.hidden = (stage !== "preheat");
     if (els.t3ScreenPreheatComplete) els.t3ScreenPreheatComplete.hidden = (stage !== "completed");
-    if (els.t3ScreenBurnerStatus) els.t3ScreenBurnerStatus.hidden = true;
+    if (els.t3ScreenBurnerStatus) els.t3ScreenBurnerStatus.hidden = (stage !== "burnerStatus");
     if (els.t3ScreenTempRun) els.t3ScreenTempRun.hidden = (stage !== "tempRun");
+
+    if (stage !== "burnerStatus") {
+      hideT3CompleteToast();
+    }
 
     // Task 3C screens:
     if (els.t3ScreenFoodOptions) els.t3ScreenFoodOptions.hidden = (stage !== "foodOptions");
@@ -1573,18 +1601,18 @@
       t.preArc = null;
       if (currentT3BurnerLevels[index] !== "prc") return;
 
-      // Begin 3s magenta arc animation from 12 o'clock top point
+      // Begin 2s magenta arc animation from 12 o'clock top point
       roller.classList.add("has-arc");
       requestAnimationFrame(() => {
         if (!roller.classList.contains("has-arc")) return;
         roller.classList.add("is-arcing");
         if (arcCircle) {
-          arcCircle.style.transition = "stroke-dashoffset 3000ms linear";
+          arcCircle.style.transition = "stroke-dashoffset 2000ms linear";
           arcCircle.style.strokeDashoffset = "0";
         }
       });
 
-      // Exactly at 3.0s after arc start: arc finishes full circle -> transition to confirmed active state (white background disc with dark thermometer icon)
+      // Exactly at 2.0s after arc start: arc finishes full circle -> transition to confirmed active state (white background disc with dark thermometer icon)
       t.arc = setTimeout(() => {
         t.arc = null;
         if (currentT3BurnerLevels[index] !== "prc") return;
@@ -1605,7 +1633,7 @@
             transitionToT3Temperature();
           }, 800);
         }
-      }, 3000);
+      }, 2000);
     }, 1000);
   }
 
@@ -1677,6 +1705,9 @@
     if (t3PreheatInterval) {
       clearInterval(t3PreheatInterval);
       t3PreheatInterval = null;
+    }
+    if (typeof hideT3CompleteToast === "function") {
+      hideT3CompleteToast();
     }
   }
 
@@ -2137,93 +2168,165 @@
     transitionToT3Temperature();
   }
 
-  // TASK 3B: PREHEAT AND COMPLETION TIMERS
+  let t3ToastCompleteTimeout = null;
+
+  function hideT3CompleteToast() {
+    if (t3ToastCompleteTimeout) {
+      clearTimeout(t3ToastCompleteTimeout);
+      t3ToastCompleteTimeout = null;
+    }
+    if (els.t3ToastComplete) {
+      els.t3ToastComplete.classList.remove("is-visible");
+    }
+  }
+
+  function showT3CompleteToast() {
+    if (t3ToastCompleteTimeout) {
+      clearTimeout(t3ToastCompleteTimeout);
+      t3ToastCompleteTimeout = null;
+    }
+    if (els.t3ToastComplete) {
+      els.t3ToastComplete.classList.add("is-visible");
+      // Toast stays for 10s as specified in user prompt
+      t3ToastCompleteTimeout = setTimeout(() => {
+        hideT3CompleteToast();
+      }, 10000);
+    }
+  }
+
+  let digipadInput = "375";
+  let digipadIsFresh = true;
+
+  function openT3Digipad() {
+    digipadInput = String(state.task3TargetTemp || 375);
+    digipadIsFresh = true;
+    if (els.t3DigipadTempNum) {
+      els.t3DigipadTempNum.textContent = digipadInput;
+    }
+    showT3Screen("digipad");
+  }
+
+  function closeT3DigipadToPicker() {
+    let temp = parseInt(digipadInput, 10);
+    if (isNaN(temp) || temp < T3_TEMP_MIN) temp = 375;
+    if (temp > T3_TEMP_MAX) temp = 500;
+    temp = Math.round(temp / T3_TEMP_STEP) * T3_TEMP_STEP;
+    state.task3TargetTemp = temp;
+    showT3Screen("temperature");
+    requestAnimationFrame(() => {
+      scrollToT3Temp(temp, false);
+    });
+  }
+
+  function handleDigipadKey(key) {
+    playSound("touch");
+    if (key === "clear") {
+      digipadInput = "";
+      digipadIsFresh = false;
+      if (els.t3DigipadTempNum) els.t3DigipadTempNum.textContent = "--";
+      return;
+    }
+    if (key === "backspace") {
+      digipadIsFresh = false;
+      if (digipadInput.length > 0) {
+        digipadInput = digipadInput.slice(0, -1);
+      }
+      if (els.t3DigipadTempNum) {
+        els.t3DigipadTempNum.textContent = digipadInput || "--";
+      }
+      if (digipadInput) {
+        state.task3TargetTemp = parseInt(digipadInput, 10);
+      }
+      return;
+    }
+    // Digit 0-9
+    if (digipadIsFresh) {
+      digipadInput = key;
+      digipadIsFresh = false;
+    } else {
+      if (digipadInput.length < 3) {
+        digipadInput += key;
+      }
+    }
+    if (els.t3DigipadTempNum) {
+      els.t3DigipadTempNum.textContent = digipadInput;
+    }
+    const val = parseInt(digipadInput, 10);
+    if (!isNaN(val)) {
+      state.task3TargetTemp = val;
+    }
+  }
+
+  // TASK 3B: PREHEAT DIRECTLY ON BURNER STATUS (FIGMA 2310:12162 & 3051:42542 & 3051:42525)
   function startT3Preheat() {
     clearT3Timers();
-    showT3Screen("preheat");
+    hideT3CompleteToast();
+    showT3Screen("burnerStatus");
     playSound("toggleOn");
 
     const targetTemp = state.task3TargetTemp || 375;
-    const startTemp = 182;
-    const durationMs = 5000; // 5s smooth temperature growth
+    const startTemp = 178; // Exact starting number from Figma 2310:12162
+    const durationMs = 4000; // 4s smooth temperature growth
     const startTime = Date.now();
 
-    if (els.t3PreheatTarget) {
-      els.t3PreheatTarget.textContent = targetTemp;
+    // Reset burner label tile to preheating state
+    if (els.t3BurnerTextTile) {
+      els.t3BurnerTextTile.classList.remove("is-complete");
     }
-    if (els.t3PreheatCurrent) {
-      els.t3PreheatCurrent.textContent = startTemp;
+    if (els.t3TileTargetText) {
+      els.t3TileTargetText.textContent = `Preheat to ${targetTemp}°F`;
+      els.t3TileTargetText.style.display = "";
+    }
+    if (els.t3TileLiveTemp) {
+      els.t3TileLiveTemp.textContent = `${startTemp}°F`;
     }
 
     t3PreheatInterval = setInterval(() => {
       const elapsed = Date.now() - startTime;
       const progress = Math.min(1.0, elapsed / durationMs);
       const current = Math.round(startTemp + progress * (targetTemp - startTemp));
-      if (els.t3PreheatCurrent) {
-        els.t3PreheatCurrent.textContent = current;
+      if (els.t3TileLiveTemp) {
+        els.t3TileLiveTemp.textContent = `${current}°F`;
       }
 
       if (progress >= 1.0) {
         clearInterval(t3PreheatInterval);
         t3PreheatInterval = null;
-        if (els.t3PreheatCurrent) {
-          els.t3PreheatCurrent.textContent = targetTemp;
+        if (els.t3TileLiveTemp) {
+          els.t3TileLiveTemp.textContent = `${targetTemp}°F`;
         }
 
-        // 2s holding delay at target temperature before transition to completed
-        t3HoldingTimeout = setTimeout(() => {
-          startT3PreheatCompleted();
-        }, 2000);
+        // When target temp reached:
+        // 1. Label text changes to Figma 3051:42542 (hide preheat to line)
+        if (els.t3BurnerTextTile) {
+          els.t3BurnerTextTile.classList.add("is-complete");
+        }
+        // 2. Play completion chime
+        playSound("toggleOn");
+        // 3. Preheat complete toast pops up from bottom and stays for 10s (Figma 3051:42525)
+        showT3CompleteToast();
       }
     }, 50);
   }
 
   function startT3PreheatCompleted() {
     clearT3Timers();
-    showT3Screen("completed");
+    showT3Screen("burnerStatus");
     playSound("toggleOn");
-
-    // Pop up preheat complete toast with spring animation!
-    if (els.t3ToastPreheatComplete) {
-      els.t3ToastPreheatComplete.classList.remove("is-visible");
-      els.t3ToastPreheatComplete.classList.remove("is-dismissing");
-      requestAnimationFrame(() => {
-        setTimeout(() => {
-          if (t3Stage === "completed" && els.t3ToastPreheatComplete) {
-            els.t3ToastPreheatComplete.classList.add("is-visible");
-          }
-        }, 50);
-      });
-    }
-
     const targetTemp = state.task3TargetTemp || 375;
-    if (els.t3CompleteTarget) {
-      els.t3CompleteTarget.textContent = targetTemp;
+    if (els.t3TileLiveTemp) {
+      els.t3TileLiveTemp.textContent = `${targetTemp}°F`;
     }
-
-    // Auto-advance to burnerStatus after 4s (or user clicks OK or ✕)
-    t3HoldingTimeout = setTimeout(() => {
-      finishT3PreheatToBurnerStatus();
-    }, 4000);
+    if (els.t3BurnerTextTile) {
+      els.t3BurnerTextTile.classList.add("is-complete");
+    }
+    showT3CompleteToast();
   }
 
   function finishT3PreheatToBurnerStatus() {
-    clearT3Timers();
-    if (els.t3ToastPreheatComplete) {
-      els.t3ToastPreheatComplete.classList.remove("is-visible");
-      els.t3ToastPreheatComplete.classList.add("is-dismissing");
-      setTimeout(() => {
-        showT3Screen("burnerStatus");
-      }, 250);
-    } else {
-      showT3Screen("burnerStatus");
-    }
+    hideT3CompleteToast();
+    showT3Screen("burnerStatus");
     playSound("touch");
-
-    const targetTemp = state.task3TargetTemp || 375;
-    if (els.t3BurnerStatusTemp) {
-      els.t3BurnerStatusTemp.textContent = `${targetTemp}°F`;
-    }
   }
 
   // TASK 3C: FOOD RECIPE PREHEAT AND COMPLETION TIMERS
@@ -3154,7 +3257,71 @@
     if (els.t3BtnKeypadFromTemp) {
       els.t3BtnKeypadFromTemp.addEventListener("click", () => {
         playSound("touch");
+        openT3Digipad();
       });
+    }
+
+    // Digipad Screen: Back button (< Precision Cooking) -> slides back to Burners
+    if (els.t3BtnBackFromDigipad) {
+      els.t3BtnBackFromDigipad.addEventListener("click", () => {
+        playSound("touch");
+        cancelT3A();
+      });
+    }
+
+    // Digipad Screen: Picker toggle button (switches back to temp carousel)
+    if (els.t3BtnPickerFromDigipad) {
+      els.t3BtnPickerFromDigipad.addEventListener("click", () => {
+        playSound("touch");
+        closeT3DigipadToPicker();
+      });
+    }
+
+    // Digipad Screen: Tabs
+    if (els.t3TabBtnTempFromDigi) {
+      els.t3TabBtnTempFromDigi.addEventListener("click", () => {
+        playSound("touch");
+        closeT3DigipadToPicker();
+      });
+    }
+    if (els.t3TabBtnFoodFromDigi) {
+      els.t3TabBtnFoodFromDigi.addEventListener("click", () => {
+        playSound("touch");
+        showT3Screen("foodOptions");
+      });
+    }
+    if (els.t3TabBtnTechFromDigi) {
+      els.t3TabBtnTechFromDigi.addEventListener("click", () => {
+        playSound("touch");
+        showT3Screen("technique");
+      });
+    }
+
+    // Digipad Screen: 3x4 Number Keys
+    if (els.t3DigipadKeyGrid) {
+      els.t3DigipadKeyGrid.querySelectorAll(".t3-digi-key").forEach(k => {
+        k.addEventListener("click", (e) => {
+          e.stopPropagation();
+          handleDigipadKey(k.dataset.key);
+        });
+      });
+    }
+
+    // Digipad Screen: START button
+    if (els.t3BtnStartDigipad) {
+      let lastStartTimeDigi = 0;
+      const handleStartDigi = (e) => {
+        if (e) e.preventDefault();
+        const now = Date.now();
+        if (now - lastStartTimeDigi < 400) return;
+        lastStartTimeDigi = now;
+        let temp = parseInt(digipadInput, 10);
+        if (isNaN(temp) || temp < 100) temp = 375;
+        state.task3TargetTemp = temp;
+        startT3Preheat();
+      };
+      els.t3BtnStartDigipad.addEventListener("click", handleStartDigi);
+      els.t3BtnStartDigipad.addEventListener("touchstart", handleStartDigi, { passive: false });
     }
 
     // Temperature Screen: START button -> Triggers Activity Bar & Preheating!
@@ -3169,6 +3336,33 @@
       };
       els.t3BtnStartTemp.addEventListener("click", handleStart);
       els.t3BtnStartTemp.addEventListener("touchstart", handleStart, { passive: false });
+    }
+
+    // 10s Preheat Complete Toast Buttons (Figma 3051:42525)
+    if (els.t3ToastBtnOk) {
+      els.t3ToastBtnOk.addEventListener("click", (e) => {
+        e.stopPropagation();
+        playSound("touch");
+        hideT3CompleteToast();
+      });
+    }
+    if (els.t3ToastBtnClose) {
+      els.t3ToastBtnClose.addEventListener("click", (e) => {
+        e.stopPropagation();
+        playSound("touch");
+        hideT3CompleteToast();
+      });
+    }
+
+    // Active Burner Text Tile on Burner Status Screen (Figma 2310:12162 & 3051:42542)
+    if (els.t3BurnerTextTile) {
+      els.t3BurnerTextTile.addEventListener("click", () => {
+        playSound("touch");
+        showT3Screen("tempRun");
+        requestAnimationFrame(() => {
+          scrollToT3RunTemp(state.task3TargetTemp || 375, false);
+        });
+      });
     }
 
     // Preheat Screen: Back & Edit Buttons
@@ -3959,6 +4153,8 @@
           } else if (stage === "temperature") {
             showT3Screen("temperature");
             requestAnimationFrame(() => scrollToT3Temp(state.task3TargetTemp || 375, false));
+          } else if (stage === "digipad") {
+            openT3Digipad();
           } else if (stage === "preheat") {
             showT3Screen("preheat");
           } else if (stage === "completed") {
