@@ -6,7 +6,7 @@
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <title>Polaris Cooktop Precision Cooking Prototype</title>
-  <link rel="stylesheet" href="./styles.css?v=20261012-v7-update-singlerow">
+  <link rel="stylesheet" href="./styles.css?v=20261012-v8-task3c">
 </head>
 <body>
   <div class="test-environment">
@@ -571,6 +571,7 @@
             <!-- 4. SCREEN: 3B-PCTEMPERATURE (HORIZONTAL PICKER & START BUTTON) -->
             <div class="t3-screen" id="t3ScreenTemperature" hidden>
               <img class="t3-screen-bg" src="./assets/task3a-pc-temp-picker-bg.png" alt="Precision Cooking Temperature">
+              <img id="t3TemperatureMinimapOverlay" class="t3-temp-minimap-overlay" src="./assets/task3c/minimap-front-left-active.png" alt="Front Left Burner Active" hidden>
               <!-- Back button (< Precision Cooking) -->
               <button type="button" class="t3-back-btn" id="t3BtnBackFromTemp" aria-label="Back to Burners"></button>
 
@@ -597,6 +598,7 @@
             <!-- 4B. SCREEN: 3B-DIGIPAD (PC TEMPERATURE DIGIPAD - FIGMA 3017:25641) -->
             <div class="t3-screen" id="t3ScreenDigipad" hidden>
               <img class="t3-screen-bg" src="./assets/task3b-temp-digipad.png" alt="Precision Cooking Temperature Keypad">
+              <img id="t3DigipadMinimapOverlay" class="t3-temp-minimap-overlay" src="./assets/task3c/minimap-front-left-active.png" alt="Front Left Burner Active" hidden>
               <!-- Back button (< Burners) -->
               <button type="button" class="t3-back-btn" id="t3BtnBackFromDigipad" aria-label="Back to Burners"></button>
 
@@ -697,6 +699,101 @@
               <!-- Active Burner Hotspot -->
               <button type="button" class="t3-active-burner-hotspot" id="t3HotspotActiveBurner" aria-label="Rear Left Active Burner"></button>
 
+              <!-- Front-Left 128px Burner (Knob 1) on BurnerStatus Screen -->
+              <div class="t3-burner-roller burner-fl" id="t3StatusBurnerRoller1">
+                <svg class="t3-burner-roller-bg" viewBox="0 0 128 128">
+                  <circle cx="64" cy="64" r="60"/>
+                </svg>
+                <svg class="t3-burner-prc-arc" viewBox="0 0 128 128">
+                  <circle class="t3-burner-prc-arc-circle" cx="64" cy="64" r="60"/>
+                </svg>
+                <div class="t3-burner-roller-strip" id="t3StatusBurnerStrip1">
+                  <div class="t3-burner-roller-item" data-index="0">OFF</div>
+                  <div class="t3-burner-roller-item" data-index="1">1</div>
+                  <div class="t3-burner-roller-item" data-index="2">2</div>
+                  <div class="t3-burner-roller-item" data-index="3">3</div>
+                  <div class="t3-burner-roller-item" data-index="4">4</div>
+                  <div class="t3-burner-roller-item" data-index="5">5</div>
+                  <div class="t3-burner-roller-item" data-index="6">6</div>
+                  <div class="t3-burner-roller-item" data-index="7">7</div>
+                  <div class="t3-burner-roller-item" data-index="8">8</div>
+                  <div class="t3-burner-roller-item" data-index="9">9</div>
+                  <div class="t3-burner-roller-item" data-index="10">10</div>
+                  <div class="t3-burner-roller-item is-temp" data-index="11">
+                    <svg class="t3-temp-icon" viewBox="0 0 24 24" fill="currentColor">
+                      <path d="M14 6.5V2.5C14 1.67 13.33 1 12.5 1h-1C10.67 1 10 1.67 10 2.5v4C10 6.67 10.67 7.33 11.5 7.33h1C13.33 7.33 14 6.67 14 6.5zm0 5V8.5C14 7.67 13.33 7 12.5 7h-1C10.67 7 10 7.67 10 8.5v3C10 11.67 10.67 12.33 11.5 12.33h1C13.33 12.33 14 11.67 14 11.5zm1 4.5c0-1.85-1.12-3.44-2.73-4.14-.26-.11-.54-.18-.83-.18s-.57.07-.83.18C8.99 12.56 7.87 14.15 7.87 16c0 2.28 1.85 4.13 4.13 4.13 2.28 0 4.13-1.85 4.13-4.13z"/>
+                    </svg>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Rear-Center 106px Burner (Knob 3) on BurnerStatus Screen -->
+              <div class="t3-burner-roller burner-rc" id="t3StatusBurnerRoller3">
+                <svg class="t3-burner-roller-bg" viewBox="0 0 108 108">
+                  <circle cx="54" cy="54" r="50"/>
+                </svg>
+                <div class="t3-burner-roller-strip is-rc-strip" id="t3StatusBurnerStrip3">
+                  <div class="t3-burner-roller-item is-rc-item" data-index="0">OFF</div>
+                  <div class="t3-burner-roller-item is-rc-item" data-index="1">ON</div>
+                </div>
+              </div>
+
+              <!-- Main 176px Burner (Knob 4) on BurnerStatus Screen -->
+              <div class="t3-burner-roller burner-main" id="t3StatusBurnerRoller4">
+                <svg class="t3-burner-roller-bg" viewBox="0 0 176 176">
+                  <circle cx="88" cy="88" r="84"/>
+                </svg>
+                <svg class="t3-burner-prc-arc" viewBox="0 0 176 176">
+                  <circle class="t3-burner-prc-arc-circle" cx="88" cy="88" r="84"/>
+                </svg>
+                <div class="t3-burner-roller-strip is-main-strip" id="t3StatusBurnerStrip4">
+                  <div class="t3-burner-roller-item is-main-item" data-index="0">OFF</div>
+                  <div class="t3-burner-roller-item is-main-item" data-index="1">1</div>
+                  <div class="t3-burner-roller-item is-main-item" data-index="2">2</div>
+                  <div class="t3-burner-roller-item is-main-item" data-index="3">3</div>
+                  <div class="t3-burner-roller-item is-main-item" data-index="4">4</div>
+                  <div class="t3-burner-roller-item is-main-item" data-index="5">5</div>
+                  <div class="t3-burner-roller-item is-main-item" data-index="6">6</div>
+                  <div class="t3-burner-roller-item is-main-item" data-index="7">7</div>
+                  <div class="t3-burner-roller-item is-main-item" data-index="8">8</div>
+                  <div class="t3-burner-roller-item is-main-item" data-index="9">9</div>
+                  <div class="t3-burner-roller-item is-main-item" data-index="10">10</div>
+                  <div class="t3-burner-roller-item is-main-item is-temp" data-index="11">
+                    <svg class="t3-temp-icon-main" viewBox="0 0 24 24" fill="currentColor">
+                      <path d="M14 6.5V2.5C14 1.67 13.33 1 12.5 1h-1C10.67 1 10 1.67 10 2.5v4C10 6.67 10.67 7.33 11.5 7.33h1C13.33 7.33 14 6.67 14 6.5zm0 5V8.5C14 7.67 13.33 7 12.5 7h-1C10.67 7 10 7.67 10 8.5v3C10 11.67 10.67 12.33 11.5 12.33h1C13.33 12.33 14 11.67 14 11.5zm1 4.5c0-1.85-1.12-3.44-2.73-4.14-.26-.11-.54-.18-.83-.18s-.57.07-.83.18C8.99 12.56 7.87 14.15 7.87 16c0 2.28 1.85 4.13 4.13 4.13 2.28 0 4.13-1.85 4.13-4.13z"/>
+                    </svg>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Front-Right 128px Burner (Knob 5) on BurnerStatus Screen -->
+              <div class="t3-burner-roller burner-rr" id="t3StatusBurnerRoller5">
+                <svg class="t3-burner-roller-bg" viewBox="0 0 128 128">
+                  <circle cx="64" cy="64" r="60"/>
+                </svg>
+                <svg class="t3-burner-prc-arc" viewBox="0 0 128 128">
+                  <circle class="t3-burner-prc-arc-circle" cx="64" cy="64" r="60"/>
+                </svg>
+                <div class="t3-burner-roller-strip" id="t3StatusBurnerStrip5">
+                  <div class="t3-burner-roller-item" data-index="0">OFF</div>
+                  <div class="t3-burner-roller-item" data-index="1">1</div>
+                  <div class="t3-burner-roller-item" data-index="2">2</div>
+                  <div class="t3-burner-roller-item" data-index="3">3</div>
+                  <div class="t3-burner-roller-item" data-index="4">4</div>
+                  <div class="t3-burner-roller-item" data-index="5">5</div>
+                  <div class="t3-burner-roller-item" data-index="6">6</div>
+                  <div class="t3-burner-roller-item" data-index="7">7</div>
+                  <div class="t3-burner-roller-item" data-index="8">8</div>
+                  <div class="t3-burner-roller-item" data-index="9">9</div>
+                  <div class="t3-burner-roller-item" data-index="10">10</div>
+                  <div class="t3-burner-roller-item is-temp" data-index="11">
+                    <svg class="t3-temp-icon" viewBox="0 0 24 24" fill="currentColor">
+                      <path d="M14 6.5V2.5C14 1.67 13.33 1 12.5 1h-1C10.67 1 10 1.67 10 2.5v4C10 6.67 10.67 7.33 11.5 7.33h1C13.33 7.33 14 6.67 14 6.5zm0 5V8.5C14 7.67 13.33 7 12.5 7h-1C10.67 7 10 7.67 10 8.5v3C10 11.67 10.67 12.33 11.5 12.33h1C13.33 12.33 14 11.67 14 11.5zm1 4.5c0-1.85-1.12-3.44-2.73-4.14-.26-.11-.54-.18-.83-.18s-.57.07-.83.18C8.99 12.56 7.87 14.15 7.87 16c0 2.28 1.85 4.13 4.13 4.13 2.28 0 4.13-1.85 4.13-4.13z"/>
+                    </svg>
+                  </div>
+                </div>
+              </div>
+
               <!-- Preheat Complete Toast Popup (Figma 3051:42525) -->
               <div class="t3-toast-preheat-complete" id="t3ToastComplete" aria-live="polite">
                 <span class="t3-toast-complete-text">Preheat complete.</span>
@@ -714,6 +811,7 @@
             <!-- 8. SCREEN: 3B-PCTEMPERATURERUN (RUNNING TEMP WITH UPDATE BUTTON & KEYPAD - FIGMA 3017:26093) -->
             <div class="t3-screen" id="t3ScreenTempRun" hidden>
               <img class="t3-screen-bg" src="./assets/task3b-pc-temp-update-bg.png" alt="Precision Cooking Temperature Running">
+              <img id="t3TempRunMinimapOverlay" class="t3-temp-minimap-overlay" src="./assets/task3c/minimap-front-left-active.png" alt="Front Left Burner Active" hidden>
               <!-- Back button (< Precision Cooking) -->
               <button type="button" class="t3-back-btn" id="t3BtnBackFromTempRun" aria-label="Back to Burners"></button>
 
@@ -738,45 +836,63 @@
               <button type="button" class="t3-temp-keypad-btn" id="t3BtnKeypadTemp" aria-label="Keypad"></button>
             </div>
 
-            <!-- 9. SCREEN: 3C-FOOD-OPTIONS (COOKTOP PRECISION COOKING FOOD GRID - FIGMA 2315:14683) -->
+            <!-- 9. SCREEN: 3C-FOOD-OPTIONS (PRECISION COOKING FOOD GRID - FIGMA 3021:26359) -->
             <div class="t3-screen" id="t3ScreenFoodOptions" hidden>
-              <img class="t3-screen-bg" src="./assets/pc-bg.png" alt="Precision Cooking Background">
-              <div class="t3-crop-header">
-                <img class="t3-crop-header-img" src="./assets/task3c/2315_14683.png" alt="Food Header">
-              </div>
-              <!-- Back button (< Cooktop) -->
-              <button type="button" class="t3-back-btn" id="t3BtnBackFromFoodOptions" aria-label="Back to Cooktop"></button>
-              <!-- TAB GROUP -->
+              <img class="t3-screen-bg" src="./assets/task3c-pc-food-clean-bg.png" alt="Precision Cooking Food Options">
+              <img id="t3FoodMinimapOverlay" class="t3-temp-minimap-overlay" src="./assets/task3c/minimap-front-left-active.png" alt="Front Left Burner Active" hidden>
+              <!-- Back button (< Precision Cooking) -->
+              <button type="button" class="t3-back-btn" id="t3BtnBackFromFoodOptions" aria-label="Back to Burners"></button>
+
+              <!-- TAB GROUP: Temperature / Food / Technique / Favorite / Recent used -->
               <nav class="t3-tab-group" id="t3TabGroupFood">
-                <button type="button" class="t3-tab-btn" data-t3tab="spotlight" id="t3TabFoodToSpotlight" aria-label="Spotlight Tab"></button>
-                <button type="button" class="t3-tab-btn" data-t3tab="technique" id="t3TabFoodToTech" aria-label="Technique Tab"></button>
-                <button type="button" class="t3-tab-btn" data-t3tab="food" id="t3TabFoodToFood" aria-label="Food Tab"></button>
                 <button type="button" class="t3-tab-btn" data-t3tab="temperature" id="t3TabFoodToTemp" aria-label="Temperature Tab"></button>
+                <button type="button" class="t3-tab-btn is-active" data-t3tab="food" id="t3TabFoodToFood" aria-label="Food Tab"></button>
+                <button type="button" class="t3-tab-btn" data-t3tab="technique" id="t3TabFoodToTech" aria-label="Technique Tab"></button>
+                <button type="button" class="t3-tab-btn" data-t3tab="favorite" id="t3TabFoodToFav" aria-label="Favorite Tab"></button>
+                <button type="button" class="t3-tab-btn" data-t3tab="recent" id="t3TabFoodToRecent" aria-label="Recent used Tab"></button>
               </nav>
-              <!-- Scroll Container for Food Options -->
-              <div class="t3-options-scroll-container" id="t3FoodScroll">
-                <div class="t3-tiles-grid">
-                  <button type="button" class="buttontile" data-food="Bacon"><span class="text">Bacon</span></button>
-                  <button type="button" class="buttontile" data-food="Beef"><span class="text">Beef</span></button>
-                  <button type="button" class="buttontile" data-food="Butter"><span class="text">Butter</span></button>
-                  <button type="button" class="buttontile" data-food="Chicken"><span class="text">Chicken</span></button>
 
-                  <button type="button" class="buttontile" data-food="Chocolate"><span class="text">Chocolate</span></button>
-                  <button type="button" class="buttontile" data-food="Crepes"><span class="text">Crepes</span></button>
-                  <button type="button" class="buttontile" data-food="Eggs"><span class="text">Eggs</span></button>
-                  <button type="button" class="buttontile" data-food="French Toast"><span class="text">French<br>Toast</span></button>
+              <!-- Scroll Container for Food Options (3 cards per row, vertical scroll) -->
+              <div class="t3-food-scroll-container" id="t3FoodScroll">
+                <div class="t3-food-grid">
+                  <button type="button" class="t3-food-card" data-food="Bacon"><span>Bacon</span></button>
+                  <button type="button" class="t3-food-card" data-food="Beef" id="t3BtnFoodBeef"><span>Beef</span></button>
+                  <button type="button" class="t3-food-card" data-food="Butter"><span>Butter</span></button>
 
-                  <button type="button" class="buttontile" data-food="Grilled Sandwich"><span class="text">Grilled Sandwich</span></button>
-                  <button type="button" class="buttontile" data-food="Pancakes"><span class="text">Pancakes</span></button>
-                  <button type="button" class="buttontile" data-food="Pork"><span class="text">Pork</span></button>
-                  <button type="button" class="buttontile" data-food="Potatoes"><span class="text">Potatoes</span></button>
+                  <button type="button" class="t3-food-card" data-food="Chicken"><span>Chicken</span></button>
+                  <button type="button" class="t3-food-card" data-food="Chocolate"><span>Chocolate</span></button>
+                  <button type="button" class="t3-food-card" data-food="Crepes"><span>Crepes</span></button>
 
-                  <button type="button" class="buttontile" data-food="Sausage"><span class="text">Sausage</span></button>
-                  <button type="button" class="buttontile" data-food="Seafood"><span class="text">Seafood</span></button>
-                  <button type="button" class="buttontile" data-food="Chocolate Fondue"><span class="text">Chocolate Fondue</span></button>
-                  <button type="button" class="buttontile" data-food="Beans"><span class="text">Beans</span></button>
+                  <button type="button" class="t3-food-card" data-food="Grilled Sandwich"><span class="t3-food-multiline">Grilled<br>Sandwich</span></button>
+                  <button type="button" class="t3-food-card" data-food="Eggs"><span>Eggs</span></button>
+                  <button type="button" class="t3-food-card" data-food="French Toast"><span class="t3-food-multiline">French<br>Toast</span></button>
+
+                  <button type="button" class="t3-food-card" data-food="Pancakes"><span>Pancakes</span></button>
+                  <button type="button" class="t3-food-card" data-food="Pork"><span>Pork</span></button>
+                  <button type="button" class="t3-food-card" data-food="Potatoes"><span>Potatoes</span></button>
+
+                  <button type="button" class="t3-food-card" data-food="Sausage"><span>Sausage</span></button>
+                  <button type="button" class="t3-food-card" data-food="Seafood"><span>Seafood</span></button>
+                  <button type="button" class="t3-food-card" data-food="Chocolate Fondue"><span class="t3-food-multiline">Chocolate<br>Fondue</span></button>
+
+                  <button type="button" class="t3-food-card is-beans" data-food="Beans"><span>Beans</span></button>
                 </div>
               </div>
+            </div>
+
+            <!-- 9B. SCREEN: 3C-BEEF-MENU (BURNERS BEEF COOKING SCREEN - FIGMA 3028:28875) -->
+            <div class="t3-screen" id="t3ScreenBeefMenu" hidden>
+              <img class="t3-screen-bg" src="./assets/task3c-beef-menu.png" alt="Burners Beef Cooking Screen">
+              <!-- Back button (< Burners) -->
+              <button type="button" class="t3-back-btn" id="t3BtnBackFromBeefMenu" aria-label="Back to Food Options"></button>
+
+              <!-- Left Drawer Hotspots -->
+              <button type="button" class="t3-beef-menu-card-btn" id="t3BtnBeefCardBurner" style="left: 19px; top: 74px; width: 317px; height: 84px;" aria-label="Burner Front Left"></button>
+              <button type="button" class="t3-beef-menu-card-btn" id="t3BtnBeefCardType" style="left: 19px; top: 178px; width: 317px; height: 84px;" aria-label="Type Steak"></button>
+              <button type="button" class="t3-beef-menu-card-btn" id="t3BtnBeefCardDoneness" style="left: 19px; top: 282px; width: 317px; height: 84px;" aria-label="Doneness Med Rare"></button>
+
+              <!-- START Button Hotspot -->
+              <button type="button" class="t3-beef-start-btn" id="t3BtnStartBeef" style="left: 582px; top: 302px; width: 127px; height: 48px;" aria-label="Start Precision Cooking"></button>
             </div>
 
             <!-- 10. SCREEN: 3C-BEEF-TYPE (SELECT TYPE: STEAK, GROUND, PATTIES - FIGMA 2323:15099) -->
@@ -1231,6 +1347,6 @@
     </footer>
   </div>
 
-  <script src="./app.js?v=20261012-v7-update-singlerow"></script>
+  <script src="./app.js?v=20261012-v8-task3c"></script>
 </body>
 </html>
