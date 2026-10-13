@@ -2407,9 +2407,8 @@
       (els.t3ScreenTempRun && !els.t3ScreenTempRun.hidden ? els.t3ScreenTempRun : null)));
 
     if (currentScreen) {
-      const fromKey = (currentScreen === els.t3ScreenDigipad) ? "digipad" :
-                      (currentScreen === els.t3ScreenTempRun) ? "tempRun" : "temperature";
-      contentSlideTransition(fromKey, "food");
+      showT3Screen("foodOptions");
+      if (els.t3FoodScroll) els.t3FoodScroll.scrollTop = 0;
     } else {
       t3Stage = "foodOptions";
       updateScreenBadge("foodOptions");
@@ -3896,34 +3895,21 @@
       });
     }
 
-    // Unified Tab Navigation for Task 3 (Spotlight, Technique, Food, Temperature)
+    // Unified Tab Navigation for Task 3 (Technique, Food, Temperature, Favorite, Recent)
     function switchT3Tab(tabName) {
-      const pcTabs = ["temperature", "digipad", "tempRun", "foodOptions", "technique"];
-      const isCurrentlyInPC = pcTabs.includes(t3Stage);
-
       if (tabName === "spotlight") {
         showT3Screen("spotlight");
       } else if (tabName === "technique") {
         if (t3Stage === "technique") return;
-        if (isCurrentlyInPC) {
-          contentSlideTransition(t3Stage === "foodOptions" ? "food" : t3Stage, "technique");
-        } else {
-          showT3Screen("technique");
-          if (els.t3TechniqueScroll) els.t3TechniqueScroll.scrollTop = 0;
-        }
+        showT3Screen("technique");
+        if (els.t3TechniqueScroll) els.t3TechniqueScroll.scrollTop = 0;
       } else if (tabName === "food") {
         if (t3Stage === "foodOptions") return;
-        if (isCurrentlyInPC) {
-          contentSlideTransition(t3Stage === "foodOptions" ? "food" : t3Stage, "food");
-        } else {
-          transitionToT3FoodOptions();
-          if (els.t3FoodScroll) els.t3FoodScroll.scrollTop = 0;
-        }
+        showT3Screen("foodOptions");
+        if (els.t3FoodScroll) els.t3FoodScroll.scrollTop = 0;
       } else if (tabName === "temperature") {
         if (t3Stage === "temperature") return;
-        if (isCurrentlyInPC) {
-          contentSlideTransition(t3Stage === "foodOptions" ? "food" : t3Stage, "temperature");
-        } else if (t3Stage === "beefMenu") {
+        if (t3Stage === "beefMenu") {
           t3Stage = "temperature";
           updateScreenBadge("temperature");
           slideTransition(els.t3ScreenBeefMenu, els.t3ScreenTemperature, "right", () => {

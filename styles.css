@@ -3857,19 +3857,21 @@ input,
   width: 162px;
 }
 
-/* Figma 3017:25535 / 3021:26359 Updated 5-tab Group for Precision Cooking Screens */
+/* Figma 3066:42686 / 3033:40314 / 3021:26359 Aligned 5-tab Group for Precision Cooking Screens */
 #t3TabGroupTemperature,
 #t3TabGroupFood,
 #t3TabGroupDigipad,
-#t3TabGroupTempRun {
-  top: 68px;
+#t3TabGroupTempRun,
+#t3TabGroupTechnique {
+  top: 59px;
   height: 48px;
 }
 
 #t3TabGroupTemperature .t3-tab-btn[data-t3tab="temperature"],
 #t3TabGroupFood .t3-tab-btn[data-t3tab="temperature"],
 #t3TabGroupDigipad .t3-tab-btn[data-t3tab="temperature"],
-#t3TabGroupTempRun .t3-tab-btn[data-t3tab="temperature"] {
+#t3TabGroupTempRun .t3-tab-btn[data-t3tab="temperature"],
+#t3TabGroupTechnique .t3-tab-btn[data-t3tab="temperature"] {
   left: 146px;
   width: 156px;
 }
@@ -3877,7 +3879,8 @@ input,
 #t3TabGroupTemperature .t3-tab-btn[data-t3tab="food"],
 #t3TabGroupFood .t3-tab-btn[data-t3tab="food"],
 #t3TabGroupDigipad .t3-tab-btn[data-t3tab="food"],
-#t3TabGroupTempRun .t3-tab-btn[data-t3tab="food"] {
+#t3TabGroupTempRun .t3-tab-btn[data-t3tab="food"],
+#t3TabGroupTechnique .t3-tab-btn[data-t3tab="food"] {
   left: 310px;
   width: 72px;
 }
@@ -3885,7 +3888,8 @@ input,
 #t3TabGroupTemperature .t3-tab-btn[data-t3tab="technique"],
 #t3TabGroupFood .t3-tab-btn[data-t3tab="technique"],
 #t3TabGroupDigipad .t3-tab-btn[data-t3tab="technique"],
-#t3TabGroupTempRun .t3-tab-btn[data-t3tab="technique"] {
+#t3TabGroupTempRun .t3-tab-btn[data-t3tab="technique"],
+#t3TabGroupTechnique .t3-tab-btn[data-t3tab="technique"] {
   left: 390px;
   width: 126px;
 }
@@ -3893,7 +3897,8 @@ input,
 #t3TabGroupTemperature .t3-tab-btn[data-t3tab="favorite"],
 #t3TabGroupFood .t3-tab-btn[data-t3tab="favorite"],
 #t3TabGroupDigipad .t3-tab-btn[data-t3tab="favorite"],
-#t3TabGroupTempRun .t3-tab-btn[data-t3tab="favorite"] {
+#t3TabGroupTempRun .t3-tab-btn[data-t3tab="favorite"],
+#t3TabGroupTechnique .t3-tab-btn[data-t3tab="favorite"] {
   left: 524px;
   width: 108px;
 }
@@ -3901,7 +3906,8 @@ input,
 #t3TabGroupTemperature .t3-tab-btn[data-t3tab="recent"],
 #t3TabGroupFood .t3-tab-btn[data-t3tab="recent"],
 #t3TabGroupDigipad .t3-tab-btn[data-t3tab="recent"],
-#t3TabGroupTempRun .t3-tab-btn[data-t3tab="recent"] {
+#t3TabGroupTempRun .t3-tab-btn[data-t3tab="recent"],
+#t3TabGroupTechnique .t3-tab-btn[data-t3tab="recent"] {
   left: 640px;
   width: 152px;
 }
@@ -3946,7 +3952,7 @@ input,
   height: 96px;
   min-height: 96px;
   max-height: 96px;
-  background: transparent;
+  background: rgba(75, 76, 82, 0.8);
   border-radius: 8px;
   border: none;
   display: flex;
@@ -3968,7 +3974,7 @@ input,
 }
 
 .t3-food-card:hover {
-  background: transparent;
+  background: rgba(95, 96, 104, 0.9);
 }
 
 .t3-food-card:active {
@@ -3989,6 +3995,48 @@ input,
 .t3-food-multiline {
   line-height: 1.12;
   font-size: 24px;
+}
+
+/* Technique Grid (Figma 3033:40314) */
+#t3TechniqueScroll {
+  position: absolute;
+  left: 179px;
+  top: 123px;
+  width: 576px;
+  height: 261px;
+  overflow-y: scroll;
+  overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
+  touch-action: pan-y !important;
+  z-index: 10;
+  padding-bottom: 24px;
+  box-sizing: border-box;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+#t3TechniqueScroll::-webkit-scrollbar {
+  display: none;
+  width: 0;
+  height: 0;
+}
+
+#t3TechniqueScroll .t3-tiles-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 176px);
+  gap: 24px;
+  width: 576px;
+  justify-content: start;
+  touch-action: pan-y !important;
+}
+
+#t3TechniqueScroll .buttontile {
+  width: 176px;
+  min-width: 176px;
+  max-width: 176px;
+  height: 96px;
+  min-height: 96px;
+  max-height: 96px;
 }
 
 /* Beef Menu Screen (Figma 3028:28875) */
