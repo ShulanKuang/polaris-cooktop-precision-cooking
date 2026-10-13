@@ -4039,20 +4039,91 @@ input,
   max-height: 96px;
 }
 
-/* Beef Menu Screen (Figma 3028:28875) */
-.t3-beef-menu-card-btn {
+/* ==========================================================================
+   TASK 3C: BEEF MENU SCREEN (FIGMA 3028:28875, 3028:30032, 3009:10309, etc.)
+   Scrollable 6-tile drawer (Burner, Type, Doneness, Thickness, Cookware, Tips)
+   ========================================================================== */
+.t3-beef-drawer-tiles {
   position: absolute;
-  background: transparent;
-  border: none;
-  cursor: pointer;
-  border-radius: 8px;
-  outline: none;
-  -webkit-tap-highlight-color: transparent;
-  z-index: 20;
+  left: 20px;
+  top: 74px;
+  width: 317px;
+  height: 301px;
+  overflow-y: scroll;
+  overflow-x: hidden;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+  touch-action: pan-y;
+  z-index: 25;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding-bottom: 20px;
+  box-sizing: border-box;
 }
 
-.t3-beef-menu-card-btn:active {
-  background: rgba(255, 255, 255, 0.08);
+.t3-beef-drawer-tiles::-webkit-scrollbar {
+  display: none;
+}
+
+.t3-beef-drawer-tile {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 317px;
+  height: 84px;
+  min-height: 84px;
+  padding: 0 20px;
+  border-radius: 8px;
+  border: none;
+  box-sizing: border-box;
+  background: rgba(97, 100, 107, 0.2);
+  color: #FFFFFF;
+  cursor: pointer;
+  text-align: left;
+  outline: none;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+  transition: background 0.15s ease, color 0.15s ease;
+  flex-shrink: 0;
+}
+
+.t3-beef-drawer-tile:active {
+  background: rgba(120, 125, 135, 0.35);
+}
+
+.t3-beef-drawer-tile .label {
+  font-family: var(--font-text, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif);
+  font-size: 26px;
+  font-weight: 500;
+  line-height: 26px;
+  color: inherit;
+  pointer-events: none;
+}
+
+.t3-beef-drawer-tile .value {
+  font-family: var(--font-text, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif);
+  font-size: 32px;
+  font-weight: 600;
+  line-height: 38px;
+  color: inherit;
+  text-align: right;
+  pointer-events: none;
+}
+
+.t3-beef-drawer-tile.is-selected {
+  background: #FFFFFF !important;
+  color: #1E1E24 !important;
+}
+
+.t3-beef-drawer-tile.is-selected .label {
+  color: #1E1E24 !important;
+  font-weight: 600;
+}
+
+.t3-beef-drawer-tile.is-selected .value {
+  color: #1E1E24 !important;
+  font-weight: 700;
 }
 
 .t3-beef-start-btn {
@@ -4063,11 +4134,29 @@ input,
   border-radius: 999px;
   outline: none;
   -webkit-tap-highlight-color: transparent;
-  z-index: 20;
+  z-index: 30;
 }
 
 .t3-beef-start-btn:active {
-  background: rgba(0, 0, 0, 0.15);
+  background: rgba(255, 255, 255, 0.15);
+}
+
+.t3-beef-icon-btn,
+.t3-beef-stepper-btn,
+.t3-beef-choice-btn {
+  position: absolute;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  outline: none;
+  -webkit-tap-highlight-color: transparent;
+  z-index: 30;
+}
+
+.t3-beef-icon-btn:active,
+.t3-beef-stepper-btn:active {
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 50%;
 }
 
 /* Back button (< Cooktop) across screens */

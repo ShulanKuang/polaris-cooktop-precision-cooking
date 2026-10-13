@@ -371,8 +371,21 @@
     t3BtnFoodBeef: document.getElementById("t3BtnFoodBeef"),
 
     t3ScreenBeefMenu: document.getElementById("t3ScreenBeefMenu"),
+    t3BeefBgImg: document.getElementById("t3BeefBgImg"),
+    t3BeefDrawerTiles: document.getElementById("t3BeefDrawerTiles"),
     t3BtnBackFromBeefMenu: document.getElementById("t3BtnBackFromBeefMenu"),
     t3BtnStartBeef: document.getElementById("t3BtnStartBeef"),
+    t3BtnBeefMenuDonenessToggle: document.getElementById("t3BtnBeefMenuDonenessToggle"),
+    t3BtnBeefMenuThicknessMinus: document.getElementById("t3BtnBeefMenuThicknessMinus"),
+    t3BtnBeefMenuThicknessPlus: document.getElementById("t3BtnBeefMenuThicknessPlus"),
+    t3BeefMenuThicknessOverlay: document.getElementById("t3BeefMenuThicknessOverlay"),
+    t3BeefMenuThicknessVal: document.getElementById("t3BeefMenuThicknessVal"),
+    t3BeefTypeHotspots: document.getElementById("t3BeefTypeHotspots"),
+    t3BeefDonenessHotspots: document.getElementById("t3BeefDonenessHotspots"),
+    t3BeefValBurner: document.getElementById("t3BeefValBurner"),
+    t3BeefValType: document.getElementById("t3BeefValType"),
+    t3BeefValDoneness: document.getElementById("t3BeefValDoneness"),
+    t3BeefValThickness: document.getElementById("t3BeefValThickness"),
 
     t3ScreenBeefType: document.getElementById("t3ScreenBeefType"),
     t3BtnBackFromBeefType: document.getElementById("t3BtnBackFromBeefType"),
@@ -507,6 +520,7 @@
         { el: els.t3ScreenTechniquePreheat, name: "3E-techniquePreheat" },
         { el: els.t3ScreenTechniqueComplete, name: "3E-techniqueComplete" },
         { el: els.t3ScreenFoodOptions, name: "3C-foodOptions" },
+        { el: els.t3ScreenBeefMenu, name: "3-beefmenu" },
         { el: els.t3ScreenBeefType, name: "3C-beefType" },
         { el: els.t3ScreenBeefDoneness, name: "3C-beefDoneness" },
         { el: els.t3ScreenBeefThickness, name: "3C-beefThickness" },
@@ -551,6 +565,7 @@
           techniquePreheat: "3E-techniquePreheat",
           techniqueComplete: "3E-techniqueComplete",
           foodOptions: "3C-foodOptions",
+          beefMenu: "3-beefmenu",
           beefType: "3C-beefType",
           beefDoneness: "3C-beefDoneness",
           beefThickness: "3C-beefThickness",
@@ -590,9 +605,12 @@
       }
 
       if (selectVal && els.screenJumperSelect.value !== selectVal) {
-        const opt = els.screenJumperSelect.querySelector(`option[value="${selectVal}"]`);
+        let opt = els.screenJumperSelect.querySelector(`option[value="${selectVal}"]`);
+        if (!opt && selectVal.toLowerCase() === "t3:beefmenu") {
+          opt = els.screenJumperSelect.querySelector('option[value="t3:beefMenu"]');
+        }
         if (opt) {
-          els.screenJumperSelect.value = selectVal;
+          els.screenJumperSelect.value = opt.value;
         }
       }
     }
@@ -1479,7 +1497,17 @@
         window.__onEnterBeefScreen(stage);
       }
     }
+    if (stage === "beefMenu") {
+      clearT3Timers();
+      state.task3Mode = "food";
+      if (!knobsState[1] || Math.abs(knobsState[1].angle) <= 5) setKnobAngle(2, -56, false, false);
+      currentT3BurnerLevels[2] = "prc";
+      if (typeof window.__updateBeefMenuUI === "function") {
+        window.__updateBeefMenuUI();
+      }
+    }
     if (stage === "foodBurnerStatus") {
+      clearT3Timers();
       const targetTemp = state.task3TargetTemp || 375;
       if (els.t3FoodBurnerStatusTemp1) els.t3FoodBurnerStatusTemp1.textContent = `${targetTemp}°F`;
       // In foodBurnerStatus (Figma 2327:15934): BOTH Rear Left and Front Left are running!
@@ -2419,7 +2447,9 @@
 
   function transitionToT3BeefMenu() {
     t3Stage = "beefMenu";
+    state.task3Mode = "food";
     updateScreenBadge("beefMenu");
+    if (typeof window.__updateBeefMenuUI === "function") window.__updateBeefMenuUI();
     slideTransition(els.t3ScreenFoodOptions, els.t3ScreenBeefMenu, "left");
   }
 
@@ -3135,7 +3165,7 @@
     updateCooktopActiveState();
 
     // TASK 2 & TASK 3 PRECISION COOKING WORKFLOW TRIGGER
-    if (state.currentTask === 3 || state.currentTask === 2) {
+    if (updateBurner && (state.currentTask === 3 || state.currentTask === 2)) {
       updateT3BurnerFromKnob(index, angle, animate);
       updateCooktopActiveState();
     }
@@ -3994,7 +4024,122 @@
       });
     });
 
-    // Beef Menu Screen (Figma 3028:28875): Back button and Start button
+    // Beef Menu Screen (Figma 3028:28875): Scrollable 6-tile drawer & view switching
+    let currentBeefTab = "burner";
+    let isDonenessDesc = false;
+    let currentBeefType = "Steak";
+    let currentBeefDoneness = "Med Rare";
+    const beefThicknessValues = ["0.5", "0.625", "0.75", "0.875", "1.0", "1.25", "1.5"];
+    let currentBeefThicknessIdx = 3; // default 0.875
+
+    function updateBeefMenuUI() {
+      const beefTiles = document.querySelectorAll("#t3BeefDrawerTiles .t3-beef-drawer-tile");
+      beefTiles.forEach(tile => {
+        if (tile.dataset.beefTab === currentBeefTab) {
+          tile.classList.add("is-selected");
+        } else {
+          tile.classList.remove("is-selected");
+        }
+      });
+
+      if (els.t3BeefBgImg) {
+        if (currentBeefTab === "burner") {
+          els.t3BeefBgImg.src = "./assets/task3c/beef_bg_clean_burner.png";
+        } else if (currentBeefTab === "type") {
+          els.t3BeefBgImg.src = "./assets/task3c/beef_bg_clean_type.png";
+        } else if (currentBeefTab === "doneness") {
+          els.t3BeefBgImg.src = isDonenessDesc ? "./assets/task3c/beef_bg_clean_doneness_desc.png" : "./assets/task3c/beef_bg_clean_doneness_img.png";
+        } else if (currentBeefTab === "thickness") {
+          els.t3BeefBgImg.src = "./assets/task3c/beef_bg_clean_thickness.png";
+        } else if (currentBeefTab === "cookware") {
+          els.t3BeefBgImg.src = "./assets/task3c/beef_bg_clean_cookware.png";
+        } else if (currentBeefTab === "tips") {
+          els.t3BeefBgImg.src = "./assets/task3c/beef_bg_clean_tips.png";
+        }
+      }
+
+      if (els.t3BtnBeefMenuDonenessToggle) {
+        els.t3BtnBeefMenuDonenessToggle.style.display = (currentBeefTab === "doneness") ? "block" : "none";
+      }
+      if (els.t3BtnBeefMenuThicknessMinus) {
+        els.t3BtnBeefMenuThicknessMinus.style.display = (currentBeefTab === "thickness") ? "block" : "none";
+      }
+      if (els.t3BtnBeefMenuThicknessPlus) {
+        els.t3BtnBeefMenuThicknessPlus.style.display = (currentBeefTab === "thickness") ? "block" : "none";
+      }
+      if (els.t3BeefMenuThicknessOverlay) {
+        els.t3BeefMenuThicknessOverlay.style.display = (currentBeefTab === "thickness") ? "flex" : "none";
+      }
+      if (els.t3BeefTypeHotspots) {
+        els.t3BeefTypeHotspots.style.display = (currentBeefTab === "type") ? "block" : "none";
+      }
+      if (els.t3BeefDonenessHotspots) {
+        els.t3BeefDonenessHotspots.style.display = (currentBeefTab === "doneness") ? "block" : "none";
+      }
+    }
+    window.__updateBeefMenuUI = updateBeefMenuUI;
+
+    const beefTiles = document.querySelectorAll("#t3BeefDrawerTiles .t3-beef-drawer-tile");
+    beefTiles.forEach(tile => {
+      tile.addEventListener("click", () => {
+        playSound("touch");
+        currentBeefTab = tile.dataset.beefTab;
+        updateBeefMenuUI();
+      });
+    });
+
+    if (els.t3BtnBeefMenuDonenessToggle) {
+      els.t3BtnBeefMenuDonenessToggle.addEventListener("click", () => {
+        playSound("touch");
+        isDonenessDesc = !isDonenessDesc;
+        updateBeefMenuUI();
+      });
+    }
+
+    if (els.t3BtnBeefMenuThicknessMinus) {
+      els.t3BtnBeefMenuThicknessMinus.addEventListener("click", () => {
+        if (currentBeefThicknessIdx > 0) {
+          playSound("touch");
+          currentBeefThicknessIdx--;
+          const val = beefThicknessValues[currentBeefThicknessIdx];
+          if (els.t3BeefMenuThicknessVal) els.t3BeefMenuThicknessVal.textContent = val;
+          if (els.t3BeefValThickness) els.t3BeefValThickness.textContent = `${val} in`;
+          updateBeefMenuUI();
+        }
+      });
+    }
+
+    if (els.t3BtnBeefMenuThicknessPlus) {
+      els.t3BtnBeefMenuThicknessPlus.addEventListener("click", () => {
+        if (currentBeefThicknessIdx < beefThicknessValues.length - 1) {
+          playSound("touch");
+          currentBeefThicknessIdx++;
+          const val = beefThicknessValues[currentBeefThicknessIdx];
+          if (els.t3BeefMenuThicknessVal) els.t3BeefMenuThicknessVal.textContent = val;
+          if (els.t3BeefValThickness) els.t3BeefValThickness.textContent = `${val} in`;
+          updateBeefMenuUI();
+        }
+      });
+    }
+
+    const beefTypeChoices = document.querySelectorAll("#t3BeefTypeHotspots .t3-beef-choice-btn");
+    beefTypeChoices.forEach(btn => {
+      btn.addEventListener("click", () => {
+        playSound("touch");
+        currentBeefType = btn.dataset.choiceType;
+        if (els.t3BeefValType) els.t3BeefValType.textContent = currentBeefType;
+      });
+    });
+
+    const beefDonenessChoices = document.querySelectorAll("#t3BeefDonenessHotspots .t3-beef-choice-btn");
+    beefDonenessChoices.forEach(btn => {
+      btn.addEventListener("click", () => {
+        playSound("touch");
+        currentBeefDoneness = btn.dataset.choiceDoneness;
+        if (els.t3BeefValDoneness) els.t3BeefValDoneness.textContent = currentBeefDoneness;
+      });
+    });
+
     if (els.t3BtnBackFromBeefMenu) {
       els.t3BtnBackFromBeefMenu.addEventListener("click", () => {
         playSound("touch");
@@ -4005,11 +4150,12 @@
       });
     }
 
+    // Press START: Navigates to 3C-foodBurnerStatus (Figma 2327:15934) per user directive
     if (els.t3BtnStartBeef) {
       els.t3BtnStartBeef.addEventListener("click", () => {
         playSound("toggleOn");
-        showT3Screen("foodPreheat");
-        startFoodPreheatTimer();
+        state.task3Mode = "food";
+        showT3Screen("foodBurnerStatus");
       });
     }
 
@@ -4560,6 +4706,10 @@
             setKnobAngle(2, -56, false, false);
             setKnobAngle(1, -56, false, false);
             showT3Screen("foodBurnerStatus");
+          } else if (stage === "beefMenu" || stage === "beefmenu") {
+            state.task3Mode = "food";
+            setKnobAngle(2, -56, false, false);
+            showT3Screen("beefMenu");
           } else if (stage === "turnknob") {
             showT3Screen("turnknob");
           } else if (stage === "temperature") {

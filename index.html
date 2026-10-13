@@ -117,6 +117,7 @@
               <option value="t3:techniquePreheat">3E-techniquePreheat (Caramelize Preheating)</option>
               <option value="t3:techniqueComplete">3E-techniqueComplete (Caramelize Preheated)</option>
               <option value="t3:foodOptions">3C-foodOptions (Food Options 8 Tiles)</option>
+              <option value="t3:beefMenu">3-beefmenu (Beef Menu 6-Tile Drawer)</option>
               <option value="t3:beefType">3C-beefType (Beef Cuts Selection)</option>
               <option value="t3:beefDoneness">3C-beefDoneness (Doneness Selection)</option>
               <option value="t3:beefThickness">3C-beefThickness (Thickness Selection)</option>
@@ -885,17 +886,65 @@
 
             <!-- 9B. SCREEN: 3C-BEEF-MENU (BURNERS BEEF COOKING SCREEN - FIGMA 3028:28875) -->
             <div class="t3-screen" id="t3ScreenBeefMenu" hidden>
-              <img class="t3-screen-bg" src="./assets/task3c-beef-menu.png" alt="Burners Beef Cooking Screen">
+              <!-- Dynamic Screen Background (Switches based on active drawer tab) -->
+              <img class="t3-screen-bg" id="t3BeefBgImg" src="./assets/task3c/beef_bg_clean_burner.png" alt="Burners Beef Cooking Screen">
+
               <!-- Back button (< Burners) -->
               <button type="button" class="t3-back-btn" id="t3BtnBackFromBeefMenu" aria-label="Back to Food Options"></button>
 
-              <!-- Left Drawer Hotspots -->
-              <button type="button" class="t3-beef-menu-card-btn" id="t3BtnBeefCardBurner" style="left: 19px; top: 74px; width: 317px; height: 84px;" aria-label="Burner Front Left"></button>
-              <button type="button" class="t3-beef-menu-card-btn" id="t3BtnBeefCardType" style="left: 19px; top: 178px; width: 317px; height: 84px;" aria-label="Type Steak"></button>
-              <button type="button" class="t3-beef-menu-card-btn" id="t3BtnBeefCardDoneness" style="left: 19px; top: 282px; width: 317px; height: 84px;" aria-label="Doneness Med Rare"></button>
+              <!-- Scrollable Left Drawer Options Container (6 options per Figma 3028:28875) -->
+              <div class="t3-beef-drawer-tiles" id="t3BeefDrawerTiles">
+                <button type="button" class="t3-beef-drawer-tile is-selected" data-beef-tab="burner" aria-label="Burner Front Left">
+                  <span class="label">Burner</span>
+                  <span class="value" id="t3BeefValBurner">Front Left</span>
+                </button>
+                <button type="button" class="t3-beef-drawer-tile" data-beef-tab="type" aria-label="Type Steak">
+                  <span class="label">Type</span>
+                  <span class="value" id="t3BeefValType">Steak</span>
+                </button>
+                <button type="button" class="t3-beef-drawer-tile" data-beef-tab="doneness" aria-label="Doneness Med Rare">
+                  <span class="label">Doneness</span>
+                  <span class="value" id="t3BeefValDoneness">Med Rare</span>
+                </button>
+                <button type="button" class="t3-beef-drawer-tile" data-beef-tab="thickness" aria-label="Thickness 0.875 in">
+                  <span class="label">Thickness</span>
+                  <span class="value" id="t3BeefValThickness">0.875 in</span>
+                </button>
+                <button type="button" class="t3-beef-drawer-tile" data-beef-tab="cookware" aria-label="Recommend Cookware">
+                  <span class="label">Recommend Cookware</span>
+                </button>
+                <button type="button" class="t3-beef-drawer-tile" data-beef-tab="tips" aria-label="Cooking Tips">
+                  <span class="label">Cooking Tips</span>
+                </button>
+              </div>
 
-              <!-- START Button Hotspot -->
-              <button type="button" class="t3-beef-start-btn" id="t3BtnStartBeef" style="left: 582px; top: 302px; width: 127px; height: 48px;" aria-label="Start Precision Cooking"></button>
+              <!-- START Button Hotspot (Common across all views at left: 582px, top: 301px) -->
+              <button type="button" class="t3-beef-start-btn" id="t3BtnStartBeef" style="left: 582px; top: 301px; width: 127px; height: 48px;" aria-label="Start Precision Cooking"></button>
+
+              <!-- Doneness Info / Image Toggle Button (at left: 809px, top: 302px) -->
+              <button type="button" class="t3-beef-icon-btn" id="t3BtnBeefMenuDonenessToggle" style="left: 809px; top: 302px; width: 48px; height: 48px; display: none;" aria-label="Toggle Doneness View"></button>
+
+              <!-- Thickness Stepper Controls (Minus & Plus) -->
+              <button type="button" class="t3-beef-stepper-btn" id="t3BtnBeefMenuThicknessMinus" style="left: 445px; top: 173px; width: 48px; height: 48px; display: none; border-radius: 50%;" aria-label="Decrease Thickness"></button>
+              <button type="button" class="t3-beef-stepper-btn" id="t3BtnBeefMenuThicknessPlus" style="left: 797px; top: 173px; width: 48px; height: 48px; display: none; border-radius: 50%;" aria-label="Increase Thickness"></button>
+              <!-- Dynamic Thickness Value Overlay -->
+              <div class="t3-beef-thickness-overlay" id="t3BeefMenuThicknessOverlay" style="position: absolute; left: 518px; top: 157px; width: 254px; height: 80px; display: none; align-items: center; justify-content: center; background: transparent; color: #FFFFFF; font-family: var(--font-display, var(--font-text, sans-serif)); font-size: 78px; font-weight: 500; line-height: 1; z-index: 28; pointer-events: none;">
+                <span id="t3BeefMenuThicknessVal">0.875</span>
+              </div>
+
+              <!-- Type Selection Hotspots (Steak, Ground Beef, Burger Patty) -->
+              <div id="t3BeefTypeHotspots" style="display: none;">
+                <button type="button" class="t3-beef-choice-btn" data-choice-type="Steak" style="left: 565px; top: 110px; width: 275px; height: 165px;" aria-label="Steak"></button>
+                <button type="button" class="t3-beef-choice-btn" data-choice-type="Burger Patty" style="left: 855px; top: 110px; width: 160px; height: 165px;" aria-label="Burger Patty"></button>
+                <button type="button" class="t3-beef-choice-btn" data-choice-type="Ground Beef" style="left: 450px; top: 110px; width: 100px; height: 165px;" aria-label="Ground Beef"></button>
+              </div>
+
+              <!-- Doneness Selection Hotspots (Rare, Med Rare, Medium) -->
+              <div id="t3BeefDonenessHotspots" style="display: none;">
+                <button type="button" class="t3-beef-choice-btn" data-choice-doneness="Rare" style="left: 450px; top: 110px; width: 100px; height: 165px;" aria-label="Rare"></button>
+                <button type="button" class="t3-beef-choice-btn" data-choice-doneness="Med Rare" style="left: 565px; top: 110px; width: 275px; height: 165px;" aria-label="Med Rare"></button>
+                <button type="button" class="t3-beef-choice-btn" data-choice-doneness="Medium" style="left: 855px; top: 110px; width: 160px; height: 165px;" aria-label="Medium"></button>
+              </div>
             </div>
 
             <!-- 10. SCREEN: 3C-BEEF-TYPE (SELECT TYPE: STEAK, GROUND, PATTIES - FIGMA 2323:15099) -->
@@ -1186,7 +1235,7 @@
 
             <!-- 15. SCREEN: 3C-FOOD-BURNER-STATUS (COOKTOP OVERVIEW WITH TWO ACTIVE BURNERS - FIGMA 2327:15934) -->
             <div class="t3-screen" id="t3ScreenFoodBurnerStatus" hidden>
-              <img class="t3-screen-bg" src="./assets/task3c/2327_15934_clean.png" alt="Cooktop Burner Status with Steak Med Rare">
+              <img class="t3-screen-bg" src="./assets/task3c/2327_15934_burners.png" alt="Cooktop Burner Status with Steak Med Rare">
               <!-- Back button (< Cooktop) -->
               <button type="button" class="t3-back-btn" id="t3BtnBackFromFoodBurnerStatus" aria-label="Back to Cooktop"></button>
               
