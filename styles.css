@@ -3945,6 +3945,7 @@ input,
   overflow-y: auto;
   overflow-x: hidden;
   -webkit-overflow-scrolling: touch;
+  touch-action: pan-y;
   z-index: 10;
   padding-bottom: 24px;
   box-sizing: border-box;
@@ -3988,7 +3989,7 @@ input,
   padding: 8px 12px;
   box-sizing: border-box;
   user-select: none;
-  touch-action: manipulation;
+  touch-action: pan-y;
   -webkit-tap-highlight-color: transparent;
   transition: background 0.15s ease, color 0.15s ease, transform 0.12s ease, box-shadow 0.15s ease;
 }

@@ -2224,21 +2224,214 @@
     }
   }
 
+  // Content-only slide transition between Precision Cooking tabs (Temperature, Food, Technique)
+  let isT3ContentTransitioning = false;
+  function contentSlideTransition(fromKey, toKey, onComplete = null) {
+    if (fromKey === toKey) return;
+    if (isT3ContentTransitioning) return;
+    isT3ContentTransitioning = true;
+
+    const tabOrder = {
+      temperature: 0,
+      digipad: 0,
+      tempRun: 0,
+      food: 1,
+      foodOptions: 1,
+      technique: 2
+    };
+
+    const tabDefs = {
+      temperature: {
+        stage: "temperature",
+        screen: els.t3ScreenTemperature,
+        getContent: () => [els.t3PickerWheelContainer, els.t3BtnStartTemp, els.t3BtnKeypadFromTemp].filter(Boolean),
+        onInit: () => {
+          const isFrontLeft = (activePrcKnobIndex === 1);
+          if (els.t3TemperatureMinimapOverlay) els.t3TemperatureMinimapOverlay.hidden = !isFrontLeft;
+          scrollToT3Temp(state.task3TargetTemp || 375, false);
+        }
+      },
+      digipad: {
+        stage: "digipad",
+        screen: els.t3ScreenDigipad,
+        getContent: () => [
+          document.getElementById("t3DigipadTempDisplay"),
+          document.getElementById("t3BtnStartDigipad"),
+          document.getElementById("t3BtnPickerFromDigipad"),
+          document.getElementById("t3DigipadKeyGrid")
+        ].filter(Boolean)
+      },
+      tempRun: {
+        stage: "tempRun",
+        screen: els.t3ScreenTempRun,
+        getContent: () => [
+          document.getElementById("t3RunPickerWheelContainer"),
+          document.getElementById("t3BtnUpdateTemp"),
+          document.getElementById("t3BtnKeypadTemp")
+        ].filter(Boolean)
+      },
+      food: {
+        stage: "foodOptions",
+        screen: els.t3ScreenFoodOptions,
+        getContent: () => [els.t3FoodScroll].filter(Boolean),
+        onInit: () => {
+          const isFrontLeft = (activePrcKnobIndex === 1);
+          if (els.t3FoodMinimapOverlay) els.t3FoodMinimapOverlay.hidden = !isFrontLeft;
+          if (els.t3FoodScroll) els.t3FoodScroll.scrollTop = 0;
+        }
+      },
+      technique: {
+        stage: "technique",
+        screen: els.t3ScreenTechnique,
+        getContent: () => [els.t3TechniqueScroll].filter(Boolean),
+        onInit: () => {
+          if (els.t3TechniqueScroll) els.t3TechniqueScroll.scrollTop = 0;
+        }
+      }
+    };
+
+    const fromDef = tabDefs[fromKey];
+    const toDef = tabDefs[toKey];
+    if (!fromDef || !toDef || !fromDef.screen || !toDef.screen || fromDef.screen === toDef.screen) {
+      isT3ContentTransitioning = false;
+      showT3Screen(toDef ? toDef.stage : toKey);
+      if (typeof onComplete === "function") onComplete();
+      return;
+    }
+
+    t3Stage = toDef.stage;
+    updateScreenBadge(t3Stage);
+    if (toDef.onInit) toDef.onInit();
+
+    const fromIdx = tabOrder[fromKey] ?? 0;
+    const toIdx = tabOrder[toKey] ?? 1;
+    const movingLeft = toIdx > fromIdx;
+    const outTranslate = movingLeft ? "translateX(-160px)" : "translateX(160px)";
+    const inTranslate = movingLeft ? "translateX(160px)" : "translateX(-160px)";
+
+    const outgoingContent = fromDef.getContent();
+    const incomingContent = toDef.getContent();
+
+    // Show incoming screen underneath stationary; neither screen container translates!
+    toDef.screen.hidden = false;
+    toDef.screen.style.transition = "none";
+    toDef.screen.style.webkitTransition = "none";
+    toDef.screen.style.transform = "none";
+    toDef.screen.style.webkitTransform = "none";
+    toDef.screen.style.zIndex = "1";
+
+    if (toKey === "temperature" || toDef.stage === "temperature") {
+      scrollToT3Temp(state.task3TargetTemp || 375, false);
+    }
+
+    fromDef.screen.style.transition = "none";
+    fromDef.screen.style.webkitTransition = "none";
+    fromDef.screen.style.transform = "none";
+    fromDef.screen.style.webkitTransform = "none";
+    fromDef.screen.style.zIndex = "2";
+
+    outgoingContent.forEach(el => {
+      el.style.transition = "none";
+      el.style.webkitTransition = "none";
+      el.style.transform = "translateX(0)";
+      el.style.webkitTransform = "translateX(0)";
+      el.style.opacity = "1";
+    });
+
+    incomingContent.forEach(el => {
+      el.style.transition = "none";
+      el.style.webkitTransition = "none";
+      el.style.transform = inTranslate;
+      el.style.webkitTransform = inTranslate;
+      el.style.opacity = "0";
+    });
+
+    const fromBg = fromDef.screen.querySelector(".t3-screen-bg");
+    if (fromBg) {
+      fromBg.style.transition = "opacity 0.22s ease";
+      fromBg.style.webkitTransition = "opacity 0.22s ease";
+    }
+
+    // Force reflow
+    void toDef.screen.offsetWidth;
+
+    requestAnimationFrame(() => {
+      outgoingContent.forEach(el => {
+        el.style.transition = "transform 0.28s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.22s ease";
+        el.style.webkitTransition = "-webkit-transform 0.28s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.22s ease";
+        el.style.transform = outTranslate;
+        el.style.webkitTransform = outTranslate;
+        el.style.opacity = "0";
+      });
+
+      incomingContent.forEach(el => {
+        el.style.transition = "transform 0.28s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.28s ease";
+        el.style.webkitTransition = "-webkit-transform 0.28s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.28s ease";
+        el.style.transform = "translateX(0)";
+        el.style.webkitTransform = "translateX(0)";
+        el.style.opacity = "1";
+      });
+
+      if (fromBg) {
+        fromBg.style.opacity = "0";
+      }
+    });
+
+    setTimeout(() => {
+      fromDef.screen.hidden = true;
+      fromDef.screen.style.zIndex = "";
+      if (fromBg) {
+        fromBg.style.transition = "";
+        fromBg.style.webkitTransition = "";
+        fromBg.style.opacity = "";
+      }
+      outgoingContent.forEach(el => {
+        el.style.transition = "";
+        el.style.webkitTransition = "";
+        el.style.transform = "";
+        el.style.webkitTransform = "";
+        el.style.opacity = "";
+      });
+
+      toDef.screen.style.zIndex = "";
+      incomingContent.forEach(el => {
+        el.style.transition = "";
+        el.style.webkitTransition = "";
+        el.style.transform = "";
+        el.style.webkitTransform = "";
+        el.style.opacity = "";
+      });
+
+      if (toKey === "temperature" || toDef.stage === "temperature") {
+        requestAnimationFrame(() => {
+          scrollToT3Temp(state.task3TargetTemp || 375, false);
+        });
+      }
+      isT3ContentTransitioning = false;
+      if (typeof onComplete === "function") onComplete();
+    }, 300);
+  }
+
   function transitionToT3FoodOptions(outgoingScreen = null) {
     playSound("touch");
-    t3Stage = "foodOptions";
-    updateScreenBadge("foodOptions");
-
     const isFrontLeft = (activePrcKnobIndex === 1);
     if (els.t3FoodMinimapOverlay) els.t3FoodMinimapOverlay.hidden = !isFrontLeft;
 
-    const outScreen = outgoingScreen ||
+    const currentScreen = outgoingScreen ||
       (els.t3ScreenTemperature && !els.t3ScreenTemperature.hidden ? els.t3ScreenTemperature :
       (els.t3ScreenDigipad && !els.t3ScreenDigipad.hidden ? els.t3ScreenDigipad :
-      (els.t3ScreenTempRun && !els.t3ScreenTempRun.hidden ? els.t3ScreenTempRun :
-      (els.t3ScreenBurnerStatus && !els.t3ScreenBurnerStatus.hidden ? els.t3ScreenBurnerStatus : els.t3ScreenStart))));
+      (els.t3ScreenTempRun && !els.t3ScreenTempRun.hidden ? els.t3ScreenTempRun : null)));
 
-    slideTransition(outScreen, els.t3ScreenFoodOptions, "left");
+    if (currentScreen) {
+      const fromKey = (currentScreen === els.t3ScreenDigipad) ? "digipad" :
+                      (currentScreen === els.t3ScreenTempRun) ? "tempRun" : "temperature";
+      contentSlideTransition(fromKey, "food");
+    } else {
+      t3Stage = "foodOptions";
+      updateScreenBadge("foodOptions");
+      const outScreen = (els.t3ScreenBurnerStatus && !els.t3ScreenBurnerStatus.hidden) ? els.t3ScreenBurnerStatus : els.t3ScreenStart;
+      slideTransition(outScreen, els.t3ScreenFoodOptions, "left");
+    }
   }
 
   function transitionToT3BeefMenu() {
@@ -3751,22 +3944,35 @@
 
     // Unified Tab Navigation for Task 3 (Spotlight, Technique, Food, Temperature)
     function switchT3Tab(tabName) {
+      const pcTabs = ["temperature", "digipad", "tempRun", "foodOptions", "technique"];
+      const isCurrentlyInPC = pcTabs.includes(t3Stage);
+
       if (tabName === "spotlight") {
         showT3Screen("spotlight");
       } else if (tabName === "technique") {
-        showT3Screen("technique");
-        if (els.t3TechniqueScroll) els.t3TechniqueScroll.scrollTop = 0;
+        if (t3Stage === "technique") return;
+        if (isCurrentlyInPC) {
+          contentSlideTransition(t3Stage === "foodOptions" ? "food" : t3Stage, "technique");
+        } else {
+          showT3Screen("technique");
+          if (els.t3TechniqueScroll) els.t3TechniqueScroll.scrollTop = 0;
+        }
       } else if (tabName === "food") {
-        if (t3Stage !== "foodOptions") {
+        if (t3Stage === "foodOptions") return;
+        if (isCurrentlyInPC) {
+          contentSlideTransition(t3Stage === "foodOptions" ? "food" : t3Stage, "food");
+        } else {
           transitionToT3FoodOptions();
           if (els.t3FoodScroll) els.t3FoodScroll.scrollTop = 0;
         }
       } else if (tabName === "temperature") {
-        if (t3Stage === "foodOptions" || t3Stage === "beefMenu") {
-          const outScr = (t3Stage === "beefMenu" && els.t3ScreenBeefMenu) ? els.t3ScreenBeefMenu : els.t3ScreenFoodOptions;
+        if (t3Stage === "temperature") return;
+        if (isCurrentlyInPC) {
+          contentSlideTransition(t3Stage === "foodOptions" ? "food" : t3Stage, "temperature");
+        } else if (t3Stage === "beefMenu") {
           t3Stage = "temperature";
           updateScreenBadge("temperature");
-          slideTransition(outScr, els.t3ScreenTemperature, "right", () => {
+          slideTransition(els.t3ScreenBeefMenu, els.t3ScreenTemperature, "right", () => {
             scrollToT3Temp(state.task3TargetTemp || 375, false);
           });
         } else {
@@ -4047,25 +4253,38 @@
 
 
     // 4. Drawer Scrollable Container Smooth Mouse Drag & Wheel
-    document.querySelectorAll(".t3-drawer-scrollable-options").forEach(scrollBox => {
+    document.querySelectorAll(".t3-drawer-scrollable-options, .t3-food-scroll-container").forEach(scrollBox => {
       let isDown = false;
       let startY = 0;
       let scrollTop = 0;
+      let hasMoved = false;
 
       scrollBox.addEventListener("mousedown", (e) => {
         isDown = true;
+        hasMoved = false;
         startY = e.pageY - scrollBox.offsetTop;
         scrollTop = scrollBox.scrollTop;
       });
       scrollBox.addEventListener("mouseleave", () => { isDown = false; });
-      scrollBox.addEventListener("mouseup", () => { isDown = false; });
+      scrollBox.addEventListener("mouseup", () => {
+        setTimeout(() => { isDown = false; hasMoved = false; }, 60);
+      });
       scrollBox.addEventListener("mousemove", (e) => {
         if (!isDown) return;
-        e.preventDefault();
         const y = e.pageY - scrollBox.offsetTop;
+        if (Math.abs(y - startY) > 6) {
+          hasMoved = true;
+        }
+        e.preventDefault();
         const walk = (y - startY) * 1.5;
         scrollBox.scrollTop = scrollTop - walk;
       });
+      scrollBox.addEventListener("click", (e) => {
+        if (hasMoved) {
+          e.stopPropagation();
+          e.preventDefault();
+        }
+      }, true);
     });
 
     // 5. Select Type Screen Type Buttons (Ground, Patties, Steak)
@@ -4469,7 +4688,7 @@
       }
       const targetEl = (e.target instanceof Element) ? e.target : (e.target && e.target.parentElement);
       const scrollable = targetEl && typeof targetEl.closest === "function" ? targetEl.closest(
-        ".t3-picker-track, .t2-picker-track, .t2-options-scroll-container, .t2-tile-scroll-container, .t3-options-scroll-container, .t3-drawer-scrollable-options, .t3-doneness-carousel, .t3-recipe-cards-track"
+        ".t3-picker-track, .t2-picker-track, .t2-options-scroll-container, .t2-tile-scroll-container, .t3-options-scroll-container, .t3-drawer-scrollable-options, .t3-doneness-carousel, .t3-recipe-cards-track, .t3-food-scroll-container"
       ) : null;
       if (!scrollable) {
         e.preventDefault();
