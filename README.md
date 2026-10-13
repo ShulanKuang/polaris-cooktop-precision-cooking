@@ -11,7 +11,7 @@ Choose any of the following methods to open and test the prototype directly:
 * **⚡ [Live Web Tunnel Link (Active Now)](https://busy-baths-search.loca.lt/?task=3#task3)**  
   *(Live web mirror hosted directly from this machine for testing anywhere, even outside office Wi-Fi. If prompted for a tunnel password / Endpoint IP, enter: `4.53.66.82`)*
 
-* **📶 Local iPad / Lab Wi-Fi Link**: `http://10.35.122.114:8080/?task=3#task3`  
+* **📶 Local iPad / Lab Wi-Fi Link**: `http://10.35.122.163:8080/?task=3#task3`  
   *(Recommended for zero-latency in-person testing when your iPad is connected to the same Wi-Fi network as this computer)*
 
 * **💻 Direct Local Browser**:  
@@ -53,7 +53,7 @@ The prototype includes an external researcher toolbar positioned above the appli
 | :--- | :---: | :--- | :--- |
 | **Task 1: Awareness Test** | **ARCHIVED / HIDDEN** | *(Removed from display per research review; all code, assets, and data preserved)* Originally evaluated glance awareness of active heating burners and precision cooking states. | • **Preserved in Code**: Complete DOM markup, glance timing engine (0.5s / 1s / 2s), and flipped Figma 2294:8399 assets remain fully intact for future recall.<br>• **Display Hidden**: Switcher button and screen jumper options cleanly hidden from participant and researcher views. |
 | **Task 2: Concept Evaluation** | **ACTIVE** | Evaluate participant comprehension of Precision Cooking pillars (Spotlight, Technique, Food, Temperature Picker, and Digital Pad). | • **Explore Screen (`PC-explore`)** with clickable Explore button<br>• **Tab Navigation Bar** (Spotlight, Technique, Food, Temperature)<br>• **Dynamic Buttontile Components** with official Roux design tokens<br>• **Vertical Scrollable Tiles** for Food & Technique with top crop at $y = 179\text{px}$<br>• **Hardware-accelerated Backdrop Blur** (`-webkit-backdrop-filter: blur(16px)`)<br>• **Temperature Picker ⇄ Digital Pad Switcher** via secondary round button<br>• **Interactive Digipad Keypad** (0-9, Clear, Backspace, live display)<br>• *(Note: Activity bar removed from Task 2 per design direction)* |
-| **Task 3: Usability Flow** | **ACTIVE** | Full interactive precision cooking workflow (Tasks 3A, 3B, 3C, 3E) with authentic 1.5× physical knobs manifold, 2s 8px magenta arc countdown for Precision Cooking, 1s delay direct active status for Power Levels 1–10, and multi-tick rotary audio. | • **New 1.5× Scaled Physical Knobs Manifold** (`aspect-ratio: 2000 / 432`) at 2× Retina resolution (4000 × 864 px)<br>• **5 Rotatable Knobs with Pointer/Touch Drag & Tap Toggle** (`knob-nose-figma.png`)<br>• **Glowing LED Light Indicators (`knob-light-figma.png`)**: Unlit in standby, illuminates white when turned to PRC/ON<br>• **Magnetic Detents**: Snaps cleanly to `OFF` (0°), `PRC` (-56°), and power levels 1–10 ($55^\circ - 270^\circ$ evenly distributed)<br>• **Rotary Encoder Multi-Tick Audio**: Web Audio API polyphonic engine plays selection tick sound (`Touch.wav`) for every single number passed by during fast sweeps (e.g. 10 rapid "da-da-da...da" clicks for 1–10 at 38ms spacing), reproducing physical haptic ratchet feel<br>• **Neighboring Numbers Display**: Gray numbers visible above and below selected number during knob rotation<br>• **Power Levels 1–10 Direct Confirmation (No Arc)**: Stopping at any power level waits 1.0s quiet delay, directly transforms into active confirmed status (solid `#D9D8D7` disc, dark `#303238` numeral, chime), hides neighboring gray numbers, and stays permanently on the start screen without showing any magenta arc<br>• **Precision Cooking 2s Magenta Arc Countdown**: Turning any PRC knob to Precision Cooking waits 1.0s quiet delay, runs an 8px magenta arc closing up in 2.0s to confirmed state (`#D9D8D7` disc with dark thermometer), delays 1.0s, and smoothly slides to Precision Cooking Spotlight<br>• **Smooth Slide-in Transition**: Precision Cooking Spotlight screen smoothly slides into view from the right (`0.38s cubic-bezier(0.16, 1, 0.3, 1)`)<br>• **Interactive Temperature Picker**: Horizontal scroll carousel ($200^\circ\text{F} - 500^\circ\text{F}$ in $25^\circ$ increments, default $375^\circ\text{F}$)<br>• **Preheating Animation**: Activity bar starts running on START tap; live temperature climbs $182^\circ\text{F} \to 375^\circ\text{F}$ over 5s $\to$ 2s delay $\to$ "Preheat complete" toast (30s timeout or OK/✕)<br>• **Burner Status Screen**: Active burner card at 375°F with `COOKTOP HOT` badge and running activity bar<br>• **Back Navigation**: Returns to `PCTemperatureRun` maintaining active running burner and activity bar. |
+| **Task 3: Usability Flow** | **ACTIVE** | Full interactive precision cooking workflow (Tasks 3A, 3B, 3C, 3E) with authentic 1.5× physical knobs manifold, 2s 8px magenta arc countdown for Precision Cooking, 1s delay direct active status for Power Levels 1–10, multi-tick rotary audio, dynamic preheat temperature status, vertical food options scrolling, and dual-knob control. | • **New 1.5× Scaled Physical Knobs Manifold** (`aspect-ratio: 2000 / 432`) at 2× Retina resolution (4000 × 864 px)<br>• **5 Rotatable Knobs with Pointer/Touch Drag & Tap Toggle** (`knob-nose-figma.png`)<br>• **Glowing LED Light Indicators (`knob-light-figma.png`)**: Unlit in standby, illuminates white when turned to PRC/ON<br>• **Magnetic Detents**: Snaps cleanly to `OFF` (0°), `PRC` (-56°), and power levels 1–10 ($55^\circ - 270^\circ$ evenly distributed)<br>• **Rotary Encoder Multi-Tick Audio**: Web Audio API polyphonic engine plays selection tick sound (`Touch.wav`) for every single number passed by during fast sweeps (e.g. 10 rapid "da-da-da...da" clicks for 1–10 at 38ms spacing), reproducing physical haptic ratchet feel<br>• **Power Levels 1–10 Direct Confirmation (No Arc)**: Stopping at any power level waits 1.0s quiet delay, directly transforms into active confirmed status (solid `#D9D8D7` disc, dark `#303238` numeral, chime), hides neighboring gray numbers, and stays permanently on the start screen without showing any magenta arc<br>• **Precision Cooking 2s Magenta Arc Countdown**: Turning any PRC knob to Precision Cooking waits 1.0s quiet delay, runs an 8px magenta arc closing up in 2.0s to confirmed state (`#D9D8D7` disc with dark thermometer), delays 1.0s, and smoothly slides to Precision Cooking Spotlight<br>• **Interactive Temperature Picker & Digital Pad**: Horizontal scroll carousel ($200^\circ\text{F} - 500^\circ\text{F}$) and 10-key digital pad with seamless two-way switching<br>• **Burner Status Screen (Figma 2310:12162 & 3051:42542)**: Active burner card running at target temperature with live dynamic climbing readout, 1.0s target reached delay, and 2-row preheated state<br>• **Preheat Complete Toast (Figma 3051:42525)**: Slides up from bottom with 10s auto-dismiss<br>• **Food Mode Grid & Vertical Scroll (Figma 3021:26359 & 3060:42632)**: 3 cards per row, transparent background, touch drag scrolling, and Beef selection transitioning to Beef Menu (Figma 3028:28875). |
 
 ---
 
@@ -91,37 +91,30 @@ To prevent unintentional viewport shifting, bounce, or accidental zooming when p
 
 ### 2. Temperature Selection & Preheating
 - **Navigate to Temperature**: Tapping the temperature section or tab opens `Task3B-PCTemperature`.
-- **Horizontal Temperature Picker**: Custom horizontal wheel ($200^\circ\text{F} - 500^\circ\text{F}$ in $25^\circ$ steps), centered on $375^\circ\text{F}$ with touch-snap physics and tick audio.
+- **Horizontal Temperature Picker & Digital Pad**: Custom horizontal wheel ($200^\circ\text{F} - 500^\circ\text{F}$ in $25^\circ$ steps), centered on $375^\circ\text{F}$ with touch-snap physics and tick audio. Circular keypad button toggles seamlessly with the 10-key Digital Pad screen (Figma `3017:25641`).
 - **Tap START**:
+  - **Direct Transition to Burner Status**: Directly navigates to the 3-Burner Status screen (`Task3B-burnerStatus` / Figma `2310:12162`).
   - **Activity Bar Rule**: The bottom flowing magenta-to-blue activity bar **only starts appearing now**! (It does NOT show up before START is tapped).
-- **Temp Expand Preheat Screen (`Task3B-TempExpandPreheat`)**:
-  - Live temperature readout dynamically climbs from $182^\circ\text{F}$ to $375^\circ\text{F}$ over **5 seconds**.
-  - Once $375^\circ\text{F}$ is reached, there is a **2-second delay**.
-- **Preheat Completed Screen (`Task3B-TempExpand`)**:
-  - Displays large $375^\circ\text{F}$ and "Preheated" status.
-  - Toast popup appears: *"Preheat complete.    OK   ✕"*.
-  - Stays on screen for **30 seconds**, or advances immediately if the user taps `OK` or `✕`.
-- **Burner Status Overview (`Task3B-burnerStatus` / Figma `2310:12162` & `2310:12166`)**:
-  - Shows the rear-left burner actively running at $375^\circ\text{F}$ with authentic solid light grey circular badge (`#D9D8D7`), dark thermometer icon (`#303238`), seamless frosted glass card, `COOKTOP HOT` badge, and bottom running activity bar.
+- **Burner Status Overview (`Task3B-burnerStatus` / Figma `2310:12162` & `3051:42542`)**:
+  - Shows the rear-left burner actively running at the selected target temperature with authentic solid light grey circular badge (`#D9D8D7`), dark thermometer icon (`#303238`), seamless frosted glass card, `COOKTOP HOT` badge, and bottom running activity bar.
+  - **Live Dynamic Temperature**: Title displays `"Temperature"`, number climbs smoothly ($182^\circ\text{F} \to \text{target}$ over 5s), and `"Preheat to [Target]°F"` remains locked to a single line.
+  - **Target Reached & 1.0s Delay**: When reaching target temperature, waits 1.0s before transforming into the 2-row `"Preheated"` card.
+  - **Preheat Complete Toast (Figma `3051:42525`)**: Slides up from bottom (*"Preheat complete.    OK   ✕"*) with 10s auto-dismiss.
+  - **Status Card Tap Navigation (Figma `3017:26093`, `3017:26217`, `2315:14158`)**: Tapping the active burner info card opens the temperature picker screen with the current running temperature and `UPDATE` button.
   - All other 4 burners are OFF until the user turns another knob.
-- **Back Navigation**: Tapping `<` returns to `PCTemperatureRun` screen with horizontal temperature picker while keeping Knob 2 ON and the activity bar running.
 
 ### 3. Food Mode & Multi-Burner Usability Flow (Task 3C)
-- **Second Knob Interaction**: From the $375^\circ\text{F}$ Burner Status screen, rotating Knob 1 (Front Left) triggers the live level setting roller animation ($1 \to 10$ power levels).
-- **PRC Detent & Countdown Toast**: Rotating Knob 1 to PRC ($-56^\circ$) pops up the 3s countdown toast (*"Starting Precision Cooking in 3s."*) with instant skip option.
-- **Direct Navigation into Food Mode**: Spotlight screen transitions into view with the **Food** tab active.
-- **Full Recipe Selection Flow**:
-  1. **Food Category Options** (Figma `2315:14683`)
-  2. **Protein Category** (Figma `2323:15099`)
-  3. **Steak Item** (Figma `2323:14983`)
-  4. **Cooking Vessel / Pan** (Figma `2323:15041`)
-  5. **Doneness (Medium Rare)** (Figma `2323:15136`)
-  6. **Summary & Confirmation** (Figma `2348:17304`)
-  7. **Dual Preheat Screen** (Figma `2348:17501`) — Both Rear-Left ($375^\circ\text{F}$) and Front-Left (Steak Med Rare) preheat simultaneously!
-  8. **Dual Active Burner Status** (Figma `2327:15934`) — Both burners active on the appliance overview screen.
+- **Multi-Knob Rotation & Control**: All 5 knobs can be independently turned and controlled.
+- **Front-Left Knob PRC Activation**: Turning Knob 1 (Front Left) to PRC ($-56^\circ$) directly navigates to the Precision Cooking Temperature Picker and enables the **Food** tab (Figma `3021:26359`).
+- **Content-Only Slide Transition**: Switching between Precision Cooking tabs (`temperature`, `food`, `technique`) animates content smoothly to left/right while keeping header, mini-map, status bar, and background fixed.
+- **Food Mode Grid & Vertical Scrolling (Figma `3021:26359` & `3060:42632`)**:
+  - Categorized food option tiles arranged in 3 columns.
+  - Transparent card background with crisp white typography.
+  - Smooth vertical touch dragging & momentum scrolling starting at $y = 123\text{px}$.
+  - Tapping **Beef** activates the authentic white selected state and transitions to the **Beef Menu screen** (Figma `3028:28875`).
 - **Physical Knobs Hardware Metaphor (Knobs Never Auto Turn Off)**:
   - Knobs reflect the physical state of the cooktop dials and never auto-turn off across screen transitions.
-  - Both Knob 2 ($-56^\circ$) and Knob 1 ($-56^\circ$) remain illuminated and active simultaneously.
+  - Multiple knobs can remain illuminated and active simultaneously.
   - Knobs only turn off when the user explicitly rotates or taps them back to $0^\circ$ (OFF).
   - When all active knobs are turned off, the screen burner readouts show OFF, the activity bar shuts off, and the interface smoothly resets back to `3-start`.
 

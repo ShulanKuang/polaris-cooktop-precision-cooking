@@ -63,37 +63,31 @@ This is an interactive high-fidelity web prototype deployed on an **iPad Pro 13"
         - After an exact **1.0s delay** in the confirmed state, smoothly push-slides to the Precision Cooking Spotlight screen (`transform: translate3d(100%, 0, 0)` $\to$ `translate3d(0, 0, 0)` over `0.38s` with `cubic-bezier(0.16, 1, 0.3, 1)`).
         - **Slide-out on Cancel**: Tapping `< Cooktop` smoothly slides Spotlight back out to the right (`0.32s`), revealing the Cooktop surface and resetting the knob back to OFF ($0^\circ$).
       - **Cancel / Reset**: Turning the active PRC knob back to OFF ($0^\circ$) or clicking `< Cooktop` resets the burner roller, cancels arc/countdown timers, and returns the knob to OFF.
-   - **Task 3B: Temperature Picker, Preheat & Burner Status Flow**:
+   - **Task 3B: Temperature Picker, Digital Pad, Preheat & Burner Status Flow**:
      - **Spotlight $\rightarrow$ Temperature**: Tapping the **Temperature** tab navigates to the horizontal temperature picker screen (`task3b-pc-temperature.png`).
      - **Horizontal Carousel Wheel**: Allows scrolling and picking temperatures from $200^\circ\text{F}$ to $500^\circ\text{F}$ in $25^\circ$ increments, centered by default on $375^\circ\text{F}$ with active scaling and snapping.
+     - **Digital Pad Switcher (Figma `3017:25641`)**: Secondary circular keypad button switches seamlessly back and forth between the Horizontal Carousel Wheel and the 10-key Digital Pad screen (`#t3ScreenDigipad`) while preserving target temperature.
      - **START Button Tap**:
+       - Directly transitions to the **3-Burner Status Screen (`task3b-burner-status-clean.png` / Figma `2310:12162`)** without intermediate screen detour.
        - **Activity Bar Rule (Strict)**: The activity bar (`#screenBottomStrip`) is completely **HIDDEN** across `start`, `turnknob`, `spotlight`, and `temperature`. It **ONLY SHOWS UP** starting on `preheat` (and remains on for `completed` and `burnerStatus`).
-     - **Temp Expand Preheat Screen (`task3b-temp-expand-preheat-clean.png`)**:
-       - Displays live growing temperature from $182^\circ\text{F}$ up to $375^\circ\text{F}$ over exactly $5\text{s}$.
-       - Shows dynamic target temperature readout ($375^\circ\text{F}$).
-       - After reaching target temp, there is an exact **2s delay** before advancing.
-     - **Preheat Complete Screen (`task3b-temp-expand-completed-clean.png`)**:
-       - Shows large centered $375^\circ\text{F}$ and *"Preheated"* status.
-       - Toast card slides up from bottom: *"Preheat complete.    OK   ✕"*.
-       - Stays on this screen for **30 seconds**, or advances immediately if the user taps `OK` or `✕`.
-     - **Burner Status Overview Screen (`task3b-burner-status-clean.png` / Figma `2310:12162` & `2310:12166`)**:
-       - Displays single active Rear-Left burner card running at $375^\circ\text{F}$ with authentic solid light grey circular badge (`#D9D8D7`), dark thermometer icon (`#303238`), seamless frosted glass card, `COOKTOP HOT` badge, and bottom running activity bar.
+     - **Burner Status Overview Screen (Figma `2310:12162` & `3051:42542`)**:
+       - Displays active burner card running at the selected target temperature with authentic solid light grey circular badge (`#D9D8D7`), dark thermometer icon (`#303238`), seamless frosted glass card, `COOKTOP HOT` badge, and bottom running activity bar.
+       - **Dynamic Growing Readout**: Card displays mode name `"Temperature"` at top, live growing numbers in middle ($182^\circ\text{F} \to \text{target}$ over 5s), and `"Preheat to [Target]°F"` locked to a single row.
+       - **Target Reached & 1.0s Delay**: When temperature reaches target, waits **1.0s delay**, then transitions to 2-row layout (`"Preheated"` above large target temperature, Figma `3051:42542`).
+       - **Preheat Complete Toast (Figma `3051:42525`)**: Slides up from bottom (*"Preheat complete.    OK   ✕"*), auto-dismisses after **10 seconds**, or immediately if user taps `OK` or `✕`.
+       - **Status Card Tap Navigation (Figma `3017:26093`, `3017:26217`, `2315:14158`)**: Tapping the active burner info card on the Burner Status screen updates the Temperature screen with the currently running temperature and returns to the temperature picker screen with an `UPDATE` button.
        - All other 4 burners remain unlit / OFF until another knob is rotated.
-       - Back caret `<` navigation returns to `PCTemperatureRun` screen with horizontal temperature picker while keeping knob ON and activity bar running.
        - Turning knob back to OFF or clicking `< Cooktop` resets the flow back to the start screen.
-   - **Task 3C: Food Mode Flow & Dual Active Burner Operation**:
-     - **Second Knob Turning (From Burner Status)**: When on the 375°F Burner Status screen, rotating Knob 1 (Front Left) activates the Front Left burner's live level setting animation ($1 \to 10$ across $55^\circ - 270^\circ$).
-     - **PRC Detent & Toast**: Rotating to PRC ($-56^\circ$) triggers the 3-second countdown toast card (*"Starting Precision Cooking in 3s."*).
-     - **Food Mode Navigation Sequence**:
-       1. **Precision Cooking Spotlight** with active **Food** tab.
-       2. **Food Options (`2315:14683`)**: Categorized food options.
-       3. **Protein Category (`2323:15099`)**: Protein selections.
-       4. **Steak Item (`2323:14983`)**: Steak cut selection.
-       5. **Vessel Selection (`2323:15041`)**: Pan type (e.g., Cast Iron).
-       6. **Doneness Selection (`2323:15136`)**: Medium Rare selection.
-       7. **Confirmation Screen (`2348:17304`)**: Summary & START button.
-       8. **Dual Preheating Screen (`2348:17501`)**: Both Rear-Left (375°F) and Front-Left (Steak Med Rare) preheating.
-       9. **Dual Active Burner Status Overview (`2327:15934`)**: Full overview with both burners running simultaneously.
+   - **Task 3C: Food Mode Flow, Multi-Knob Control & Vertical Scrolling**:
+     - **Multi-Knob Physical Manifold Control**: All 5 knobs (Knob 1 Front-Left, Knob 2 Rear-Left, Knob 3 Center ON/OFF, Knob 4 Mid-Right Main, Knob 5 Rear-Right) operate independently with magnetic detents and individual state tracking.
+     - **Front-Left Burner PRC Activation**: Turning Knob 1 (Front Left) to Precision Cooking detent ($-56^\circ$) directly navigates to the Precision Cooking Temperature Picker screen and enables the **Food** tab (Figma `3021:26359`).
+     - **Content-Only Tab Slide Transition**: Switching between Precision Cooking tabs (`temperature`, `food`, `technique`) animates only content elements horizontally (`contentSlideTransition`) while leaving the header, 5-burner mini-map, status bar, and background fixed in place.
+     - **Food Mode Options Grid (Figma `3021:26359` & `3060:42632`)**:
+       - Displays categorized food option tiles in a **3-column grid** (176px wide cards, 24px gap).
+       - **Transparent Tile Background**: Cards have transparent backgrounds (`background: transparent;`) displaying clean white typography directly over the background.
+       - **Vertical Scrolling & Touch Drag**: Scroll container starts at $y = 123\text{px}$ from top with height $261\text{px}$. Implements both native momentum scrolling (`touch-action: pan-y !important;`) and programmatic touch drag listeners (`touchstart`, `touchmove`, `touchend`) with movement threshold suppression so dragging does not trigger accidental item selection.
+       - **Beef Selection & Transition (Figma `3028:28875`)**: Tapping `Beef` activates the authentic white selected state (`.is-selected`, solid `#FFFFFF` pill with dark `#1E1E24` bold text) and smoothly transitions via content slide to the **Beef Menu screen** (`#t3ScreenBeefMenu`).
+     - **Clean 5-Burner Mini-Map**: The authentic 5-burner mini-map baked into the Figma artwork is displayed cleanly without duplicate overlay ghosting.
    - **Task 3E: Caramelize Technique Flow from Main Burner**:
      - **Trigger via Right Front Main Burner (Knob 4)**: Turning Knob 4 to $-56^\circ$ (PRC) or tapping the 176px main burner on `3-start` illuminates the Knob 4 LED, activates the activity bar, activates the $130 \times 24\text{px}$ `COOKTOP HOT` status bar indicator (Figma `2315:14060`), and pops up the 3s countdown toast.
      - **Technique Tab Navigation**: Selecting the Technique tab presents the 8-tile Technique grid (`3E-technique`).
@@ -177,9 +171,12 @@ This is an interactive high-fidelity web prototype deployed on an **iPad Pro 13"
 
 ## 🚀 5. Testing & Deployment Environment
 - **Local Server**: `python3 -m http.server 8080 -d /Users/a240165853/Documents/PolarisPrototypeCooktopPrecisionCooking`
-- **Tunnel Command**: `npx --yes localtunnel --port 8080`
+- **Wi-Fi iPad URL**: `http://10.35.122.163:8080/?task=3#task3`
+- **Tunnel Command**: `npx --yes localtunnel --port 8080 --subdomain busy-baths-search`
 - **Current Live URL**: `https://busy-baths-search.loca.lt/?task=3#task3`
 - **Tunnel Password / Endpoint IP**: `4.53.66.82`
+- **Chrome Remote Debugging (CDP)**: `http://127.0.0.1:9245`
+- **Latest Asset Cache Buster**: `?v=20261013-v9-fix`
 
 ---
 
