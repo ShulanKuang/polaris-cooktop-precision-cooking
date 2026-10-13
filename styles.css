@@ -3965,7 +3965,7 @@ input,
   height: 96px;
   min-height: 96px;
   max-height: 96px;
-  background: rgba(75, 76, 82, 0.8);
+  background: transparent;
   border-radius: 8px;
   border: none;
   display: flex;
@@ -3987,7 +3987,7 @@ input,
 }
 
 .t3-food-card:hover {
-  background: rgba(95, 96, 104, 0.9);
+  background: transparent;
 }
 
 .t3-food-card:active {
