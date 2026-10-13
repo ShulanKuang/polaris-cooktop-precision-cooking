@@ -932,18 +932,121 @@
                 <span id="t3BeefMenuThicknessVal">0.875</span>
               </div>
 
-              <!-- Type Selection Hotspots (Steak, Ground Beef, Burger Patty) -->
-              <div id="t3BeefTypeHotspots" style="display: none;">
-                <button type="button" class="t3-beef-choice-btn" data-choice-type="Steak" style="left: 565px; top: 110px; width: 275px; height: 165px;" aria-label="Steak"></button>
-                <button type="button" class="t3-beef-choice-btn" data-choice-type="Burger Patty" style="left: 855px; top: 110px; width: 160px; height: 165px;" aria-label="Burger Patty"></button>
-                <button type="button" class="t3-beef-choice-btn" data-choice-type="Ground Beef" style="left: 450px; top: 110px; width: 100px; height: 165px;" aria-label="Ground Beef"></button>
+              <!-- Type Carousel (Ground, Steak, Patties - Figma 3028:29970) -->
+              <div class="t3-beef-carousel-wrap" id="t3BeefTypeCarouselWrap" style="display: none;">
+                <div class="t3-beef-carousel" id="t3BeefTypeCarousel">
+                  <div class="t3-beef-carousel-track" id="t3BeefTypeTrack">
+                    <div class="t3-beef-card" data-card-type="Ground" id="t3CardType_Ground">
+                      <span class="t3-beef-card-title">Ground</span>
+                      <div class="t3-beef-card-check">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M5 13l4 4L19 7" stroke="#1E1E24" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                      </div>
+                      <div class="t3-beef-card-img-wrap">
+                        <img src="./assets/task3c/beef_type_ground.png" alt="Ground Beef">
+                      </div>
+                    </div>
+                    <div class="t3-beef-card is-selected" data-card-type="Steak" id="t3CardType_Steak">
+                      <span class="t3-beef-card-title">Steak</span>
+                      <div class="t3-beef-card-check">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M5 13l4 4L19 7" stroke="#1E1E24" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                      </div>
+                      <div class="t3-beef-card-img-wrap">
+                        <img src="./assets/task3c/beef_type_steak.png" alt="Steak">
+                      </div>
+                    </div>
+                    <div class="t3-beef-card" data-card-type="Patties" id="t3CardType_Patties">
+                      <span class="t3-beef-card-title">Patties</span>
+                      <div class="t3-beef-card-check">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M5 13l4 4L19 7" stroke="#1E1E24" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                      </div>
+                      <div class="t3-beef-card-img-wrap">
+                        <img src="./assets/task3c/beef_type_patties.png" alt="Burger Patties">
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <!-- Pagination Dots (3 dots) -->
+                <div class="t3-beef-carousel-dots" id="t3BeefTypeDots">
+                  <button type="button" class="t3-carousel-dot" data-dot-index="0" aria-label="Page 1"></button>
+                  <button type="button" class="t3-carousel-dot is-active" data-dot-index="1" aria-label="Page 2"></button>
+                  <button type="button" class="t3-carousel-dot" data-dot-index="2" aria-label="Page 3"></button>
+                </div>
               </div>
 
-              <!-- Doneness Selection Hotspots (Rare, Med Rare, Medium) -->
-              <div id="t3BeefDonenessHotspots" style="display: none;">
-                <button type="button" class="t3-beef-choice-btn" data-choice-doneness="Rare" style="left: 450px; top: 110px; width: 100px; height: 165px;" aria-label="Rare"></button>
-                <button type="button" class="t3-beef-choice-btn" data-choice-doneness="Med Rare" style="left: 565px; top: 110px; width: 275px; height: 165px;" aria-label="Med Rare"></button>
-                <button type="button" class="t3-beef-choice-btn" data-choice-doneness="Medium" style="left: 855px; top: 110px; width: 160px; height: 165px;" aria-label="Medium"></button>
+              <!-- Doneness Carousel (5 Doneness types - Figma 3072:10345) -->
+              <div class="t3-beef-carousel-wrap" id="t3BeefDonenessCarouselWrap" style="display: none;">
+                <div class="t3-beef-carousel" id="t3BeefDonenessCarousel">
+                  <div class="t3-beef-carousel-track" id="t3BeefDonenessTrack">
+                    <div class="t3-beef-card" data-card-doneness="Rare" id="t3CardDoneness_Rare">
+                      <span class="t3-beef-card-title">Rare</span>
+                      <div class="t3-beef-card-check">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M5 13l4 4L19 7" stroke="#1E1E24" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                      </div>
+                      <div class="t3-beef-card-img-wrap">
+                        <img src="./assets/task3c/beef_doneness_rare.png" alt="Rare">
+                      </div>
+                      <div class="t3-beef-card-desc-wrap" style="display: none;">
+                        <p class="t3-beef-card-desc">Cool to warm, red center with a soft and tender texture</p>
+                      </div>
+                    </div>
+                    <div class="t3-beef-card is-selected" data-card-doneness="Med Rare" id="t3CardDoneness_MedRare">
+                      <span class="t3-beef-card-title">Med Rare</span>
+                      <div class="t3-beef-card-check">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M5 13l4 4L19 7" stroke="#1E1E24" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                      </div>
+                      <div class="t3-beef-card-img-wrap">
+                        <img src="./assets/task3c/beef_doneness_med_rare.png" alt="Med Rare">
+                      </div>
+                      <div class="t3-beef-card-desc-wrap" style="display: none;">
+                        <p class="t3-beef-card-desc">Warm, red center with a soft and tender texture</p>
+                      </div>
+                    </div>
+                    <div class="t3-beef-card" data-card-doneness="Medium" id="t3CardDoneness_Medium">
+                      <span class="t3-beef-card-title">Medium</span>
+                      <div class="t3-beef-card-check">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M5 13l4 4L19 7" stroke="#1E1E24" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                      </div>
+                      <div class="t3-beef-card-img-wrap">
+                        <img src="./assets/task3c/beef_doneness_medium.png" alt="Medium">
+                      </div>
+                      <div class="t3-beef-card-desc-wrap" style="display: none;">
+                        <p class="t3-beef-card-desc">Light red to pink center with a soft texture</p>
+                      </div>
+                    </div>
+                    <div class="t3-beef-card" data-card-doneness="Med Well" id="t3CardDoneness_MedWell">
+                      <span class="t3-beef-card-title">Med Well</span>
+                      <div class="t3-beef-card-check">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M5 13l4 4L19 7" stroke="#1E1E24" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                      </div>
+                      <div class="t3-beef-card-img-wrap">
+                        <img src="./assets/task3c/beef_doneness_med_well.png" alt="Med Well">
+                      </div>
+                      <div class="t3-beef-card-desc-wrap" style="display: none;">
+                        <p class="t3-beef-card-desc">Slightly pink center with slightly firm texture</p>
+                      </div>
+                    </div>
+                    <div class="t3-beef-card" data-card-doneness="Well" id="t3CardDoneness_Well">
+                      <span class="t3-beef-card-title">Well</span>
+                      <div class="t3-beef-card-check">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M5 13l4 4L19 7" stroke="#1E1E24" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                      </div>
+                      <div class="t3-beef-card-img-wrap">
+                        <img src="./assets/task3c/beef_doneness_well.png" alt="Well">
+                      </div>
+                      <div class="t3-beef-card-desc-wrap" style="display: none;">
+                        <p class="t3-beef-card-desc">Gray to brown center with a firm texture</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <!-- Pagination Dots (5 dots) -->
+                <div class="t3-beef-carousel-dots" id="t3BeefDonenessDots">
+                  <button type="button" class="t3-carousel-dot" data-dot-index="0" aria-label="Page 1"></button>
+                  <button type="button" class="t3-carousel-dot is-active" data-dot-index="1" aria-label="Page 2"></button>
+                  <button type="button" class="t3-carousel-dot" data-dot-index="2" aria-label="Page 3"></button>
+                  <button type="button" class="t3-carousel-dot" data-dot-index="3" aria-label="Page 4"></button>
+                  <button type="button" class="t3-carousel-dot" data-dot-index="4" aria-label="Page 5"></button>
+                </div>
               </div>
             </div>
 
@@ -1252,6 +1355,11 @@
               <!-- Rear Left Burner Readout -->
               <div class="t3-burner-status-temp-display" id="t3FoodBurnerStatusTempDisplay">
                 <span class="t3-burner-status-temp-val" id="t3FoodBurnerStatusTemp1">375°F</span>
+              </div>
+              <!-- Front Left Food Burner Dynamic Readout -->
+              <div class="t3-food-burner-status-fl-text" id="t3FoodBurnerStatusFLText">
+                <span class="t3-food-burner-fl-type" id="t3FoodBurnerStatusFLType">Steak</span>
+                <span class="t3-food-burner-fl-doneness" id="t3FoodBurnerStatusFLDoneness">Med Rare</span>
               </div>
               <!-- Front Left Steak Burner Hotspot -->
               <button type="button" class="t3-front-left-burner-hotspot" id="t3HotspotFrontLeftBurner" aria-label="Front Left Steak Burner"></button>

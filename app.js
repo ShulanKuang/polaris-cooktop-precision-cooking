@@ -386,6 +386,12 @@
     t3BeefValType: document.getElementById("t3BeefValType"),
     t3BeefValDoneness: document.getElementById("t3BeefValDoneness"),
     t3BeefValThickness: document.getElementById("t3BeefValThickness"),
+    t3BeefTypeCarouselWrap: document.getElementById("t3BeefTypeCarouselWrap"),
+    t3BeefTypeCarousel: document.getElementById("t3BeefTypeCarousel"),
+    t3BeefTypeDots: document.getElementById("t3BeefTypeDots"),
+    t3BeefDonenessCarouselWrap: document.getElementById("t3BeefDonenessCarouselWrap"),
+    t3BeefDonenessCarousel: document.getElementById("t3BeefDonenessCarousel"),
+    t3BeefDonenessDots: document.getElementById("t3BeefDonenessDots"),
 
     t3ScreenBeefType: document.getElementById("t3ScreenBeefType"),
     t3BtnBackFromBeefType: document.getElementById("t3BtnBackFromBeefType"),
@@ -427,6 +433,9 @@
     t3BtnBackFromFoodBurnerStatus: document.getElementById("t3BtnBackFromFoodBurnerStatus"),
     t3FoodBurnerStatusTemp1: document.getElementById("t3FoodBurnerStatusTemp1"),
     t3FoodBurnerStatusTempDisplay: document.getElementById("t3FoodBurnerStatusTempDisplay"),
+    t3FoodBurnerStatusFLText: document.getElementById("t3FoodBurnerStatusFLText"),
+    t3FoodBurnerStatusFLType: document.getElementById("t3FoodBurnerStatusFLType"),
+    t3FoodBurnerStatusFLDoneness: document.getElementById("t3FoodBurnerStatusFLDoneness"),
     t3FoodBurnerOffRL: document.getElementById("t3FoodBurnerOffRL"),
     t3FoodBurnerOffFL: document.getElementById("t3FoodBurnerOffFL"),
     t3HotspotFrontLeftBurner: document.getElementById("t3HotspotFrontLeftBurner"),
@@ -1519,6 +1528,9 @@
       if (els.t3FoodBurnerOffRL) els.t3FoodBurnerOffRL.hidden = true;
       if (els.t3FoodBurnerOffFL) els.t3FoodBurnerOffFL.hidden = true;
       if (els.t3FoodBurnerStatusTempDisplay) els.t3FoodBurnerStatusTempDisplay.style.display = "";
+      if (els.t3FoodBurnerStatusFLType) els.t3FoodBurnerStatusFLType.textContent = els.t3BeefValType?.textContent || currentBeefType || "Steak";
+      if (els.t3FoodBurnerStatusFLDoneness) els.t3FoodBurnerStatusFLDoneness.textContent = els.t3BeefValDoneness?.textContent || currentBeefDoneness || "Med Rare";
+      if (els.t3FoodBurnerStatusFLText) els.t3FoodBurnerStatusFLText.style.display = "flex";
       if (els.t3HotspotRearLeftBurner) els.t3HotspotRearLeftBurner.style.pointerEvents = "auto";
       if (els.t3HotspotFrontLeftBurner) els.t3HotspotFrontLeftBurner.style.pointerEvents = "auto";
     }
@@ -1804,6 +1816,9 @@
     // 1. Front Left (Knob 1)
     if (els.t3FoodBurnerOffFL) {
       els.t3FoodBurnerOffFL.hidden = !isKnob1Off;
+    }
+    if (els.t3FoodBurnerStatusFLText) {
+      els.t3FoodBurnerStatusFLText.style.display = isKnob1Off ? "none" : "flex";
     }
     if (els.t3HotspotFrontLeftBurner) {
       els.t3HotspotFrontLeftBurner.style.pointerEvents = isKnob1Off ? "none" : "auto";
@@ -4031,6 +4046,56 @@
     let currentBeefDoneness = "Med Rare";
     const beefThicknessValues = ["0.5", "0.625", "0.75", "0.875", "1.0", "1.25", "1.5"];
     let currentBeefThicknessIdx = 3; // default 0.875
+    const BEEF_TYPES = ["Ground", "Steak", "Patties"];
+    const BEEF_DONENESSES = ["Rare", "Med Rare", "Medium", "Med Well", "Well"];
+
+    function selectBeefType(type, smoothScroll = true) {
+      if (!type) return;
+      currentBeefType = type;
+      if (els.t3BeefValType) els.t3BeefValType.textContent = type;
+
+      const typeCards = document.querySelectorAll("#t3BeefTypeTrack .t3-beef-card");
+      typeCards.forEach(card => {
+        card.classList.toggle("is-selected", card.dataset.cardType === type);
+      });
+
+      const idx = BEEF_TYPES.indexOf(type);
+      const dots = els.t3BeefTypeDots?.querySelectorAll(".t3-carousel-dot");
+      dots?.forEach((d, i) => d.classList.toggle("is-active", i === idx));
+
+      if (els.t3BeefTypeCarousel && idx >= 0) {
+        const targetLeft = idx * 344;
+        if (smoothScroll) {
+          els.t3BeefTypeCarousel.scrollTo({ left: targetLeft, behavior: "smooth" });
+        } else {
+          els.t3BeefTypeCarousel.scrollLeft = targetLeft;
+        }
+      }
+    }
+
+    function selectBeefDoneness(doneness, smoothScroll = true) {
+      if (!doneness) return;
+      currentBeefDoneness = doneness;
+      if (els.t3BeefValDoneness) els.t3BeefValDoneness.textContent = doneness;
+
+      const donenessCards = document.querySelectorAll("#t3BeefDonenessTrack .t3-beef-card");
+      donenessCards.forEach(card => {
+        card.classList.toggle("is-selected", card.dataset.cardDoneness === doneness);
+      });
+
+      const idx = BEEF_DONENESSES.indexOf(doneness);
+      const dots = els.t3BeefDonenessDots?.querySelectorAll(".t3-carousel-dot");
+      dots?.forEach((d, i) => d.classList.toggle("is-active", i === idx));
+
+      if (els.t3BeefDonenessCarousel && idx >= 0) {
+        const targetLeft = idx * 344;
+        if (smoothScroll) {
+          els.t3BeefDonenessCarousel.scrollTo({ left: targetLeft, behavior: "smooth" });
+        } else {
+          els.t3BeefDonenessCarousel.scrollLeft = targetLeft;
+        }
+      }
+    }
 
     function updateBeefMenuUI() {
       const beefTiles = document.querySelectorAll("#t3BeefDrawerTiles .t3-beef-drawer-tile");
@@ -4058,6 +4123,28 @@
         }
       }
 
+      // Type Carousel
+      if (els.t3BeefTypeCarouselWrap) {
+        els.t3BeefTypeCarouselWrap.style.display = (currentBeefTab === "type") ? "flex" : "none";
+        if (currentBeefTab === "type") {
+          selectBeefType(currentBeefType, false);
+        }
+      }
+
+      // Doneness Carousel
+      if (els.t3BeefDonenessCarouselWrap) {
+        els.t3BeefDonenessCarouselWrap.style.display = (currentBeefTab === "doneness") ? "flex" : "none";
+        if (currentBeefTab === "doneness") {
+          selectBeefDoneness(currentBeefDoneness, false);
+        }
+      }
+
+      // Doneness view mode (Image vs Description)
+      const donenessDescWraps = document.querySelectorAll("#t3BeefDonenessTrack .t3-beef-card-desc-wrap");
+      const donenessImgWraps = document.querySelectorAll("#t3BeefDonenessTrack .t3-beef-card-img-wrap");
+      donenessDescWraps.forEach(w => w.style.display = isDonenessDesc ? "flex" : "none");
+      donenessImgWraps.forEach(w => w.style.display = isDonenessDesc ? "none" : "flex");
+
       if (els.t3BtnBeefMenuDonenessToggle) {
         els.t3BtnBeefMenuDonenessToggle.style.display = (currentBeefTab === "doneness") ? "block" : "none";
       }
@@ -4070,12 +4157,6 @@
       if (els.t3BeefMenuThicknessOverlay) {
         els.t3BeefMenuThicknessOverlay.style.display = (currentBeefTab === "thickness") ? "flex" : "none";
       }
-      if (els.t3BeefTypeHotspots) {
-        els.t3BeefTypeHotspots.style.display = (currentBeefTab === "type") ? "block" : "none";
-      }
-      if (els.t3BeefDonenessHotspots) {
-        els.t3BeefDonenessHotspots.style.display = (currentBeefTab === "doneness") ? "block" : "none";
-      }
     }
     window.__updateBeefMenuUI = updateBeefMenuUI;
 
@@ -4087,6 +4168,123 @@
         updateBeefMenuUI();
       });
     });
+
+    // Type Card clicks
+    const typeCards = document.querySelectorAll("#t3BeefTypeTrack .t3-beef-card");
+    typeCards.forEach(card => {
+      card.addEventListener("click", () => {
+        playSound("touch");
+        selectBeefType(card.dataset.cardType, true);
+      });
+    });
+
+    // Type Dot clicks
+    const typeDots = els.t3BeefTypeDots?.querySelectorAll(".t3-carousel-dot");
+    typeDots?.forEach(dot => {
+      dot.addEventListener("click", () => {
+        playSound("touch");
+        const idx = parseInt(dot.dataset.dotIndex, 10);
+        if (BEEF_TYPES[idx]) selectBeefType(BEEF_TYPES[idx], true);
+      });
+    });
+
+    // Doneness Card clicks
+    const donenessCards = document.querySelectorAll("#t3BeefDonenessTrack .t3-beef-card");
+    donenessCards.forEach(card => {
+      card.addEventListener("click", () => {
+        playSound("touch");
+        selectBeefDoneness(card.dataset.cardDoneness, true);
+      });
+    });
+
+    // Doneness Dot clicks
+    const donenessDots = els.t3BeefDonenessDots?.querySelectorAll(".t3-carousel-dot");
+    donenessDots?.forEach(dot => {
+      dot.addEventListener("click", () => {
+        playSound("touch");
+        const idx = parseInt(dot.dataset.dotIndex, 10);
+        if (BEEF_DONENESSES[idx]) selectBeefDoneness(BEEF_DONENESSES[idx], true);
+      });
+    });
+
+    // Carousel Scroll listeners
+    if (els.t3BeefTypeCarousel) {
+      let scrollEndTimer = null;
+      els.t3BeefTypeCarousel.addEventListener("scroll", () => {
+        const idx = Math.max(0, Math.min(BEEF_TYPES.length - 1, Math.round(els.t3BeefTypeCarousel.scrollLeft / 344)));
+        const dots = els.t3BeefTypeDots?.querySelectorAll(".t3-carousel-dot");
+        dots?.forEach((d, i) => d.classList.toggle("is-active", i === idx));
+
+        clearTimeout(scrollEndTimer);
+        scrollEndTimer = setTimeout(() => {
+          if (BEEF_TYPES[idx] && BEEF_TYPES[idx] !== currentBeefType) {
+            selectBeefType(BEEF_TYPES[idx], false);
+          }
+        }, 150);
+      }, { passive: true });
+    }
+
+    if (els.t3BeefDonenessCarousel) {
+      let scrollEndTimer = null;
+      els.t3BeefDonenessCarousel.addEventListener("scroll", () => {
+        const idx = Math.max(0, Math.min(BEEF_DONENESSES.length - 1, Math.round(els.t3BeefDonenessCarousel.scrollLeft / 344)));
+        const dots = els.t3BeefDonenessDots?.querySelectorAll(".t3-carousel-dot");
+        dots?.forEach((d, i) => d.classList.toggle("is-active", i === idx));
+
+        clearTimeout(scrollEndTimer);
+        scrollEndTimer = setTimeout(() => {
+          if (BEEF_DONENESSES[idx] && BEEF_DONENESSES[idx] !== currentBeefDoneness) {
+            selectBeefDoneness(BEEF_DONENESSES[idx], false);
+          }
+        }, 150);
+      }, { passive: true });
+    }
+
+    // Generic drag scroll helper
+    function enableDragScroll(container, direction = "horizontal") {
+      if (!container) return;
+      let isDown = false;
+      let startPos = 0;
+      let scrollPos = 0;
+      let hasMoved = false;
+
+      container.addEventListener("mousedown", (e) => {
+        isDown = true;
+        hasMoved = false;
+        startPos = (direction === "horizontal") ? e.pageX : e.pageY;
+        scrollPos = (direction === "horizontal") ? container.scrollLeft : container.scrollTop;
+      });
+
+      window.addEventListener("mousemove", (e) => {
+        if (!isDown) return;
+        const currentPos = (direction === "horizontal") ? e.pageX : e.pageY;
+        const walk = currentPos - startPos;
+        if (Math.abs(walk) > 5) {
+          hasMoved = true;
+        }
+        if (direction === "horizontal") {
+          container.scrollLeft = scrollPos - walk;
+        } else {
+          container.scrollTop = scrollPos - walk;
+        }
+      });
+
+      window.addEventListener("mouseup", () => {
+        if (isDown) isDown = false;
+      });
+
+      container.addEventListener("click", (e) => {
+        if (hasMoved) {
+          e.stopPropagation();
+          e.preventDefault();
+          hasMoved = false;
+        }
+      }, true);
+    }
+
+    enableDragScroll(els.t3BeefTypeCarousel, "horizontal");
+    enableDragScroll(els.t3BeefDonenessCarousel, "horizontal");
+    enableDragScroll(els.t3BeefDrawerTiles, "vertical");
 
     if (els.t3BtnBeefMenuDonenessToggle) {
       els.t3BtnBeefMenuDonenessToggle.addEventListener("click", () => {
@@ -4121,24 +4319,6 @@
         }
       });
     }
-
-    const beefTypeChoices = document.querySelectorAll("#t3BeefTypeHotspots .t3-beef-choice-btn");
-    beefTypeChoices.forEach(btn => {
-      btn.addEventListener("click", () => {
-        playSound("touch");
-        currentBeefType = btn.dataset.choiceType;
-        if (els.t3BeefValType) els.t3BeefValType.textContent = currentBeefType;
-      });
-    });
-
-    const beefDonenessChoices = document.querySelectorAll("#t3BeefDonenessHotspots .t3-beef-choice-btn");
-    beefDonenessChoices.forEach(btn => {
-      btn.addEventListener("click", () => {
-        playSound("touch");
-        currentBeefDoneness = btn.dataset.choiceDoneness;
-        if (els.t3BeefValDoneness) els.t3BeefValDoneness.textContent = currentBeefDoneness;
-      });
-    });
 
     if (els.t3BtnBackFromBeefMenu) {
       els.t3BtnBackFromBeefMenu.addEventListener("click", () => {

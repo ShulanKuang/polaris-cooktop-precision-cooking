@@ -3766,6 +3766,44 @@ input,
   z-index: 20;
 }
 
+/* Front Left Food Burner Dynamic Readout */
+.t3-food-burner-status-fl-text {
+  position: absolute;
+  left: 55px;
+  top: 238px;
+  width: 145px;
+  height: 70px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-end;
+  pointer-events: none;
+  z-index: 10;
+  background: transparent;
+  padding-right: 8px;
+  box-sizing: border-box;
+}
+
+.t3-food-burner-fl-type {
+  font-family: var(--font-text, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif);
+  font-size: 20px;
+  font-weight: 500;
+  color: #D9D8D7;
+  line-height: 28px;
+  text-align: right;
+  white-space: nowrap;
+}
+
+.t3-food-burner-fl-doneness {
+  font-family: var(--font-text, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif);
+  font-size: 24px;
+  font-weight: 600;
+  color: #FFFFFF;
+  line-height: 34px;
+  text-align: right;
+  white-space: nowrap;
+}
+
 /* 3C-FoodBurnerStatus Burner OFF Overlays (Figma 2327:15934) */
 .t3-food-burner-off-rl {
   position: absolute;
@@ -4092,22 +4130,33 @@ input,
   background: rgba(120, 125, 135, 0.35);
 }
 
-.t3-beef-drawer-tile .label {
+.t3-beef-drawer-tile .label,
+.t3-beef-drawer-tile .t3-beef-tile-label {
   font-family: var(--font-text, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif);
-  font-size: 26px;
+  font-size: 24px;
   font-weight: 500;
-  line-height: 26px;
+  line-height: 28px;
   color: inherit;
   pointer-events: none;
 }
 
-.t3-beef-drawer-tile .value {
+.t3-beef-drawer-tile .value,
+.t3-beef-drawer-tile .t3-beef-tile-val {
   font-family: var(--font-text, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif);
-  font-size: 32px;
+  font-size: 26px;
   font-weight: 600;
-  line-height: 38px;
+  line-height: 28px;
   color: inherit;
   text-align: right;
+  pointer-events: none;
+}
+
+.t3-beef-drawer-tile .t3-beef-tile-label-single {
+  font-family: var(--font-text, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif);
+  font-size: 24px;
+  font-weight: 500;
+  line-height: 28px;
+  color: inherit;
   pointer-events: none;
 }
 
@@ -4116,12 +4165,15 @@ input,
   color: #1E1E24 !important;
 }
 
-.t3-beef-drawer-tile.is-selected .label {
+.t3-beef-drawer-tile.is-selected .label,
+.t3-beef-drawer-tile.is-selected .t3-beef-tile-label,
+.t3-beef-drawer-tile.is-selected .t3-beef-tile-label-single {
   color: #1E1E24 !important;
   font-weight: 600;
 }
 
-.t3-beef-drawer-tile.is-selected .value {
+.t3-beef-drawer-tile.is-selected .value,
+.t3-beef-drawer-tile.is-selected .t3-beef-tile-val {
   color: #1E1E24 !important;
   font-weight: 700;
 }
@@ -4157,6 +4209,176 @@ input,
 .t3-beef-stepper-btn:active {
   background: rgba(255, 255, 255, 0.15);
   border-radius: 50%;
+}
+
+/* ==========================================================================
+   TASK 3C: BEEF CAROUSELS (TYPE & DONENESS) - FIGMA 3028:29970 & 3072:10345
+   ========================================================================== */
+.t3-beef-carousel-wrap {
+  position: absolute;
+  left: 357px;
+  top: 97px;
+  width: 577px;
+  height: 200px;
+  z-index: 25;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  pointer-events: auto;
+}
+
+.t3-beef-carousel {
+  width: 577px;
+  height: 172px;
+  overflow-x: scroll;
+  overflow-y: hidden;
+  scroll-behavior: smooth;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  cursor: grab;
+  user-select: none;
+  touch-action: pan-x;
+}
+
+.t3-beef-carousel::-webkit-scrollbar {
+  display: none;
+}
+
+.t3-beef-carousel:active {
+  cursor: grabbing;
+}
+
+.t3-beef-carousel-track {
+  display: flex;
+  flex-direction: row;
+  align-items: stretch;
+  gap: 24px;
+  padding: 0 128.5px;
+  width: max-content;
+  box-sizing: border-box;
+}
+
+.t3-beef-card {
+  flex: 0 0 320px;
+  width: 320px;
+  height: 172px;
+  scroll-snap-align: center;
+  border-radius: 8px;
+  background: rgba(61, 62, 68, 0.9);
+  box-sizing: border-box;
+  position: relative;
+  cursor: pointer;
+  border: 2px solid transparent;
+  transition: border-color 0.15s ease, background-color 0.15s ease;
+  overflow: hidden;
+  user-select: none;
+}
+
+.t3-beef-card.is-selected {
+  border-color: #FFFFFF !important;
+}
+
+.t3-beef-card-title {
+  position: absolute;
+  left: 32px;
+  top: 16px;
+  font-family: var(--font-display, var(--font-text, sans-serif));
+  font-size: 28px;
+  font-weight: 600;
+  line-height: 34px;
+  color: #D9D8D7;
+  pointer-events: none;
+}
+
+.t3-beef-card.is-selected .t3-beef-card-title {
+  color: #FFFFFF;
+}
+
+.t3-beef-card-check {
+  display: none;
+  position: absolute;
+  right: 16px;
+  top: 16px;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: #FFFFFF;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+}
+
+.t3-beef-card.is-selected .t3-beef-card-check {
+  display: flex;
+}
+
+.t3-beef-card-img-wrap {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 16px;
+  height: 80px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+}
+
+.t3-beef-card-img-wrap img {
+  max-height: 80px;
+  max-width: 90%;
+  object-fit: contain;
+  display: block;
+  pointer-events: none;
+}
+
+.t3-beef-card-desc-wrap {
+  position: absolute;
+  left: 32px;
+  right: 32px;
+  top: 60px;
+  bottom: 16px;
+  display: flex;
+  align-items: center;
+  pointer-events: none;
+}
+
+.t3-beef-card-desc {
+  margin: 0;
+  font-family: var(--font-text, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif);
+  font-size: 20px;
+  font-weight: 400;
+  line-height: 26px;
+  color: #D9D8D7;
+}
+
+.t3-beef-carousel-dots {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  height: 24px;
+  margin-top: 6px;
+  pointer-events: auto;
+}
+
+.t3-carousel-dot {
+  width: 8px;
+  height: 8px;
+  padding: 0;
+  border-radius: 50%;
+  background: #5D5C62;
+  border: none;
+  cursor: pointer;
+  outline: none;
+  transition: background-color 0.2s ease, transform 0.2s ease;
+}
+
+.t3-carousel-dot.is-active {
+  background: #FFFFFF;
+  transform: scale(1.15);
 }
 
 /* Back button (< Cooktop) across screens */
