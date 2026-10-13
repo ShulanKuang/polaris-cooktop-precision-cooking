@@ -296,7 +296,6 @@
     // Task 3B: Temperature Picker & Preheat
     t3TabBtnTemperature: document.getElementById("t3TabBtnTemperature"),
     t3ScreenTemperature: document.getElementById("t3ScreenTemperature"),
-    t3TemperatureMinimapOverlay: document.getElementById("t3TemperatureMinimapOverlay"),
     t3BtnBackFromTemp: document.getElementById("t3BtnBackFromTemp"),
     t3TabBtnSpotlightFromTemp: document.getElementById("t3TabBtnSpotlightFromTemp"),
     t3TabBtnFoodFromTemp: document.getElementById("t3TabBtnFoodFromTemp"),
@@ -307,7 +306,6 @@
 
     // Task 3B: Digital Keypad Screen (Figma 3017:25641)
     t3ScreenDigipad: document.getElementById("t3ScreenDigipad"),
-    t3DigipadMinimapOverlay: document.getElementById("t3DigipadMinimapOverlay"),
     t3BtnBackFromDigipad: document.getElementById("t3BtnBackFromDigipad"),
     t3DigipadTempDisplay: document.getElementById("t3DigipadTempDisplay"),
     t3DigipadTempNum: document.getElementById("t3DigipadTempNum"),
@@ -355,7 +353,6 @@
     t3StatusBurnerStrip5: document.getElementById("t3StatusBurnerStrip5"),
 
     t3ScreenTempRun: document.getElementById("t3ScreenTempRun"),
-    t3TempRunMinimapOverlay: document.getElementById("t3TempRunMinimapOverlay"),
     t3BtnBackFromTempRun: document.getElementById("t3BtnBackFromTempRun"),
     t3RunPickerWheelContainer: document.getElementById("t3RunPickerWheelContainer"),
     t3RunPickerTrack: document.getElementById("t3RunPickerTrack"),
@@ -368,7 +365,6 @@
     t3TabBtnFood: document.getElementById("t3TabBtnFood"),
 
     t3ScreenFoodOptions: document.getElementById("t3ScreenFoodOptions"),
-    t3FoodMinimapOverlay: document.getElementById("t3FoodMinimapOverlay"),
     t3BtnBackFromFoodOptions: document.getElementById("t3BtnBackFromFoodOptions"),
     t3TabFoodToSpotlight: document.getElementById("t3TabFoodToSpotlight"),
     t3TabFoodToTemp: document.getElementById("t3TabFoodToTemp"),
@@ -2194,12 +2190,6 @@
       return;
     }
 
-    // Toggle Front Left active mini-map overlay across precision cooking screens
-    const isFrontLeft = (activePrcKnobIndex === 1);
-    if (els.t3TemperatureMinimapOverlay) els.t3TemperatureMinimapOverlay.hidden = !isFrontLeft;
-    if (els.t3DigipadMinimapOverlay) els.t3DigipadMinimapOverlay.hidden = !isFrontLeft;
-    if (els.t3TempRunMinimapOverlay) els.t3TempRunMinimapOverlay.hidden = !isFrontLeft;
-
     const outgoingScreen = (t3Stage === "burnerStatus" && els.t3ScreenBurnerStatus && !els.t3ScreenBurnerStatus.hidden)
       ? els.t3ScreenBurnerStatus
       : els.t3ScreenStart;
@@ -2246,8 +2236,6 @@
         screen: els.t3ScreenTemperature,
         getContent: () => [els.t3PickerWheelContainer, els.t3BtnStartTemp, els.t3BtnKeypadFromTemp].filter(Boolean),
         onInit: () => {
-          const isFrontLeft = (activePrcKnobIndex === 1);
-          if (els.t3TemperatureMinimapOverlay) els.t3TemperatureMinimapOverlay.hidden = !isFrontLeft;
           scrollToT3Temp(state.task3TargetTemp || 375, false);
         }
       },
@@ -2275,8 +2263,6 @@
         screen: els.t3ScreenFoodOptions,
         getContent: () => [els.t3FoodScroll].filter(Boolean),
         onInit: () => {
-          const isFrontLeft = (activePrcKnobIndex === 1);
-          if (els.t3FoodMinimapOverlay) els.t3FoodMinimapOverlay.hidden = !isFrontLeft;
           if (els.t3FoodScroll) els.t3FoodScroll.scrollTop = 0;
         }
       },
@@ -2414,8 +2400,6 @@
 
   function transitionToT3FoodOptions(outgoingScreen = null) {
     playSound("touch");
-    const isFrontLeft = (activePrcKnobIndex === 1);
-    if (els.t3FoodMinimapOverlay) els.t3FoodMinimapOverlay.hidden = !isFrontLeft;
 
     const currentScreen = outgoingScreen ||
       (els.t3ScreenTemperature && !els.t3ScreenTemperature.hidden ? els.t3ScreenTemperature :
@@ -4031,9 +4015,15 @@
     }
 
     // Food Options 3-Column Grid Cards Selection (Figma 3021:26359 & 3028:28875)
+    let isFoodOrDrawerDragging = false;
     const t3FoodCards = document.querySelectorAll("#t3FoodScroll .t3-food-card");
     t3FoodCards.forEach(card => {
       card.addEventListener("click", (e) => {
+        if (isFoodOrDrawerDragging) {
+          e.stopPropagation();
+          e.preventDefault();
+          return;
+        }
         e.stopPropagation();
         playSound("touch");
         t3FoodCards.forEach(c => c.classList.remove("is-selected"));
@@ -4252,35 +4242,85 @@
     // 3. Side Panel Handle (Figma 2581:7152) - Disabled, Non-collapsible
 
 
-    // 4. Drawer Scrollable Container Smooth Mouse Drag & Wheel
+    // 4. Drawer & Food Scrollable Container Smooth Drag (Mouse & Touch)
     document.querySelectorAll(".t3-drawer-scrollable-options, .t3-food-scroll-container").forEach(scrollBox => {
       let isDown = false;
       let startY = 0;
       let scrollTop = 0;
       let hasMoved = false;
 
+      // Mouse drag
       scrollBox.addEventListener("mousedown", (e) => {
         isDown = true;
         hasMoved = false;
         startY = e.pageY - scrollBox.offsetTop;
         scrollTop = scrollBox.scrollTop;
       });
-      scrollBox.addEventListener("mouseleave", () => { isDown = false; });
+      scrollBox.addEventListener("mouseleave", () => {
+        isDown = false;
+        if (hasMoved) {
+          setTimeout(() => { isFoodOrDrawerDragging = false; }, 80);
+        }
+      });
       scrollBox.addEventListener("mouseup", () => {
-        setTimeout(() => { isDown = false; hasMoved = false; }, 60);
+        setTimeout(() => {
+          isDown = false;
+          hasMoved = false;
+          isFoodOrDrawerDragging = false;
+        }, 120);
       });
       scrollBox.addEventListener("mousemove", (e) => {
         if (!isDown) return;
         const y = e.pageY - scrollBox.offsetTop;
-        if (Math.abs(y - startY) > 6) {
+        if (Math.abs(y - startY) > 5) {
           hasMoved = true;
+          isFoodOrDrawerDragging = true;
         }
         e.preventDefault();
         const walk = (y - startY) * 1.5;
         scrollBox.scrollTop = scrollTop - walk;
       });
+
+      // Touch drag for iPad Safari and touch monitors
+      let touchActive = false;
+      let touchStartY = 0;
+      let touchScrollTop = 0;
+      let touchMoved = false;
+
+      scrollBox.addEventListener("touchstart", (e) => {
+        if (e.touches && e.touches.length === 1) {
+          touchActive = true;
+          touchMoved = false;
+          touchStartY = e.touches[0].pageY;
+          touchScrollTop = scrollBox.scrollTop;
+        }
+      }, { passive: true });
+
+      scrollBox.addEventListener("touchmove", (e) => {
+        if (!touchActive || !e.touches || e.touches.length !== 1) return;
+        const diff = touchStartY - e.touches[0].pageY;
+        if (Math.abs(diff) > 5) {
+          touchMoved = true;
+          isFoodOrDrawerDragging = true;
+        }
+        // Direct scroll update ensures 100% responsiveness on touch devices
+        scrollBox.scrollTop = touchScrollTop + diff;
+      }, { passive: true });
+
+      const finishTouch = () => {
+        touchActive = false;
+        if (touchMoved) {
+          setTimeout(() => {
+            touchMoved = false;
+            isFoodOrDrawerDragging = false;
+          }, 150);
+        }
+      };
+      scrollBox.addEventListener("touchend", finishTouch, { passive: true });
+      scrollBox.addEventListener("touchcancel", finishTouch, { passive: true });
+
       scrollBox.addEventListener("click", (e) => {
-        if (hasMoved) {
+        if (hasMoved || touchMoved || isFoodOrDrawerDragging) {
           e.stopPropagation();
           e.preventDefault();
         }

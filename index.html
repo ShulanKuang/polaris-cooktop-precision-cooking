@@ -6,7 +6,7 @@
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <title>Polaris Cooktop Precision Cooking Prototype</title>
-  <link rel="stylesheet" href="./styles.css?v=20261012-v8-task3c">
+  <link rel="stylesheet" href="./styles.css?v=20261013-v9-fix">
 </head>
 <body>
   <div class="test-environment">
@@ -571,7 +571,6 @@
             <!-- 4. SCREEN: 3B-PCTEMPERATURE (HORIZONTAL PICKER & START BUTTON) -->
             <div class="t3-screen" id="t3ScreenTemperature" hidden>
               <img class="t3-screen-bg" src="./assets/task3a-pc-temp-picker-bg.png" alt="Precision Cooking Temperature">
-              <img id="t3TemperatureMinimapOverlay" class="t3-temp-minimap-overlay" src="./assets/task3c/minimap-front-left-active.png" alt="Front Left Burner Active" hidden>
               <!-- Back button (< Precision Cooking) -->
               <button type="button" class="t3-back-btn" id="t3BtnBackFromTemp" aria-label="Back to Burners"></button>
 
@@ -598,7 +597,6 @@
             <!-- 4B. SCREEN: 3B-DIGIPAD (PC TEMPERATURE DIGIPAD - FIGMA 3017:25641) -->
             <div class="t3-screen" id="t3ScreenDigipad" hidden>
               <img class="t3-screen-bg" src="./assets/task3b-temp-digipad.png" alt="Precision Cooking Temperature Keypad">
-              <img id="t3DigipadMinimapOverlay" class="t3-temp-minimap-overlay" src="./assets/task3c/minimap-front-left-active.png" alt="Front Left Burner Active" hidden>
               <!-- Back button (< Burners) -->
               <button type="button" class="t3-back-btn" id="t3BtnBackFromDigipad" aria-label="Back to Burners"></button>
 
@@ -820,7 +818,6 @@
             <!-- 8. SCREEN: 3B-PCTEMPERATURERUN (RUNNING TEMP WITH UPDATE BUTTON & KEYPAD - FIGMA 3017:26093) -->
             <div class="t3-screen" id="t3ScreenTempRun" hidden>
               <img class="t3-screen-bg" src="./assets/task3b-pc-temp-update-bg.png" alt="Precision Cooking Temperature Running">
-              <img id="t3TempRunMinimapOverlay" class="t3-temp-minimap-overlay" src="./assets/task3c/minimap-front-left-active.png" alt="Front Left Burner Active" hidden>
               <!-- Back button (< Precision Cooking) -->
               <button type="button" class="t3-back-btn" id="t3BtnBackFromTempRun" aria-label="Back to Burners"></button>
 
@@ -848,7 +845,6 @@
             <!-- 9. SCREEN: 3C-FOOD-OPTIONS (PRECISION COOKING FOOD GRID - FIGMA 3021:26359) -->
             <div class="t3-screen" id="t3ScreenFoodOptions" hidden>
               <img class="t3-screen-bg" src="./assets/task3c-pc-food-clean-bg.png" alt="Precision Cooking Food Options">
-              <img id="t3FoodMinimapOverlay" class="t3-temp-minimap-overlay" src="./assets/task3c/minimap-front-left-active.png" alt="Front Left Burner Active" hidden>
               <!-- Back button (< Precision Cooking) -->
               <button type="button" class="t3-back-btn" id="t3BtnBackFromFoodOptions" aria-label="Back to Burners"></button>
 
@@ -1356,6 +1352,6 @@
     </footer>
   </div>
 
-  <script src="./app.js?v=20261012-v8-task3c"></script>
+  <script src="./app.js?v=20261013-v9-fix"></script>
 </body>
 </html>
