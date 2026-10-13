@@ -3451,38 +3451,8 @@
     // ==============================================
     // TASK 3A: PRECISION COOKING FLOW LISTENERS
     // ==============================================
-    if (els.t3BtnExplore) {
-      els.t3BtnExplore.addEventListener("click", () => {
-        playSound("touch");
-        // Animate Knob 1 turning to PRC position and trigger flow
-        setKnobAngle(1, -56, true, true);
-      });
-    }
-    // Tapping directly on any screen burner triggers its dedicated knob and animations
-    [1, 2, 3, 4, 5].forEach(i => {
-      const roller = els[`t3BurnerRoller${i}`];
-      if (roller) {
-        roller.addEventListener("click", (e) => {
-          e.stopPropagation();
-          playSound("touch");
-          const k = knobsState[i - 1];
-          const isOff = !k || Math.abs(k.angle) <= 5;
-          const targetAngle = isOff ? (i === 3 ? 45 : -56) : 0;
-          setKnobAngle(i, targetAngle, true, true);
-        });
-      }
-    });
-
-    if (els.t3HotspotMainBurner) {
-      els.t3HotspotMainBurner.addEventListener("click", (e) => {
-        e.stopPropagation();
-        playSound("touch");
-        const k = knobsState[3];
-        const isOff = !k || Math.abs(k.angle) <= 5;
-        const targetAngle = isOff ? -56 : 0;
-        setKnobAngle(4, targetAngle, true, true);
-      });
-    }
+    // Screen burners are display-only indicators (press & start on screen burner disabled).
+    // All burner activation, deactivation, and setting levels are operated exclusively via the knobs.
 
     // Toast Actions: X button immediately advances to Precision Cooking without 3s countdown
     if (els.t3ToastClose) {

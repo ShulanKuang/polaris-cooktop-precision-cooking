@@ -2391,40 +2391,21 @@ input,
   display: none; /* Shadow is already baked behind the status bar and text in task3a-start-burners.png; hidden here so status bar and Burners label stay bright and unobstructed */
 }
 
-/* Explore / Cooktop Surface Hotspot (Task 3A Start) */
+/* Explore / Cooktop Surface Hotspot (Disabled: screen burners do not press-to-start) */
 .t3-explore-hotspot {
-  position: absolute;
-  left: 0;
-  top: 48px;
-  right: 0;
-  bottom: 0;
-  background: transparent;
-  border: none;
-  cursor: pointer;
-  z-index: 101;
-  outline: none;
+  display: none !important;
+  pointer-events: none !important;
 }
 
-/* Burner Hotspot (Rear Left Burner: x=324, y=73, w=125, h=125 -> adjusted to left: 234px) */
+/* Burner Hotspots (Disabled: screen burners do not press-to-start) */
 .t3-burner-hotspot {
-  position: absolute;
-  left: 234px;
-  top: 73px;
-  width: 125px;
-  height: 125px;
-  background: transparent;
-  border: none;
-  cursor: pointer;
-  z-index: 102;
-  border-radius: 50%;
+  display: none !important;
+  pointer-events: none !important;
 }
 
 .t3-burner-hotspot.t3-burner-hotspot-main {
-  left: 433px;
-  top: 170px;
-  width: 176px;
-  height: 176px;
-  border-radius: 50%;
+  display: none !important;
+  pointer-events: none !important;
 }
 
 /* ============================================== */
@@ -2437,8 +2418,8 @@ input,
   display: flex;
   align-items: center;
   justify-content: center;
-  pointer-events: auto;
-  cursor: pointer;
+  pointer-events: none !important;
+  cursor: default !important;
   opacity: 0;
   transition: opacity 0.2s ease;
   z-index: 105;
