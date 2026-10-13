@@ -4245,40 +4245,49 @@
     // 4. Drawer & Food Scrollable Container Smooth Drag (Mouse & Touch)
     document.querySelectorAll(".t3-drawer-scrollable-options, .t3-food-scroll-container").forEach(scrollBox => {
       let isDown = false;
-      let startY = 0;
-      let scrollTop = 0;
+      let startClientY = 0;
+      let startScrollTop = 0;
       let hasMoved = false;
 
-      // Mouse drag
-      scrollBox.addEventListener("mousedown", (e) => {
-        isDown = true;
-        hasMoved = false;
-        startY = e.pageY - scrollBox.offsetTop;
-        scrollTop = scrollBox.scrollTop;
-      });
-      scrollBox.addEventListener("mouseleave", () => {
-        isDown = false;
-        if (hasMoved) {
-          setTimeout(() => { isFoodOrDrawerDragging = false; }, 80);
-        }
-      });
-      scrollBox.addEventListener("mouseup", () => {
-        setTimeout(() => {
-          isDown = false;
-          hasMoved = false;
-          isFoodOrDrawerDragging = false;
-        }, 120);
-      });
-      scrollBox.addEventListener("mousemove", (e) => {
+      const getAppScale = () => {
+        return parseFloat(getComputedStyle(document.documentElement).getPropertyValue("--app-scale")) || 1.0;
+      };
+
+      // Mouse drag with window-level tracking
+      const onMouseMove = (e) => {
         if (!isDown) return;
-        const y = e.pageY - scrollBox.offsetTop;
-        if (Math.abs(y - startY) > 5) {
+        const scale = getAppScale();
+        const diff = (e.clientY - startClientY) / scale;
+        if (Math.abs(diff) > 4) {
           hasMoved = true;
           isFoodOrDrawerDragging = true;
         }
+        scrollBox.scrollTop = startScrollTop - diff;
         e.preventDefault();
-        const walk = (y - startY) * 1.5;
-        scrollBox.scrollTop = scrollTop - walk;
+      };
+
+      const onMouseUp = () => {
+        if (!isDown) return;
+        isDown = false;
+        window.removeEventListener("mousemove", onMouseMove);
+        window.removeEventListener("mouseup", onMouseUp);
+        if (hasMoved) {
+          setTimeout(() => {
+            hasMoved = false;
+            isFoodOrDrawerDragging = false;
+          }, 120);
+        } else {
+          isFoodOrDrawerDragging = false;
+        }
+      };
+
+      scrollBox.addEventListener("mousedown", (e) => {
+        isDown = true;
+        hasMoved = false;
+        startClientY = e.clientY;
+        startScrollTop = scrollBox.scrollTop;
+        window.addEventListener("mousemove", onMouseMove);
+        window.addEventListener("mouseup", onMouseUp);
       });
 
       // Touch drag for iPad Safari and touch monitors
@@ -4291,19 +4300,19 @@
         if (e.touches && e.touches.length === 1) {
           touchActive = true;
           touchMoved = false;
-          touchStartY = e.touches[0].pageY;
+          touchStartY = e.touches[0].clientY;
           touchScrollTop = scrollBox.scrollTop;
         }
       }, { passive: true });
 
       scrollBox.addEventListener("touchmove", (e) => {
         if (!touchActive || !e.touches || e.touches.length !== 1) return;
-        const diff = touchStartY - e.touches[0].pageY;
+        const scale = getAppScale();
+        const diff = (touchStartY - e.touches[0].clientY) / scale;
         if (Math.abs(diff) > 5) {
           touchMoved = true;
           isFoodOrDrawerDragging = true;
         }
-        // Direct scroll update ensures 100% responsiveness on touch devices
         scrollBox.scrollTop = touchScrollTop + diff;
       }, { passive: true });
 
@@ -4314,6 +4323,8 @@
             touchMoved = false;
             isFoodOrDrawerDragging = false;
           }, 150);
+        } else {
+          isFoodOrDrawerDragging = false;
         }
       };
       scrollBox.addEventListener("touchend", finishTouch, { passive: true });

@@ -3930,42 +3930,42 @@ input,
   position: absolute;
   left: 179px;
   top: 123px;
-  width: 590px;
+  width: 576px;
   height: 261px;
   overflow-y: scroll;
   overflow-x: hidden;
   -webkit-overflow-scrolling: touch;
   touch-action: pan-y !important;
   z-index: 10;
-  padding-bottom: 32px;
+  padding-bottom: 24px;
   box-sizing: border-box;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
 }
 
 .t3-food-scroll-container::-webkit-scrollbar {
-  width: 6px;
-}
-
-.t3-food-scroll-container::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-.t3-food-scroll-container::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.25);
-  border-radius: 3px;
+  display: none;
+  width: 0;
+  height: 0;
 }
 
 .t3-food-grid {
   display: grid;
   grid-template-columns: repeat(3, 176px);
   gap: 24px;
+  width: 576px;
   justify-content: start;
   touch-action: pan-y !important;
 }
 
 .t3-food-card {
   width: 176px;
+  min-width: 176px;
+  max-width: 176px;
   height: 96px;
-  background: transparent;
+  min-height: 96px;
+  max-height: 96px;
+  background: rgba(75, 76, 82, 0.8);
   border-radius: 8px;
   border: none;
   display: flex;
@@ -3987,7 +3987,7 @@ input,
 }
 
 .t3-food-card:hover {
-  background: transparent;
+  background: rgba(95, 96, 104, 0.9);
 }
 
 .t3-food-card:active {
