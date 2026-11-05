@@ -1946,31 +1946,6 @@ input,
   top: 294px;
 }
 
-/* For screens with baked-in Temperature active state (Figma 3198:27479) */
-.pc-side-drawer-nav.has-baked-temp .pc-drawer-item {
-  color: transparent;
-  background: transparent;
-}
-
-.pc-side-drawer-nav.has-baked-temp .pc-drawer-item.is-active {
-  color: transparent !important;
-  background: transparent !important;
-  box-shadow: none !important;
-}
-
-/* If user switches away from temperature on a has-baked-temp screen */
-.pc-side-drawer-nav.has-baked-temp .pc-drawer-item:not(.is-active)[data-t2tab="temperature"],
-.pc-side-drawer-nav.has-baked-temp .pc-drawer-item:not(.is-active)[data-t3tab="temperature"] {
-  background: #19191d !important;
-  color: rgba(255, 255, 255, 0.85) !important;
-}
-
-.pc-side-drawer-nav.has-baked-temp .pc-drawer-item.is-active:not([data-t2tab="temperature"]):not([data-t3tab="temperature"]) {
-  background: #ffffff !important;
-  color: #16171a !important;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.25) !important;
-}
-
 /* Cookware Tabs (Stainless Steel / Cast Iron / Other - Figma 3198:27479) */
 .pc-cookware-tabs {
   position: absolute;
@@ -3170,23 +3145,33 @@ input,
   opacity: 1;
 }
 
-/* Start Button on Temperature Screen (Figma node 3198:27479) */
+/* Start Button on Temperature Screen (Figma node 3198:27479 - aligned with active temperature digits) */
 .t3-temp-start-btn {
   position: absolute;
-  left: 550px;
+  left: 532px;
   top: 288px;
   width: 127px;
   height: 48px;
-  background: transparent;
+  background: #ffffff;
+  color: #16171a;
   border: none;
   cursor: pointer;
   outline: none;
-  border-radius: 999px;
+  border-radius: 24px;
+  font-family: var(--roux-typography-subtitle-small-font-family);
+  font-size: 19px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.35);
   z-index: 55;
-  transition: transform 0.12s ease;
+  transition: transform 0.12s ease, background-color 0.15s ease, box-shadow 0.15s ease;
 }
 .t3-temp-start-btn:active {
   transform: scale(0.95);
+  background-color: #e5e5e5;
 }
 
 /* Keypad Button on Temperature Screen (Figma node 3017:25518) */
