@@ -163,10 +163,10 @@
     },
     task2: {
       screen: "explore", // "explore" or "precision"
-      tab: "spotlight",  // "spotlight", "technique", "food", "temperature"
+      tab: "temperature", // Figma 3198:27479 entry is temperature
       tempMode: "picker",// "picker" or "digipad"
-      temperature: 370,
-      digipadBuffer: "370",
+      temperature: 375,
+      digipadBuffer: "375",
       hasEditedKeypad: false
     },
     task3TargetTemp: 375,
@@ -761,16 +761,17 @@
     }
     ensureNavbarVisible();
     state.task2.screen = "explore";
-    if (els.viewTask2) els.viewTask2.hidden = true;
-    if (els.viewTask3) els.viewTask3.hidden = false;
+    if (els.viewTask2) els.viewTask2.hidden = false;
+    if (els.viewTask3) els.viewTask3.hidden = true;
+    if (els.t2ScreenExplore) els.t2ScreenExplore.hidden = false;
+    if (els.t2ScreenPrecision) els.t2ScreenPrecision.hidden = true;
     if (activePrcKnobIndex) {
       setKnobAngle(activePrcKnobIndex, 0, true, true);
     }
-    showT3Screen("start");
     updateScreenBadge("explore");
   }
 
-  function showT2Precision(tabName = "spotlight", tempMode = "picker", silent = false) {
+  function showT2Precision(tabName = "temperature", tempMode = "picker", silent = false) {
     if (!silent) playSound("touch");
     if (state.currentTask === 1) {
       state.currentTask = 2;
@@ -787,6 +788,14 @@
     if (els.t2ScreenPrecision) els.t2ScreenPrecision.hidden = false;
     setT2Tab(tabName, tempMode, true);
     updateCooktopActiveState();
+    if (tabName === "temperature") {
+      requestAnimationFrame(() => {
+        scrollToT2Temp(state.task2.temperature || 375, false);
+      });
+      setTimeout(() => {
+        scrollToT2Temp(state.task2.temperature || 375, false);
+      }, 50);
+    }
   }
 
   function setT2Tab(tabName, tempMode = null, silent = false) {
@@ -796,6 +805,7 @@
       state.task2.tempMode = tempMode;
     }
 
+    const effectivePanel = (tabName === "recent") ? "spotlight" : tabName;
     const panels = {
       spotlight: els.t2PanelSpotlight,
       technique: els.t2PanelTechnique,
@@ -805,9 +815,14 @@
 
     for (const [key, panel] of Object.entries(panels)) {
       if (panel) {
-        panel.hidden = (key !== tabName);
+        panel.hidden = (key !== effectivePanel);
       }
     }
+
+    // Update active pill on Task 2 side drawer
+    document.querySelectorAll("#t2SideDrawer .pc-drawer-item").forEach(item => {
+      item.classList.toggle("is-active", item.dataset.t2tab === tabName);
+    });
 
     // Reset scroll positions when entering technique or food
     if (tabName === "technique" && els.t2TechniqueScroll) {
@@ -832,8 +847,8 @@
   // TASK 2 TEMPERATURE WHEEL & DIGIPAD LOGIC (200°F - 500°F, 10° increments)
   const T2_TEMP_MIN = 200;
   const T2_TEMP_MAX = 500;
-  const T2_TEMP_STEP = 10;
-  let lastTickTemp = 370;
+  const T2_TEMP_STEP = 25;
+  let lastTickTemp = 375;
 
   function initT2PickerWheel() {
     if (!els.t2PickerTrack) return;
@@ -883,17 +898,29 @@
       const walk = (x - startX) * 1.5;
       els.t2PickerTrack.scrollLeft = scrollLeft - walk;
     });
+
+    els.t2PickerTrack.addEventListener("touchend", () => {
+      setTimeout(snapToClosestT2Temp, 80);
+    }, { passive: true });
+
+    setTimeout(() => {
+      scrollToT2Temp(state.task2.temperature || 375, false);
+    }, 60);
   }
 
   function updateT2PickerVisuals() {
-    if (!els.t2PickerTrack) return;
-    const trackCenter = els.t2PickerTrack.scrollLeft + (els.t2PickerTrack.clientWidth / 2);
+    if (!els.t2PickerTrack || els.t2PickerTrack.offsetParent === null || els.t2PickerTrack.clientWidth === 0) return;
+    const trackWidth = els.t2PickerTrack.clientWidth || 493;
+    const trackCenter = els.t2PickerTrack.scrollLeft + (trackWidth / 2);
     const items = els.t2PickerTrack.querySelectorAll(".t2-picker-item");
     let closestItem = null;
     let closestDist = Infinity;
 
-    items.forEach(item => {
-      const itemCenter = item.offsetLeft + (item.offsetWidth / 2);
+    items.forEach((item, idx) => {
+      const paddingLeft = (trackWidth - 160) / 2;
+      const itemCenter = (item.offsetLeft > 0)
+        ? (item.offsetLeft + (item.offsetWidth / 2))
+        : (paddingLeft + idx * 160 + 80);
       const dist = Math.abs(itemCenter - trackCenter);
 
       if (dist < closestDist) {
@@ -901,18 +928,15 @@
         closestItem = item;
       }
 
-      // Hierarchy classes
+      // Hierarchy classes: strictly 3 numbers visible (center active, 1 single immediate neighbor on each side)
       item.classList.remove("is-active", "is-neighbor-1", "is-neighbor-2");
-      if (dist < 65) {
-        // active
-      } else if (dist < 195) {
+      if (dist >= 80 && dist < 240) {
         item.classList.add("is-neighbor-1");
-      } else if (dist < 325) {
-        item.classList.add("is-neighbor-2");
       }
     });
 
     if (closestItem) {
+      closestItem.classList.remove("is-neighbor-1");
       closestItem.classList.add("is-active");
       const tempVal = parseInt(closestItem.dataset.temp, 10);
       if (tempVal !== state.task2.temperature) {
@@ -930,13 +954,17 @@
 
   function snapToClosestT2Temp() {
     if (!els.t2PickerTrack) return;
-    const trackCenter = els.t2PickerTrack.scrollLeft + (els.t2PickerTrack.clientWidth / 2);
+    const trackWidth = els.t2PickerTrack.clientWidth || 493;
+    const trackCenter = els.t2PickerTrack.scrollLeft + (trackWidth / 2);
     const items = els.t2PickerTrack.querySelectorAll(".t2-picker-item");
-    let closestTemp = 370;
+    let closestTemp = 375;
     let closestDist = Infinity;
 
-    items.forEach(item => {
-      const itemCenter = item.offsetLeft + (item.offsetWidth / 2);
+    items.forEach((item, idx) => {
+      const paddingLeft = (trackWidth - 160) / 2;
+      const itemCenter = (item.offsetLeft > 0)
+        ? (item.offsetLeft + (item.offsetWidth / 2))
+        : (paddingLeft + idx * 160 + 80);
       const dist = Math.abs(itemCenter - trackCenter);
       if (dist < closestDist) {
         closestDist = dist;
@@ -949,19 +977,18 @@
 
   function scrollToT2Temp(temp, smooth = true) {
     if (!els.t2PickerTrack) return;
-    const targetItem = els.t2PickerTrack.querySelector(`.t2-picker-item[data-temp="${temp}"]`);
-    if (targetItem) {
-      const itemCenter = targetItem.offsetLeft + (targetItem.offsetWidth / 2);
-      const targetScrollLeft = itemCenter - (els.t2PickerTrack.clientWidth / 2);
-      els.t2PickerTrack.scrollTo({
-        left: targetScrollLeft,
-        behavior: smooth ? "smooth" : "auto"
-      });
-      state.task2.temperature = temp;
-      state.task2.digipadBuffer = String(temp);
-      if (els.t2DigipadValue) els.t2DigipadValue.textContent = String(temp);
-      setTimeout(updateT2PickerVisuals, smooth ? 250 : 50);
-    }
+    const index = Math.round((temp - T2_TEMP_MIN) / T2_TEMP_STEP);
+    const targetScrollLeft = index * 160;
+    els.t2PickerTrack.scrollLeft = targetScrollLeft;
+    els.t2PickerTrack.scrollTo({
+      left: targetScrollLeft,
+      behavior: smooth ? "smooth" : "auto"
+    });
+    state.task2.temperature = temp;
+    state.task2.digipadBuffer = String(temp);
+    if (els.t2DigipadValue) els.t2DigipadValue.textContent = String(temp);
+    updateT2PickerVisuals();
+    setTimeout(updateT2PickerVisuals, smooth ? 250 : 50);
   }
 
   function setT2TempMode(mode, silent = false) {
@@ -1490,6 +1517,36 @@
           }
         }, 50);
       });
+    }
+
+    // Update active pill on Task 3 side drawers
+    if (stage === "temperature") {
+      const drawer = document.getElementById("t3SideDrawerTemp");
+      if (drawer) {
+        drawer.querySelectorAll(".pc-drawer-item").forEach(item => {
+          item.classList.toggle("is-active", item.dataset.t3tab === "temperature");
+        });
+      }
+      requestAnimationFrame(() => {
+        scrollToT3Temp(state.task3TargetTemp || 375, false);
+      });
+      setTimeout(() => {
+        scrollToT3Temp(state.task3TargetTemp || 375, false);
+      }, 50);
+    } else if (stage === "technique") {
+      const drawer = document.getElementById("t3SideDrawerTech");
+      if (drawer) {
+        drawer.querySelectorAll(".pc-drawer-item").forEach(item => {
+          item.classList.toggle("is-active", item.dataset.t3tab === "technique");
+        });
+      }
+    } else if (stage === "foodOptions") {
+      const drawer = document.getElementById("t3SideDrawerFood");
+      if (drawer) {
+        drawer.querySelectorAll(".pc-drawer-item").forEach(item => {
+          item.classList.toggle("is-active", item.dataset.t3tab === "food");
+        });
+      }
     }
 
     // Activity bar & Cooktop Hot indicator are active whenever any knob is turned on or cooking runs
@@ -2971,18 +3028,26 @@
     els.t3PickerTrack.addEventListener("touchend", () => {
       setTimeout(snapToClosestT3Temp, 80);
     }, { passive: true });
+
+    setTimeout(() => {
+      scrollToT3Temp(state.task3TargetTemp || 375, false);
+    }, 60);
   }
 
   let lastT3TickTemp = null;
   function updateT3PickerVisuals() {
-    if (!els.t3PickerTrack) return;
-    const trackCenter = els.t3PickerTrack.scrollLeft + (els.t3PickerTrack.clientWidth / 2);
+    if (!els.t3PickerTrack || els.t3PickerTrack.offsetParent === null || els.t3PickerTrack.clientWidth === 0) return;
+    const trackWidth = els.t3PickerTrack.clientWidth || 493;
+    const trackCenter = els.t3PickerTrack.scrollLeft + (trackWidth / 2);
     const items = els.t3PickerTrack.querySelectorAll(".t3-picker-item");
     let closestItem = null;
     let closestDist = Infinity;
 
-    items.forEach(item => {
-      const itemCenter = item.offsetLeft + (item.offsetWidth / 2);
+    items.forEach((item, idx) => {
+      const paddingLeft = (trackWidth - 160) / 2;
+      const itemCenter = (item.offsetLeft > 0)
+        ? (item.offsetLeft + (item.offsetWidth / 2))
+        : (paddingLeft + idx * 160 + 80);
       const dist = Math.abs(itemCenter - trackCenter);
 
       if (dist < closestDist) {
@@ -2991,11 +3056,11 @@
       }
 
       item.classList.remove("is-active", "is-neighbor-1", "is-neighbor-2");
-      // Dist threshold with 180px items:
-      // Active item: dist < 90
-      // Single immediate neighbor on each side (350 and 400): 90 <= dist < 270
-      // Any further numbers (325, 300, 425, 450): dist >= 270 -> hidden (opacity 0)
-      if (dist >= 90 && dist < 270) {
+      // Dist threshold with 160px items (Figma 3198:27479):
+      // Active item: dist < 80
+      // Single immediate neighbor on each side (e.g. 350 and 400): 80 <= dist < 240
+      // Any further numbers (325, 300, 425, 450): dist >= 240 -> strictly hidden (opacity 0)
+      if (dist >= 80 && dist < 240) {
         item.classList.add("is-neighbor-1");
       }
     });
@@ -3016,13 +3081,17 @@
 
   function snapToClosestT3Temp() {
     if (!els.t3PickerTrack) return;
-    const trackCenter = els.t3PickerTrack.scrollLeft + (els.t3PickerTrack.clientWidth / 2);
+    const trackWidth = els.t3PickerTrack.clientWidth || 493;
+    const trackCenter = els.t3PickerTrack.scrollLeft + (trackWidth / 2);
     const items = els.t3PickerTrack.querySelectorAll(".t3-picker-item");
     let closestTemp = 375;
     let closestDist = Infinity;
 
-    items.forEach(item => {
-      const itemCenter = item.offsetLeft + (item.offsetWidth / 2);
+    items.forEach((item, idx) => {
+      const paddingLeft = (trackWidth - 160) / 2;
+      const itemCenter = (item.offsetLeft > 0)
+        ? (item.offsetLeft + (item.offsetWidth / 2))
+        : (paddingLeft + idx * 160 + 80);
       const dist = Math.abs(itemCenter - trackCenter);
       if (dist < closestDist) {
         closestDist = dist;
@@ -3035,18 +3104,16 @@
 
   function scrollToT3Temp(temp, smooth = true) {
     if (!els.t3PickerTrack) return;
-    const targetItem = els.t3PickerTrack.querySelector(`.t3-picker-item[data-temp="${temp}"]`);
-    if (targetItem) {
-      const trackWidth = els.t3PickerTrack.clientWidth || 840;
-      const itemCenter = targetItem.offsetLeft + (targetItem.offsetWidth / 2);
-      const targetScrollLeft = itemCenter - (trackWidth / 2);
-      els.t3PickerTrack.scrollTo({
-        left: targetScrollLeft,
-        behavior: smooth ? "smooth" : "auto"
-      });
-      state.task3TargetTemp = temp;
-      setTimeout(updateT3PickerVisuals, smooth ? 250 : 50);
-    }
+    const index = Math.round((temp - T3_TEMP_MIN) / T3_TEMP_STEP);
+    const targetScrollLeft = index * 160;
+    els.t3PickerTrack.scrollLeft = targetScrollLeft;
+    els.t3PickerTrack.scrollTo({
+      left: targetScrollLeft,
+      behavior: smooth ? "smooth" : "auto"
+    });
+    state.task3TargetTemp = temp;
+    updateT3PickerVisuals();
+    setTimeout(updateT3PickerVisuals, smooth ? 250 : 50);
   }
 
   // TASK 3: PCTEMPERATURERUN HORIZONTAL TEMPERATURE CAROUSEL PICKER
@@ -3121,11 +3188,11 @@
       }
 
       item.classList.remove("is-active", "is-neighbor-1", "is-neighbor-2");
-      // Dist threshold with 180px items:
-      // Active item: dist < 90
-      // Single immediate neighbor on each side (350 and 400): 90 <= dist < 270
-      // Any further numbers (325, 300, 425, 450): dist >= 270 -> hidden (opacity 0)
-      if (dist >= 90 && dist < 270) {
+      // Dist threshold with 160px items (Figma 3198:27479):
+      // Active item: dist < 80
+      // Single immediate neighbor on each side (e.g. 350 and 400): 80 <= dist < 240
+      // Any further numbers (325, 300, 425, 450): dist >= 240 -> strictly hidden (opacity 0)
+      if (dist >= 80 && dist < 240) {
         item.classList.add("is-neighbor-1");
       }
     });
@@ -3435,13 +3502,13 @@
 
     // TASK 2 EVENT LISTENERS
     if (els.t2BtnExplore) {
-      els.t2BtnExplore.addEventListener("click", () => showT2Precision("spotlight"));
+      els.t2BtnExplore.addEventListener("click", () => showT2Precision("temperature"));
     }
     if (els.t2BtnBack) {
       els.t2BtnBack.addEventListener("click", () => showT2Explore());
     }
 
-    // Task 2 Tab Bar
+    // Task 2 Tab Bar & Side Drawer Navigation
     let lastT2TabTime = 0;
     const bindT2TabBtn = (btn) => {
       const tabTarget = btn.dataset.t2tab;
@@ -3467,7 +3534,35 @@
       btn.addEventListener("touchstart", triggerTab, { passive: false });
       btn.addEventListener("pointerdown", triggerTab);
     };
-    document.querySelectorAll(".t2-tab-btn").forEach(bindT2TabBtn);
+    document.querySelectorAll(".t2-tab-btn, .pc-drawer-item[data-t2tab]").forEach(bindT2TabBtn);
+
+    // Cookware tabs (Stainless Steel / Cast Iron / Other / Info - Figma 3198:27479)
+    document.querySelectorAll(".pc-cookware-tab").forEach(tab => {
+      tab.addEventListener("click", (e) => {
+        e.stopPropagation();
+        playSound("touch");
+        const parent = tab.closest(".pc-cookware-tabs");
+        if (parent) {
+          parent.querySelectorAll(".pc-cookware-tab").forEach(t => t.classList.remove("is-active"));
+        }
+        tab.classList.add("is-active");
+      });
+    });
+
+    const t2CookwareInfo = document.getElementById("t2CookwareInfo");
+    if (t2CookwareInfo) {
+      t2CookwareInfo.addEventListener("click", (e) => {
+        e.stopPropagation();
+        playSound("touch");
+      });
+    }
+    const t3CookwareInfo = document.getElementById("t3CookwareInfo");
+    if (t3CookwareInfo) {
+      t3CookwareInfo.addEventListener("click", (e) => {
+        e.stopPropagation();
+        playSound("touch");
+      });
+    }
 
     // Task 2 Temperature Mode Switchers
     if (els.t2BtnToDigipad) {
@@ -4048,7 +4143,7 @@
       btn.addEventListener("touchstart", triggerTab, { passive: false });
       btn.addEventListener("pointerdown", triggerTab);
     };
-    document.querySelectorAll(".t3-tab-btn").forEach(bindT3TabBtn);
+    document.querySelectorAll(".t3-tab-btn, .pc-drawer-item[data-t3tab]").forEach(bindT3TabBtn);
 
     // Food Options Screen Back Button (< Cooktop)
     if (els.t3BtnBackFromFoodOptions) {

@@ -171,27 +171,27 @@
             <div class="t2-screen" id="t2ScreenExplore">
               <img class="t2-screen-bg" src="./assets/task3a-start.png" alt="Cooktop Home - All Burners Off">
               <!-- Clickable Explore Button -->
-              <button type="button" class="t2-explore-btn" id="t2BtnExplore" aria-label="Explore Precision Cooking" style="display:none;"></button>
+              <button type="button" class="t2-explore-btn" id="t2BtnExplore" aria-label="Explore Precision Cooking"></button>
             </div>
 
-            <!-- 2. SCREEN: PRECISION COOKING (TABS + PANELS) -->
+            <!-- 2. SCREEN: PRECISION COOKING (TABS + PANELS - FIGMA NODE 3198:27479) -->
             <div class="t2-screen" id="t2ScreenPrecision" hidden>
-              <!-- Base background canvas with side rail, top status, and breakfast artwork -->
-              <img class="t2-screen-bg" src="./assets/pc-bg.png" alt="Precision Cooking Background">
+              <!-- Base background canvas with side rail, top status, and authentic side drawer -->
+              <img class="t2-screen-bg" src="./assets/pc-temperature-entry.png" alt="Precision Cooking Background">
 
               <!-- Back button (< Cooktop) -->
               <button type="button" class="t2-back-btn" id="t2BtnBack" aria-label="Back to Cooktop"></button>
 
-              <!-- TAB GROUP: Spotlight / Technique / Food / Temperature -->
-              <nav class="t2-tab-group" id="t2TabGroup">
-                <button type="button" class="t2-tab-btn" data-t2tab="spotlight" id="t2TabSpotlight" aria-label="Spotlight Tab"></button>
-                <button type="button" class="t2-tab-btn" data-t2tab="technique" id="t2TabTechnique" aria-label="Technique Tab"></button>
-                <button type="button" class="t2-tab-btn" data-t2tab="food" id="t2TabFood" aria-label="Food Tab"></button>
-                <button type="button" class="t2-tab-btn" data-t2tab="temperature" id="t2TabTemperature" aria-label="Temperature Tab"></button>
+              <!-- SIDE DRAWER NAVIGATION: Temperature / Food / Technique / Recent Used (Figma 3198:27479) -->
+              <nav class="pc-side-drawer-nav has-baked-temp" id="t2SideDrawer">
+                <button type="button" class="pc-drawer-item is-active" data-t2tab="temperature" id="t2TabTemperature">Temperature</button>
+                <button type="button" class="pc-drawer-item" data-t2tab="food" id="t2TabFood">Food</button>
+                <button type="button" class="pc-drawer-item" data-t2tab="technique" id="t2TabTechnique">Technique</button>
+                <button type="button" class="pc-drawer-item" data-t2tab="recent" id="t2TabRecent">Recent Used</button>
               </nav>
 
               <!-- PANEL 1: SPOTLIGHT -->
-              <div class="t2-panel" id="t2PanelSpotlight">
+              <div class="t2-panel" id="t2PanelSpotlight" hidden>
                 <img class="t2-panel-bg" src="./assets/pc-spotlight.png" alt="Spotlight Screen">
                 <!-- Interactive hotspots -->
                 <button type="button" class="t2-hotspot t2-spotlight-steak" id="t2SpotlightSteak" aria-label="Suggested: Steak"></button>
@@ -259,21 +259,29 @@
                 </div>
               </div>
 
-              <!-- PANEL 4: TEMPERATURE (PICKER & DIGIPAD) -->
-              <div class="t2-panel" id="t2PanelTemperature" hidden>
+              <!-- PANEL 4: TEMPERATURE (PICKER - FIGMA NODE 3198:27479) -->
+              <div class="t2-panel" id="t2PanelTemperature">
                 <!-- Mode A: Temperature Picker -->
                 <div class="t2-temp-mode" id="t2TempModePicker">
-                  <img class="t2-temp-bg" src="./assets/pc-temperature-picker.png" alt="Temperature Picker">
+                  <img class="t2-temp-bg" src="./assets/pc-temperature-entry.png" alt="Temperature Picker">
+
+                  <!-- Cookware Tabs (Stainless Steel / Cast Iron / Other / Info - Figma 3198:27479) -->
+                  <div class="pc-cookware-tabs" id="t2CookwareTabs">
+                    <button type="button" class="pc-cookware-tab is-active" data-cookware="stainless" aria-label="Stainless Steel"></button>
+                    <button type="button" class="pc-cookware-tab" data-cookware="castiron" aria-label="Cast Iron"></button>
+                    <button type="button" class="pc-cookware-tab" data-cookware="other" aria-label="Other"></button>
+                    <button type="button" class="pc-cookware-info" id="t2CookwareInfo" aria-label="Cookware Info"></button>
+                  </div>
                   
-                  <!-- Dynamic Horizontal Temperature Carousel (200°F - 500°F in 10° increments) -->
+                  <!-- Dynamic Horizontal Temperature Carousel (200°F - 500°F in 25° increments, 3 numbers on screen) -->
                   <div class="t2-picker-wheel-container" id="t2PickerWheelContainer">
                     <div class="t2-picker-track" id="t2PickerTrack"></div>
                   </div>
 
-                  <!-- START button -->
+                  <!-- START button (Figma Node 3198:27479) -->
                   <button type="button" class="t2-temp-start-btn t2-picker-start" id="t2PickerStartBtn" aria-label="Start Temperature"></button>
-                  <!-- Secondary round button with keypad icon (switches to Digipad) -->
-                  <button type="button" class="t2-temp-switch-btn t2-switch-to-digipad" id="t2BtnToDigipad" aria-label="Switch to Keypad"></button>
+                  <!-- Secondary round button with keypad icon (hidden to match Figma 3198:27479) -->
+                  <button type="button" class="t2-temp-switch-btn t2-switch-to-digipad" id="t2BtnToDigipad" aria-label="Switch to Keypad" style="display:none;"></button>
                 </div>
 
                 <!-- Mode B: Temperature Digipad -->
@@ -535,13 +543,12 @@
               <img class="t3-screen-bg" src="./assets/task3-pc-bg-technique.png" alt="Precision Cooking Background">
               <!-- Back button (< Cooktop) -->
               <button type="button" class="t3-back-btn" id="t3BtnBackFromTechnique" aria-label="Back to Cooktop"></button>
-              <!-- TAB GROUP -->
-              <nav class="t3-tab-group" id="t3TabGroupTechnique">
-                <button type="button" class="t3-tab-btn" data-t3tab="temperature" id="t3TabTempFromTech" aria-label="Temperature Tab"></button>
-                <button type="button" class="t3-tab-btn" data-t3tab="food" id="t3TabFoodFromTech" aria-label="Food Tab"></button>
-                <button type="button" class="t3-tab-btn is-active" data-t3tab="technique" id="t3TabTechFromTech" aria-label="Technique Tab"></button>
-                <button type="button" class="t3-tab-btn" data-t3tab="favorite" id="t3TabFavFromTech" aria-label="Favorite Tab"></button>
-                <button type="button" class="t3-tab-btn" data-t3tab="recent" id="t3TabRecentFromTech" aria-label="Recent used Tab"></button>
+              <!-- SIDE DRAWER NAVIGATION: Temperature / Food / Technique / Recent Used -->
+              <nav class="pc-side-drawer-nav" id="t3SideDrawerTech">
+                <button type="button" class="pc-drawer-item" data-t3tab="temperature" id="t3TabTempFromTech">Temperature</button>
+                <button type="button" class="pc-drawer-item" data-t3tab="food" id="t3TabFoodFromTech">Food</button>
+                <button type="button" class="pc-drawer-item is-active" data-t3tab="technique" id="t3TabTechFromTech">Technique</button>
+                <button type="button" class="pc-drawer-item" data-t3tab="recent" id="t3TabRecentFromTech">Recent Used</button>
               </nav>
               <!-- Scroll Container for Technique Options -->
               <div class="t3-options-scroll-container" id="t3TechniqueScroll">
@@ -567,30 +574,37 @@
               </div>
             </div>
 
-            <!-- 4. SCREEN: 3B-PCTEMPERATURE (HORIZONTAL PICKER & START BUTTON) -->
+            <!-- 4. SCREEN: 3B-PCTEMPERATURE (HORIZONTAL PICKER & START BUTTON - FIGMA 3198:27479) -->
             <div class="t3-screen" id="t3ScreenTemperature" hidden>
               <img class="t3-screen-bg" src="./assets/task3-pc-bg-temperature.png" alt="Precision Cooking Temperature">
               <!-- Back button (< Precision Cooking) -->
               <button type="button" class="t3-back-btn" id="t3BtnBackFromTemp" aria-label="Back to Burners"></button>
 
-              <!-- TAB GROUP: Temperature / Food / Technique / Favorite / Recent used -->
-              <nav class="t3-tab-group" id="t3TabGroupTemperature">
-                <button type="button" class="t3-tab-btn" data-t3tab="temperature" id="t3TabBtnTempFromTemp" aria-label="Temperature Tab"></button>
-                <button type="button" class="t3-tab-btn" data-t3tab="food" id="t3TabBtnFoodFromTemp" aria-label="Food Tab"></button>
-                <button type="button" class="t3-tab-btn" data-t3tab="technique" id="t3TabBtnTechFromTemp" aria-label="Technique Tab"></button>
-                <button type="button" class="t3-tab-btn" data-t3tab="favorite" id="t3TabBtnFavFromTemp" aria-label="Favorite Tab"></button>
-                <button type="button" class="t3-tab-btn" data-t3tab="recent" id="t3TabBtnRecentFromTemp" aria-label="Recent used Tab"></button>
+              <!-- SIDE DRAWER NAVIGATION: Temperature / Food / Technique / Recent Used (Figma 3198:27479) -->
+              <nav class="pc-side-drawer-nav has-baked-temp" id="t3SideDrawerTemp">
+                <button type="button" class="pc-drawer-item is-active" data-t3tab="temperature" id="t3TabBtnTempFromTemp">Temperature</button>
+                <button type="button" class="pc-drawer-item" data-t3tab="food" id="t3TabBtnFoodFromTemp">Food</button>
+                <button type="button" class="pc-drawer-item" data-t3tab="technique" id="t3TabBtnTechFromTemp">Technique</button>
+                <button type="button" class="pc-drawer-item" data-t3tab="recent" id="t3TabBtnRecentFromTemp">Recent Used</button>
               </nav>
 
-              <!-- Dynamic Horizontal Temperature Carousel (200°F - 500°F in 25° increments, centered at 375°F) -->
+              <!-- Cookware Tabs (Stainless Steel / Cast Iron / Other / Info - Figma 3198:27479) -->
+              <div class="pc-cookware-tabs" id="t3CookwareTabs">
+                <button type="button" class="pc-cookware-tab is-active" data-cookware="stainless" aria-label="Stainless Steel"></button>
+                <button type="button" class="pc-cookware-tab" data-cookware="castiron" aria-label="Cast Iron"></button>
+                <button type="button" class="pc-cookware-tab" data-cookware="other" aria-label="Other"></button>
+                <button type="button" class="pc-cookware-info" id="t3CookwareInfo" aria-label="Cookware Info"></button>
+              </div>
+
+              <!-- Dynamic Horizontal Temperature Carousel (200°F - 500°F in 25° increments, centered at 375°F, 3 numbers on screen) -->
               <div class="t3-picker-wheel-container" id="t3PickerWheelContainer">
                 <div class="t3-picker-track" id="t3PickerTrack"></div>
               </div>
 
-              <!-- START Button -->
+              <!-- START Button (Figma Node 3198:27479) -->
               <button type="button" class="t3-temp-start-btn" id="t3BtnStartTemp" aria-label="Start Temperature"></button>
-              <!-- Keypad Switcher Button -->
-              <button type="button" class="t3-temp-keypad-btn" id="t3BtnKeypadFromTemp" aria-label="Switch to Keypad"></button>
+              <!-- Keypad Switcher Button (hidden to match Figma 3198:27479) -->
+              <button type="button" class="t3-temp-keypad-btn" id="t3BtnKeypadFromTemp" aria-label="Switch to Keypad" style="display:none;"></button>
             </div>
 
             <!-- 4B. SCREEN: 3B-DIGIPAD (PC TEMPERATURE DIGIPAD - FIGMA 3017:25641) -->
@@ -847,13 +861,12 @@
               <!-- Back button (< Precision Cooking) -->
               <button type="button" class="t3-back-btn" id="t3BtnBackFromFoodOptions" aria-label="Back to Burners"></button>
 
-              <!-- TAB GROUP: Temperature / Food / Technique / Favorite / Recent used -->
-              <nav class="t3-tab-group" id="t3TabGroupFood">
-                <button type="button" class="t3-tab-btn" data-t3tab="temperature" id="t3TabFoodToTemp" aria-label="Temperature Tab"></button>
-                <button type="button" class="t3-tab-btn is-active" data-t3tab="food" id="t3TabFoodToFood" aria-label="Food Tab"></button>
-                <button type="button" class="t3-tab-btn" data-t3tab="technique" id="t3TabFoodToTech" aria-label="Technique Tab"></button>
-                <button type="button" class="t3-tab-btn" data-t3tab="favorite" id="t3TabFoodToFav" aria-label="Favorite Tab"></button>
-                <button type="button" class="t3-tab-btn" data-t3tab="recent" id="t3TabFoodToRecent" aria-label="Recent used Tab"></button>
+              <!-- SIDE DRAWER NAVIGATION: Temperature / Food / Technique / Recent Used -->
+              <nav class="pc-side-drawer-nav" id="t3SideDrawerFood">
+                <button type="button" class="pc-drawer-item" data-t3tab="temperature" id="t3TabFoodToTemp">Temperature</button>
+                <button type="button" class="pc-drawer-item is-active" data-t3tab="food" id="t3TabFoodToFood">Food</button>
+                <button type="button" class="pc-drawer-item" data-t3tab="technique" id="t3TabFoodToTech">Technique</button>
+                <button type="button" class="pc-drawer-item" data-t3tab="recent" id="t3TabFoodToRecent">Recent Used</button>
               </nav>
 
               <!-- Scroll Container for Food Options (3 cards per row, vertical scroll) -->

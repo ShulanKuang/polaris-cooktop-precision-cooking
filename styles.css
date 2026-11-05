@@ -1879,6 +1879,159 @@ input,
   transform: scale(0.97);
 }
 
+/* Side Drawer Navigation (Figma Node 3198:27479) */
+.pc-side-drawer-nav {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 300px;
+  height: 384px;
+  z-index: 60;
+  pointer-events: none;
+}
+
+.pc-drawer-item {
+  position: absolute;
+  left: 32px;
+  width: 248px;
+  height: 48px;
+  border-radius: 24px;
+  background: transparent;
+  border: none;
+  padding: 0 24px;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  font-family: var(--roux-typography-subtitle-small-font-family);
+  font-size: 17px;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.85);
+  cursor: pointer;
+  outline: none;
+  pointer-events: auto !important;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+  transition: background-color 0.15s ease, color 0.15s ease, transform 0.1s ease;
+}
+
+.pc-drawer-item:active {
+  transform: scale(0.98);
+}
+
+.pc-drawer-item.is-active {
+  background: #ffffff;
+  color: #16171a;
+  font-weight: 600;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.25);
+}
+
+.pc-drawer-item[data-t2tab="temperature"],
+.pc-drawer-item[data-t3tab="temperature"] {
+  top: 126px;
+}
+
+.pc-drawer-item[data-t2tab="food"],
+.pc-drawer-item[data-t3tab="food"] {
+  top: 182px;
+}
+
+.pc-drawer-item[data-t2tab="technique"],
+.pc-drawer-item[data-t3tab="technique"] {
+  top: 238px;
+}
+
+.pc-drawer-item[data-t2tab="recent"],
+.pc-drawer-item[data-t3tab="recent"] {
+  top: 294px;
+}
+
+/* For screens with baked-in Temperature active state (Figma 3198:27479) */
+.pc-side-drawer-nav.has-baked-temp .pc-drawer-item {
+  color: transparent;
+  background: transparent;
+}
+
+.pc-side-drawer-nav.has-baked-temp .pc-drawer-item.is-active {
+  color: transparent !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+/* If user switches away from temperature on a has-baked-temp screen */
+.pc-side-drawer-nav.has-baked-temp .pc-drawer-item:not(.is-active)[data-t2tab="temperature"],
+.pc-side-drawer-nav.has-baked-temp .pc-drawer-item:not(.is-active)[data-t3tab="temperature"] {
+  background: #19191d !important;
+  color: rgba(255, 255, 255, 0.85) !important;
+}
+
+.pc-side-drawer-nav.has-baked-temp .pc-drawer-item.is-active:not([data-t2tab="temperature"]):not([data-t3tab="temperature"]) {
+  background: #ffffff !important;
+  color: #16171a !important;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.25) !important;
+}
+
+/* Cookware Tabs (Stainless Steel / Cast Iron / Other - Figma 3198:27479) */
+.pc-cookware-tabs {
+  position: absolute;
+  left: 428px;
+  top: 118px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  z-index: 55;
+  pointer-events: auto;
+}
+
+.pc-cookware-tab {
+  height: 40px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  outline: none;
+  border-radius: 20px;
+  transition: transform 0.12s ease;
+  padding: 0;
+  margin: 0;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.pc-cookware-tab:active {
+  transform: scale(0.96);
+}
+
+.pc-cookware-tab[data-cookware="stainless"] {
+  width: 171px;
+}
+
+.pc-cookware-tab[data-cookware="castiron"] {
+  margin-left: 20px;
+  width: 103px;
+}
+
+.pc-cookware-tab[data-cookware="other"] {
+  margin-left: 20px;
+  width: 64px;
+}
+
+.pc-cookware-info {
+  margin-left: 24px;
+  width: 32px;
+  height: 32px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  outline: none;
+  border-radius: 50%;
+  transition: transform 0.12s ease;
+  padding: 0;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.pc-cookware-info:active {
+  transform: scale(0.92);
+}
+
 /* Tab Group Navigation */
 .t2-tab-group {
   position: absolute;
@@ -2155,10 +2308,12 @@ input,
   transform: scale(0.96);
 }
 .t2-picker-start {
-  left: 400px;
-  top: 295px;
-  width: 140px;
-  height: 68px;
+  left: 550px;
+  top: 288px;
+  width: 127px;
+  height: 48px;
+  border-radius: 999px;
+  z-index: 55;
 }
 .t2-digipad-start {
   left: 164px;
@@ -2193,16 +2348,16 @@ input,
   height: 66px;
 }
 
-/* Dynamic Horizontal Temperature Carousel Wheel */
+/* Dynamic Horizontal Temperature Carousel Wheel (Figma Node 3198:27479 - 3 numbers visible) */
 .t2-picker-wheel-container {
   position: absolute;
-  left: 50px;
-  top: 150px;
-  width: 840px;
-  height: 116px;
-  z-index: 20;
-  -webkit-mask-image: linear-gradient(to right, transparent 0%, black 14%, black 86%, transparent 100%);
-  mask-image: linear-gradient(to right, transparent 0%, black 14%, black 86%, transparent 100%);
+  left: 371px;
+  top: 174px;
+  width: 493px;
+  height: 98px;
+  z-index: 50;
+  -webkit-mask-image: linear-gradient(to right, transparent 0%, black 15%, black 85%, transparent 100%);
+  mask-image: linear-gradient(to right, transparent 0%, black 15%, black 85%, transparent 100%);
   overflow: hidden;
 }
 
@@ -2215,7 +2370,7 @@ input,
   overflow-y: hidden;
   scroll-snap-type: x mandatory;
   -webkit-overflow-scrolling: touch;
-  padding: 0 calc(50% - 65px);
+  padding: 0 calc(50% - 80px);
   box-sizing: border-box;
   scrollbar-width: none;
 }
@@ -2224,8 +2379,8 @@ input,
 }
 
 .t2-picker-item {
-  flex: 0 0 130px;
-  width: 130px;
+  flex: 0 0 160px;
+  width: 160px;
   height: 100%;
   display: flex;
   align-items: center;
@@ -2235,18 +2390,26 @@ input,
   user-select: none;
   -webkit-user-select: none;
   position: relative;
-  transition: transform 0.12s ease;
+  transition: transform 0.15s ease, opacity 0.15s ease;
+  opacity: 0 !important;
+  pointer-events: none !important;
+}
+
+.t2-picker-item.is-active,
+.t2-picker-item.is-neighbor-1 {
+  opacity: 1 !important;
+  pointer-events: auto !important;
 }
 
 .t2-item-num {
   font-family: var(--roux-typography-subtitle-small-font-family);
-  font-size: 32px;
-  font-weight: 500;
+  font-size: 46px;
+  font-weight: 700;
   color: #ffffff;
-  opacity: 0.35;
+  opacity: 0.75;
   letter-spacing: -0.5px;
   line-height: 1;
-  transition: font-size 0.12s ease, opacity 0.12s ease, font-weight 0.12s ease;
+  transition: font-size 0.15s ease, opacity 0.15s ease, font-weight 0.15s ease;
 }
 
 .t2-item-unit {
@@ -2258,29 +2421,27 @@ input,
   margin-top: -24px;
   line-height: 1;
   opacity: 0;
-  transition: opacity 0.12s ease;
-}
-
-.t2-picker-item.is-neighbor-2 .t2-item-num {
-  font-size: 36px;
-  font-weight: 500;
-  opacity: 0.45;
+  transition: opacity 0.15s ease;
 }
 
 .t2-picker-item.is-neighbor-1 .t2-item-num {
   font-size: 46px;
-  font-weight: 600;
-  opacity: 0.8;
+  font-weight: 700;
+  opacity: 0.75;
 }
 
 .t2-picker-item.is-active .t2-item-num {
-  font-size: 68px;
-  font-weight: 700;
+  font-size: 88px;
+  font-weight: 500;
   opacity: 1;
   letter-spacing: -1px;
 }
 
 .t2-picker-item.is-active .t2-item-unit {
+  font-size: 40px;
+  font-weight: 700;
+  margin-left: 6px;
+  margin-top: -34px;
   opacity: 1;
 }
 
@@ -2912,16 +3073,16 @@ input,
   height: 52px;
 }
 
-/* Horizontal Temperature Carousel Picker (Only 3 numbers shown: 350, 375°F, 400 with enlarged spacing) */
+/* Horizontal Temperature Carousel Picker (Figma Node 3198:27479 - strictly 3 numbers visible: e.g. 350, 375°F, 400) */
 .t3-picker-wheel-container {
   position: absolute;
-  left: 50px;
-  top: 150px;
-  width: 840px;
-  height: 116px;
-  z-index: 20;
-  -webkit-mask-image: linear-gradient(to right, transparent 0%, black 14%, black 86%, transparent 100%);
-  mask-image: linear-gradient(to right, transparent 0%, black 14%, black 86%, transparent 100%);
+  left: 371px;
+  top: 174px;
+  width: 493px;
+  height: 98px;
+  z-index: 50;
+  -webkit-mask-image: linear-gradient(to right, transparent 0%, black 15%, black 85%, transparent 100%);
+  mask-image: linear-gradient(to right, transparent 0%, black 15%, black 85%, transparent 100%);
   overflow: hidden;
 }
 
@@ -2934,7 +3095,7 @@ input,
   overflow-y: hidden;
   scroll-snap-type: x mandatory;
   -webkit-overflow-scrolling: touch;
-  padding: 0 calc(50% - 90px);
+  padding: 0 calc(50% - 80px);
   box-sizing: border-box;
   scrollbar-width: none;
 }
@@ -2943,8 +3104,8 @@ input,
 }
 
 .t3-picker-item {
-  flex: 0 0 180px;
-  width: 180px;
+  flex: 0 0 160px;
+  width: 160px;
   height: 100%;
   display: flex;
   align-items: center;
@@ -2955,14 +3116,14 @@ input,
   -webkit-user-select: none;
   position: relative;
   transition: transform 0.15s ease, opacity 0.15s ease;
-  opacity: 0;
-  pointer-events: none;
+  opacity: 0 !important;
+  pointer-events: none !important;
 }
 
 .t3-picker-item.is-active,
 .t3-picker-item.is-neighbor-1 {
-  opacity: 1;
-  pointer-events: auto;
+  opacity: 1 !important;
+  pointer-events: auto !important;
 }
 
 .t3-item-num {
@@ -3009,19 +3170,19 @@ input,
   opacity: 1;
 }
 
-/* Start Button on Temperature Screen (Figma node 3017:25518) */
+/* Start Button on Temperature Screen (Figma node 3198:27479) */
 .t3-temp-start-btn {
   position: absolute;
-  left: 399px;
-  top: 282px;
-  width: 135px;
-  height: 64px;
+  left: 550px;
+  top: 288px;
+  width: 127px;
+  height: 48px;
   background: transparent;
   border: none;
   cursor: pointer;
   outline: none;
-  border-radius: 32px;
-  z-index: 25;
+  border-radius: 999px;
+  z-index: 55;
   transition: transform 0.12s ease;
 }
 .t3-temp-start-btn:active {
