@@ -664,6 +664,10 @@
     }
 
     // Toggle subbar controls (Task 1 glance controls vs Task 3 flow controls)
+    if (taskId !== 1 && state.shutterTimer) {
+      clearTimeout(state.shutterTimer);
+      state.shutterTimer = null;
+    }
     if (els.glanceControls) {
       els.glanceControls.hidden = taskId !== 1;
       els.glanceControls.style.display = taskId === 1 ? "flex" : "none";
@@ -694,7 +698,7 @@
       if (els.task1FullScreen) els.task1FullScreen.hidden = true;
       if (els.viewTask2) els.viewTask2.hidden = false;
       if (els.viewTask3) els.viewTask3.hidden = true;
-      if (els.screenRail) els.screenRail.hidden = false;
+      ensureNavbarVisible();
       if (els.topStatus) els.topStatus.hidden = true;
       if (els.screenCanvas) els.screenCanvas.hidden = true;
 
@@ -705,7 +709,7 @@
       if (els.task1FullScreen) els.task1FullScreen.hidden = true;
       if (els.viewTask2) els.viewTask2.hidden = true;
       if (els.viewTask3) els.viewTask3.hidden = false;
-      if (els.screenRail) els.screenRail.hidden = false;
+      ensureNavbarVisible();
       if (els.topStatus) els.topStatus.hidden = true;
       if (els.screenCanvas) els.screenCanvas.hidden = true;
 
@@ -716,7 +720,7 @@
       if (els.task1FullScreen) els.task1FullScreen.hidden = true;
       if (els.viewTask2) els.viewTask2.hidden = true;
       if (els.viewTask3) els.viewTask3.hidden = true;
-      if (els.screenRail) els.screenRail.hidden = false;
+      ensureNavbarVisible();
       if (els.topStatus) els.topStatus.hidden = false;
       if (els.screenCanvas) els.screenCanvas.hidden = false;
       if (els.screenBottomStrip) els.screenBottomStrip.hidden = false;
@@ -748,6 +752,14 @@
   // ==============================================
   function showT2Explore(silent = false) {
     if (!silent) playSound("touch");
+    if (state.currentTask === 1) {
+      state.currentTask = 2;
+      if (state.shutterTimer) {
+        clearTimeout(state.shutterTimer);
+        state.shutterTimer = null;
+      }
+    }
+    ensureNavbarVisible();
     state.task2.screen = "explore";
     if (els.viewTask2) els.viewTask2.hidden = true;
     if (els.viewTask3) els.viewTask3.hidden = false;
@@ -760,6 +772,14 @@
 
   function showT2Precision(tabName = "spotlight", tempMode = "picker", silent = false) {
     if (!silent) playSound("touch");
+    if (state.currentTask === 1) {
+      state.currentTask = 2;
+      if (state.shutterTimer) {
+        clearTimeout(state.shutterTimer);
+        state.shutterTimer = null;
+      }
+    }
+    ensureNavbarVisible();
     state.task2.screen = "precision";
     if (els.viewTask3) els.viewTask3.hidden = true;
     if (els.viewTask2) els.viewTask2.hidden = false;
@@ -1029,12 +1049,16 @@
   }
 
   function coverTask1Screen() {
-    if (state.shutterTimer) clearTimeout(state.shutterTimer);
+    if (state.currentTask !== 1) return;
+    if (state.shutterTimer) {
+      clearTimeout(state.shutterTimer);
+      state.shutterTimer = null;
+    }
     if (els.task1StandbyCover) {
       els.task1StandbyCover.classList.remove("is-revealed");
       els.task1StandbyCover.style.display = "flex";
     }
-    if (state.currentTask === 1 && els.screenRail) {
+    if (els.screenRail) {
       els.screenRail.hidden = true;
     }
     if (els.glanceStatusPill) els.glanceStatusPill.classList.remove("is-active");
@@ -1307,6 +1331,15 @@
     return isAnyKnobOrBurnerActive();
   }
 
+  function ensureNavbarVisible() {
+    if (state.currentTask !== 1 && els.screenRail) {
+      els.screenRail.hidden = false;
+      els.screenRail.removeAttribute("hidden");
+      els.screenRail.style.display = "block";
+    }
+    updateNavbarState();
+  }
+
   function updateNavbarState() {
     if (!els.screenRailBg) return;
     const running = isAnyBurnerRunning();
@@ -1346,6 +1379,14 @@
   }
 
   function showT3Screen(stage) {
+    if (state.currentTask === 1) {
+      state.currentTask = 3;
+      if (state.shutterTimer) {
+        clearTimeout(state.shutterTimer);
+        state.shutterTimer = null;
+      }
+    }
+    ensureNavbarVisible();
     t3Stage = stage;
     if (els.viewTask3) els.viewTask3.hidden = false;
     if (els.viewTask2) els.viewTask2.hidden = true;
@@ -2158,9 +2199,11 @@
   }
 
   function slideTransition(outgoingScreen, incomingScreen, direction = "left", onComplete) {
+    ensureNavbarVisible();
     if (!outgoingScreen || !incomingScreen) {
       if (incomingScreen) incomingScreen.hidden = false;
       if (outgoingScreen) outgoingScreen.hidden = true;
+      ensureNavbarVisible();
       if (onComplete) onComplete();
       return;
     }
@@ -2213,6 +2256,7 @@
         incomingScreen.style.webkitTransition = "";
         incomingScreen.style.transform = "";
         incomingScreen.style.webkitTransform = "";
+        ensureNavbarVisible();
         if (onComplete) onComplete();
       }, 480);
     });
@@ -2263,6 +2307,7 @@
     if (fromKey === toKey) return;
     if (isT3ContentTransitioning) return;
     isT3ContentTransitioning = true;
+    ensureNavbarVisible();
 
     const tabOrder = {
       temperature: 0,
@@ -2437,6 +2482,7 @@
         });
       }
       isT3ContentTransitioning = false;
+      ensureNavbarVisible();
       if (typeof onComplete === "function") onComplete();
     }, 300);
   }
@@ -2801,6 +2847,7 @@
   function cancelT3A() {
     clearT3Timers();
     dismissPrcTimerAndToast();
+    ensureNavbarVisible();
     const knobToReset = activePrcKnobIndex || 1;
 
     const activeScreen = (els.t3ScreenTemperature && !els.t3ScreenTemperature.hidden)
@@ -2849,6 +2896,7 @@
 
         setTimeout(() => {
           showT3Screen("start");
+          ensureNavbarVisible();
           activeScreen.style.transition = "";
           activeScreen.style.webkitTransition = "";
           activeScreen.style.transform = "";
@@ -4779,28 +4827,28 @@
       els.t3BtnBackFromFoodPreheat.addEventListener("click", () => {
         playSound("touch");
         clearT3Timers();
-        showT3Screen("beefType");
+        showT3Screen("beefMenu");
       });
     }
     if (els.t3BtnEditFoodPreheat) {
       els.t3BtnEditFoodPreheat.addEventListener("click", () => {
         playSound("touch");
         clearT3Timers();
-        showT3Screen("beefType");
+        showT3Screen("beefMenu");
       });
     }
     if (els.t3BtnBackFromFoodComplete) {
       els.t3BtnBackFromFoodComplete.addEventListener("click", () => {
         playSound("touch");
         clearT3Timers();
-        showT3Screen("beefType");
+        showT3Screen("beefMenu");
       });
     }
     if (els.t3BtnEditFoodComplete) {
       els.t3BtnEditFoodComplete.addEventListener("click", () => {
         playSound("touch");
         clearT3Timers();
-        showT3Screen("beefType");
+        showT3Screen("beefMenu");
       });
     }
 
@@ -4814,7 +4862,7 @@
     if (els.t3HotspotFrontLeftBurner) {
       els.t3HotspotFrontLeftBurner.addEventListener("click", () => {
         playSound("touch");
-        showT3Screen("beefType");
+        showT3Screen("beefMenu");
       });
     }
     if (els.t3HotspotRearLeftBurner) {
@@ -5091,6 +5139,8 @@
     setT2Tab,
     updateScreenBadge,
     updateCooktopActiveState,
+    ensureNavbarVisible,
+    updateNavbarState,
     scrollToT3Temp,
     scrollToT3RunTemp,
     playSound,
