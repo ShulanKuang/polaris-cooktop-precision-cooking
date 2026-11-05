@@ -18,17 +18,17 @@
       </div>
 
       <div class="toolbar-center">
-        <!-- 3 MAIN TASK SWITCHER BUTTONS (Task 1 hidden from display per research review) -->
-        <div class="task-switcher" role="group" aria-label="Switch test task">
+        <!-- TASK SWITCHER BUTTONS (Task 1 & Task 2 hidden, working on Task 3 only) -->
+        <div class="task-switcher" role="group" aria-label="Switch test task" style="display: none !important;">
           <button type="button" class="task-btn" id="btnTask1" data-task="1" style="display: none !important;">
             <span class="task-num">Task 1</span>
             <span class="task-label">Awareness Test</span>
           </button>
-          <button type="button" class="task-btn is-active" id="btnTask2" data-task="2">
+          <button type="button" class="task-btn" id="btnTask2" data-task="2" style="display: none !important;">
             <span class="task-num">Task 2</span>
             <span class="task-label">Concept Evaluation</span>
           </button>
-          <button type="button" class="task-btn" id="btnTask3" data-task="3">
+          <button type="button" class="task-btn is-active" id="btnTask3" data-task="3">
             <span class="task-num">Task 3</span>
             <span class="task-label">Usability Flow</span>
           </button>
@@ -51,8 +51,9 @@
 
     <!-- RESEARCHER CHEAT SHEET & TASK 1 GLANCE BAR -->
     <section class="researcher-subbar" id="researcherSubbar">
-      <div class="subbar-info">
-        <strong id="taskTitle">Task 2: Precision Cooking Concept Evaluation</strong>
+      <!-- TASK NAME PANEL (Hidden per request: working on Task 3 only) -->
+      <div class="subbar-info" id="subbarInfo" style="display: none !important;">
+        <strong id="taskTitle">Task 3: Precision Cooking Usability Flow</strong>
       </div>
 
       <!-- TASK 1 ONLY: GLANCE TIMEOUT BUTTONS (0.5s / 1s / 2s) - Hidden from display -->
@@ -125,7 +126,8 @@
               <option value="t3:foodComplete">3C-foodComplete (Food Preheat Complete)</option>
               <option value="t3:foodBurnerStatus">3C-foodBurnerStatus (Food Cooking Overview)</option>
             </optgroup>
-            <optgroup label="Task 2: Concept Evaluation">
+            <!-- Task 2 screens hidden from dropdown per request: working on Task 3 only -->
+            <optgroup label="Task 2: Concept Evaluation" id="optgroupTask2" style="display: none;">
               <option value="t2:explore">2-explore (Task 2 Start Screen)</option>
               <option value="t2:spotlight">2-spotlight (Task 2 Spotlight)</option>
               <option value="t2:technique">2-technique (Task 2 Technique Options)</option>

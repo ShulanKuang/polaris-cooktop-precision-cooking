@@ -149,7 +149,7 @@
 
   // STATE MANAGEMENT
   const state = {
-    currentTask: 1,
+    currentTask: 3,
     shutterHidden: true,
     shutterTimer: null,
     targetTemp: 375,
@@ -5212,14 +5212,14 @@
   initRunningActivityBar();
   initScreenObserver();
 
-  // Restore active task from URL or localStorage (Task 1 hidden from display, promote to 2)
+  // Focus exclusively on Task 3 (Task 1 & Task 2 hidden from display)
   const urlParams = new URLSearchParams(window.location.search);
   const taskFromParam = parseInt(urlParams.get("task"), 10);
   const taskFromHash = window.location.hash === "#task3" ? 3 : window.location.hash === "#task2" ? 2 : window.location.hash === "#task1" ? 1 : null;
   const taskFromStorage = parseInt(localStorage.getItem("polaris_active_task"), 10);
-  let initialTask = taskFromParam || taskFromHash || (taskFromStorage >= 2 ? taskFromStorage : 2);
-  if (initialTask === 1) {
-    initialTask = 2; // Awareness test removed from display; promote to Task 2
+  let initialTask = taskFromParam || taskFromHash || taskFromStorage || 3;
+  if (initialTask === 1 || initialTask === 2) {
+    initialTask = 3; // Focus exclusively on Task 3
   }
   setTask(initialTask);
 
