@@ -3056,8 +3056,6 @@ input,
   width: 493px;
   height: 98px;
   z-index: 50;
-  -webkit-mask-image: linear-gradient(to right, transparent 0%, black 15%, black 85%, transparent 100%);
-  mask-image: linear-gradient(to right, transparent 0%, black 15%, black 85%, transparent 100%);
   overflow: hidden;
 }
 
@@ -3131,14 +3129,14 @@ input,
 }
 
 .t3-picker-item.is-active .t3-item-num {
-  font-size: 88px;
+  font-size: 90px;
   font-weight: 500;
   opacity: 1;
   letter-spacing: -1px;
 }
 
 .t3-picker-item.is-active .t3-item-unit {
-  font-size: 40px;
+  font-size: 44px;
   font-weight: 700;
   margin-left: 6px;
   margin-top: -34px;
