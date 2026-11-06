@@ -9,7 +9,7 @@
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
   <title>Polaris Cooktop Precision Cooking Prototype</title>
-  <link rel="stylesheet" href="./styles.css?v=20261106-tech-v1">
+  <link rel="stylesheet" href="./styles.css?v=20261106-recent-v1">
 </head>
 <body>
   <div class="test-environment">
@@ -95,6 +95,9 @@
         <button type="button" class="glance-btn" id="btnT3FlowTech">
           3E: Tech Flow
         </button>
+        <button type="button" class="glance-btn" id="btnT3FlowRecent">
+          3F: Recent Flow
+        </button>
       </div>
 
       <!-- UNIVERSAL SCREEN INSPECTOR & QUICK JUMPER -->
@@ -128,6 +131,7 @@
               <option value="t3:foodPreheat">3C-foodPreheat (Food Preheating)</option>
               <option value="t3:foodComplete">3C-foodComplete (Food Preheat Complete)</option>
               <option value="t3:foodBurnerStatus">3C-foodBurnerStatus (Food Cooking Overview)</option>
+              <option value="t3:recentUsed">3F-recentUsed (Recent Used Options - Figma 3098:10875)</option>
             </optgroup>
             <!-- Task 2 screens hidden from dropdown per request: working on Task 3 only -->
             <optgroup label="Task 2: Concept Evaluation" id="optgroupTask2" style="display: none;">
@@ -620,6 +624,36 @@
                   <button type="button" class="t3-tech-card is-simmer" data-technique="Simmer">
                     <span class="t3-tech-title">Simmer</span>
                     <span class="t3-tech-temp">250°</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <!-- SCREEN: 3F-RECENT-USED (COOKTOP PRECISION COOKING RECENT USED - FIGMA 3098:10875) -->
+            <div class="t3-screen" id="t3ScreenRecentUsed" hidden>
+              <img class="t3-screen-bg" src="./assets/task3-pc-bg-recent-figma.png" alt="Precision Cooking Recent Used">
+              <!-- Back button (< Precision Cooking) -->
+              <button type="button" class="t3-back-btn" id="t3BtnBackFromRecentUsed" aria-label="Back to Burners"></button>
+
+              <!-- SIDE DRAWER NAVIGATION: Temperature / Food / Technique / Recent Used -->
+              <nav class="pc-side-drawer-nav" id="t3SideDrawerRecent">
+                <button type="button" class="pc-drawer-item" data-t3tab="temperature" id="t3TabRecentToTemp">Temperature</button>
+                <button type="button" class="pc-drawer-item" data-t3tab="food" id="t3TabRecentToFood">Food</button>
+                <button type="button" class="pc-drawer-item" data-t3tab="technique" id="t3TabRecentToTech">Technique</button>
+                <button type="button" class="pc-drawer-item is-active" data-t3tab="recent" id="t3TabRecentToRecent">Recent Used</button>
+              </nav>
+
+              <!-- Cookware Button overlay if tapped -->
+              <button type="button" class="t3-cookware-btn-hotspot" id="t3BtnCookware" aria-label="Cookware"></button>
+
+              <!-- Recent Used Options Container (Figma 3098:10972) -->
+              <div class="t3-recent-container" id="t3RecentContainer">
+                <div class="t3-recent-row">
+                  <button type="button" class="t3-recent-card" data-recent="Caramelize">
+                    <span class="t3-recent-title">Caramelize</span>
+                  </button>
+                  <button type="button" class="t3-recent-card" data-recent="500°F">
+                    <span class="t3-recent-title">500°F</span>
                   </button>
                 </div>
               </div>
@@ -1577,6 +1611,6 @@
     </footer>
   </div>
 
-  <script src="./app.js?v=20261106-tech-v1"></script>
+  <script src="./app.js?v=20261106-recent-v1"></script>
 </body>
 </html>

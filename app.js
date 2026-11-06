@@ -454,11 +454,18 @@
     t3BtnBackFromTechComplete: document.getElementById("t3BtnBackFromTechComplete"),
     t3BtnEditTechComplete: document.getElementById("t3BtnEditTechComplete"),
 
+    // Task 3 Recent Used screen
+    t3ScreenRecentUsed: document.getElementById("t3ScreenRecentUsed"),
+    t3BtnBackFromRecentUsed: document.getElementById("t3BtnBackFromRecentUsed"),
+    t3RecentContainer: document.getElementById("t3RecentContainer"),
+    t3BtnCookware: document.getElementById("t3BtnCookware"),
+
     t3SubflowControls: document.getElementById("t3SubflowControls"),
     btnT3FlowTemp: document.getElementById("btnT3FlowTemp"),
     btnT3FlowStatus: document.getElementById("btnT3FlowStatus"),
     btnT3FlowFood: document.getElementById("btnT3FlowFood"),
     btnT3FlowTech: document.getElementById("btnT3FlowTech"),
+    btnT3FlowRecent: document.getElementById("btnT3FlowRecent"),
     t3BtnBackFromStart: document.getElementById("t3BtnBackFromStart"),
 
     clockReadout: document.getElementById("clockReadout"),
@@ -528,6 +535,7 @@
         { el: els.t3ScreenTechnique, name: "3E-technique" },
         { el: els.t3ScreenTechniquePreheat, name: "3E-techniquePreheat" },
         { el: els.t3ScreenTechniqueComplete, name: "3E-techniqueComplete" },
+        { el: els.t3ScreenRecentUsed, name: "3F-recentUsed" },
         { el: els.t3ScreenFoodOptions, name: "3C-foodOptions" },
         { el: els.t3ScreenBeefMenu, name: "3-beefmenu" },
         { el: els.t3ScreenBeefType, name: "3C-beefType" },
@@ -580,7 +588,8 @@
           beefThickness: "3C-beefThickness",
           foodPreheat: "3C-foodPreheat",
           foodComplete: "3C-foodComplete",
-          foodBurnerStatus: "3C-foodBurnerStatus"
+          foodBurnerStatus: "3C-foodBurnerStatus",
+          recentUsed: "3F-recentUsed"
         };
         cleanBadge = t3PrefixMap[screenName] || `3-${screenName}`;
       } else if (state.currentTask === 2) {
@@ -1459,6 +1468,16 @@
         els.t3ScreenFoodOptions.style.zIndex = "";
       }
     }
+    if (stage !== "recentUsed") {
+      if (els.t3ScreenRecentUsed) {
+        els.t3ScreenRecentUsed.style.transition = "";
+        els.t3ScreenRecentUsed.style.webkitTransition = "";
+        els.t3ScreenRecentUsed.style.transform = "";
+        els.t3ScreenRecentUsed.style.webkitTransform = "";
+        els.t3ScreenRecentUsed.style.boxShadow = "";
+        els.t3ScreenRecentUsed.style.zIndex = "";
+      }
+    }
     if (stage !== "beefMenu") {
       if (els.t3ScreenBeefMenu) {
         els.t3ScreenBeefMenu.style.transition = "";
@@ -1499,6 +1518,9 @@
     // Task 3C Technique screens:
     if (els.t3ScreenTechniquePreheat) els.t3ScreenTechniquePreheat.hidden = (stage !== "techniquePreheat");
     if (els.t3ScreenTechniqueComplete) els.t3ScreenTechniqueComplete.hidden = (stage !== "techniqueComplete");
+
+    // Task 3F Recent Used screen:
+    if (els.t3ScreenRecentUsed) els.t3ScreenRecentUsed.hidden = (stage !== "recentUsed");
 
     // Top status bar visibility (Figma 2323:15134) - 48px tall status bar on 3C-beefType, doneness, and thickness screens
     const needsTopStatus = (stage === "beefType" || stage === "beefDoneness" || stage === "beefThickness");
@@ -1545,6 +1567,13 @@
       if (drawer) {
         drawer.querySelectorAll(".pc-drawer-item").forEach(item => {
           item.classList.toggle("is-active", item.dataset.t3tab === "food");
+        });
+      }
+    } else if (stage === "recentUsed") {
+      const drawer = document.getElementById("t3SideDrawerRecent");
+      if (drawer) {
+        drawer.querySelectorAll(".pc-drawer-item").forEach(item => {
+          item.classList.toggle("is-active", item.dataset.t3tab === "recent");
         });
       }
     }
@@ -2372,7 +2401,9 @@
       tempRun: 0,
       food: 1,
       foodOptions: 1,
-      technique: 2
+      technique: 2,
+      recent: 3,
+      recentUsed: 3
     };
 
     const tabDefs = {
@@ -2418,6 +2449,16 @@
         onInit: () => {
           if (els.t3TechniqueScroll) els.t3TechniqueScroll.scrollTop = 0;
         }
+      },
+      recent: {
+        stage: "recentUsed",
+        screen: els.t3ScreenRecentUsed,
+        getContent: () => [els.t3RecentContainer].filter(Boolean)
+      },
+      recentUsed: {
+        stage: "recentUsed",
+        screen: els.t3ScreenRecentUsed,
+        getContent: () => [els.t3RecentContainer].filter(Boolean)
       }
     };
 
@@ -4028,6 +4069,7 @@
         if (els.btnT3FlowFood) els.btnT3FlowFood.classList.remove("is-active");
         if (els.btnT3FlowStatus) els.btnT3FlowStatus.classList.remove("is-active");
         if (els.btnT3FlowTech) els.btnT3FlowTech.classList.remove("is-active");
+        if (els.btnT3FlowRecent) els.btnT3FlowRecent.classList.remove("is-active");
         if (els.tStartActiveBurner1) els.tStartActiveBurner1.hidden = true;
         setKnobAngle(1, 0, false, true);
         setKnobAngle(2, 0, false, true);
@@ -4044,6 +4086,7 @@
         if (els.btnT3FlowTemp) els.btnT3FlowTemp.classList.remove("is-active");
         if (els.btnT3FlowFood) els.btnT3FlowFood.classList.remove("is-active");
         if (els.btnT3FlowTech) els.btnT3FlowTech.classList.remove("is-active");
+        if (els.btnT3FlowRecent) els.btnT3FlowRecent.classList.remove("is-active");
         setKnobAngle(2, -56, false, false);
         [1, 3, 4, 5].forEach(i => setKnobAngle(i, 0, false, false));
         showT3Screen("burnerStatus");
@@ -4058,6 +4101,7 @@
         if (els.btnT3FlowTemp) els.btnT3FlowTemp.classList.remove("is-active");
         if (els.btnT3FlowStatus) els.btnT3FlowStatus.classList.remove("is-active");
         if (els.btnT3FlowTech) els.btnT3FlowTech.classList.remove("is-active");
+        if (els.btnT3FlowRecent) els.btnT3FlowRecent.classList.remove("is-active");
         setKnobAngle(2, -56, false, false);
         showT3Screen("burnerStatus");
         setTimeout(() => {
@@ -4074,12 +4118,26 @@
         if (els.btnT3FlowTemp) els.btnT3FlowTemp.classList.remove("is-active");
         if (els.btnT3FlowStatus) els.btnT3FlowStatus.classList.remove("is-active");
         if (els.btnT3FlowFood) els.btnT3FlowFood.classList.remove("is-active");
+        if (els.btnT3FlowRecent) els.btnT3FlowRecent.classList.remove("is-active");
         if (els.tStartActiveBurner1) els.tStartActiveBurner1.hidden = true;
         [1, 2, 3, 5].forEach(i => setKnobAngle(i, 0, false, false));
         showT3Screen("start");
         setTimeout(() => {
           setKnobAngle(4, -56, true, true);
         }, 300);
+      });
+    }
+
+    if (els.btnT3FlowRecent) {
+      els.btnT3FlowRecent.addEventListener("click", () => {
+        playSound("touch");
+        state.task3Mode = "recent";
+        els.btnT3FlowRecent.classList.add("is-active");
+        if (els.btnT3FlowTemp) els.btnT3FlowTemp.classList.remove("is-active");
+        if (els.btnT3FlowStatus) els.btnT3FlowStatus.classList.remove("is-active");
+        if (els.btnT3FlowFood) els.btnT3FlowFood.classList.remove("is-active");
+        if (els.btnT3FlowTech) els.btnT3FlowTech.classList.remove("is-active");
+        showT3Screen("recentUsed");
       });
     }
 
@@ -4112,7 +4170,10 @@
             }, 60);
           });
         }
-      } else if (tabName === "favorite" || tabName === "recent") {
+      } else if (tabName === "recent") {
+        if (t3Stage === "recentUsed") return;
+        showT3Screen("recentUsed");
+      } else if (tabName === "favorite") {
         playSound("touch");
       }
     }
@@ -4194,6 +4255,17 @@
         e.stopPropagation();
         playSound("touch");
         t3TechCards.forEach(c => c.classList.remove("is-selected"));
+        card.classList.add("is-selected");
+      });
+    });
+
+    // Recent Used Options Cards Selection (Figma 3098:10875)
+    const t3RecentCards = document.querySelectorAll("#t3RecentContainer .t3-recent-card");
+    t3RecentCards.forEach(card => {
+      card.addEventListener("click", (e) => {
+        e.stopPropagation();
+        playSound("touch");
+        t3RecentCards.forEach(c => c.classList.remove("is-selected"));
         card.classList.add("is-selected");
       });
     });
@@ -4508,6 +4580,25 @@
         t3Stage = targetScreen === els.t3ScreenBurnerStatus ? "burnerStatus" : "start";
         updateScreenBadge(t3Stage);
         slideTransition(els.t3ScreenTechnique, targetScreen, "right");
+      });
+    }
+
+    // Recent Used Screen Back Button (< Cooktop)
+    if (els.t3BtnBackFromRecentUsed) {
+      els.t3BtnBackFromRecentUsed.addEventListener("click", () => {
+        playSound("touch");
+        const targetScreen = (knobsState[1] && Math.abs(knobsState[1].angle) > 20) || (state.task3Mode === "recent")
+          ? els.t3ScreenBurnerStatus
+          : els.t3ScreenStart;
+        t3Stage = targetScreen === els.t3ScreenBurnerStatus ? "burnerStatus" : "start";
+        updateScreenBadge(t3Stage);
+        slideTransition(els.t3ScreenRecentUsed, targetScreen, "right");
+      });
+    }
+
+    if (els.t3BtnCookware) {
+      els.t3BtnCookware.addEventListener("click", () => {
+        playSound("touch");
       });
     }
 
