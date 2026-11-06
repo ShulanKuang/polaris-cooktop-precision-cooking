@@ -913,31 +913,38 @@
               </div>
             </div>
 
-            <!-- 8. SCREEN: 3B-PCTEMPERATURERUN (RUNNING TEMP WITH UPDATE BUTTON & KEYPAD - FIGMA 3017:26093) -->
+            <!-- 8. SCREEN: 3B-PCTEMPERATURERUN (RUNNING TEMP WITH UPDATE BUTTON & KEYPAD - FIGMA 3298:17543 / 3017:26093) -->
             <div class="t3-screen" id="t3ScreenTempRun" hidden>
-              <img class="t3-screen-bg" src="./assets/task3b-pc-temp-update-bg.png" alt="Precision Cooking Temperature Running">
+              <img class="t3-screen-bg" src="./assets/task3-pc-bg-temperature.png?v=20261105-clean3" alt="Precision Cooking Temperature Running">
               <!-- Back button (< Precision Cooking) -->
               <button type="button" class="t3-back-btn" id="t3BtnBackFromTempRun" aria-label="Back to Burners"></button>
 
-              <!-- TAB GROUP: Temperature / Food / Technique / Favorite / Recent used -->
-              <nav class="t3-tab-group" id="t3TabGroupTempRun">
-                <button type="button" class="t3-tab-btn" data-t3tab="temperature" id="t3TabBtnTempFromTempRun" aria-label="Temperature Tab"></button>
-                <button type="button" class="t3-tab-btn" data-t3tab="food" id="t3TabBtnFoodFromTempRun" aria-label="Food Tab"></button>
-                <button type="button" class="t3-tab-btn" data-t3tab="technique" id="t3TabBtnTechFromTempRun" aria-label="Technique Tab"></button>
-                <button type="button" class="t3-tab-btn" data-t3tab="favorite" id="t3TabBtnFavFromTempRun" aria-label="Favorite Tab"></button>
-                <button type="button" class="t3-tab-btn" data-t3tab="recent" id="t3TabBtnRecentFromTempRun" aria-label="Recent used Tab"></button>
+              <!-- SIDE DRAWER NAVIGATION: Temperature / Food / Technique / Recent Used (Figma 3298:17543) -->
+              <nav class="pc-side-drawer-nav" id="t3SideDrawerTempRun">
+                <button type="button" class="pc-drawer-item is-active" data-t3tab="temperature" id="t3TabRunToTemp">Temperature</button>
+                <button type="button" class="pc-drawer-item" data-t3tab="food" id="t3TabRunToFood">Food</button>
+                <button type="button" class="pc-drawer-item" data-t3tab="technique" id="t3TabRunToTech">Technique</button>
+                <button type="button" class="pc-drawer-item" data-t3tab="recent" id="t3TabRunToRecent">Recent Used</button>
               </nav>
+
+              <!-- Cookware Tabs (Stainless Steel / Cast Iron / Other / Info - Figma 3298:17543) -->
+              <div class="pc-cookware-tabs" id="t3RunCookwareTabs">
+                <button type="button" class="pc-cookware-tab is-active" data-cookware="stainless" aria-label="Stainless Steel"></button>
+                <button type="button" class="pc-cookware-tab" data-cookware="castiron" aria-label="Cast Iron"></button>
+                <button type="button" class="pc-cookware-tab" data-cookware="other" aria-label="Other"></button>
+                <button type="button" class="pc-cookware-info" id="t3RunCookwareInfo" aria-label="Cookware Info"></button>
+              </div>
 
               <!-- Dynamic Horizontal Temperature Carousel (matching Task 2 / Task 3 picker) -->
               <div class="t3-picker-wheel-container" id="t3RunPickerWheelContainer">
                 <div class="t3-picker-track" id="t3RunPickerTrack"></div>
               </div>
 
-              <!-- UPDATE Button (Figma 3017:26093 & 3017:26217) -->
-              <button type="button" class="t3-temp-update-btn" id="t3BtnUpdateTemp" aria-label="Update Temperature"></button>
+              <!-- UPDATE Button (Figma 3298:17543) -->
+              <button type="button" class="t3-temp-update-btn" id="t3BtnUpdateTemp" aria-label="Update Temperature">UPDATE</button>
 
-              <!-- Keypad Switch Button -->
-              <button type="button" class="t3-temp-keypad-btn" id="t3BtnKeypadTemp" aria-label="Keypad"></button>
+              <!-- Keypad Switch Button (hidden to match Figma 3298:17543) -->
+              <button type="button" class="t3-temp-keypad-btn" id="t3BtnKeypadTemp" aria-label="Keypad" style="display:none;"></button>
             </div>
 
             <!-- 9. SCREEN: 3C-FOOD-OPTIONS (PRECISION COOKING FOOD GRID - FIGMA 3198:23239 & 3365:21042) -->

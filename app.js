@@ -353,6 +353,7 @@
     t3StatusBurnerStrip5: document.getElementById("t3StatusBurnerStrip5"),
 
     t3ScreenTempRun: document.getElementById("t3ScreenTempRun"),
+    t3SideDrawerTempRun: document.getElementById("t3SideDrawerTempRun"),
     t3BtnBackFromTempRun: document.getElementById("t3BtnBackFromTempRun"),
     t3RunPickerWheelContainer: document.getElementById("t3RunPickerWheelContainer"),
     t3RunPickerTrack: document.getElementById("t3RunPickerTrack"),
@@ -1555,6 +1556,19 @@
       setTimeout(() => {
         scrollToT3Temp(state.task3TargetTemp || 375, false);
       }, 50);
+    } else if (stage === "tempRun") {
+      const drawer = document.getElementById("t3SideDrawerTempRun");
+      if (drawer) {
+        drawer.querySelectorAll(".pc-drawer-item").forEach(item => {
+          item.classList.toggle("is-active", item.dataset.t3tab === "temperature");
+        });
+      }
+      requestAnimationFrame(() => {
+        scrollToT3RunTemp(state.task3TargetTemp || 375, false);
+      });
+      setTimeout(() => {
+        scrollToT3RunTemp(state.task3TargetTemp || 375, false);
+      }, 50);
     } else if (stage === "technique") {
       const drawer = document.getElementById("t3SideDrawerTech");
       if (drawer) {
@@ -1672,6 +1686,7 @@
       }
       clearT3Timers();
       if (!isFoodFlow) {
+        state.task3IsRunning = false;
         [1, 2, 3, 4, 5].forEach(i => {
           setKnobAngle(i, 0, false, false);
           currentT3BurnerLevels[i] = "off";
@@ -2720,6 +2735,7 @@
 
   // TASK 3B: PREHEAT DIRECTLY ON BURNER STATUS (FIGMA 2310:12162 & 3051:42542 & 3051:42525)
   function startT3Preheat() {
+    state.task3IsRunning = true;
     clearT3Timers();
     hideT3CompleteToast();
     showT3Screen("burnerStatus");
@@ -3213,14 +3229,18 @@
 
   let lastT3RunTickTemp = null;
   function updateT3RunPickerVisuals() {
-    if (!els.t3RunPickerTrack) return;
-    const trackCenter = els.t3RunPickerTrack.scrollLeft + (els.t3RunPickerTrack.clientWidth / 2);
+    if (!els.t3RunPickerTrack || els.t3RunPickerTrack.offsetParent === null || els.t3RunPickerTrack.clientWidth === 0) return;
+    const trackWidth = els.t3RunPickerTrack.clientWidth || 493;
+    const trackCenter = els.t3RunPickerTrack.scrollLeft + (trackWidth / 2);
     const items = els.t3RunPickerTrack.querySelectorAll(".t3-picker-item");
     let closestItem = null;
     let closestDist = Infinity;
 
-    items.forEach(item => {
-      const itemCenter = item.offsetLeft + (item.offsetWidth / 2);
+    items.forEach((item, idx) => {
+      const paddingLeft = (trackWidth - 160) / 2;
+      const itemCenter = (item.offsetLeft > 0)
+        ? (item.offsetLeft + (item.offsetWidth / 2))
+        : (paddingLeft + idx * 160 + 80);
       const dist = Math.abs(itemCenter - trackCenter);
 
       if (dist < closestDist) {
@@ -3229,10 +3249,10 @@
       }
 
       item.classList.remove("is-active", "is-neighbor-1", "is-neighbor-2");
-      // Dist threshold with 160px items (Figma 3198:27479):
+      // Dist threshold with 160px items (Figma 3198:27479 / 3298:17543):
       // Active item: dist < 80
       // Single immediate neighbor on each side (e.g. 350 and 400): 80 <= dist < 240
-      // Any further numbers (325, 300, 425, 450): dist >= 240 -> strictly hidden (opacity 0)
+      // Any further numbers: dist >= 240 -> strictly hidden (opacity 0)
       if (dist >= 80 && dist < 240) {
         item.classList.add("is-neighbor-1");
       }
@@ -3249,18 +3269,38 @@
           playSound("touch");
         }
       }
+
+      // Align UPDATE button with the biggest temperature number (.t3-item-num)
+      if (els.t3BtnUpdateTemp && els.t3ScreenTempRun) {
+        const numEl = closestItem.querySelector(".t3-item-num");
+        if (numEl) {
+          const numRect = numEl.getBoundingClientRect();
+          const screenRect = els.t3ScreenTempRun.getBoundingClientRect();
+          if (screenRect.width > 0) {
+            const scale = screenRect.width / 934;
+            const numCenterX = ((numRect.left - screenRect.left) + numRect.width / 2) / scale;
+            const btnWidth = els.t3BtnUpdateTemp.offsetWidth || 143;
+            const targetLeft = Math.round(numCenterX - btnWidth / 2);
+            els.t3BtnUpdateTemp.style.left = `${targetLeft}px`;
+          }
+        }
+      }
     }
   }
 
   function snapToClosestT3RunTemp() {
     if (!els.t3RunPickerTrack) return;
-    const trackCenter = els.t3RunPickerTrack.scrollLeft + (els.t3RunPickerTrack.clientWidth / 2);
+    const trackWidth = els.t3RunPickerTrack.clientWidth || 493;
+    const trackCenter = els.t3RunPickerTrack.scrollLeft + (trackWidth / 2);
     const items = els.t3RunPickerTrack.querySelectorAll(".t3-picker-item");
     let closestTemp = 375;
     let closestDist = Infinity;
 
-    items.forEach(item => {
-      const itemCenter = item.offsetLeft + (item.offsetWidth / 2);
+    items.forEach((item, idx) => {
+      const paddingLeft = (trackWidth - 160) / 2;
+      const itemCenter = (item.offsetLeft > 0)
+        ? (item.offsetLeft + (item.offsetWidth / 2))
+        : (paddingLeft + idx * 160 + 80);
       const dist = Math.abs(itemCenter - trackCenter);
       if (dist < closestDist) {
         closestDist = dist;
@@ -3273,18 +3313,16 @@
 
   function scrollToT3RunTemp(temp, smooth = true) {
     if (!els.t3RunPickerTrack) return;
-    const targetItem = els.t3RunPickerTrack.querySelector(`.t3-picker-item[data-temp="${temp}"]`);
-    if (targetItem) {
-      const trackWidth = els.t3RunPickerTrack.clientWidth || 840;
-      const itemCenter = targetItem.offsetLeft + (targetItem.offsetWidth / 2);
-      const targetScrollLeft = itemCenter - (trackWidth / 2);
-      els.t3RunPickerTrack.scrollTo({
-        left: targetScrollLeft,
-        behavior: smooth ? "smooth" : "auto"
-      });
-      state.task3TargetTemp = temp;
-      setTimeout(updateT3RunPickerVisuals, smooth ? 250 : 50);
-    }
+    const index = Math.round((temp - T3_TEMP_MIN) / T3_TEMP_STEP);
+    const targetScrollLeft = index * 160;
+    els.t3RunPickerTrack.scrollLeft = targetScrollLeft;
+    els.t3RunPickerTrack.scrollTo({
+      left: targetScrollLeft,
+      behavior: smooth ? "smooth" : "auto"
+    });
+    state.task3TargetTemp = temp;
+    updateT3RunPickerVisuals();
+    setTimeout(updateT3RunPickerVisuals, smooth ? 250 : 50);
   }
 
   window.scrollToT3Temp = scrollToT3Temp;
@@ -3992,7 +4030,7 @@
         if (t3Stage === "burnerStatus") {
           showT3Screen("tempRun");
           requestAnimationFrame(() => {
-            scrollToT3RunTemp(state.task3TargetTemp || 500, false);
+            scrollToT3RunTemp(state.task3TargetTemp || 375, false);
           });
         }
       });
@@ -4024,35 +4062,13 @@
       });
     }
 
-    // Tabs on TempRun screen (Figma 3017:26093)
-    const tabTempFromRun = document.getElementById("t3TabBtnTempFromTempRun");
-    const tabFoodFromRun = document.getElementById("t3TabBtnFoodFromTempRun");
-    const tabTechFromRun = document.getElementById("t3TabBtnTechFromTempRun");
-    const tabFavFromRun = document.getElementById("t3TabBtnFavFromTempRun");
-    const tabRecentFromRun = document.getElementById("t3TabBtnRecentFromTempRun");
-
-    if (tabTempFromRun) {
-      tabTempFromRun.addEventListener("click", () => {
+    // Cookware info on TempRun screen
+    const t3RunCookwareInfo = document.getElementById("t3RunCookwareInfo");
+    if (t3RunCookwareInfo) {
+      t3RunCookwareInfo.addEventListener("click", (e) => {
+        e.stopPropagation();
         playSound("touch");
       });
-    }
-    if (tabFoodFromRun) {
-      tabFoodFromRun.addEventListener("click", () => {
-        playSound("touch");
-        showT3Screen("foodOptions");
-      });
-    }
-    if (tabTechFromRun) {
-      tabTechFromRun.addEventListener("click", () => {
-        playSound("touch");
-        showT3Screen("technique");
-      });
-    }
-    if (tabFavFromRun) {
-      tabFavFromRun.addEventListener("click", () => playSound("touch"));
-    }
-    if (tabRecentFromRun) {
-      tabRecentFromRun.addEventListener("click", () => playSound("touch"));
     }
 
     // ==============================================
@@ -4154,6 +4170,20 @@
         showT3Screen("foodOptions");
         if (els.t3FoodScroll) els.t3FoodScroll.scrollTop = 0;
       } else if (tabName === "temperature") {
+        if (state.task3IsRunning) {
+          if (t3Stage === "tempRun") {
+            scrollToT3RunTemp(state.task3TargetTemp || 375, true);
+            return;
+          }
+          showT3Screen("tempRun");
+          requestAnimationFrame(() => {
+            scrollToT3RunTemp(state.task3TargetTemp || 375, false);
+            setTimeout(() => {
+              scrollToT3RunTemp(state.task3TargetTemp || 375, false);
+            }, 60);
+          });
+          return;
+        }
         if (t3Stage === "temperature") return;
         if (t3Stage === "beefMenu") {
           t3Stage = "temperature";
