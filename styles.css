@@ -1893,20 +1893,23 @@ input,
 .pc-drawer-item {
   position: absolute;
   left: 32px;
-  width: 248px;
+  width: fit-content;
+  max-width: 248px;
   height: 48px;
-  border-radius: 24px;
+  border-radius: 8px;
   background: transparent;
   border: none;
-  padding: 0 24px;
+  padding: 0 12px;
   margin: 0;
-  display: flex;
+  display: inline-flex;
   align-items: center;
   justify-content: flex-start;
   font-family: var(--roux-typography-subtitle-small-font-family);
-  font-size: 17px;
+  font-size: 26px;
   font-weight: 500;
-  color: rgba(255, 255, 255, 0.85);
+  letter-spacing: 0.52px;
+  line-height: 48px;
+  color: #ffffff;
   cursor: pointer;
   outline: none;
   pointer-events: auto !important;
@@ -1921,9 +1924,9 @@ input,
 
 .pc-drawer-item.is-active {
   background: #ffffff;
-  color: #16171a;
-  font-weight: 600;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.25);
+  color: #1f2024;
+  font-weight: 500;
+  box-shadow: none;
 }
 
 .pc-drawer-item[data-t2tab="temperature"],
@@ -3146,7 +3149,7 @@ input,
 /* Start Button on Temperature Screen (Figma node 3198:27479 - aligned with active temperature digits) */
 .t3-temp-start-btn {
   position: absolute;
-  left: 532px;
+  left: 530px;
   top: 288px;
   width: 127px;
   height: 48px;
