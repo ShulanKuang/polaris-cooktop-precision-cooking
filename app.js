@@ -3269,22 +3269,6 @@
           playSound("touch");
         }
       }
-
-      // Align UPDATE button with the biggest temperature number (.t3-item-num)
-      if (els.t3BtnUpdateTemp && els.t3ScreenTempRun) {
-        const numEl = closestItem.querySelector(".t3-item-num");
-        if (numEl) {
-          const numRect = numEl.getBoundingClientRect();
-          const screenRect = els.t3ScreenTempRun.getBoundingClientRect();
-          if (screenRect.width > 0) {
-            const scale = screenRect.width / 934;
-            const numCenterX = ((numRect.left - screenRect.left) + numRect.width / 2) / scale;
-            const btnWidth = els.t3BtnUpdateTemp.offsetWidth || 143;
-            const targetLeft = Math.round(numCenterX - btnWidth / 2);
-            els.t3BtnUpdateTemp.style.left = `${targetLeft}px`;
-          }
-        }
-      }
     }
   }
 
