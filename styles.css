@@ -4097,19 +4097,19 @@ input,
   width: 152px;
 }
 
-/* Task 3C: Food Mode Cards (Figma 3021:26359 & 3060:42632) */
+/* Task 3C: Food Mode Cards (Figma 3198:23239 & 3365:21042) */
 .t3-food-scroll-container {
   position: absolute;
-  left: 179px;
-  top: 123px;
+  left: 330px;
+  top: 152px;
   width: 576px;
-  height: 261px;
+  height: 232px;
   overflow-y: scroll;
   overflow-x: hidden;
   -webkit-overflow-scrolling: touch;
   touch-action: pan-y !important;
   z-index: 10;
-  padding-bottom: 24px;
+  padding-bottom: 32px;
   box-sizing: border-box;
   scrollbar-width: none;
   -ms-overflow-style: none;
@@ -4148,6 +4148,7 @@ input,
   font-family: inherit;
   font-size: 28px;
   font-weight: 600;
+  letter-spacing: 0.56px;
   cursor: pointer;
   padding: 8px 12px;
   box-sizing: border-box;
@@ -4155,7 +4156,7 @@ input,
   -webkit-user-select: none;
   touch-action: pan-y !important;
   -webkit-tap-highlight-color: transparent;
-  transition: background 0.15s ease, color 0.15s ease, transform 0.12s ease, box-shadow 0.15s ease;
+  transition: background 0.15s ease, color 0.15s ease, transform 0.12s ease;
 }
 
 .t3-food-card:hover {
@@ -4168,9 +4169,9 @@ input,
 
 .t3-food-card.is-selected {
   background: #FFFFFF !important;
-  color: #1E1E24 !important;
+  color: #1F2024 !important;
   font-weight: 700 !important;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.45);
+  box-shadow: none !important;
 }
 
 .t3-food-card.is-beans {
@@ -4178,7 +4179,7 @@ input,
 }
 
 .t3-food-multiline {
-  line-height: 1.12;
+  line-height: 1.15;
   font-size: 24px;
 }
 

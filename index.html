@@ -9,7 +9,7 @@
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
   <title>Polaris Cooktop Precision Cooking Prototype</title>
-  <link rel="stylesheet" href="./styles.css?v=20261106-pinstart-v1">
+  <link rel="stylesheet" href="./styles.css?v=20261106-food-v1">
 </head>
 <body>
   <div class="test-environment">
@@ -860,9 +860,9 @@
               <button type="button" class="t3-temp-keypad-btn" id="t3BtnKeypadTemp" aria-label="Keypad"></button>
             </div>
 
-            <!-- 9. SCREEN: 3C-FOOD-OPTIONS (PRECISION COOKING FOOD GRID - FIGMA 3021:26359) -->
+            <!-- 9. SCREEN: 3C-FOOD-OPTIONS (PRECISION COOKING FOOD GRID - FIGMA 3198:23239 & 3365:21042) -->
             <div class="t3-screen" id="t3ScreenFoodOptions" hidden>
-              <img class="t3-screen-bg" src="./assets/task3c-pc-food-clean-bg.png" alt="Precision Cooking Food Options">
+              <img class="t3-screen-bg" src="./assets/task3-pc-bg-food-figma.png" alt="Precision Cooking Food Options">
               <!-- Back button (< Precision Cooking) -->
               <button type="button" class="t3-back-btn" id="t3BtnBackFromFoodOptions" aria-label="Back to Burners"></button>
 
@@ -874,29 +874,35 @@
                 <button type="button" class="pc-drawer-item" data-t3tab="recent" id="t3TabFoodToRecent">Recent Used</button>
               </nav>
 
-              <!-- Scroll Container for Food Options (3 cards per row, vertical scroll) -->
+              <!-- Scroll Container for Food Options (3 cards per row, vertical scroll - Figma 3365:21042) -->
               <div class="t3-food-scroll-container" id="t3FoodScroll">
                 <div class="t3-food-grid">
+                  <!-- Row 1 -->
                   <button type="button" class="t3-food-card" data-food="Bacon"><span>Bacon</span></button>
                   <button type="button" class="t3-food-card" data-food="Beef" id="t3BtnFoodBeef"><span>Beef</span></button>
                   <button type="button" class="t3-food-card" data-food="Butter"><span>Butter</span></button>
 
-                  <button type="button" class="t3-food-card" data-food="Chicken"><span>Chicken</span></button>
+                  <!-- Row 2 -->
+                  <button type="button" class="t3-food-card" data-food="Pancakes"><span>Pancakes</span></button>
                   <button type="button" class="t3-food-card" data-food="Chocolate"><span>Chocolate</span></button>
                   <button type="button" class="t3-food-card" data-food="Crepes"><span>Crepes</span></button>
 
+                  <!-- Row 3 -->
                   <button type="button" class="t3-food-card" data-food="Grilled Sandwich"><span class="t3-food-multiline">Grilled<br>Sandwich</span></button>
                   <button type="button" class="t3-food-card" data-food="Eggs"><span>Eggs</span></button>
                   <button type="button" class="t3-food-card" data-food="French Toast"><span class="t3-food-multiline">French<br>Toast</span></button>
 
-                  <button type="button" class="t3-food-card" data-food="Pancakes"><span>Pancakes</span></button>
+                  <!-- Row 4 -->
+                  <button type="button" class="t3-food-card" data-food="Chicken"><span>Chicken</span></button>
                   <button type="button" class="t3-food-card" data-food="Pork"><span>Pork</span></button>
                   <button type="button" class="t3-food-card" data-food="Potatoes"><span>Potatoes</span></button>
 
+                  <!-- Row 5 -->
                   <button type="button" class="t3-food-card" data-food="Sausage"><span>Sausage</span></button>
                   <button type="button" class="t3-food-card" data-food="Seafood"><span>Seafood</span></button>
                   <button type="button" class="t3-food-card" data-food="Chocolate Fondue"><span class="t3-food-multiline">Chocolate<br>Fondue</span></button>
 
+                  <!-- Row 6 -->
                   <button type="button" class="t3-food-card is-beans" data-food="Beans"><span>Beans</span></button>
                 </div>
               </div>
@@ -1525,6 +1531,6 @@
     </footer>
   </div>
 
-  <script src="./app.js?v=20261106-pinstart-v1"></script>
+  <script src="./app.js?v=20261106-food-v1"></script>
 </body>
 </html>
