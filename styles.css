@@ -283,7 +283,8 @@ input,
 .t2-tile-scroll-container,
 .t3-options-scroll-container,
 .t3-drawer-scrollable-options,
-.t3-food-scroll-container {
+.t3-food-scroll-container,
+.t3-tech-scroll-container {
   touch-action: pan-y !important;
   overscroll-behavior-y: contain !important;
   overscroll-behavior-x: none !important;
@@ -4183,31 +4184,31 @@ input,
   font-size: 24px;
 }
 
-/* Technique Grid (Figma 3033:40314) */
-#t3TechniqueScroll {
+/* Task 3C: Technique Mode Cards (Figma 3198:27869 & 3198:27884) */
+.t3-tech-scroll-container {
   position: absolute;
-  left: 179px;
-  top: 123px;
+  left: 330px;
+  top: 152px;
   width: 576px;
-  height: 261px;
+  height: 232px;
   overflow-y: scroll;
   overflow-x: hidden;
   -webkit-overflow-scrolling: touch;
   touch-action: pan-y !important;
   z-index: 10;
-  padding-bottom: 24px;
+  padding-bottom: 32px;
   box-sizing: border-box;
   scrollbar-width: none;
   -ms-overflow-style: none;
 }
 
-#t3TechniqueScroll::-webkit-scrollbar {
+.t3-tech-scroll-container::-webkit-scrollbar {
   display: none;
   width: 0;
   height: 0;
 }
 
-#t3TechniqueScroll .t3-tiles-grid {
+.t3-tech-grid {
   display: grid;
   grid-template-columns: repeat(3, 176px);
   gap: 24px;
@@ -4216,13 +4217,82 @@ input,
   touch-action: pan-y !important;
 }
 
-#t3TechniqueScroll .buttontile {
+.t3-tech-card {
   width: 176px;
   min-width: 176px;
   max-width: 176px;
   height: 96px;
   min-height: 96px;
   max-height: 96px;
+  background: rgba(75, 76, 82, 0.8);
+  border-radius: 8px;
+  border: none;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  cursor: pointer;
+  padding: 8px 12px;
+  box-sizing: border-box;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: pan-y !important;
+  -webkit-tap-highlight-color: transparent;
+  transition: background 0.15s ease, color 0.15s ease, transform 0.12s ease;
+}
+
+.t3-tech-card:hover {
+  background: rgba(95, 96, 104, 0.9);
+}
+
+.t3-tech-card:active {
+  transform: scale(0.97);
+}
+
+.t3-tech-title {
+  font-family: inherit;
+  font-size: 28px;
+  font-weight: 600;
+  letter-spacing: 0.56px;
+  line-height: 1.15;
+  color: #FFFFFF;
+  display: block;
+}
+
+.t3-tech-title.t3-tech-multiline {
+  font-size: 24px;
+  line-height: 1.15;
+}
+
+.t3-tech-temp {
+  font-family: inherit;
+  font-size: 22px;
+  font-weight: 500;
+  letter-spacing: 0.44px;
+  line-height: 1.15;
+  color: #C5C6CE;
+  margin-top: 2px;
+  display: block;
+}
+
+.t3-tech-card.is-selected {
+  background: #FFFFFF !important;
+  box-shadow: none !important;
+}
+
+.t3-tech-card.is-selected .t3-tech-title {
+  color: #1F2024 !important;
+  font-weight: 700 !important;
+}
+
+.t3-tech-card.is-selected .t3-tech-temp {
+  color: #5E6068 !important;
+  font-weight: 600 !important;
+}
+
+.t3-tech-card.is-simmer {
+  grid-column: 2;
 }
 
 /* ==========================================================================

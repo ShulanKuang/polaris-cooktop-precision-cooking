@@ -9,7 +9,7 @@
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
   <title>Polaris Cooktop Precision Cooking Prototype</title>
-  <link rel="stylesheet" href="./styles.css?v=20261106-food-v1">
+  <link rel="stylesheet" href="./styles.css?v=20261106-tech-v1">
 </head>
 <body>
   <div class="test-environment">
@@ -543,38 +543,84 @@
               </nav>
             </div>
 
-            <!-- SCREEN: 3C-TECHNIQUE-OPTIONS (COOKTOP PRECISION COOKING TECHNIQUE GRID - FIGMA 3033:40314) -->
+            <!-- SCREEN: 3C-TECHNIQUE-OPTIONS (COOKTOP PRECISION COOKING TECHNIQUE GRID - FIGMA 3198:27869 & 3198:27884) -->
             <div class="t3-screen" id="t3ScreenTechnique" hidden>
-              <img class="t3-screen-bg" src="./assets/task3-pc-bg-technique.png" alt="Precision Cooking Background">
-              <!-- Back button (< Cooktop) -->
-              <button type="button" class="t3-back-btn" id="t3BtnBackFromTechnique" aria-label="Back to Cooktop"></button>
+              <img class="t3-screen-bg" src="./assets/task3-pc-bg-technique-figma.png" alt="Precision Cooking Technique Options">
+              <!-- Back button (< Precision Cooking) -->
+              <button type="button" class="t3-back-btn" id="t3BtnBackFromTechnique" aria-label="Back to Burners"></button>
+
               <!-- SIDE DRAWER NAVIGATION: Temperature / Food / Technique / Recent Used -->
               <nav class="pc-side-drawer-nav" id="t3SideDrawerTech">
-                <button type="button" class="pc-drawer-item" data-t3tab="temperature" id="t3TabTempFromTech">Temperature</button>
-                <button type="button" class="pc-drawer-item" data-t3tab="food" id="t3TabFoodFromTech">Food</button>
-                <button type="button" class="pc-drawer-item is-active" data-t3tab="technique" id="t3TabTechFromTech">Technique</button>
-                <button type="button" class="pc-drawer-item" data-t3tab="recent" id="t3TabRecentFromTech">Recent Used</button>
+                <button type="button" class="pc-drawer-item" data-t3tab="temperature" id="t3TabTechToTemp">Temperature</button>
+                <button type="button" class="pc-drawer-item" data-t3tab="food" id="t3TabTechToFood">Food</button>
+                <button type="button" class="pc-drawer-item is-active" data-t3tab="technique" id="t3TabTechToTech">Technique</button>
+                <button type="button" class="pc-drawer-item" data-t3tab="recent" id="t3TabTechToRecent">Recent Used</button>
               </nav>
-              <!-- Scroll Container for Technique Options -->
-              <div class="t3-options-scroll-container" id="t3TechniqueScroll">
-                <div class="t3-tiles-grid">
-                  <button type="button" class="buttontile" data-technique="Poaching"><span class="text">Poaching</span></button>
-                  <button type="button" class="buttontile" data-technique="Custards"><span class="text">Custards</span></button>
-                  <button type="button" class="buttontile" data-technique="Simmer"><span class="text">Simmer</span></button>
-                  <button type="button" class="buttontile" data-technique="Steaming"><span class="text">Steaming</span></button>
 
-                  <button type="button" class="buttontile" data-technique="Braising"><span class="text">Braising</span></button>
-                  <button type="button" class="buttontile" data-technique="Slow Cooking"><span class="text">Slow<br>Cooking</span></button>
-                  <button type="button" class="buttontile" data-technique="Candy Making"><span class="text">Candy Making</span></button>
-                  <button type="button" class="buttontile" data-technique="Caramelize"><span class="text">Caramelize</span></button>
+              <!-- Scroll Container for Technique Options (3 cards per row, vertical scroll - Figma 3198:27884) -->
+              <div class="t3-tech-scroll-container" id="t3TechniqueScroll">
+                <div class="t3-tech-grid">
+                  <!-- Row 1 -->
+                  <button type="button" class="t3-tech-card" data-technique="Caramelize">
+                    <span class="t3-tech-title">Caramelize</span>
+                    <span class="t3-tech-temp">300°</span>
+                  </button>
+                  <button type="button" class="t3-tech-card" data-technique="Sauté">
+                    <span class="t3-tech-title">Sauté</span>
+                    <span class="t3-tech-temp">350°</span>
+                  </button>
+                  <button type="button" class="t3-tech-card" data-technique="Brown">
+                    <span class="t3-tech-title">Brown</span>
+                    <span class="t3-tech-temp">350°</span>
+                  </button>
 
-                  <button type="button" class="buttontile" data-technique="Sauté"><span class="text">Sauté</span></button>
-                  <button type="button" class="buttontile" data-technique="Slow Cooking"><span class="text">Slow<br>Cooking</span></button>
-                  <button type="button" class="buttontile" data-technique="Brown"><span class="text">Brown</span></button>
-                  <button type="button" class="buttontile" data-technique="Pan Fry"><span class="text">Pan Fry</span></button>
+                  <!-- Row 2 -->
+                  <button type="button" class="t3-tech-card" data-technique="Pan Fry">
+                    <span class="t3-tech-title">Pan Fry</span>
+                    <span class="t3-tech-temp">400°</span>
+                  </button>
+                  <button type="button" class="t3-tech-card" data-technique="Stir Fry">
+                    <span class="t3-tech-title">Stir Fry</span>
+                    <span class="t3-tech-temp">425°</span>
+                  </button>
+                  <button type="button" class="t3-tech-card" data-technique="Sear">
+                    <span class="t3-tech-title">Sear</span>
+                    <span class="t3-tech-temp">425°</span>
+                  </button>
 
-                  <button type="button" class="buttontile" data-technique="Sear"><span class="text">Sear</span></button>
-                  <button type="button" class="buttontile" data-technique="Slow Cooking"><span class="text">Slow<br>Cooking</span></button>
+                  <!-- Row 3 -->
+                  <button type="button" class="t3-tech-card" data-technique="Braising">
+                    <span class="t3-tech-title">Braising</span>
+                    <span class="t3-tech-temp">225°</span>
+                  </button>
+                  <button type="button" class="t3-tech-card" data-technique="Slow Cooking">
+                    <span class="t3-tech-title t3-tech-multiline">Slow<br>Cooking</span>
+                    <span class="t3-tech-temp">250°</span>
+                  </button>
+                  <button type="button" class="t3-tech-card" data-technique="Steaming">
+                    <span class="t3-tech-title">Steaming</span>
+                    <span class="t3-tech-temp">200°</span>
+                  </button>
+
+                  <!-- Row 4 -->
+                  <button type="button" class="t3-tech-card" data-technique="Candy Making">
+                    <span class="t3-tech-title t3-tech-multiline">Candy<br>Making</span>
+                    <span class="t3-tech-temp">250°</span>
+                  </button>
+                  <button type="button" class="t3-tech-card" data-technique="Poaching">
+                    <span class="t3-tech-title">Poaching</span>
+                    <span class="t3-tech-temp">170°</span>
+                  </button>
+                  <button type="button" class="t3-tech-card" data-technique="Custards">
+                    <span class="t3-tech-title">Custards</span>
+                    <span class="t3-tech-temp">175°</span>
+                  </button>
+
+                  <!-- Row 5 -->
+                  <button type="button" class="t3-tech-card is-simmer" data-technique="Simmer">
+                    <span class="t3-tech-title">Simmer</span>
+                    <span class="t3-tech-temp">250°</span>
+                  </button>
                 </div>
               </div>
             </div>
@@ -1531,6 +1577,6 @@
     </footer>
   </div>
 
-  <script src="./app.js?v=20261106-food-v1"></script>
+  <script src="./app.js?v=20261106-tech-v1"></script>
 </body>
 </html>

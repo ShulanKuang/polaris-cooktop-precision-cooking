@@ -4182,6 +4182,22 @@
       });
     });
 
+    // Technique Options 3-Column Grid Cards Selection (Figma 3198:27869 & 3198:27884)
+    const t3TechCards = document.querySelectorAll("#t3TechniqueScroll .t3-tech-card");
+    t3TechCards.forEach(card => {
+      card.addEventListener("click", (e) => {
+        if (isFoodOrDrawerDragging) {
+          e.stopPropagation();
+          e.preventDefault();
+          return;
+        }
+        e.stopPropagation();
+        playSound("touch");
+        t3TechCards.forEach(c => c.classList.remove("is-selected"));
+        card.classList.add("is-selected");
+      });
+    });
+
     // Beef Menu Screen (Figma 3028:28875): Scrollable 6-tile drawer & view switching
     let currentBeefTab = "burner";
     let isDonenessDesc = false;
@@ -4486,7 +4502,12 @@
     if (els.t3BtnBackFromTechnique) {
       els.t3BtnBackFromTechnique.addEventListener("click", () => {
         playSound("touch");
-        showT3Screen(knobsState[1] && Math.abs(knobsState[1].angle) > 20 ? "burnerStatus" : "start");
+        const targetScreen = (knobsState[1] && Math.abs(knobsState[1].angle) > 20) || (state.task3Mode === "technique")
+          ? els.t3ScreenBurnerStatus
+          : els.t3ScreenStart;
+        t3Stage = targetScreen === els.t3ScreenBurnerStatus ? "burnerStatus" : "start";
+        updateScreenBadge(t3Stage);
+        slideTransition(els.t3ScreenTechnique, targetScreen, "right");
       });
     }
 
@@ -4668,7 +4689,7 @@
 
 
     // 4. Drawer & Food Scrollable Container Smooth Drag (Mouse & Touch)
-    document.querySelectorAll(".t3-drawer-scrollable-options, .t3-food-scroll-container").forEach(scrollBox => {
+    document.querySelectorAll(".t3-drawer-scrollable-options, .t3-food-scroll-container, .t3-tech-scroll-container").forEach(scrollBox => {
       let isDown = false;
       let startClientY = 0;
       let startScrollTop = 0;
