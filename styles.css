@@ -3266,7 +3266,7 @@ input,
   overflow-x: scroll;
   overflow-y: hidden;
   -webkit-overflow-scrolling: touch;
-  scroll-snap-type: x mandatory;
+  touch-action: pan-x;
   scrollbar-width: none;
   -ms-overflow-style: none;
   z-index: 50;
@@ -3301,7 +3301,6 @@ input,
   flex-shrink: 0;
   border-radius: 8px;
   box-sizing: border-box;
-  scroll-snap-align: center;
   cursor: pointer;
   position: relative;
   overflow: hidden;

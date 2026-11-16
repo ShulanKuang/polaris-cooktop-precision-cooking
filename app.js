@@ -3913,6 +3913,15 @@
     let cookwareScrollStart = 0;
     let cookwareHasDragged = false;
     let cookwareScrollRaf = null;
+    let cookwareMomentumRaf = null;
+    let cookwareVelocitySamples = [];
+
+    function stopCookwareMomentum() {
+      if (cookwareMomentumRaf) {
+        cancelAnimationFrame(cookwareMomentumRaf);
+        cookwareMomentumRaf = null;
+      }
+    }
 
     function updateCookwareUI(activeIndex) {
       activeIndex = Math.max(0, Math.min(cookwareCards.length - 1, activeIndex));
@@ -3930,6 +3939,7 @@
 
     function scrollToCookwareIndex(index, smooth = true) {
       if (!cookwareViewport) return;
+      stopCookwareMomentum();
       index = Math.max(0, Math.min(cookwareCards.length - 1, index));
       updateCookwareUI(index);
       cookwareViewport.scrollTo({
@@ -3940,40 +3950,133 @@
     window.scrollToCookwareIndex = scrollToCookwareIndex;
 
     if (cookwareViewport) {
-      // Mouse drag support
-      const onCookwarePointerDown = (e) => {
+      const onCookwareStart = (clientX) => {
+        stopCookwareMomentum();
         isCookwareDragging = true;
         cookwareHasDragged = false;
-        cookwareStartX = e.clientX ?? (e.touches && e.touches[0] ? e.touches[0].clientX : 0);
+        cookwareStartX = clientX;
         cookwareScrollStart = cookwareViewport.scrollLeft;
+        cookwareVelocitySamples = [{ x: clientX, t: performance.now() }];
       };
 
-      const onCookwarePointerMove = (e) => {
+      const onCookwareMove = (clientX) => {
         if (!isCookwareDragging) return;
-        const currentX = e.clientX ?? (e.touches && e.touches[0] ? e.touches[0].clientX : 0);
-        const diff = currentX - cookwareStartX;
+        const now = performance.now();
+        const diff = clientX - cookwareStartX;
         if (Math.abs(diff) > 5) {
           cookwareHasDragged = true;
         }
         cookwareViewport.scrollLeft = cookwareScrollStart - diff;
-      };
+        cookwareVelocitySamples.push({ x: clientX, t: now });
 
-      const onCookwarePointerUp = () => {
-        if (!isCookwareDragging) return;
-        isCookwareDragging = false;
-        if (cookwareHasDragged) {
-          const targetIndex = Math.round(cookwareViewport.scrollLeft / CARD_STEP);
-          scrollToCookwareIndex(targetIndex, true);
+        // Keep only velocity samples from the last 80ms
+        const cutoff = now - 80;
+        while (cookwareVelocitySamples.length > 1 && cookwareVelocitySamples[0].t < cutoff) {
+          cookwareVelocitySamples.shift();
         }
       };
 
-      cookwareViewport.addEventListener("mousedown", onCookwarePointerDown);
-      window.addEventListener("mousemove", onCookwarePointerMove);
-      window.addEventListener("mouseup", onCookwarePointerUp);
+      const onCookwareEnd = () => {
+        if (!isCookwareDragging) return;
+        isCookwareDragging = false;
 
-      cookwareViewport.addEventListener("touchstart", onCookwarePointerDown, { passive: true });
-      cookwareViewport.addEventListener("touchmove", onCookwarePointerMove, { passive: true });
-      cookwareViewport.addEventListener("touchend", onCookwarePointerUp, { passive: true });
+        if (cookwareHasDragged) {
+          // Calculate release velocity in scrollLeft space (-dx / dt)
+          const now = performance.now();
+          const cutoff = now - 80;
+          while (cookwareVelocitySamples.length > 1 && cookwareVelocitySamples[0].t < cutoff) {
+            cookwareVelocitySamples.shift();
+          }
+
+          let velocity = 0;
+          if (cookwareVelocitySamples.length >= 2) {
+            const first = cookwareVelocitySamples[0];
+            const last = cookwareVelocitySamples[cookwareVelocitySamples.length - 1];
+            const dt = last.t - first.t;
+            if (dt > 8) {
+              velocity = -(last.x - first.x) / dt; // px/ms
+            }
+          }
+
+          // Cap maximum velocity for natural feel
+          const MAX_VELOCITY = 2.4;
+          velocity = Math.max(-MAX_VELOCITY, Math.min(MAX_VELOCITY, velocity));
+
+          // If flicked with sufficient velocity, glide smoothly with momentum
+          if (Math.abs(velocity) > 0.08) {
+            let lastTime = performance.now();
+            const friction = 0.94; // Deceleration rate per frame
+
+            const momentumStep = (currentTime) => {
+              const dt = Math.min(32, Math.max(8, currentTime - lastTime));
+              lastTime = currentTime;
+
+              const decay = Math.pow(friction, dt / 16.67);
+              velocity *= decay;
+
+              cookwareViewport.scrollLeft += velocity * dt;
+
+              const maxScroll = cookwareViewport.scrollWidth - cookwareViewport.clientWidth;
+              if (cookwareViewport.scrollLeft <= 0) {
+                cookwareViewport.scrollLeft = 0;
+                velocity = 0;
+              } else if (cookwareViewport.scrollLeft >= maxScroll) {
+                cookwareViewport.scrollLeft = maxScroll;
+                velocity = 0;
+              }
+
+              if (Math.abs(velocity) > 0.015) {
+                cookwareMomentumRaf = requestAnimationFrame(momentumStep);
+              } else {
+                cookwareMomentumRaf = null;
+                // Natural stop at ANY point without snapping
+              }
+            };
+
+            cookwareMomentumRaf = requestAnimationFrame(momentumStep);
+          }
+
+          // Reset drag flag after short delay so click event doesn't trigger card selection
+          setTimeout(() => {
+            cookwareHasDragged = false;
+          }, 80);
+        }
+      };
+
+      // Mouse drag event listeners
+      cookwareViewport.addEventListener("mousedown", (e) => {
+        onCookwareStart(e.clientX);
+      });
+      window.addEventListener("mousemove", (e) => {
+        onCookwareMove(e.clientX);
+      });
+      window.addEventListener("mouseup", () => {
+        onCookwareEnd();
+      });
+
+      // Touch drag event listeners
+      cookwareViewport.addEventListener("touchstart", (e) => {
+        if (e.touches && e.touches.length > 0) {
+          onCookwareStart(e.touches[0].clientX);
+        }
+      }, { passive: true });
+
+      cookwareViewport.addEventListener("touchmove", (e) => {
+        if (e.touches && e.touches.length > 0) {
+          const clientX = e.touches[0].clientX;
+          if (Math.abs(clientX - cookwareStartX) > 5 && e.cancelable) {
+            e.preventDefault();
+          }
+          onCookwareMove(clientX);
+        }
+      }, { passive: false });
+
+      cookwareViewport.addEventListener("touchend", () => {
+        onCookwareEnd();
+      }, { passive: true });
+      cookwareViewport.addEventListener("touchcancel", () => {
+        onCookwareEnd();
+      }, { passive: true });
 
       // Live scroll listener for active card & pagination indicator
       cookwareViewport.addEventListener("scroll", () => {
@@ -3998,7 +4101,6 @@
         scrollToCookwareIndex(index, true);
       };
       el.addEventListener("click", onCardClick);
-      el.addEventListener("touchend", onCardClick);
     });
 
     // Pagination dots tap to navigate
@@ -4009,7 +4111,6 @@
         scrollToCookwareIndex(idx, true);
       };
       dot.addEventListener("click", onDotClick);
-      dot.addEventListener("touchend", onDotClick);
     });
 
     // Cookware Edit button on Temperature Screen (Figma 3382:21184)
