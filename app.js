@@ -305,9 +305,11 @@
     t3BtnStartTemp: document.getElementById("t3BtnStartTemp"),
     t3BtnCookwareEdit: document.getElementById("t3BtnCookwareEdit"),
     t3BtnKeypadFromTemp: document.getElementById("t3BtnKeypadFromTemp"),
+    t3TempMainContent: document.getElementById("t3TempMainContent"),
 
     // Task 3B: Select Cookware Screen (Figma 3407:25065 & 3409:25225)
     t3ScreenSelectCookware: document.getElementById("t3ScreenSelectCookware"),
+    t3CookwareMainContent: document.getElementById("t3CookwareMainContent"),
     t3BtnBackFromCookware: document.getElementById("t3BtnBackFromCookware"),
     t3SideDrawerCookware: document.getElementById("t3SideDrawerCookware"),
     t3CookwareCarouselViewport: document.getElementById("t3CookwareCarouselViewport"),
@@ -700,8 +702,8 @@
       els.glanceControls.style.display = taskId === 1 ? "flex" : "none";
     }
     if (els.t3SubflowControls) {
-      els.t3SubflowControls.hidden = taskId !== 3;
-      els.t3SubflowControls.style.display = taskId === 3 ? "flex" : "none";
+      els.t3SubflowControls.hidden = true;
+      els.t3SubflowControls.style.display = "none";
     }
 
     // Switch screen view
@@ -1335,6 +1337,8 @@
   const currentT3BurnerLevels = { 1: "off", 2: "off", 3: "off", 4: "off", 5: "off" };
   let activePrcKnobIndex = 1;
   let t3Stage = "start"; // "start" | "turnknob" | "spotlight" | "temperature" | "preheat" | "completed" | "burnerStatus"
+  let transitionCookwareToTemperature = null;
+  let transitionTemperatureToCookware = null;
 
   function isAnyKnobOrBurnerActive() {
     if (state.currentTask === 1) return false;
@@ -4113,6 +4117,126 @@
       dot.addEventListener("click", onDotClick);
     });
 
+    let isCookwareTransitioning = false;
+
+    transitionTemperatureToCookware = function() {
+      if (isCookwareTransitioning) return;
+      isCookwareTransitioning = true;
+      playSound("touch");
+
+      t3Stage = "selectCookware";
+      updateScreenBadge("selectCookware");
+
+      let targetIdx = 1; // Default to Cast Iron as in Figma 3407:25065
+      if (state.selectedCookware === "Stainless") targetIdx = 0;
+      else if (state.selectedCookware === "Other") targetIdx = 2;
+
+      // Both screens remain strictly static at translate3d(0, 0, 0) - NO whole-screen slide!
+      if (els.t3ScreenTemperature) {
+        els.t3ScreenTemperature.style.transition = "none";
+        els.t3ScreenTemperature.style.webkitTransition = "none";
+        els.t3ScreenTemperature.style.transform = "translate3d(0, 0, 0)";
+        els.t3ScreenTemperature.style.webkitTransform = "translate3d(0, 0, 0)";
+        els.t3ScreenTemperature.hidden = false;
+        els.t3ScreenTemperature.style.zIndex = "100";
+      }
+      if (els.t3ScreenSelectCookware) {
+        els.t3ScreenSelectCookware.style.transition = "none";
+        els.t3ScreenSelectCookware.style.webkitTransition = "none";
+        els.t3ScreenSelectCookware.style.transform = "translate3d(0, 0, 0)";
+        els.t3ScreenSelectCookware.style.webkitTransform = "translate3d(0, 0, 0)";
+        els.t3ScreenSelectCookware.hidden = false;
+        els.t3ScreenSelectCookware.style.zIndex = "101";
+      }
+
+      scrollToCookwareIndex(targetIdx, false);
+
+      // Animate ONLY the right side content container
+      if (els.t3TempMainContent) {
+        els.t3TempMainContent.classList.remove("is-entering");
+        els.t3TempMainContent.classList.add("is-leaving");
+      }
+      if (els.t3CookwareMainContent) {
+        els.t3CookwareMainContent.classList.remove("is-leaving");
+        els.t3CookwareMainContent.classList.add("is-entering");
+      }
+
+      setTimeout(() => {
+        if (els.t3ScreenTemperature && t3Stage === "selectCookware") {
+          els.t3ScreenTemperature.hidden = true;
+        }
+        if (els.t3TempMainContent) {
+          els.t3TempMainContent.classList.remove("is-leaving");
+        }
+        if (els.t3CookwareMainContent) {
+          els.t3CookwareMainContent.classList.remove("is-entering");
+        }
+        scrollToCookwareIndex(targetIdx, false);
+        isCookwareTransitioning = false;
+      }, 260);
+    };
+
+    transitionCookwareToTemperature = function() {
+      if (isCookwareTransitioning) return;
+      isCookwareTransitioning = true;
+      playSound("touch");
+
+      const selected = state.selectedCookware || "Cast Iron";
+      if (els.t3BtnCookwareEdit) {
+        const label = els.t3BtnCookwareEdit.querySelector(".t3-cookware-edit-label");
+        if (label) {
+          label.textContent = selected === "Stainless Steel" ? "Stainless" : selected;
+        }
+      }
+
+      t3Stage = "temperature";
+      updateScreenBadge("temperature");
+
+      // Both screens remain strictly static at translate3d(0, 0, 0) - NO whole-screen slide!
+      if (els.t3ScreenTemperature) {
+        els.t3ScreenTemperature.style.transition = "none";
+        els.t3ScreenTemperature.style.webkitTransition = "none";
+        els.t3ScreenTemperature.style.transform = "translate3d(0, 0, 0)";
+        els.t3ScreenTemperature.style.webkitTransform = "translate3d(0, 0, 0)";
+        els.t3ScreenTemperature.hidden = false;
+        els.t3ScreenTemperature.style.zIndex = "101";
+      }
+      if (els.t3ScreenSelectCookware) {
+        els.t3ScreenSelectCookware.style.transition = "none";
+        els.t3ScreenSelectCookware.style.webkitTransition = "none";
+        els.t3ScreenSelectCookware.style.transform = "translate3d(0, 0, 0)";
+        els.t3ScreenSelectCookware.style.webkitTransform = "translate3d(0, 0, 0)";
+        els.t3ScreenSelectCookware.hidden = false;
+        els.t3ScreenSelectCookware.style.zIndex = "100";
+      }
+
+      scrollToT3Temp(state.task3TargetTemp || 375, false);
+
+      // Animate ONLY the right side content container
+      if (els.t3CookwareMainContent) {
+        els.t3CookwareMainContent.classList.remove("is-entering");
+        els.t3CookwareMainContent.classList.add("is-leaving");
+      }
+      if (els.t3TempMainContent) {
+        els.t3TempMainContent.classList.remove("is-leaving");
+        els.t3TempMainContent.classList.add("is-entering");
+      }
+
+      setTimeout(() => {
+        if (els.t3ScreenSelectCookware && t3Stage === "temperature") {
+          els.t3ScreenSelectCookware.hidden = true;
+        }
+        if (els.t3CookwareMainContent) {
+          els.t3CookwareMainContent.classList.remove("is-leaving");
+        }
+        if (els.t3TempMainContent) {
+          els.t3TempMainContent.classList.remove("is-entering");
+        }
+        scrollToT3Temp(state.task3TargetTemp || 375, false);
+        isCookwareTransitioning = false;
+      }, 260);
+    };
+
     // Cookware Edit button on Temperature Screen (Figma 3382:21184)
     if (els.t3BtnCookwareEdit) {
       const handleCookwareEdit = (e) => {
@@ -4120,18 +4244,7 @@
           e.preventDefault();
           e.stopPropagation();
         }
-        playSound("touch");
-        t3Stage = "selectCookware";
-        updateScreenBadge("selectCookware");
-
-        let targetIdx = 1; // Default to Cast Iron as in Figma 3407:25065
-        if (state.selectedCookware === "Stainless") targetIdx = 0;
-        else if (state.selectedCookware === "Other") targetIdx = 2;
-
-        scrollToCookwareIndex(targetIdx, false);
-        slideTransition(els.t3ScreenTemperature, els.t3ScreenSelectCookware, "left", () => {
-          scrollToCookwareIndex(targetIdx, false);
-        });
+        transitionTemperatureToCookware();
       };
       els.t3BtnCookwareEdit.addEventListener("click", handleCookwareEdit);
       els.t3BtnCookwareEdit.addEventListener("touchstart", handleCookwareEdit, { passive: false });
@@ -4144,19 +4257,7 @@
           e.preventDefault();
           e.stopPropagation();
         }
-        playSound("touch");
-        const selected = state.selectedCookware || "Cast Iron";
-        if (els.t3BtnCookwareEdit) {
-          const label = els.t3BtnCookwareEdit.querySelector(".t3-cookware-edit-label");
-          if (label) {
-            label.textContent = selected === "Stainless Steel" ? "Stainless" : selected;
-          }
-        }
-        t3Stage = "temperature";
-        updateScreenBadge("temperature");
-        slideTransition(els.t3ScreenSelectCookware, els.t3ScreenTemperature, "right", () => {
-          scrollToT3Temp(state.task3TargetTemp || 375, false);
-        });
+        transitionCookwareToTemperature();
       };
       els.t3BtnSelectCookware.addEventListener("click", handleSelectCookware);
       els.t3BtnSelectCookware.addEventListener("touchstart", handleSelectCookware, { passive: false });
@@ -4168,12 +4269,7 @@
           e.preventDefault();
           e.stopPropagation();
         }
-        playSound("touch");
-        t3Stage = "temperature";
-        updateScreenBadge("temperature");
-        slideTransition(els.t3ScreenSelectCookware, els.t3ScreenTemperature, "right", () => {
-          scrollToT3Temp(state.task3TargetTemp || 375, false);
-        });
+        transitionCookwareToTemperature();
       };
       els.t3BtnBackFromCookware.addEventListener("click", handleBackFromCookware);
       els.t3BtnBackFromCookware.addEventListener("touchstart", handleBackFromCookware, { passive: false });
@@ -4521,11 +4617,13 @@
             scrollToT3Temp(state.task3TargetTemp || 375, false);
           });
         } else if (t3Stage === "selectCookware") {
-          t3Stage = "temperature";
-          updateScreenBadge("temperature");
-          slideTransition(els.t3ScreenSelectCookware, els.t3ScreenTemperature, "right", () => {
-            scrollToT3Temp(state.task3TargetTemp || 375, false);
-          });
+          if (typeof transitionCookwareToTemperature === "function") {
+            transitionCookwareToTemperature();
+          } else {
+            t3Stage = "temperature";
+            updateScreenBadge("temperature");
+            showT3Screen("temperature");
+          }
         } else {
           showT3Screen("temperature");
           requestAnimationFrame(() => {
@@ -5449,6 +5547,12 @@
       els.navHomeBtn.addEventListener("click", () => {
         playSound("touch");
         if (state.currentTask === 3 && t3Stage !== "start") {
+          if (t3Stage === "selectCookware") {
+            if (typeof transitionCookwareToTemperature === "function") {
+              transitionCookwareToTemperature();
+              return;
+            }
+          }
           cancelT3A();
         } else if (state.currentTask === 2) {
           showT2Explore(true);
@@ -5465,6 +5569,12 @@
       if (e) e.preventDefault();
       playSound("touch");
       if (state.currentTask === 3 && t3Stage !== "start") {
+        if (t3Stage === "selectCookware") {
+          if (typeof transitionCookwareToTemperature === "function") {
+            transitionCookwareToTemperature();
+            return;
+          }
+        }
         cancelT3A();
       } else if (state.currentTask === 2) {
         showT2Explore(true);

@@ -566,11 +566,10 @@ input,
   box-shadow: 0 0 8px #00e0d0;
 }
 
-/* TASK 3 SUBFLOW CONTROLS */
-.t3-subflow-controls {
-  display: flex;
-  align-items: center;
-  gap: 6px;
+/* TASK 3 SUBFLOW CONTROLS (Hidden per request) */
+.t3-subflow-controls,
+#t3SubflowControls {
+  display: none !important;
 }
 
 /* ============================================== */
@@ -3254,6 +3253,84 @@ input,
   height: 384px;
   overflow: hidden;
   will-change: transform, opacity;
+}
+
+/* Static Left Panel Content Transitions (Temperature <-> Cookware) */
+.t3-temp-main-content,
+.t3-cookware-main-content {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 934px;
+  height: 384px;
+  pointer-events: none;
+  z-index: 50;
+  will-change: transform, opacity;
+}
+
+.t3-temp-main-content > *,
+.t3-cookware-main-content > * {
+  pointer-events: auto;
+}
+
+.t3-cookware-main-content.is-entering {
+  animation: t3RightPaneInFromRight 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.t3-cookware-main-content.is-leaving {
+  animation: t3RightPaneOutToRight 0.22s cubic-bezier(0.4, 0, 1, 1) forwards;
+}
+
+.t3-temp-main-content.is-leaving {
+  animation: t3RightPaneOutToLeft 0.22s cubic-bezier(0.4, 0, 1, 1) forwards;
+}
+
+.t3-temp-main-content.is-entering {
+  animation: t3RightPaneInFromLeft 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes t3RightPaneInFromRight {
+  0% {
+    opacity: 0;
+    transform: translate3d(50px, 0, 0);
+  }
+  100% {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+@keyframes t3RightPaneOutToLeft {
+  0% {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+  100% {
+    opacity: 0;
+    transform: translate3d(-35px, 0, 0);
+  }
+}
+
+@keyframes t3RightPaneInFromLeft {
+  0% {
+    opacity: 0;
+    transform: translate3d(-35px, 0, 0);
+  }
+  100% {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+@keyframes t3RightPaneOutToRight {
+  0% {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+  100% {
+    opacity: 0;
+    transform: translate3d(50px, 0, 0);
+  }
 }
 
 /* Horizontally Scrollable Cookware Carousel (Figma 3409:25225 - 634px content area) */

@@ -9,7 +9,7 @@
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
   <title>Polaris Cooktop Precision Cooking Prototype</title>
-  <link rel="stylesheet" href="./styles.css?v=20261116-temp-f3">
+  <link rel="stylesheet" href="./styles.css?v=20261116-staticpanel-1">
 </head>
 <body>
   <div class="test-environment">
@@ -80,8 +80,8 @@
         </div>
       </div>
 
-      <!-- TASK 3 ONLY: SUB-FLOW SWITCHER (3B: Temp vs Status 375°F vs 3C: Food Mode vs 3E: Technique) -->
-      <div class="t3-subflow-controls" id="t3SubflowControls" hidden>
+      <!-- TASK 3 ONLY: SUB-FLOW SWITCHER (Hidden per request) -->
+      <div class="t3-subflow-controls" id="t3SubflowControls" style="display: none !important;" hidden>
         <span class="glance-label">Task 3 Flow:</span>
         <button type="button" class="glance-btn is-active" id="btnT3FlowTemp">
           3B: Temp Flow
@@ -674,21 +674,24 @@
                 <button type="button" class="pc-drawer-item" data-t3tab="recent" id="t3TabBtnRecentFromTemp">Recent Used</button>
               </nav>
 
-              <!-- Stainless Cookware Edit Button (Figma Node 3382:21184) -->
-              <button type="button" class="t3-cookware-edit-btn" id="t3BtnCookwareEdit" aria-label="Cookware Selection: Stainless">
-                <span class="t3-cookware-edit-label">Stainless</span>
-                <img class="t3-cookware-edit-icon" src="./assets/icon-pencil-edit.png" alt="" aria-hidden="true">
-              </button>
+              <!-- Main Content Pane (Right side) -->
+              <div class="t3-temp-main-content" id="t3TempMainContent">
+                <!-- Stainless Cookware Edit Button (Figma Node 3382:21184) -->
+                <button type="button" class="t3-cookware-edit-btn" id="t3BtnCookwareEdit" aria-label="Cookware Selection: Stainless">
+                  <span class="t3-cookware-edit-label">Stainless</span>
+                  <img class="t3-cookware-edit-icon" src="./assets/icon-pencil-edit.png" alt="" aria-hidden="true">
+                </button>
 
-              <!-- Dynamic Horizontal Temperature Carousel (200°F - 500°F in 25° increments, centered at 375°F, 3 numbers on screen) -->
-              <div class="t3-picker-wheel-container" id="t3PickerWheelContainer">
-                <div class="t3-picker-track" id="t3PickerTrack"></div>
+                <!-- Dynamic Horizontal Temperature Carousel (200°F - 500°F in 25° increments, centered at 375°F, 3 numbers on screen) -->
+                <div class="t3-picker-wheel-container" id="t3PickerWheelContainer">
+                  <div class="t3-picker-track" id="t3PickerTrack"></div>
+                </div>
+
+                <!-- START Button (Figma Node 3198:27479) -->
+                <button type="button" class="t3-temp-start-btn" id="t3BtnStartTemp" aria-label="Start Temperature">START</button>
+                <!-- Keypad Switcher Button (hidden to match Figma 3198:27479) -->
+                <button type="button" class="t3-temp-keypad-btn" id="t3BtnKeypadFromTemp" aria-label="Switch to Keypad" style="display:none;"></button>
               </div>
-
-              <!-- START Button (Figma Node 3198:27479) -->
-              <button type="button" class="t3-temp-start-btn" id="t3BtnStartTemp" aria-label="Start Temperature">START</button>
-              <!-- Keypad Switcher Button (hidden to match Figma 3198:27479) -->
-              <button type="button" class="t3-temp-keypad-btn" id="t3BtnKeypadFromTemp" aria-label="Switch to Keypad" style="display:none;"></button>
             </div>
 
             <!-- 4B. SCREEN: 3B-DIGIPAD (PC TEMPERATURE DIGIPAD - FIGMA 3017:25641) -->
@@ -749,33 +752,36 @@
                 <button type="button" class="pc-drawer-item" data-t3tab="recent" id="t3TabCookwareToRecent">Recent Used</button>
               </nav>
 
-              <!-- Horizontally Scrollable Cookware Carousel (Figma 3409:25225) -->
-              <div class="t3-cookware-carousel-viewport" id="t3CookwareCarouselViewport">
-                <div class="t3-cookware-scroll-track" id="t3CookwareScrollTrack">
-                  <div class="t3-cookware-card" data-cookware="Stainless" data-index="0" id="t3CardStainless" role="button" tabindex="0" aria-label="Stainless Steel Cookware">
-                    <img src="./assets/cookware/card_stainless.png" alt="Stainless Steel">
-                  </div>
-                  <div class="t3-cookware-card is-active" data-cookware="Cast Iron" data-index="1" id="t3CardCastIron" role="button" tabindex="0" aria-label="Cast Iron Cookware">
-                    <img src="./assets/cookware/card_castiron_clean.png" alt="Cast Iron">
-                  </div>
-                  <div class="t3-cookware-card" data-cookware="Other" data-index="2" id="t3CardOther" role="button" tabindex="0" aria-label="Other Cookware">
-                    <img src="./assets/cookware/card_other.png" alt="Other Cookware">
+              <!-- Main Content Pane (Right side) -->
+              <div class="t3-cookware-main-content" id="t3CookwareMainContent">
+                <!-- Horizontally Scrollable Cookware Carousel (Figma 3409:25225) -->
+                <div class="t3-cookware-carousel-viewport" id="t3CookwareCarouselViewport">
+                  <div class="t3-cookware-scroll-track" id="t3CookwareScrollTrack">
+                    <div class="t3-cookware-card" data-cookware="Stainless" data-index="0" id="t3CardStainless" role="button" tabindex="0" aria-label="Stainless Steel Cookware">
+                      <img src="./assets/cookware/card_stainless.png" alt="Stainless Steel">
+                    </div>
+                    <div class="t3-cookware-card is-active" data-cookware="Cast Iron" data-index="1" id="t3CardCastIron" role="button" tabindex="0" aria-label="Cast Iron Cookware">
+                      <img src="./assets/cookware/card_castiron_clean.png" alt="Cast Iron">
+                    </div>
+                    <div class="t3-cookware-card" data-cookware="Other" data-index="2" id="t3CardOther" role="button" tabindex="0" aria-label="Other Cookware">
+                      <img src="./assets/cookware/card_other.png" alt="Other Cookware">
+                    </div>
                   </div>
                 </div>
+
+                <!-- Pagination Indicator Dots (Figma 3409:25241) -->
+                <div class="t3-cookware-pagination" id="t3CookwarePagination">
+                  <button type="button" class="t3-cookware-dot" data-index="0" aria-label="Go to Stainless Steel"></button>
+                  <button type="button" class="t3-cookware-dot is-active" data-index="1" aria-label="Go to Cast Iron"></button>
+                  <button type="button" class="t3-cookware-dot" data-index="2" aria-label="Go to Other Cookware"></button>
+                </div>
+
+                <!-- SELECT Button (Figma Node 3407:25105) -->
+                <button type="button" class="t3-cookware-select-btn" id="t3BtnSelectCookware" aria-label="Select Cookware">Select</button>
+
+                <!-- Cookware Info Button (Figma Node 3407:25106) -->
+                <button type="button" class="t3-cookware-info-btn" id="t3BtnCookwareInfo" aria-label="Cookware Information"></button>
               </div>
-
-              <!-- Pagination Indicator Dots (Figma 3409:25241) -->
-              <div class="t3-cookware-pagination" id="t3CookwarePagination">
-                <button type="button" class="t3-cookware-dot" data-index="0" aria-label="Go to Stainless Steel"></button>
-                <button type="button" class="t3-cookware-dot is-active" data-index="1" aria-label="Go to Cast Iron"></button>
-                <button type="button" class="t3-cookware-dot" data-index="2" aria-label="Go to Other Cookware"></button>
-              </div>
-
-              <!-- SELECT Button (Figma Node 3407:25105) -->
-              <button type="button" class="t3-cookware-select-btn" id="t3BtnSelectCookware" aria-label="Select Cookware">Select</button>
-
-              <!-- Cookware Info Button (Figma Node 3407:25106) -->
-              <button type="button" class="t3-cookware-info-btn" id="t3BtnCookwareInfo" aria-label="Cookware Information"></button>
             </div>
 
             <!-- 5. SCREEN: 3B-TEMP EXPAND PREHEAT (LIVE GROWING TEMP OVER 5S) -->
@@ -1660,6 +1666,6 @@
     </footer>
   </div>
 
-  <script src="./app.js?v=20261116-temp-f3"></script>
+  <script src="./app.js?v=20261116-staticpanel-1"></script>
 </body>
 </html>
