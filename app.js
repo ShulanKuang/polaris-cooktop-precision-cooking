@@ -306,14 +306,16 @@
     t3BtnCookwareEdit: document.getElementById("t3BtnCookwareEdit"),
     t3BtnKeypadFromTemp: document.getElementById("t3BtnKeypadFromTemp"),
 
-    // Task 3B: Select Cookware Screen (Figma 3407:25065)
+    // Task 3B: Select Cookware Screen (Figma 3407:25065 & 3409:25225)
     t3ScreenSelectCookware: document.getElementById("t3ScreenSelectCookware"),
     t3BtnBackFromCookware: document.getElementById("t3BtnBackFromCookware"),
     t3SideDrawerCookware: document.getElementById("t3SideDrawerCookware"),
-    t3CookwareCardsContainer: document.getElementById("t3CookwareCardsContainer"),
+    t3CookwareCarouselViewport: document.getElementById("t3CookwareCarouselViewport"),
+    t3CookwareScrollTrack: document.getElementById("t3CookwareScrollTrack"),
     t3CardStainless: document.getElementById("t3CardStainless"),
     t3CardCastIron: document.getElementById("t3CardCastIron"),
     t3CardOther: document.getElementById("t3CardOther"),
+    t3CookwarePagination: document.getElementById("t3CookwarePagination"),
     t3BtnSelectCookware: document.getElementById("t3BtnSelectCookware"),
     t3BtnCookwareInfo: document.getElementById("t3BtnCookwareInfo"),
 
@@ -2433,6 +2435,22 @@
         scrollToT3Temp(state.task3TargetTemp || 375, false);
       });
     }
+    if (stage === "selectCookware") {
+      const drawer = document.getElementById("t3SideDrawerCookware");
+      if (drawer) {
+        drawer.querySelectorAll(".pc-drawer-item").forEach(item => {
+          item.classList.toggle("is-active", item.dataset.t3tab === "temperature");
+        });
+      }
+      requestAnimationFrame(() => {
+        let targetIdx = 1;
+        if (state.selectedCookware === "Stainless") targetIdx = 0;
+        else if (state.selectedCookware === "Other") targetIdx = 2;
+        if (typeof window.scrollToCookwareIndex === "function") {
+          window.scrollToCookwareIndex(targetIdx, false);
+        }
+      });
+    }
   }
 
   // Content-only slide transition between Precision Cooking tabs (Temperature, Food, Technique)
@@ -3880,6 +3898,120 @@
       els.t3BtnStartTemp.addEventListener("touchstart", handleStart, { passive: false });
     }
 
+    // Cookware Selection Carousel Setup (Figma 3407:25065 & 3409:25225)
+    const cookwareViewport = els.t3CookwareCarouselViewport;
+    const cookwareCards = [
+      { el: els.t3CardStainless, name: "Stainless Steel", shortName: "Stainless", index: 0 },
+      { el: els.t3CardCastIron, name: "Cast Iron", shortName: "Cast Iron", index: 1 },
+      { el: els.t3CardOther, name: "Other", shortName: "Other", index: 2 }
+    ];
+    const cookwareDots = els.t3CookwarePagination ? Array.from(els.t3CookwarePagination.querySelectorAll(".t3-cookware-dot")) : [];
+
+    const CARD_STEP = 284; // 260px card width + 24px gap
+    let isCookwareDragging = false;
+    let cookwareStartX = 0;
+    let cookwareScrollStart = 0;
+    let cookwareHasDragged = false;
+    let cookwareScrollRaf = null;
+
+    function updateCookwareUI(activeIndex) {
+      activeIndex = Math.max(0, Math.min(cookwareCards.length - 1, activeIndex));
+      const targetCard = cookwareCards[activeIndex];
+      if (targetCard) {
+        state.selectedCookware = targetCard.shortName;
+      }
+      cookwareCards.forEach((c, idx) => {
+        if (c.el) c.el.classList.toggle("is-active", idx === activeIndex);
+      });
+      cookwareDots.forEach((dot, idx) => {
+        dot.classList.toggle("is-active", idx === activeIndex);
+      });
+    }
+
+    function scrollToCookwareIndex(index, smooth = true) {
+      if (!cookwareViewport) return;
+      index = Math.max(0, Math.min(cookwareCards.length - 1, index));
+      updateCookwareUI(index);
+      cookwareViewport.scrollTo({
+        left: index * CARD_STEP,
+        behavior: smooth ? "smooth" : "auto"
+      });
+    }
+    window.scrollToCookwareIndex = scrollToCookwareIndex;
+
+    if (cookwareViewport) {
+      // Mouse drag support
+      const onCookwarePointerDown = (e) => {
+        isCookwareDragging = true;
+        cookwareHasDragged = false;
+        cookwareStartX = e.clientX ?? (e.touches && e.touches[0] ? e.touches[0].clientX : 0);
+        cookwareScrollStart = cookwareViewport.scrollLeft;
+      };
+
+      const onCookwarePointerMove = (e) => {
+        if (!isCookwareDragging) return;
+        const currentX = e.clientX ?? (e.touches && e.touches[0] ? e.touches[0].clientX : 0);
+        const diff = currentX - cookwareStartX;
+        if (Math.abs(diff) > 5) {
+          cookwareHasDragged = true;
+        }
+        cookwareViewport.scrollLeft = cookwareScrollStart - diff;
+      };
+
+      const onCookwarePointerUp = () => {
+        if (!isCookwareDragging) return;
+        isCookwareDragging = false;
+        if (cookwareHasDragged) {
+          const targetIndex = Math.round(cookwareViewport.scrollLeft / CARD_STEP);
+          scrollToCookwareIndex(targetIndex, true);
+        }
+      };
+
+      cookwareViewport.addEventListener("mousedown", onCookwarePointerDown);
+      window.addEventListener("mousemove", onCookwarePointerMove);
+      window.addEventListener("mouseup", onCookwarePointerUp);
+
+      cookwareViewport.addEventListener("touchstart", onCookwarePointerDown, { passive: true });
+      cookwareViewport.addEventListener("touchmove", onCookwarePointerMove, { passive: true });
+      cookwareViewport.addEventListener("touchend", onCookwarePointerUp, { passive: true });
+
+      // Live scroll listener for active card & pagination indicator
+      cookwareViewport.addEventListener("scroll", () => {
+        if (cookwareScrollRaf) cancelAnimationFrame(cookwareScrollRaf);
+        cookwareScrollRaf = requestAnimationFrame(() => {
+          const activeIdx = Math.round(cookwareViewport.scrollLeft / CARD_STEP);
+          updateCookwareUI(activeIdx);
+        });
+      }, { passive: true });
+    }
+
+    // Card tap to center and select
+    cookwareCards.forEach(({ el, index, shortName }) => {
+      if (!el) return;
+      const onCardClick = (e) => {
+        if (cookwareHasDragged) return;
+        if (e) {
+          e.preventDefault();
+          e.stopPropagation();
+        }
+        playSound("touch");
+        scrollToCookwareIndex(index, true);
+      };
+      el.addEventListener("click", onCardClick);
+      el.addEventListener("touchend", onCardClick);
+    });
+
+    // Pagination dots tap to navigate
+    cookwareDots.forEach((dot, idx) => {
+      const onDotClick = (e) => {
+        e.stopPropagation();
+        playSound("touch");
+        scrollToCookwareIndex(idx, true);
+      };
+      dot.addEventListener("click", onDotClick);
+      dot.addEventListener("touchend", onDotClick);
+    });
+
     // Cookware Edit button on Temperature Screen (Figma 3382:21184)
     if (els.t3BtnCookwareEdit) {
       const handleCookwareEdit = (e) => {
@@ -3890,13 +4022,21 @@
         playSound("touch");
         t3Stage = "selectCookware";
         updateScreenBadge("selectCookware");
-        slideTransition(els.t3ScreenTemperature, els.t3ScreenSelectCookware, "left");
+
+        let targetIdx = 1; // Default to Cast Iron as in Figma 3407:25065
+        if (state.selectedCookware === "Stainless") targetIdx = 0;
+        else if (state.selectedCookware === "Other") targetIdx = 2;
+
+        scrollToCookwareIndex(targetIdx, false);
+        slideTransition(els.t3ScreenTemperature, els.t3ScreenSelectCookware, "left", () => {
+          scrollToCookwareIndex(targetIdx, false);
+        });
       };
       els.t3BtnCookwareEdit.addEventListener("click", handleCookwareEdit);
       els.t3BtnCookwareEdit.addEventListener("touchstart", handleCookwareEdit, { passive: false });
     }
 
-    // Select Cookware Screen Handlers (Figma 3407:25065)
+    // Select Cookware Screen Handlers (Figma 3407:25065 / 3409:25243)
     if (els.t3BtnSelectCookware) {
       const handleSelectCookware = (e) => {
         if (e) {
@@ -3937,28 +4077,6 @@
       els.t3BtnBackFromCookware.addEventListener("click", handleBackFromCookware);
       els.t3BtnBackFromCookware.addEventListener("touchstart", handleBackFromCookware, { passive: false });
     }
-
-    const cookwareCards = [
-      { el: els.t3CardStainless, name: "Stainless Steel", shortName: "Stainless" },
-      { el: els.t3CardCastIron, name: "Cast Iron", shortName: "Cast Iron" },
-      { el: els.t3CardOther, name: "Other", shortName: "Other" }
-    ];
-    cookwareCards.forEach(({ el, name, shortName }) => {
-      if (!el) return;
-      const onCardClick = (e) => {
-        if (e) {
-          e.preventDefault();
-          e.stopPropagation();
-        }
-        playSound("touch");
-        state.selectedCookware = shortName;
-        cookwareCards.forEach(c => {
-          if (c.el) c.el.classList.toggle("is-active", c.shortName === shortName);
-        });
-      };
-      el.addEventListener("click", onCardClick);
-      el.addEventListener("touchstart", onCardClick, { passive: false });
-    });
 
     if (els.t3BtnCookwareInfo) {
       els.t3BtnCookwareInfo.addEventListener("click", (e) => {

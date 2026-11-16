@@ -749,11 +749,26 @@
                 <button type="button" class="pc-drawer-item" data-t3tab="recent" id="t3TabCookwareToRecent">Recent Used</button>
               </nav>
 
-              <!-- Cookware Selection Cards (Hotspots/Overlays for Stainless Steel, Cast Iron, Other - Figma 3407:25089) -->
-              <div class="t3-cookware-cards-container" id="t3CookwareCardsContainer">
-                <button type="button" class="t3-cookware-card-btn" data-cookware="Stainless" id="t3CardStainless" aria-label="Stainless Steel Cookware"></button>
-                <button type="button" class="t3-cookware-card-btn is-active" data-cookware="Cast Iron" id="t3CardCastIron" aria-label="Cast Iron Cookware"></button>
-                <button type="button" class="t3-cookware-card-btn" data-cookware="Other" id="t3CardOther" aria-label="Other Cookware"></button>
+              <!-- Horizontally Scrollable Cookware Carousel (Figma 3409:25225) -->
+              <div class="t3-cookware-carousel-viewport" id="t3CookwareCarouselViewport">
+                <div class="t3-cookware-scroll-track" id="t3CookwareScrollTrack">
+                  <div class="t3-cookware-card" data-cookware="Stainless" data-index="0" id="t3CardStainless" role="button" tabindex="0" aria-label="Stainless Steel Cookware">
+                    <img src="./assets/cookware/card_stainless.png" alt="Stainless Steel">
+                  </div>
+                  <div class="t3-cookware-card is-active" data-cookware="Cast Iron" data-index="1" id="t3CardCastIron" role="button" tabindex="0" aria-label="Cast Iron Cookware">
+                    <img src="./assets/cookware/card_castiron_clean.png" alt="Cast Iron">
+                  </div>
+                  <div class="t3-cookware-card" data-cookware="Other" data-index="2" id="t3CardOther" role="button" tabindex="0" aria-label="Other Cookware">
+                    <img src="./assets/cookware/card_other.png" alt="Other Cookware">
+                  </div>
+                </div>
+              </div>
+
+              <!-- Pagination Indicator Dots (Figma 3409:25241) -->
+              <div class="t3-cookware-pagination" id="t3CookwarePagination">
+                <button type="button" class="t3-cookware-dot" data-index="0" aria-label="Go to Stainless Steel"></button>
+                <button type="button" class="t3-cookware-dot is-active" data-index="1" aria-label="Go to Cast Iron"></button>
+                <button type="button" class="t3-cookware-dot" data-index="2" aria-label="Go to Other Cookware"></button>
               </div>
 
               <!-- SELECT Button (Figma Node 3407:25105) -->

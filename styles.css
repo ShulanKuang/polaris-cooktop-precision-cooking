@@ -3256,37 +3256,119 @@ input,
   will-change: transform, opacity;
 }
 
-/* Cookware Selection Cards Container (Figma 3407:25089) */
-.t3-cookware-cards-container {
+/* Horizontally Scrollable Cookware Carousel (Figma 3409:25225 - 634px content area) */
+.t3-cookware-carousel-viewport {
   position: absolute;
-  left: 203px;
+  left: 300px;
   top: 100px;
-  width: 828px;
+  width: 634px;
   height: 172px;
-  display: flex;
-  gap: 24px;
+  overflow-x: scroll;
+  overflow-y: hidden;
+  -webkit-overflow-scrolling: touch;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
   z-index: 50;
-  pointer-events: auto;
+  cursor: grab;
+  user-select: none;
+  -webkit-user-select: none;
+}
+.t3-cookware-carousel-viewport::-webkit-scrollbar {
+  display: none;
+  width: 0;
+  height: 0;
+}
+.t3-cookware-carousel-viewport:active {
+  cursor: grabbing;
 }
 
-.t3-cookware-card-btn {
+/* Cookware Scroll Track (padding: 0 187px centers 260px cards in 634px viewport) */
+.t3-cookware-scroll-track {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  padding: 0 187px;
+  width: max-content;
+  height: 100%;
+  box-sizing: border-box;
+}
+
+/* Individual Cookware Card (260x172px, radius 8px) */
+.t3-cookware-card {
   width: 260px;
   height: 172px;
-  background: transparent;
-  border: 2px solid transparent;
+  flex-shrink: 0;
   border-radius: 8px;
-  cursor: pointer;
-  outline: none;
   box-sizing: border-box;
-  transition: transform 0.12s ease, border-color 0.15s ease, box-shadow 0.15s ease;
+  scroll-snap-align: center;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.16s cubic-bezier(0.2, 0.9, 0.3, 1), box-shadow 0.16s ease;
   -webkit-tap-highlight-color: transparent;
 }
-.t3-cookware-card-btn:active {
-  transform: scale(0.98);
+.t3-cookware-card::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  border: 2px solid transparent;
+  border-radius: 8px;
+  pointer-events: none;
+  box-sizing: border-box;
+  transition: border-color 0.16s ease, box-shadow 0.16s ease;
 }
-.t3-cookware-card-btn.is-active {
+.t3-cookware-card.is-active::after {
   border-color: #ffffff;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.45);
+}
+.t3-cookware-card:active {
+  transform: scale(0.97);
+}
+.t3-cookware-card img {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: cover;
+  border-radius: 8px;
+  pointer-events: none;
+}
+
+/* Pagination Indicator Dots (Figma 3409:25241 - 8px circles with 8px gap) */
+.t3-cookware-pagination {
+  position: absolute;
+  left: 300px;
+  top: 278px;
+  width: 634px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  z-index: 52;
+  pointer-events: auto;
+}
+.t3-cookware-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  border: none;
+  padding: 0;
+  margin: 0;
+  background: rgba(255, 255, 255, 0.25);
+  cursor: pointer;
+  outline: none;
+  transition: background-color 0.2s ease, transform 0.2s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+.t3-cookware-dot:active {
+  transform: scale(1.25);
+}
+.t3-cookware-dot.is-active {
+  background: #ffffff;
 }
 
 /* Select Button (Figma 3407:25105 - centered at 552.5px in content area / 642.5px in 1024) */
