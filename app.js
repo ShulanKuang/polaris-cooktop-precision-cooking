@@ -172,7 +172,8 @@
     task3TargetTemp: 375,
     task3BeefType: "Steak",
     task3BeefDoneness: "Med Rare",
-    task3BeefThickness: 0.5
+    task3BeefThickness: 0.5,
+    selectedCookware: "Cast Iron"
   };
 
   // DOM ELEMENTS
@@ -304,6 +305,17 @@
     t3BtnStartTemp: document.getElementById("t3BtnStartTemp"),
     t3BtnCookwareEdit: document.getElementById("t3BtnCookwareEdit"),
     t3BtnKeypadFromTemp: document.getElementById("t3BtnKeypadFromTemp"),
+
+    // Task 3B: Select Cookware Screen (Figma 3407:25065)
+    t3ScreenSelectCookware: document.getElementById("t3ScreenSelectCookware"),
+    t3BtnBackFromCookware: document.getElementById("t3BtnBackFromCookware"),
+    t3SideDrawerCookware: document.getElementById("t3SideDrawerCookware"),
+    t3CookwareCardsContainer: document.getElementById("t3CookwareCardsContainer"),
+    t3CardStainless: document.getElementById("t3CardStainless"),
+    t3CardCastIron: document.getElementById("t3CardCastIron"),
+    t3CardOther: document.getElementById("t3CardOther"),
+    t3BtnSelectCookware: document.getElementById("t3BtnSelectCookware"),
+    t3BtnCookwareInfo: document.getElementById("t3BtnCookwareInfo"),
 
     // Task 3B: Digital Keypad Screen (Figma 3017:25641)
     t3ScreenDigipad: document.getElementById("t3ScreenDigipad"),
@@ -546,6 +558,7 @@
         { el: els.t3ScreenFoodPreheat, name: "3C-foodPreheat" },
         { el: els.t3ScreenFoodComplete, name: "3C-foodComplete" },
         { el: els.t3ScreenFoodBurnerStatus, name: "3C-foodBurnerStatus" },
+        { el: els.t3ScreenSelectCookware, name: "3B-selectCookware" },
         { el: els.t3ScreenTemperature, name: "3B-temperature" },
         { el: els.t3ScreenDigipad, name: "3B-digipad" },
         { el: els.t3ScreenPreheat, name: "3B-preheat" },
@@ -576,6 +589,7 @@
           turnknob: "3A-turnknob",
           spotlight: "3A-spotlight",
           temperature: "3B-temperature",
+          selectCookware: "3B-selectCookware",
           digipad: "3B-digipad",
           preheat: "3B-preheat",
           completed: "3B-completed",
@@ -1460,6 +1474,16 @@
         els.t3ScreenTemperature.style.zIndex = "";
       }
     }
+    if (stage !== "selectCookware") {
+      if (els.t3ScreenSelectCookware) {
+        els.t3ScreenSelectCookware.style.transition = "";
+        els.t3ScreenSelectCookware.style.webkitTransition = "";
+        els.t3ScreenSelectCookware.style.transform = "";
+        els.t3ScreenSelectCookware.style.webkitTransform = "";
+        els.t3ScreenSelectCookware.style.boxShadow = "";
+        els.t3ScreenSelectCookware.style.zIndex = "";
+      }
+    }
     if (stage !== "foodOptions") {
       if (els.t3ScreenFoodOptions) {
         els.t3ScreenFoodOptions.style.transition = "";
@@ -1497,6 +1521,7 @@
     if (els.t3ScreenSpotlight) els.t3ScreenSpotlight.hidden = (stage !== "spotlight");
     if (els.t3ScreenTechnique) els.t3ScreenTechnique.hidden = (stage !== "technique");
     if (els.t3ScreenTemperature) els.t3ScreenTemperature.hidden = (stage !== "temperature");
+    if (els.t3ScreenSelectCookware) els.t3ScreenSelectCookware.hidden = (stage !== "selectCookware");
     if (els.t3ScreenDigipad) els.t3ScreenDigipad.hidden = (stage !== "digipad");
     if (els.t3ScreenPreheat) els.t3ScreenPreheat.hidden = (stage !== "preheat");
     if (els.t3ScreenPreheatComplete) els.t3ScreenPreheatComplete.hidden = (stage !== "completed");
@@ -1589,6 +1614,13 @@
       if (drawer) {
         drawer.querySelectorAll(".pc-drawer-item").forEach(item => {
           item.classList.toggle("is-active", item.dataset.t3tab === "recent");
+        });
+      }
+    } else if (stage === "selectCookware") {
+      const drawer = document.getElementById("t3SideDrawerCookware");
+      if (drawer) {
+        drawer.querySelectorAll(".pc-drawer-item").forEach(item => {
+          item.classList.toggle("is-active", item.dataset.t3tab === "temperature");
         });
       }
     }
@@ -2606,8 +2638,9 @@
 
     const currentScreen = outgoingScreen ||
       (els.t3ScreenTemperature && !els.t3ScreenTemperature.hidden ? els.t3ScreenTemperature :
+      (els.t3ScreenSelectCookware && !els.t3ScreenSelectCookware.hidden ? els.t3ScreenSelectCookware :
       (els.t3ScreenDigipad && !els.t3ScreenDigipad.hidden ? els.t3ScreenDigipad :
-      (els.t3ScreenTempRun && !els.t3ScreenTempRun.hidden ? els.t3ScreenTempRun : null)));
+      (els.t3ScreenTempRun && !els.t3ScreenTempRun.hidden ? els.t3ScreenTempRun : null))));
 
     if (currentScreen) {
       showT3Screen("foodOptions");
@@ -2967,7 +3000,8 @@
 
     const activeScreen = (els.t3ScreenTemperature && !els.t3ScreenTemperature.hidden)
       ? els.t3ScreenTemperature
-      : (els.t3ScreenSpotlight && !els.t3ScreenSpotlight.hidden ? els.t3ScreenSpotlight : null);
+      : ((els.t3ScreenSelectCookware && !els.t3ScreenSelectCookware.hidden) ? els.t3ScreenSelectCookware
+      : (els.t3ScreenSpotlight && !els.t3ScreenSpotlight.hidden ? els.t3ScreenSpotlight : null));
 
     if (activeScreen && els.t3ScreenStart) {
       t3Stage = "start";
@@ -3848,11 +3882,90 @@
 
     // Cookware Edit button on Temperature Screen (Figma 3382:21184)
     if (els.t3BtnCookwareEdit) {
-      els.t3BtnCookwareEdit.addEventListener("click", (e) => {
+      const handleCookwareEdit = (e) => {
+        if (e) {
+          e.preventDefault();
+          e.stopPropagation();
+        }
+        playSound("touch");
+        t3Stage = "selectCookware";
+        updateScreenBadge("selectCookware");
+        slideTransition(els.t3ScreenTemperature, els.t3ScreenSelectCookware, "left");
+      };
+      els.t3BtnCookwareEdit.addEventListener("click", handleCookwareEdit);
+      els.t3BtnCookwareEdit.addEventListener("touchstart", handleCookwareEdit, { passive: false });
+    }
+
+    // Select Cookware Screen Handlers (Figma 3407:25065)
+    if (els.t3BtnSelectCookware) {
+      const handleSelectCookware = (e) => {
+        if (e) {
+          e.preventDefault();
+          e.stopPropagation();
+        }
+        playSound("touch");
+        const selected = state.selectedCookware || "Cast Iron";
+        if (els.t3BtnCookwareEdit) {
+          const label = els.t3BtnCookwareEdit.querySelector(".t3-cookware-edit-label");
+          if (label) {
+            label.textContent = selected === "Stainless Steel" ? "Stainless" : selected;
+          }
+        }
+        t3Stage = "temperature";
+        updateScreenBadge("temperature");
+        slideTransition(els.t3ScreenSelectCookware, els.t3ScreenTemperature, "right", () => {
+          scrollToT3Temp(state.task3TargetTemp || 375, false);
+        });
+      };
+      els.t3BtnSelectCookware.addEventListener("click", handleSelectCookware);
+      els.t3BtnSelectCookware.addEventListener("touchstart", handleSelectCookware, { passive: false });
+    }
+
+    if (els.t3BtnBackFromCookware) {
+      const handleBackFromCookware = (e) => {
+        if (e) {
+          e.preventDefault();
+          e.stopPropagation();
+        }
+        playSound("touch");
+        t3Stage = "temperature";
+        updateScreenBadge("temperature");
+        slideTransition(els.t3ScreenSelectCookware, els.t3ScreenTemperature, "right", () => {
+          scrollToT3Temp(state.task3TargetTemp || 375, false);
+        });
+      };
+      els.t3BtnBackFromCookware.addEventListener("click", handleBackFromCookware);
+      els.t3BtnBackFromCookware.addEventListener("touchstart", handleBackFromCookware, { passive: false });
+    }
+
+    const cookwareCards = [
+      { el: els.t3CardStainless, name: "Stainless Steel", shortName: "Stainless" },
+      { el: els.t3CardCastIron, name: "Cast Iron", shortName: "Cast Iron" },
+      { el: els.t3CardOther, name: "Other", shortName: "Other" }
+    ];
+    cookwareCards.forEach(({ el, name, shortName }) => {
+      if (!el) return;
+      const onCardClick = (e) => {
+        if (e) {
+          e.preventDefault();
+          e.stopPropagation();
+        }
+        playSound("touch");
+        state.selectedCookware = shortName;
+        cookwareCards.forEach(c => {
+          if (c.el) c.el.classList.toggle("is-active", c.shortName === shortName);
+        });
+      };
+      el.addEventListener("click", onCardClick);
+      el.addEventListener("touchstart", onCardClick, { passive: false });
+    });
+
+    if (els.t3BtnCookwareInfo) {
+      els.t3BtnCookwareInfo.addEventListener("click", (e) => {
         e.stopPropagation();
         playSound("touch");
       });
-      els.t3BtnCookwareEdit.addEventListener("touchstart", (e) => {
+      els.t3BtnCookwareInfo.addEventListener("touchstart", (e) => {
         e.stopPropagation();
         playSound("touch");
       }, { passive: true });
@@ -4186,6 +4299,12 @@
           t3Stage = "temperature";
           updateScreenBadge("temperature");
           slideTransition(els.t3ScreenBeefMenu, els.t3ScreenTemperature, "right", () => {
+            scrollToT3Temp(state.task3TargetTemp || 375, false);
+          });
+        } else if (t3Stage === "selectCookware") {
+          t3Stage = "temperature";
+          updateScreenBadge("temperature");
+          slideTransition(els.t3ScreenSelectCookware, els.t3ScreenTemperature, "right", () => {
             scrollToT3Temp(state.task3TargetTemp || 375, false);
           });
         } else {

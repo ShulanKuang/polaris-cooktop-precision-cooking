@@ -3066,7 +3066,7 @@ input,
 
 #t3ScreenTemperature .t3-picker-wheel-container,
 #t3PickerWheelContainer {
-  left: 461px;
+  left: 371px;
   top: 143px;
 }
 
@@ -3157,7 +3157,7 @@ input,
 /* Start Button on Temperature Screen (Figma node 3198:27479 - aligned with active temperature digits) */
 .t3-temp-start-btn {
   position: absolute;
-  left: 640px;
+  left: 550px;
   top: 288px;
   width: 127px;
   height: 48px;
@@ -3183,10 +3183,10 @@ input,
   background-color: #e5e5e5;
 }
 
-/* Stainless Cookware Edit Button on Temperature Screen (Figma node 3382:21184) */
+/* Stainless Cookware Edit Button on Temperature Screen (Figma node 3382:21184 - left aligned to burner icon at 330px in content area / 420px in 1024 space) */
 .t3-cookware-edit-btn {
   position: absolute;
-  left: 420px;
+  left: 330px;
   top: 296px;
   width: 162px;
   height: 32px;
@@ -3241,6 +3241,102 @@ input,
 }
 .t3-temp-keypad-btn:active {
   transform: scale(0.95);
+}
+
+/* ==========================================================================
+   SELECT COOKWARE SCREEN (Figma Node 3407:25065)
+   ========================================================================== */
+#t3ScreenSelectCookware {
+  position: absolute;
+  left: 90px;
+  top: 0;
+  width: 934px;
+  height: 384px;
+  overflow: hidden;
+  will-change: transform, opacity;
+}
+
+/* Cookware Selection Cards Container (Figma 3407:25089) */
+.t3-cookware-cards-container {
+  position: absolute;
+  left: 203px;
+  top: 100px;
+  width: 828px;
+  height: 172px;
+  display: flex;
+  gap: 24px;
+  z-index: 50;
+  pointer-events: auto;
+}
+
+.t3-cookware-card-btn {
+  width: 260px;
+  height: 172px;
+  background: transparent;
+  border: 2px solid transparent;
+  border-radius: 8px;
+  cursor: pointer;
+  outline: none;
+  box-sizing: border-box;
+  transition: transform 0.12s ease, border-color 0.15s ease, box-shadow 0.15s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+.t3-cookware-card-btn:active {
+  transform: scale(0.98);
+}
+.t3-cookware-card-btn.is-active {
+  border-color: #ffffff;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+}
+
+/* Select Button (Figma 3407:25105 - centered at 552.5px in content area / 642.5px in 1024) */
+.t3-cookware-select-btn {
+  position: absolute;
+  left: 552.5px;
+  top: 305px;
+  width: 129px;
+  height: 48px;
+  background: #f4f4f2;
+  color: #1f2024;
+  border: none;
+  cursor: pointer;
+  outline: none;
+  border-radius: 999px;
+  font-family: var(--roux-typography-subtitle-small-font-family);
+  font-size: 26px;
+  font-weight: 600;
+  letter-spacing: 0.52px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.35);
+  z-index: 55;
+  transition: transform 0.12s ease, background-color 0.15s ease, box-shadow 0.15s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+.t3-cookware-select-btn:active {
+  transform: scale(0.95);
+  background-color: #e5e5e5;
+}
+
+/* Info Button (Figma 3407:25106) */
+.t3-cookware-info-btn {
+  position: absolute;
+  left: 781.5px;
+  top: 305px;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  outline: none;
+  z-index: 55;
+  -webkit-tap-highlight-color: transparent;
+  transition: transform 0.12s ease;
+}
+.t3-cookware-info-btn:active {
+  transform: scale(0.92);
 }
 
 /* ======================================================== */

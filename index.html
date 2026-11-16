@@ -117,6 +117,7 @@
               <option value="t3:spotlight">3A-spotlight (Precision Spotlight Screen)</option>
               <option value="t3:temperature">3B-temperature (PC Temperature Picker)</option>
               <option value="t3:digipad">3B-digipad (PC Temperature Digipad)</option>
+              <option value="t3:selectCookware">3B-selectCookware (Select Cookware Material)</option>
               <option value="t3:preheat">3B-preheat (Preheating In Progress)</option>
               <option value="t3:completed">3B-completed (Preheat Complete Toast)</option>
               <option value="t3:tempRun">3B-tempRun (Update Temp Screen)</option>
@@ -732,6 +733,34 @@
                 <button type="button" class="t3-digi-key" data-key="0" aria-label="0"></button>
                 <button type="button" class="t3-digi-key" data-key="backspace" aria-label="Backspace"></button>
               </div>
+            </div>
+
+            <!-- 4C. SCREEN: 3B-SELECT-COOKWARE (SELECT COOKWARE MATERIAL - FIGMA 3407:25065) -->
+            <div class="t3-screen" id="t3ScreenSelectCookware" hidden>
+              <img class="t3-screen-bg" src="./assets/task3-pc-bg-select-cookware.png" alt="Select Cookware">
+              <!-- Back button (< Precision Cooking) -->
+              <button type="button" class="t3-back-btn" id="t3BtnBackFromCookware" aria-label="Back to Temperature"></button>
+
+              <!-- SIDE DRAWER NAVIGATION: Temperature / Food / Technique / Recent Used (Figma 3407:25065) -->
+              <nav class="pc-side-drawer-nav" id="t3SideDrawerCookware">
+                <button type="button" class="pc-drawer-item is-active" data-t3tab="temperature" id="t3TabCookwareToTemp">Temperature</button>
+                <button type="button" class="pc-drawer-item" data-t3tab="food" id="t3TabCookwareToFood">Food</button>
+                <button type="button" class="pc-drawer-item" data-t3tab="technique" id="t3TabCookwareToTech">Technique</button>
+                <button type="button" class="pc-drawer-item" data-t3tab="recent" id="t3TabCookwareToRecent">Recent Used</button>
+              </nav>
+
+              <!-- Cookware Selection Cards (Hotspots/Overlays for Stainless Steel, Cast Iron, Other - Figma 3407:25089) -->
+              <div class="t3-cookware-cards-container" id="t3CookwareCardsContainer">
+                <button type="button" class="t3-cookware-card-btn" data-cookware="Stainless" id="t3CardStainless" aria-label="Stainless Steel Cookware"></button>
+                <button type="button" class="t3-cookware-card-btn is-active" data-cookware="Cast Iron" id="t3CardCastIron" aria-label="Cast Iron Cookware"></button>
+                <button type="button" class="t3-cookware-card-btn" data-cookware="Other" id="t3CardOther" aria-label="Other Cookware"></button>
+              </div>
+
+              <!-- SELECT Button (Figma Node 3407:25105) -->
+              <button type="button" class="t3-cookware-select-btn" id="t3BtnSelectCookware" aria-label="Select Cookware">Select</button>
+
+              <!-- Cookware Info Button (Figma Node 3407:25106) -->
+              <button type="button" class="t3-cookware-info-btn" id="t3BtnCookwareInfo" aria-label="Cookware Information"></button>
             </div>
 
             <!-- 5. SCREEN: 3B-TEMP EXPAND PREHEAT (LIVE GROWING TEMP OVER 5S) -->
