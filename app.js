@@ -302,6 +302,7 @@
     t3PickerWheelContainer: document.getElementById("t3PickerWheelContainer"),
     t3PickerTrack: document.getElementById("t3PickerTrack"),
     t3BtnStartTemp: document.getElementById("t3BtnStartTemp"),
+    t3BtnCookwareEdit: document.getElementById("t3BtnCookwareEdit"),
     t3BtnKeypadFromTemp: document.getElementById("t3BtnKeypadFromTemp"),
 
     // Task 3B: Digital Keypad Screen (Figma 3017:25641)
@@ -2425,7 +2426,7 @@
       temperature: {
         stage: "temperature",
         screen: els.t3ScreenTemperature,
-        getContent: () => [els.t3PickerWheelContainer, els.t3BtnStartTemp, els.t3BtnKeypadFromTemp].filter(Boolean),
+        getContent: () => [els.t3PickerWheelContainer, els.t3BtnCookwareEdit, els.t3BtnStartTemp, els.t3BtnKeypadFromTemp].filter(Boolean),
         onInit: () => {
           scrollToT3Temp(state.task3TargetTemp || 375, false);
         }
@@ -3843,6 +3844,18 @@
       };
       els.t3BtnStartTemp.addEventListener("click", handleStart);
       els.t3BtnStartTemp.addEventListener("touchstart", handleStart, { passive: false });
+    }
+
+    // Cookware Edit button on Temperature Screen (Figma 3382:21184)
+    if (els.t3BtnCookwareEdit) {
+      els.t3BtnCookwareEdit.addEventListener("click", (e) => {
+        e.stopPropagation();
+        playSound("touch");
+      });
+      els.t3BtnCookwareEdit.addEventListener("touchstart", (e) => {
+        e.stopPropagation();
+        playSound("touch");
+      }, { passive: true });
     }
 
     // 10s Preheat Complete Toast Buttons (Figma 3051:42525)

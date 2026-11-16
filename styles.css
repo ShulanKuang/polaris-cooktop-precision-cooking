@@ -3064,6 +3064,12 @@ input,
   overflow: hidden;
 }
 
+#t3ScreenTemperature .t3-picker-wheel-container,
+#t3PickerWheelContainer {
+  left: 461px;
+  top: 143px;
+}
+
 .t3-picker-track {
   display: flex;
   align-items: center;
@@ -3151,20 +3157,20 @@ input,
 /* Start Button on Temperature Screen (Figma node 3198:27479 - aligned with active temperature digits) */
 .t3-temp-start-btn {
   position: absolute;
-  left: 530px;
+  left: 640px;
   top: 288px;
   width: 127px;
   height: 48px;
-  background: #ffffff;
-  color: #16171a;
+  background: #f4f4f2;
+  color: #1f2024;
   border: none;
   cursor: pointer;
   outline: none;
-  border-radius: 24px;
+  border-radius: 999px;
   font-family: var(--roux-typography-subtitle-small-font-family);
-  font-size: 19px;
-  font-weight: 700;
-  letter-spacing: 0.5px;
+  font-size: 26px;
+  font-weight: 600;
+  letter-spacing: 0.52px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -3175,6 +3181,47 @@ input,
 .t3-temp-start-btn:active {
   transform: scale(0.95);
   background-color: #e5e5e5;
+}
+
+/* Stainless Cookware Edit Button on Temperature Screen (Figma node 3382:21184) */
+.t3-cookware-edit-btn {
+  position: absolute;
+  left: 420px;
+  top: 296px;
+  width: 162px;
+  height: 32px;
+  background: rgba(75, 76, 82, 0.8);
+  border: none;
+  cursor: pointer;
+  outline: none;
+  border-radius: 999px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 0 12px;
+  box-sizing: border-box;
+  z-index: 55;
+  transition: transform 0.12s ease, background-color 0.15s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+.t3-cookware-edit-btn:active {
+  transform: scale(0.96);
+  background: rgba(90, 92, 98, 0.9);
+}
+.t3-cookware-edit-label {
+  font-family: var(--roux-typography-subtitle-small-font-family);
+  font-size: 22px;
+  font-weight: 500;
+  line-height: 1;
+  color: #ffffff;
+  letter-spacing: 0.52px;
+}
+.t3-cookware-edit-icon {
+  width: 18px;
+  height: 18px;
+  display: block;
+  object-fit: contain;
 }
 
 /* Keypad Button on Temperature Screen (Figma node 3017:25518) */

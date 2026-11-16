@@ -9,7 +9,7 @@
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
   <title>Polaris Cooktop Precision Cooking Prototype</title>
-  <link rel="stylesheet" href="./styles.css?v=20261106-recent-v1">
+  <link rel="stylesheet" href="./styles.css?v=20261116-temp-f3">
 </head>
 <body>
   <div class="test-environment">
@@ -661,7 +661,7 @@
 
             <!-- 4. SCREEN: 3B-PCTEMPERATURE (HORIZONTAL PICKER & START BUTTON - FIGMA 3198:27479) -->
             <div class="t3-screen" id="t3ScreenTemperature" hidden>
-              <img class="t3-screen-bg" src="./assets/task3-pc-bg-temperature.png?v=20261105-clean3" alt="Precision Cooking Temperature">
+              <img class="t3-screen-bg" src="./assets/task3-pc-bg-temperature.png?v=20261116-clean4" alt="Precision Cooking Temperature">
               <!-- Back button (< Precision Cooking) -->
               <button type="button" class="t3-back-btn" id="t3BtnBackFromTemp" aria-label="Back to Burners"></button>
 
@@ -673,13 +673,11 @@
                 <button type="button" class="pc-drawer-item" data-t3tab="recent" id="t3TabBtnRecentFromTemp">Recent Used</button>
               </nav>
 
-              <!-- Cookware Tabs (Stainless Steel / Cast Iron / Other / Info - Figma 3198:27479) -->
-              <div class="pc-cookware-tabs" id="t3CookwareTabs">
-                <button type="button" class="pc-cookware-tab is-active" data-cookware="stainless" aria-label="Stainless Steel"></button>
-                <button type="button" class="pc-cookware-tab" data-cookware="castiron" aria-label="Cast Iron"></button>
-                <button type="button" class="pc-cookware-tab" data-cookware="other" aria-label="Other"></button>
-                <button type="button" class="pc-cookware-info" id="t3CookwareInfo" aria-label="Cookware Info"></button>
-              </div>
+              <!-- Stainless Cookware Edit Button (Figma Node 3382:21184) -->
+              <button type="button" class="t3-cookware-edit-btn" id="t3BtnCookwareEdit" aria-label="Cookware Selection: Stainless">
+                <span class="t3-cookware-edit-label">Stainless</span>
+                <img class="t3-cookware-edit-icon" src="./assets/icon-pencil-edit.png" alt="" aria-hidden="true">
+              </button>
 
               <!-- Dynamic Horizontal Temperature Carousel (200°F - 500°F in 25° increments, centered at 375°F, 3 numbers on screen) -->
               <div class="t3-picker-wheel-container" id="t3PickerWheelContainer">
@@ -1618,6 +1616,6 @@
     </footer>
   </div>
 
-  <script src="./app.js?v=20261106-recent-v1"></script>
+  <script src="./app.js?v=20261116-temp-f3"></script>
 </body>
 </html>
