@@ -2769,6 +2769,19 @@
       if (tile.el) {
         if (tile.view === viewName || (tile.view === "tips" && viewName === "ingredients")) {
           tile.el.classList.add("is-active");
+          // Safely keep active tile within view in scrollable container
+          const container = tile.el.parentElement;
+          if (container && container.classList.contains("t3-pancakes-drawer-tiles")) {
+            const tileTop = tile.el.offsetTop;
+            const tileBottom = tileTop + tile.el.offsetHeight;
+            const viewTop = container.scrollTop;
+            const viewBottom = viewTop + container.clientHeight;
+            if (tileTop < viewTop) {
+              container.scrollTo({ top: tileTop, behavior: "smooth" });
+            } else if (tileBottom > viewBottom) {
+              container.scrollTo({ top: tileBottom - container.clientHeight, behavior: "smooth" });
+            }
+          }
         } else {
           tile.el.classList.remove("is-active");
         }
@@ -2819,6 +2832,10 @@
     t3Stage = subStage;
     updateScreenBadge(subStage);
     showT3PancakesView(initialView);
+    const drawerScroll = els.t3ScreenPancakes?.querySelector(".t3-pancakes-drawer-tiles");
+    if (drawerScroll && initialView === "doneness") {
+      drawerScroll.scrollTop = 0;
+    }
     slideTransition(els.t3ScreenFoodOptions, els.t3ScreenPancakes, "left");
   }
 
