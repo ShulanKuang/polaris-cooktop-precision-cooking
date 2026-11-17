@@ -6005,8 +6005,14 @@
       pancakeCookwareCards.forEach(c => c.classList.remove("is-selected"));
       card.classList.add("is-selected");
       const rawCookware = card.dataset.cookware || "Cast Iron";
+      const tileText = (rawCookware === "Stainless" || rawCookware === "Stainless Steel") ? "Stainless" : rawCookware;
       currentPancakeCookware = rawCookware === "Stainless" ? "Stainless Steel" : rawCookware;
-      if (els.t3PancakesValCookware) els.t3PancakesValCookware.textContent = currentPancakeCookware;
+      if (els.t3PancakesValCookware) {
+        els.t3PancakesValCookware.textContent = tileText;
+      }
+      if (els.t3TileCookware) {
+        els.t3TileCookware.setAttribute("aria-label", `Cookware: ${tileText}`);
+      }
 
       // Also update Cookware value in Tips prep details
       const tipsCookwareVal = document.querySelector("#t3TipsPanelInstructions .t3-prep-item:last-child .t3-prep-val");
