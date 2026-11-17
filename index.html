@@ -130,6 +130,7 @@
               <option value="t3:pancakesTips">3C-pancakesTips (Pancakes Instructions)</option>
               <option value="t3:pancakesIngredients">3C-pancakesIngredients (Pancakes Ingredients)</option>
               <option value="t3:pancakesCookware">3C-pancakesCookware (Pancakes Cookware)</option>
+              <option value="t3:pancakesPreheat">3C-pancakesPreheat (Pancakes Preheating - Figma 3299:24045)</option>
               <option value="t3:beefMenu">3-beefmenu (Beef Menu 6-Tile Drawer)</option>
               <option value="t3:beefType">3C-beefType (Beef Cuts Selection)</option>
               <option value="t3:beefDoneness">3C-beefDoneness (Doneness Selection)</option>
@@ -1817,6 +1818,17 @@
                 </div>
 
               </div>
+            </div>
+
+            <!-- SCREEN: 3C-PANCAKES-PREHEAT (PANCAKES 400°F PREHEATING RAMP UP - FIGMA 3299:24045) -->
+            <div class="t3-screen" id="t3ScreenPancakesPreheat" hidden>
+              <img class="t3-screen-bg" src="./assets/task3c/pancakes/3299_24045_clean.png" alt="Pancakes Preheating">
+              <!-- Back button (< Burners) -->
+              <button type="button" class="t3-back-btn" id="t3BtnBackFromPancakesPreheat" aria-label="Back to Pancakes"></button>
+              <!-- Dynamic Current Temperature (counts up from 178°F to 400°F) -->
+              <div class="t3-pancakes-preheat-temp" id="t3PancakesPreheatTemp">178°F</div>
+              <!-- Hotspot to return to Pancakes config -->
+              <button type="button" class="t3-pancakes-edit-hotspot" id="t3BtnEditPancakesPreheat" aria-label="Edit Pancakes"></button>
             </div>
 
             <!-- 13. SCREEN: 3C-FOOD-PREHEAT (STEAK MED RARE PREHEATING RAMP UP - FIGMA 2348:17304) -->

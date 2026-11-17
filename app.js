@@ -504,6 +504,10 @@
     t3PancakesCookwareCarousel: document.getElementById("t3PancakesCookwareCarousel"),
     t3PancakesDonenessDots: document.getElementById("t3PancakesDonenessDots"),
     t3PancakesCookwareDots: document.getElementById("t3PancakesCookwareDots"),
+    t3ScreenPancakesPreheat: document.getElementById("t3ScreenPancakesPreheat"),
+    t3BtnBackFromPancakesPreheat: document.getElementById("t3BtnBackFromPancakesPreheat"),
+    t3PancakesPreheatTemp: document.getElementById("t3PancakesPreheatTemp"),
+    t3BtnEditPancakesPreheat: document.getElementById("t3BtnEditPancakesPreheat"),
 
     t3SubflowControls: document.getElementById("t3SubflowControls"),
     btnT3FlowTemp: document.getElementById("btnT3FlowTemp"),
@@ -585,6 +589,7 @@
       }
 
       const screenMap = [
+        { el: els.t3ScreenPancakesPreheat, name: "3C-pancakesPreheat" },
         { el: els.t3ScreenTurnKnob, name: "3A-turnknob" },
         { el: els.t3ScreenSpotlight, name: "3A-spotlight" },
         { el: els.t3ScreenTechnique, name: "3E-technique" },
@@ -644,6 +649,7 @@
           pancakesTips: "3C-pancakesTips",
           pancakesIngredients: "3C-pancakesIngredients",
           pancakesCookware: "3C-pancakesCookware",
+          pancakesPreheat: "3C-pancakesPreheat",
           beefMenu: "3-beefmenu",
           beefType: "3C-beefType",
           beefDoneness: "3C-beefDoneness",
@@ -1563,7 +1569,7 @@
         els.t3ScreenBeefMenu.style.zIndex = "";
       }
     }
-    if (!stage.startsWith("pancakes")) {
+    if (!stage.startsWith("pancakes") || stage === "pancakesPreheat") {
       if (els.t3ScreenPancakes) {
         els.t3ScreenPancakes.style.transition = "";
         els.t3ScreenPancakes.style.webkitTransition = "";
@@ -1593,7 +1599,7 @@
 
     // Task 3C screens:
     if (els.t3ScreenFoodOptions) els.t3ScreenFoodOptions.hidden = (stage !== "foodOptions");
-    const isPancakes = stage.startsWith("pancakes");
+    const isPancakes = stage.startsWith("pancakes") && stage !== "pancakesPreheat";
     if (els.t3ScreenPancakes) {
       els.t3ScreenPancakes.hidden = !isPancakes;
       if (isPancakes) {
@@ -1605,6 +1611,7 @@
         showT3PancakesView(subView);
       }
     }
+    if (els.t3ScreenPancakesPreheat) els.t3ScreenPancakesPreheat.hidden = (stage !== "pancakesPreheat");
     if (els.t3ScreenBeefMenu) els.t3ScreenBeefMenu.hidden = (stage !== "beefMenu");
     if (els.t3ScreenBeefType) els.t3ScreenBeefType.hidden = (stage !== "beefType");
     if (els.t3ScreenBeefDoneness) els.t3ScreenBeefDoneness.hidden = (stage !== "beefDoneness");
@@ -1620,12 +1627,12 @@
     // Task 3F Recent Used screen:
     if (els.t3ScreenRecentUsed) els.t3ScreenRecentUsed.hidden = (stage !== "recentUsed");
 
-    // Top status bar visibility (Figma 2323:15134, 3198:22619) - 48px tall status bar on 3C-beefType, doneness, thickness, and all pancakes screens
+    // Top status bar visibility (Figma 2323:15134, 3198:22619) - 48px tall status bar on 3C-beefType, doneness, thickness, and all pancakes config screens
     const needsTopStatus = (
       stage === "beefType" ||
       stage === "beefDoneness" ||
       stage === "beefThickness" ||
-      stage.startsWith("pancakes")
+      (stage.startsWith("pancakes") && stage !== "pancakesPreheat")
     );
     if (els.topStatus) {
       els.topStatus.hidden = !needsTopStatus;
@@ -2052,6 +2059,10 @@
     if (t3PreheatInterval) {
       clearInterval(t3PreheatInterval);
       t3PreheatInterval = null;
+    }
+    if (t3PancakesPreheatInterval) {
+      clearInterval(t3PancakesPreheatInterval);
+      t3PancakesPreheatInterval = null;
     }
     if (typeof hideT3CompleteToast === "function") {
       hideT3CompleteToast();
@@ -2883,6 +2894,58 @@
     updateNavbarState();
     slideTransition(els.t3ScreenFoodOptions, els.t3ScreenPancakes, "left");
   }
+
+  // PANCAKES PREHEAT (Figma 3299:24045)
+  let t3PancakesPreheatInterval = null;
+  let lastPancakesStage = "pancakesCookware";
+
+  function startT3PancakesPreheat() {
+    clearT3Timers();
+    showT3Screen("pancakesPreheat");
+    playSound("toggleOn");
+
+    state.task3Mode = "food";
+    state.task3IsRunning = true;
+    state.task3TargetTemp = 400;
+
+    // In Pancakes Preheating (Figma 3299:24045): Front Left Burner (Knob 1) is active
+    if (!knobsState[0] || Math.abs(knobsState[0].angle) <= 5) {
+      setKnobAngle(1, -56, false, false);
+    }
+    currentT3BurnerLevels[1] = "prc";
+    activePrcKnobIndex = 1;
+
+    updateCooktopActiveState();
+    updateNavbarState();
+    updateScreenBadge("pancakesPreheat");
+
+    const startTemp = 178;
+    const targetTemp = 400;
+    const durationMs = 5000;
+    const startTime = Date.now();
+
+    if (els.t3PancakesPreheatTemp) {
+      els.t3PancakesPreheatTemp.textContent = `${startTemp}°F`;
+    }
+
+    t3PancakesPreheatInterval = setInterval(() => {
+      const elapsed = Date.now() - startTime;
+      const progress = Math.min(1.0, elapsed / durationMs);
+      const current = Math.round(startTemp + progress * (targetTemp - startTemp));
+      if (els.t3PancakesPreheatTemp) {
+        els.t3PancakesPreheatTemp.textContent = `${current}°F`;
+      }
+
+      if (progress >= 1.0) {
+        clearInterval(t3PancakesPreheatInterval);
+        t3PancakesPreheatInterval = null;
+        if (els.t3PancakesPreheatTemp) {
+          els.t3PancakesPreheatTemp.textContent = `${targetTemp}°F`;
+        }
+      }
+    }, 50);
+  }
+  window.startT3PancakesPreheat = startT3PancakesPreheat;
 
   function transitionToT3Spotlight() {
     transitionToT3Temperature();
@@ -6076,11 +6139,29 @@
       if (btn) {
         btn.addEventListener("click", (e) => {
           e.stopPropagation();
-          playSound("toggleOn");
-          startT3FoodPreheat(400);
+          lastPancakesStage = (t3Stage && t3Stage.startsWith("pancakes") && t3Stage !== "pancakesPreheat") ? t3Stage : "pancakesCookware";
+          startT3PancakesPreheat();
         });
       }
     });
+
+    // Pancakes Preheat screen back & edit hotspot (Figma 3299:24045)
+    if (els.t3BtnBackFromPancakesPreheat) {
+      els.t3BtnBackFromPancakesPreheat.addEventListener("click", (e) => {
+        e.stopPropagation();
+        playSound("touch");
+        clearT3Timers();
+        showT3Screen(lastPancakesStage || "pancakesDoneness");
+      });
+    }
+    if (els.t3BtnEditPancakesPreheat) {
+      els.t3BtnEditPancakesPreheat.addEventListener("click", (e) => {
+        e.stopPropagation();
+        playSound("touch");
+        clearT3Timers();
+        showT3Screen(lastPancakesStage || "pancakesDoneness");
+      });
+    }
 
     // Drawer Header Back Button (< Burners | Pancakes)
     if (els.t3BtnBackFromPancakes) {
@@ -6130,6 +6211,11 @@
               return;
             }
           }
+          if (t3Stage === "pancakesPreheat") {
+            clearT3Timers();
+            showT3Screen(lastPancakesStage || "pancakesDoneness");
+            return;
+          }
           if (t3Stage && t3Stage.startsWith("pancakes")) {
             showT3Screen("foodOptions");
             return;
@@ -6155,6 +6241,11 @@
             transitionCookwareToTemperature();
             return;
           }
+        }
+        if (t3Stage === "pancakesPreheat") {
+          clearT3Timers();
+          showT3Screen(lastPancakesStage || "pancakesDoneness");
+          return;
         }
         if (t3Stage && t3Stage.startsWith("pancakes")) {
           showT3Screen("foodOptions");
@@ -6229,7 +6320,11 @@
             showT3Screen("techniqueComplete");
           } else if (stage.startsWith("pancakes")) {
             state.task3Mode = "food";
-            showT3Screen(stage);
+            if (stage === "pancakesPreheat") {
+              startT3PancakesPreheat();
+            } else {
+              showT3Screen(stage);
+            }
           } else {
             showT3Screen(stage);
           }

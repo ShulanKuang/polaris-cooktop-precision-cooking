@@ -6394,3 +6394,51 @@ input,
   color: rgba(255, 255, 255, 0.7);
 }
 
+/* ==========================================================================
+   TASK 3C: PANCAKES PREHEAT SCREEN (FIGMA 3299:24045)
+   ========================================================================== */
+#t3ScreenPancakesPreheat {
+  position: absolute;
+  left: 90px;
+  top: 0;
+  width: 934px;
+  height: 384px;
+  overflow: hidden;
+}
+
+.t3-pancakes-preheat-temp {
+  position: absolute;
+  left: 44px;
+  top: 265px;
+  width: 174px;
+  height: 34px;
+  font-family: "Profile Text", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  font-size: 28px;
+  font-weight: 600;
+  color: #ffffff;
+  text-align: right;
+  line-height: 34px;
+  letter-spacing: 0.56px;
+  pointer-events: none;
+  z-index: 10;
+}
+
+.t3-pancakes-edit-hotspot {
+  position: absolute;
+  left: 24px;
+  top: 218px;
+  width: 271px;
+  height: 128px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  z-index: 15;
+  outline: none;
+  border-radius: 16px;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.t3-pancakes-edit-hotspot:active {
+  background: rgba(255, 255, 255, 0.06);
+}
+
