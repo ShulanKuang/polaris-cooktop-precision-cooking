@@ -125,6 +125,11 @@
               <option value="t3:techniquePreheat">3E-techniquePreheat (Caramelize Preheating)</option>
               <option value="t3:techniqueComplete">3E-techniqueComplete (Caramelize Preheated)</option>
               <option value="t3:foodOptions">3C-foodOptions (Food Options 8 Tiles)</option>
+              <option value="t3:pancakesDoneness">3C-pancakesDoneness (Pancakes Doneness)</option>
+              <option value="t3:pancakesBurner">3C-pancakesBurner (Pancakes Burner)</option>
+              <option value="t3:pancakesTips">3C-pancakesTips (Pancakes Instructions)</option>
+              <option value="t3:pancakesIngredients">3C-pancakesIngredients (Pancakes Ingredients)</option>
+              <option value="t3:pancakesCookware">3C-pancakesCookware (Pancakes Cookware)</option>
               <option value="t3:beefMenu">3-beefmenu (Beef Menu 6-Tile Drawer)</option>
               <option value="t3:beefType">3C-beefType (Beef Cuts Selection)</option>
               <option value="t3:beefDoneness">3C-beefDoneness (Doneness Selection)</option>
@@ -1470,6 +1475,359 @@
                   </button>
                 </div>
                 <button type="button" class="t3-recipe-start-btn" id="t3BtnBeefThicknessStart" aria-label="Start Precision Cooking">START</button>
+              </div>
+            </div>
+
+            <!-- 12B. SCREEN: 3C-PANCAKES (PANCAKES MODE - FIGMA 3198:22586, 3317:32565, 3299:23383, 3299:23427, 3299:22874) -->
+            <div class="t3-screen" id="t3ScreenPancakes" hidden>
+              <!-- Screen Background (Purple gradient from Figma e649d14363ebe7bad0e1f7c69ca6e959033f007a) -->
+              <img class="t3-screen-bg" src="./assets/task3c/pancakes/bg_purple.png" alt="Pancakes Mode Background">
+
+              <!-- Sidepanel Drawer: 4 Tiles (Doneness, Burner, Cooking Tips, Cookware) -->
+              <div class="t3-drawer-collapsible">
+                <div class="t3-drawer-content">
+                  <!-- Pinned Header: Back button + 5-Burner layout icon -->
+                  <div class="t3-drawer-pinned-header t3-pancakes-drawer-header">
+                    <button type="button" class="t3-drawer-back-btn" id="t3BtnBackFromPancakes" aria-label="Back to Food Options">
+                      <svg class="t3-drawer-back-arrow" viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="#ffffff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="15 18 9 12 15 6"></polyline>
+                      </svg>
+                      <span class="t3-drawer-title"><span class="title-crumb-gray">Burners</span> <span class="title-crumb-sep">|</span> <span class="title-crumb-white">Pancakes</span></span>
+                    </button>
+                  </div>
+                  <!-- 4 Option Tiles -->
+                  <div class="t3-drawer-scrollable-options t3-pancakes-drawer-tiles">
+                    <!-- Tile 1: Doneness -->
+                    <button type="button" class="t3-drawer-tile is-active" id="t3TileDoneness" data-pancake-view="doneness" aria-label="Doneness: Fluffy">
+                      <span class="t3-drawer-tile-label">Doneness</span>
+                      <span class="t3-drawer-tile-val" id="t3PancakesValDoneness">Fluffy</span>
+                    </button>
+                    <!-- Tile 2: Burner -->
+                    <button type="button" class="t3-drawer-tile" id="t3TileBurner" data-pancake-view="burner" aria-label="Burner: Front Left">
+                      <span class="t3-drawer-tile-label">Burner</span>
+                      <span class="t3-drawer-tile-val" id="t3PancakesValBurner">Front Left</span>
+                    </button>
+                    <!-- Tile 3: Cooking Tips -->
+                    <button type="button" class="t3-drawer-tile" id="t3TileTips" data-pancake-view="tips" aria-label="Cooking Tips">
+                      <span class="t3-drawer-tile-label">Cooking Tips</span>
+                    </button>
+                    <!-- Tile 4: Cookware -->
+                    <button type="button" class="t3-drawer-tile" id="t3TileCookware" data-pancake-view="cookware" aria-label="Cookware: Cast Iron">
+                      <span class="t3-drawer-tile-label">Cookware</span>
+                      <span class="t3-drawer-tile-val" id="t3PancakesValCookware">Cast Iron</span>
+                    </button>
+                  </div>
+                </div>
+                <!-- Side Panel Handle -->
+                <div class="t3-drawer-handle" aria-hidden="true">
+                  <img src="./assets/drawer/handle-2581-7152.svg" alt="" class="t3-drawer-handle-img">
+                </div>
+              </div>
+
+              <!-- Main Right Content Pane (Switches between Doneness, Burner, Cooking Tips, Cookware) -->
+              <div class="t3-pancakes-right-pane" id="t3PancakesRightPane">
+                
+                <!-- VIEW 1: DONENESS (FIGMA 3198:22586) -->
+                <div class="t3-pancakes-view is-active" id="t3PancakesViewDoneness">
+                  <div class="t3-pancakes-header">
+                    <h2 class="t3-pancakes-view-title">Select Doneness</h2>
+                  </div>
+                  <div class="t3-pancakes-cards-carousel" id="t3PancakesDonenessCarousel">
+                    <div class="t3-pancakes-cards-track">
+                      <!-- Card 1: Fluffy -->
+                      <div class="t3-pancakes-card" data-doneness="Fluffy">
+                        <div class="t3-pancakes-card-head">
+                          <span class="t3-pancakes-card-name">Fluffy</span>
+                          <span class="t3-pancakes-card-check"></span>
+                        </div>
+                        <span class="t3-pancakes-card-desc">Description</span>
+                        <div class="t3-pancakes-card-img-wrap">
+                          <img class="t3-pancakes-card-img" src="./assets/task3c/pancakes/pancakes_fluffy.png" alt="Fluffy Pancakes">
+                        </div>
+                      </div>
+                      <!-- Card 2: Golden (Selected by default in Figma) -->
+                      <div class="t3-pancakes-card is-selected" data-doneness="Golden">
+                        <div class="t3-pancakes-card-head">
+                          <span class="t3-pancakes-card-name">Golden</span>
+                          <span class="t3-pancakes-card-check is-checked">
+                            <svg viewBox="0 0 20 20" width="18" height="18" fill="none" stroke="#ffffff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                              <polyline points="4 10 8 14 16 6"></polyline>
+                            </svg>
+                          </span>
+                        </div>
+                        <span class="t3-pancakes-card-desc">Description</span>
+                        <div class="t3-pancakes-card-img-wrap">
+                          <img class="t3-pancakes-card-img" src="./assets/task3c/pancakes/pancakes_golden.png" alt="Golden Pancakes">
+                        </div>
+                      </div>
+                      <!-- Card 3: Crispy -->
+                      <div class="t3-pancakes-card" data-doneness="Crispy">
+                        <div class="t3-pancakes-card-head">
+                          <span class="t3-pancakes-card-name">Crispy</span>
+                          <span class="t3-pancakes-card-check"></span>
+                        </div>
+                        <span class="t3-pancakes-card-desc">Description</span>
+                        <div class="t3-pancakes-card-img-wrap">
+                          <img class="t3-pancakes-card-img" src="./assets/task3c/pancakes/pancakes_crispy.png" alt="Crispy Pancakes">
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <!-- Pagination Dots -->
+                  <div class="t3-pancakes-pagination" id="t3PancakesDonenessDots">
+                    <span class="t3-pancakes-dot"></span>
+                    <span class="t3-pancakes-dot is-active"></span>
+                    <span class="t3-pancakes-dot"></span>
+                  </div>
+                  <!-- Start Button -->
+                  <button type="button" class="t3-recipe-start-btn t3-pancakes-start-btn" id="t3BtnStartPancakesDoneness" aria-label="Start Precision Cooking">START</button>
+                </div>
+
+                <!-- VIEW 2: BURNER (FIGMA 3317:32565) -->
+                <div class="t3-pancakes-view" id="t3PancakesViewBurner" hidden>
+                  <div class="t3-pancakes-burner-container">
+                    <img class="t3-pancakes-burner-svg" src="./assets/task3c/pancakes/pancakes_burner_group.svg" alt="5 Burner Cooktop Front Left Active at 400°F">
+                  </div>
+                  <!-- Start Button -->
+                  <button type="button" class="t3-recipe-start-btn t3-pancakes-start-btn" id="t3BtnStartPancakesBurner" aria-label="Start Precision Cooking">START</button>
+                </div>
+
+                <!-- VIEW 3: COOKING TIPS (FIGMA 3299:23383 & 3299:23427) -->
+                <div class="t3-pancakes-view t3-pancakes-view-tips-wrapper" id="t3PancakesViewTips" hidden>
+                  <!-- Segmented Control Pill (Instructions | Ingredients) -->
+                  <div class="t3-tips-segmented-control" role="tablist">
+                    <button type="button" class="t3-tips-segment-btn is-active" id="t3TipsTabInstructions" data-tips-tab="instructions" role="tab" aria-selected="true">Instructions</button>
+                    <button type="button" class="t3-tips-segment-btn" id="t3TipsTabIngredients" data-tips-tab="ingredients" role="tab" aria-selected="false">Ingredients</button>
+                  </div>
+
+                  <!-- SUBVIEW A: INSTRUCTIONS -->
+                  <div class="t3-tips-subpanel is-active" id="t3TipsPanelInstructions">
+                    <div class="t3-tips-prep-details">
+                      <div class="t3-prep-item">
+                        <span class="t3-prep-title">Total</span>
+                        <span class="t3-prep-val">42m</span>
+                      </div>
+                      <div class="t3-prep-divider"></div>
+                      <div class="t3-prep-item">
+                        <span class="t3-prep-title">Prep</span>
+                        <span class="t3-prep-val">10m</span>
+                      </div>
+                      <div class="t3-prep-divider"></div>
+                      <div class="t3-prep-item">
+                        <span class="t3-prep-title">Cook</span>
+                        <span class="t3-prep-val">32m</span>
+                      </div>
+                      <div class="t3-prep-divider"></div>
+                      <div class="t3-prep-item">
+                        <span class="t3-prep-title">Serving Size</span>
+                        <span class="t3-prep-val">4 Servings</span>
+                      </div>
+                      <div class="t3-prep-divider"></div>
+                      <div class="t3-prep-item">
+                        <span class="t3-prep-title">Cookware</span>
+                        <span class="t3-prep-val">Cast Iron</span>
+                      </div>
+                    </div>
+                    
+                    <button type="button" class="t3-tips-step-by-step-btn" id="t3TipsBtnStartSteps" aria-label="Start Step-by-Step">
+                      <span class="t3-step-btn-text">Start Step-by-Step</span>
+                      <svg class="t3-step-btn-chevron" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="9 18 15 12 9 6"></polyline>
+                      </svg>
+                    </button>
+
+                    <!-- Scrollable Steps List -->
+                    <div class="t3-tips-steps-scroll">
+                      <div class="t3-tips-step-item">
+                        <div class="t3-step-num">1</div>
+                        <div class="t3-step-content">
+                          <h4 class="t3-step-title">Preheat Burner and Pan to 400°F</h4>
+                          <p class="t3-step-desc">Preheat oven to 400°F, then add your butter.</p>
+                        </div>
+                      </div>
+                      <div class="t3-step-separator"></div>
+
+                      <div class="t3-tips-step-item">
+                        <div class="t3-step-num">2</div>
+                        <div class="t3-step-content">
+                          <h4 class="t3-step-title">Begin Cooking the Pancakes</h4>
+                          <p class="t3-step-desc">pour the batter into the center of the pan. Use the bottom of the ladle to spread the batter. Cook the pancake for 3 minutes or until the edges just begin to set.</p>
+                        </div>
+                      </div>
+                      <div class="t3-step-separator"></div>
+
+                      <div class="t3-tips-step-item">
+                        <div class="t3-step-num">3</div>
+                        <div class="t3-step-content">
+                          <h4 class="t3-step-title">Flip and Finishing Cooking the Pancake</h4>
+                          <p class="t3-step-desc">When the sides are set use a spatula to carefully flip the pancake. Finish cooking the pancake for 1 minute. Once finished, reserve the pancake in a low temperature oven while you cook the remaining batter.</p>
+                        </div>
+                      </div>
+                      <div class="t3-step-separator"></div>
+
+                      <div class="t3-tips-step-item">
+                        <div class="t3-step-num">4</div>
+                        <div class="t3-step-content">
+                          <h4 class="t3-step-title">Cook the Remaining Pancakes</h4>
+                          <p class="t3-step-desc">Before cooking more pancakes, thoroughly wipe the pan and add fresh butter.</p>
+                        </div>
+                      </div>
+                      <div class="t3-step-separator"></div>
+
+                      <div class="t3-tips-step-item">
+                        <div class="t3-step-num">5</div>
+                        <div class="t3-step-content">
+                          <h4 class="t3-step-title">Finish and Serve</h4>
+                          <p class="t3-step-desc">Finish the pancakes with a touch of butter and maple syrup. Serve immediately.</p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- SUBVIEW B: INGREDIENTS -->
+                  <div class="t3-tips-subpanel" id="t3TipsPanelIngredients" hidden>
+                    <div class="t3-ingredients-top-bar">
+                      <button type="button" class="t3-ingredients-add-btn" id="t3BtnAddToList">
+                        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                          <line x1="12" y1="5" x2="12" y2="19"></line>
+                          <line x1="5" y1="12" x2="19" y2="12"></line>
+                        </svg>
+                        <span>Add to List</span>
+                      </button>
+                      <button type="button" class="t3-ingredients-cart-btn" id="t3BtnCart" aria-label="Cart">
+                        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="#1F2024" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                          <circle cx="9" cy="21" r="1"></circle>
+                          <circle cx="20" cy="21" r="1"></circle>
+                          <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+                        </svg>
+                      </button>
+                    </div>
+
+                    <!-- Scrollable Ingredients Checklist -->
+                    <div class="t3-ingredients-scroll">
+                      <div class="t3-ingredient-item" data-ingredient="Melted Butter">
+                        <span class="t3-ingredient-checkbox"></span>
+                        <span class="t3-ingredient-name">Melted Butter</span>
+                        <span class="t3-ingredient-amount">5 tbs</span>
+                      </div>
+                      <div class="t3-ingredient-item" data-ingredient="Packed Brown Sugar">
+                        <span class="t3-ingredient-checkbox"></span>
+                        <span class="t3-ingredient-name">Packed Brown Sugar</span>
+                        <span class="t3-ingredient-amount">1 Cup</span>
+                      </div>
+                      <div class="t3-ingredient-item" data-ingredient="Light Corn Syrup">
+                        <span class="t3-ingredient-checkbox"></span>
+                        <span class="t3-ingredient-name">Light Corn Syrup</span>
+                        <span class="t3-ingredient-amount">1 tbs</span>
+                      </div>
+                      <div class="t3-ingredient-item" data-ingredient="Bittersweet Chocolate">
+                        <span class="t3-ingredient-checkbox"></span>
+                        <span class="t3-ingredient-name">Bittersweet Chocolate</span>
+                        <span class="t3-ingredient-amount">3oz</span>
+                      </div>
+                      <div class="t3-ingredient-item" data-ingredient="Large Egg">
+                        <span class="t3-ingredient-checkbox"></span>
+                        <span class="t3-ingredient-name">Large Egg</span>
+                        <span class="t3-ingredient-amount">1</span>
+                      </div>
+                      <div class="t3-ingredient-item" data-ingredient="Vanilla Extract">
+                        <span class="t3-ingredient-checkbox"></span>
+                        <span class="t3-ingredient-name">Vanilla Extract</span>
+                        <span class="t3-ingredient-amount">1 tsp</span>
+                      </div>
+                      <div class="t3-ingredient-item" data-ingredient="All-Purpose Flour">
+                        <span class="t3-ingredient-checkbox"></span>
+                        <span class="t3-ingredient-name">All-Purpose Flour</span>
+                        <span class="t3-ingredient-amount">1-1/3 cups</span>
+                      </div>
+                      <div class="t3-ingredient-item" data-ingredient="Baking Powder">
+                        <span class="t3-ingredient-checkbox"></span>
+                        <span class="t3-ingredient-name">Baking Powder</span>
+                        <span class="t3-ingredient-amount">3/4 Tsp</span>
+                      </div>
+                      <div class="t3-ingredient-item" data-ingredient="Baking Cocoa">
+                        <span class="t3-ingredient-checkbox"></span>
+                        <span class="t3-ingredient-name">Baking Cocoa</span>
+                        <span class="t3-ingredient-amount">2 tbs</span>
+                      </div>
+                      <div class="t3-ingredient-item" data-ingredient="Salt">
+                        <span class="t3-ingredient-checkbox"></span>
+                        <span class="t3-ingredient-name">Salt</span>
+                        <span class="t3-ingredient-amount">1/2 tsp</span>
+                      </div>
+                      <div class="t3-ingredient-item" data-ingredient="Buttermilk">
+                        <span class="t3-ingredient-checkbox"></span>
+                        <span class="t3-ingredient-name">Buttermilk</span>
+                        <span class="t3-ingredient-amount">1/2 cup</span>
+                      </div>
+                      <div class="t3-ingredient-item" data-ingredient="Chopped Pecans">
+                        <span class="t3-ingredient-checkbox"></span>
+                        <span class="t3-ingredient-name">Chopped Pecans</span>
+                        <span class="t3-ingredient-amount">1/2 up</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- VIEW 4: COOKWARE (FIGMA 3299:22874) -->
+                <div class="t3-pancakes-view" id="t3PancakesViewCookware" hidden>
+                  <div class="t3-pancakes-header t3-pancakes-cookware-header">
+                    <h2 class="t3-pancakes-view-title">Select Cookware</h2>
+                    <button type="button" class="t3-pancakes-info-btn" id="t3BtnCookwareInfo" aria-label="Cookware Info">
+                      <img src="./assets/task3c/pancakes/icon_3304_31407.svg" alt="Info">
+                    </button>
+                  </div>
+                  <div class="t3-pancakes-cards-carousel" id="t3PancakesCookwareCarousel">
+                    <div class="t3-pancakes-cards-track">
+                      <!-- Card 1: Stainless Steel -->
+                      <div class="t3-pancakes-card" data-cookware="Stainless">
+                        <div class="t3-pancakes-card-head">
+                          <span class="t3-pancakes-card-name">Stainless Steel</span>
+                          <span class="t3-pancakes-card-check"></span>
+                        </div>
+                        <span class="t3-pancakes-card-desc">Description</span>
+                        <div class="t3-pancakes-card-img-wrap">
+                          <img class="t3-pancakes-card-img" src="./assets/task3c/pancakes/pan_stainless.png" alt="Stainless Steel">
+                        </div>
+                      </div>
+                      <!-- Card 2: Cast Iron (Recommended) - Selected by default -->
+                      <div class="t3-pancakes-card is-selected" data-cookware="Cast Iron">
+                        <div class="t3-pancakes-card-head">
+                          <span class="t3-pancakes-card-name">Cast Iron <span class="t3-card-sublabel">(Recommended)</span></span>
+                          <span class="t3-pancakes-card-check is-checked">
+                            <svg viewBox="0 0 20 20" width="18" height="18" fill="none" stroke="#ffffff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                              <polyline points="4 10 8 14 16 6"></polyline>
+                            </svg>
+                          </span>
+                        </div>
+                        <span class="t3-pancakes-card-desc">Description</span>
+                        <div class="t3-pancakes-card-img-wrap">
+                          <img class="t3-pancakes-card-img" src="./assets/task3c/pancakes/pan_castiron.png" alt="Cast Iron">
+                        </div>
+                      </div>
+                      <!-- Card 3: Other -->
+                      <div class="t3-pancakes-card" data-cookware="Other">
+                        <div class="t3-pancakes-card-head">
+                          <span class="t3-pancakes-card-name">Other</span>
+                          <span class="t3-pancakes-card-check"></span>
+                        </div>
+                        <span class="t3-pancakes-card-desc">Description</span>
+                        <div class="t3-pancakes-card-img-wrap">
+                          <img class="t3-pancakes-card-img" src="./assets/task3c/pancakes/pan_other.png" alt="Other">
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <!-- Pagination Dots -->
+                  <div class="t3-pancakes-pagination" id="t3PancakesCookwareDots">
+                    <span class="t3-pancakes-dot"></span>
+                    <span class="t3-pancakes-dot is-active"></span>
+                    <span class="t3-pancakes-dot"></span>
+                  </div>
+                  <!-- Start Button -->
+                  <button type="button" class="t3-recipe-start-btn t3-pancakes-start-btn" id="t3BtnStartPancakesCookware" aria-label="Start Precision Cooking">START</button>
+                </div>
+
               </div>
             </div>
 

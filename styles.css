@@ -5676,3 +5676,658 @@ input,
   margin-top: 32px;
 }
 
+
+
+/* ==========================================================================
+   TASK 3C: PANCAKES MODE (FIGMA 3198:22586, 3317:32565, 3299:23383, 3299:23427, 3299:22874)
+   Shared 4-tile side panel (Doneness, Burner, Cooking Tips, Cookware)
+   ========================================================================== */
+
+/* 4-Tile Side Panel in Pancakes Mode */
+.t3-pancakes-drawer-header {
+  height: 34px;
+  min-height: 34px;
+}
+
+.t3-pancakes-drawer-tiles {
+  margin-top: 14px;
+  gap: 10px;
+  padding-bottom: 0;
+  overflow-y: hidden;
+}
+
+.t3-pancakes-drawer-tiles .t3-drawer-tile {
+  min-height: 64px;
+  height: 64px;
+  width: 317px;
+  padding: 0 18px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.t3-pancakes-drawer-tiles .t3-drawer-tile-label {
+  font-size: 22px;
+  font-weight: 500;
+  line-height: 1;
+}
+
+.t3-pancakes-drawer-tiles .t3-drawer-tile-val {
+  font-size: 24px;
+  font-weight: 600;
+  line-height: 1;
+}
+
+/* Right Content Pane Container */
+.t3-pancakes-right-pane {
+  position: absolute;
+  left: 353px;
+  top: 0;
+  width: 581px;
+  height: 384px;
+  overflow: hidden;
+  z-index: 50;
+}
+
+/* Common Pancakes View Styles */
+.t3-pancakes-view {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  opacity: 1;
+  box-sizing: border-box;
+}
+
+.t3-pancakes-view[hidden] {
+  display: none !important;
+}
+
+/* Pancakes Header (Doneness and Cookware views) */
+.t3-pancakes-header {
+  padding: 22px 28px 6px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-shrink: 0;
+}
+
+.t3-pancakes-view-title {
+  font-family: var(--font-display, inherit);
+  font-size: 32px;
+  font-weight: 600;
+  color: #ffffff;
+  margin: 0;
+  line-height: 1.2;
+  letter-spacing: 0.5px;
+}
+
+.t3-pancakes-info-btn {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  outline: none;
+  transition: transform 0.12s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.t3-pancakes-info-btn:active {
+  transform: scale(0.92);
+}
+
+.t3-pancakes-info-btn img {
+  width: 28px;
+  height: 28px;
+  display: block;
+}
+
+/* Cards Carousel (Doneness & Cookware) */
+.t3-pancakes-cards-carousel {
+  padding: 4px 28px;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  cursor: grab;
+  user-select: none;
+  -webkit-user-select: none;
+  flex-shrink: 0;
+}
+
+.t3-pancakes-cards-carousel::-webkit-scrollbar {
+  display: none;
+  width: 0;
+  height: 0;
+}
+
+.t3-pancakes-cards-carousel:active {
+  cursor: grabbing;
+}
+
+.t3-pancakes-cards-track {
+  display: flex;
+  gap: 16px;
+  width: max-content;
+  padding-bottom: 2px;
+}
+
+/* Individual Card (Doneness & Cookware) */
+.t3-pancakes-card {
+  width: 270px;
+  height: 164px;
+  border-radius: 16px;
+  background: rgba(61, 62, 68, 0.9);
+  padding: 14px 16px;
+  box-sizing: border-box;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  position: relative;
+  scroll-snap-align: center;
+  border: 2px solid transparent;
+  transition: border-color 0.15s ease, transform 0.12s ease, box-shadow 0.15s ease;
+  -webkit-tap-highlight-color: transparent;
+  flex-shrink: 0;
+}
+
+.t3-pancakes-card:active {
+  transform: scale(0.98);
+}
+
+.t3-pancakes-card.is-selected {
+  border-color: #ffffff;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+}
+
+.t3-pancakes-card-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+
+.t3-pancakes-card-name {
+  font-family: var(--font-display, inherit);
+  font-size: 22px;
+  font-weight: 600;
+  color: #ffffff;
+  letter-spacing: 0.3px;
+}
+
+.t3-card-sublabel {
+  font-size: 15px;
+  font-weight: 400;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.t3-pancakes-card-desc {
+  font-family: var(--font-text, inherit);
+  font-size: 15px;
+  color: rgba(255, 255, 255, 0.6);
+  margin-top: -6px;
+  margin-bottom: 4px;
+}
+
+.t3-pancakes-card-check {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: 2px solid rgba(255, 255, 255, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  flex-shrink: 0;
+  transition: background-color 0.15s ease, border-color 0.15s ease;
+}
+
+.t3-pancakes-card-check.is-checked {
+  background: #ffffff;
+  border-color: #ffffff;
+}
+
+.t3-pancakes-card-check.is-checked svg {
+  stroke: #1F2024;
+  stroke-width: 2.8;
+}
+
+.t3-pancakes-card-img-wrap {
+  width: 100%;
+  height: 78px;
+  border-radius: 10px;
+  overflow: hidden;
+  background: #26272b;
+  position: relative;
+}
+
+.t3-pancakes-card-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  pointer-events: none;
+}
+
+#t3PancakesCookwareCarousel .t3-pancakes-card-img {
+  object-fit: contain;
+  padding: 6px;
+  box-sizing: border-box;
+}
+
+/* Pagination Dots */
+.t3-pancakes-pagination {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 8px;
+  margin-bottom: 8px;
+  flex-shrink: 0;
+}
+
+.t3-pancakes-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.3);
+  transition: background-color 0.2s ease, transform 0.2s ease;
+  cursor: pointer;
+}
+
+.t3-pancakes-dot.is-active {
+  background: #ffffff;
+  transform: scale(1.1);
+}
+
+/* START Button in Pancakes Mode */
+.t3-pancakes-start-btn {
+  align-self: center;
+  width: 127px;
+  height: 46px;
+  border-radius: 999px;
+  background: #F4F4F2;
+  color: #1F2024;
+  font-family: var(--font-display, inherit);
+  font-size: 22px;
+  font-weight: 600;
+  letter-spacing: 0.6px;
+  border: none;
+  cursor: pointer;
+  outline: none;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.35);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.12s ease, background-color 0.15s ease, box-shadow 0.15s ease;
+  -webkit-tap-highlight-color: transparent;
+  flex-shrink: 0;
+}
+
+.t3-pancakes-start-btn:active {
+  transform: scale(0.95);
+  background-color: #e5e5e5;
+}
+
+/* VIEW 2: BURNER */
+#t3PancakesViewBurner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 20px 0;
+}
+
+.t3-pancakes-burner-container {
+  width: 330px;
+  height: 218px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.t3-pancakes-burner-svg {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+}
+
+#t3PancakesViewBurner .t3-pancakes-start-btn {
+  margin-top: 24px;
+}
+
+/* VIEW 3: COOKING TIPS */
+.t3-tips-segmented-control {
+  align-self: center;
+  width: 420px;
+  height: 40px;
+  border-radius: 999px;
+  background: rgba(75, 76, 82, 0.5);
+  display: flex;
+  padding: 3px;
+  box-sizing: border-box;
+  margin-top: 14px;
+  gap: 4px;
+  flex-shrink: 0;
+}
+
+.t3-tips-segment-btn {
+  flex: 1;
+  height: 100%;
+  border-radius: 999px;
+  border: none;
+  background: transparent;
+  color: #ffffff;
+  font-family: var(--font-display, inherit);
+  font-size: 18px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.15s ease, color 0.15s ease;
+  outline: none;
+  -webkit-tap-highlight-color: transparent;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.t3-tips-segment-btn.is-active {
+  background: #F4F4F2;
+  color: #1F2024;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+}
+
+.t3-tips-panel,
+.t3-tips-subpanel {
+  flex: 1;
+  min-height: 0;
+  padding: 10px 24px 14px;
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+}
+
+.t3-tips-panel[hidden],
+.t3-tips-subpanel[hidden] {
+  display: none !important;
+}
+
+/* Instructions Panel */
+.t3-tips-prep-details {
+  background: rgba(61, 62, 68, 0.9);
+  border-radius: 12px;
+  padding: 8px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-shrink: 0;
+}
+
+.t3-prep-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.t3-prep-label,
+.t3-prep-title {
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.6);
+  font-weight: 500;
+}
+
+.t3-prep-val {
+  font-size: 17px;
+  color: #ffffff;
+  font-weight: 600;
+  margin-top: 2px;
+}
+
+.t3-prep-divider {
+  width: 1px;
+  height: 28px;
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.t3-tips-step-by-step-btn {
+  width: 100%;
+  height: 38px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  background: rgba(75, 76, 82, 0.35);
+  color: #ffffff;
+  font-family: var(--font-display, inherit);
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  margin-top: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: background-color 0.15s ease;
+  flex-shrink: 0;
+  outline: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.t3-tips-step-by-step-btn:active {
+  background: rgba(255, 255, 255, 0.15);
+}
+
+.t3-tips-steps-scroll {
+  flex: 1;
+  overflow-y: auto;
+  margin-top: 8px;
+  padding-right: 6px;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.2) transparent;
+  -webkit-overflow-scrolling: touch;
+}
+
+.t3-tips-steps-scroll::-webkit-scrollbar {
+  width: 4px;
+}
+
+.t3-tips-steps-scroll::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 4px;
+}
+
+.t3-tips-step-item {
+  display: flex;
+  gap: 12px;
+  padding: 8px 0;
+  align-items: flex-start;
+}
+
+.t3-step-num {
+  font-family: var(--font-display, inherit);
+  font-size: 18px;
+  font-weight: 700;
+  color: #ffffff;
+  min-width: 18px;
+  line-height: 1.3;
+}
+
+.t3-step-content {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.t3-step-title {
+  font-family: var(--font-display, inherit);
+  font-size: 16px;
+  font-weight: 600;
+  color: #ffffff;
+  margin: 0;
+  line-height: 1.3;
+}
+
+.t3-step-desc {
+  font-family: var(--font-text, inherit);
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.75);
+  line-height: 1.35;
+  margin: 0;
+}
+
+.t3-step-separator {
+  height: 1px;
+  width: 100%;
+  background: rgba(255, 255, 255, 0.1);
+  margin: 2px 0;
+}
+
+/* Ingredients Panel */
+.t3-ingredients-top-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+  flex-shrink: 0;
+}
+
+.t3-ingredients-add-btn {
+  height: 38px;
+  border-radius: 999px;
+  background: rgba(75, 76, 82, 0.5);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  color: #ffffff;
+  font-family: var(--font-display, inherit);
+  font-size: 16px;
+  font-weight: 600;
+  padding: 0 16px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: background-color 0.15s ease;
+  outline: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.t3-ingredients-add-btn:active {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.t3-ingredients-cart-btn {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: #F4F4F2;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+  transition: transform 0.12s ease;
+  outline: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.t3-ingredients-cart-btn:active {
+  transform: scale(0.92);
+}
+
+.t3-ingredients-cart-btn svg {
+  stroke: #1F2024;
+}
+
+.t3-ingredients-scroll {
+  flex: 1;
+  overflow-y: auto;
+  padding-right: 6px;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.2) transparent;
+  -webkit-overflow-scrolling: touch;
+}
+
+.t3-ingredients-scroll::-webkit-scrollbar {
+  width: 4px;
+}
+
+.t3-ingredients-scroll::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 4px;
+}
+
+.t3-ingredient-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 12px;
+  border-radius: 8px;
+  background: rgba(61, 62, 68, 0.4);
+  margin-bottom: 6px;
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.t3-ingredient-item:hover {
+  background: rgba(61, 62, 68, 0.6);
+}
+
+.t3-ingredient-item:active {
+  background: rgba(61, 62, 68, 0.8);
+}
+
+.t3-ingredient-checkbox {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  border: 2px solid rgba(255, 255, 255, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 12px;
+  flex-shrink: 0;
+  box-sizing: border-box;
+  transition: background-color 0.15s ease, border-color 0.15s ease;
+  position: relative;
+}
+
+.t3-ingredient-item.is-checked .t3-ingredient-checkbox {
+  background: #ffffff;
+  border-color: #ffffff;
+}
+
+.t3-ingredient-item.is-checked .t3-ingredient-checkbox::after {
+  content: "";
+  width: 5px;
+  height: 9px;
+  border: solid #1F2024;
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
+  margin-top: -2px;
+  display: block;
+}
+
+.t3-ingredient-name {
+  font-family: var(--font-display, inherit);
+  font-size: 16px;
+  font-weight: 500;
+  color: #ffffff;
+  flex: 1;
+}
+
+.t3-ingredient-amount {
+  font-family: var(--font-text, inherit);
+  font-size: 15px;
+  color: rgba(255, 255, 255, 0.7);
+}
+
