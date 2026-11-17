@@ -1820,13 +1820,26 @@
               </div>
             </div>
 
-            <!-- SCREEN: 3C-PANCAKES-PREHEAT (PANCAKES 400°F PREHEATING RAMP UP - FIGMA 3299:24045) -->
+            <!-- SCREEN: 3C-PANCAKES-PREHEAT (PANCAKES 400°F PREHEATING RAMP UP & TARGET REACHED - FIGMA 3299:24045 & 3299:24163) -->
             <div class="t3-screen" id="t3ScreenPancakesPreheat" hidden>
               <img class="t3-screen-bg" src="./assets/task3c/pancakes/3299_24045_clean.png" alt="Pancakes Preheating">
               <!-- Back button (< Burners) -->
               <button type="button" class="t3-back-btn" id="t3BtnBackFromPancakesPreheat" aria-label="Back to Pancakes"></button>
-              <!-- Dynamic Current Temperature (counts up from 178°F to 400°F) -->
-              <div class="t3-pancakes-preheat-temp" id="t3PancakesPreheatTemp">178°F</div>
+              
+              <!-- Pancakes Burner Tile (Front Left) -->
+              <div class="t3-pancakes-burner-tile" id="t3PancakesBurnerTile">
+                <!-- Chef Icon Button (48x48) -->
+                <div class="t3-pancakes-chef-btn" id="t3PancakesChefBtn">
+                  <img src="./assets/task3c/pancakes/chef_button_48.png" alt="Chef Icon" class="t3-pancakes-chef-img">
+                </div>
+                <!-- Tile Texts (Pancakes, Temp, Preheat Subtitle) -->
+                <div class="t3-pancakes-tile-texts" id="t3PancakesTileTexts">
+                  <div class="t3-pancakes-tile-title">Pancakes</div>
+                  <div class="t3-pancakes-tile-temp" id="t3PancakesPreheatTemp">178°F</div>
+                  <div class="t3-pancakes-tile-sub" id="t3PancakesPreheatSub">Preheat to 400°F</div>
+                </div>
+              </div>
+
               <!-- Hotspot to return to Pancakes config -->
               <button type="button" class="t3-pancakes-edit-hotspot" id="t3BtnEditPancakesPreheat" aria-label="Edit Pancakes"></button>
             </div>

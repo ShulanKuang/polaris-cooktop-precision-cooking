@@ -506,7 +506,10 @@
     t3PancakesCookwareDots: document.getElementById("t3PancakesCookwareDots"),
     t3ScreenPancakesPreheat: document.getElementById("t3ScreenPancakesPreheat"),
     t3BtnBackFromPancakesPreheat: document.getElementById("t3BtnBackFromPancakesPreheat"),
+    t3PancakesBurnerTile: document.getElementById("t3PancakesBurnerTile"),
     t3PancakesPreheatTemp: document.getElementById("t3PancakesPreheatTemp"),
+    t3PancakesPreheatSub: document.getElementById("t3PancakesPreheatSub"),
+    t3PancakesChefBtn: document.getElementById("t3PancakesChefBtn"),
     t3BtnEditPancakesPreheat: document.getElementById("t3BtnEditPancakesPreheat"),
 
     t3SubflowControls: document.getElementById("t3SubflowControls"),
@@ -2064,6 +2067,9 @@
       clearInterval(t3PancakesPreheatInterval);
       t3PancakesPreheatInterval = null;
     }
+    if (els.t3PancakesBurnerTile) {
+      els.t3PancakesBurnerTile.classList.remove("is-reached");
+    }
     if (typeof hideT3CompleteToast === "function") {
       hideT3CompleteToast();
     }
@@ -2919,6 +2925,10 @@
     updateNavbarState();
     updateScreenBadge("pancakesPreheat");
 
+    if (els.t3PancakesBurnerTile) {
+      els.t3PancakesBurnerTile.classList.remove("is-reached");
+    }
+
     const startTemp = 178;
     const targetTemp = 400;
     const durationMs = 5000;
@@ -2942,6 +2952,10 @@
         if (els.t3PancakesPreheatTemp) {
           els.t3PancakesPreheatTemp.textContent = `${targetTemp}°F`;
         }
+        if (els.t3PancakesBurnerTile) {
+          els.t3PancakesBurnerTile.classList.add("is-reached");
+        }
+        playSound("toggleOn");
       }
     }, 50);
   }
