@@ -2756,7 +2756,7 @@
 
   // PANCAKES MODE STATE & HELPERS (Figma 3198:22586, 3317:32565, 3299:23383, 3299:23427, 3299:22874)
   let currentFoodSubflow = "beef"; // "beef" | "pancakes"
-  let currentPancakeDoneness = "Fluffy";
+  let currentPancakeDoneness = "Golden";
   let currentPancakeCookware = "Cast Iron";
 
   function showT3PancakesView(viewName) {
@@ -2799,6 +2799,35 @@
     if (els.t3PancakesViewBurner) els.t3PancakesViewBurner.hidden = (viewName !== "burner");
     if (els.t3PancakesViewTips) els.t3PancakesViewTips.hidden = (viewName !== "tips" && viewName !== "ingredients");
     if (els.t3PancakesViewCookware) els.t3PancakesViewCookware.hidden = (viewName !== "cookware");
+
+    // Center selected card if view was hidden
+    if (viewName === "doneness" && els.t3PancakesDonenessCarousel) {
+      requestAnimationFrame(() => {
+        const cards = Array.from(els.t3PancakesDonenessCarousel.querySelectorAll(".t3-pancakes-card"));
+        const selected = els.t3PancakesDonenessCarousel.querySelector(".t3-pancakes-card.is-selected");
+        const idx = selected ? cards.indexOf(selected) : 1;
+        if (idx >= 0) {
+          els.t3PancakesDonenessCarousel.scrollLeft = idx * 344;
+          const dots = Array.from(document.querySelectorAll("#t3PancakesDonenessDots .t3-pancakes-dot"));
+          dots.forEach((dot, dotIdx) => {
+            dot.classList.toggle("is-active", dotIdx === idx);
+          });
+        }
+      });
+    } else if (viewName === "cookware" && els.t3PancakesCookwareCarousel) {
+      requestAnimationFrame(() => {
+        const cards = Array.from(els.t3PancakesCookwareCarousel.querySelectorAll(".t3-pancakes-card"));
+        const selected = els.t3PancakesCookwareCarousel.querySelector(".t3-pancakes-card.is-selected");
+        const idx = selected ? cards.indexOf(selected) : 1;
+        if (idx >= 0) {
+          els.t3PancakesCookwareCarousel.scrollLeft = idx * 344;
+          const dots = Array.from(document.querySelectorAll("#t3PancakesCookwareDots .t3-pancakes-dot"));
+          dots.forEach((dot, dotIdx) => {
+            dot.classList.toggle("is-active", dotIdx === idx);
+          });
+        }
+      });
+    }
 
     // 3. Handle Cooking Tips subpanels (Instructions vs Ingredients)
     if (viewName === "tips" || viewName === "ingredients") {
@@ -5751,76 +5780,255 @@
       });
     }
 
-    // Doneness Cards Carousel Selection
-    const pancakeDonenessCards = document.querySelectorAll("#t3PancakesDonenessCarousel .t3-pancakes-card");
-    const pancakeDonenessDots = document.querySelectorAll("#t3PancakesDonenessDots .t3-pancakes-dot");
+    // =========================================================================
+    // NATURAL INERTIA CAROUSEL HELPER (FIGMA 3409:25294 & 3422:25402)
+    // Supports natural drag-scroll + momentum deceleration (stops at any point)
+    // =========================================================================
+    function setupNaturalInertiaCarousel(carouselEl, dots, onSelectIdx) {
+      if (!carouselEl) return null;
+      let isDragging = false;
+      let hasDragged = false;
+      let startX = 0;
+      let scrollStart = 0;
+      let velocitySamples = [];
+      let momentumRaf = null;
+
+      const CARD_WIDTH = 320;
+      const CARD_GAP = 24;
+      const STEP = CARD_WIDTH + CARD_GAP; // 344px
+
+      const cancelMomentum = () => {
+        if (momentumRaf) {
+          cancelAnimationFrame(momentumRaf);
+          momentumRaf = null;
+        }
+      };
+
+      const updateDots = () => {
+        if (!dots || dots.length === 0) return;
+        const currentIdx = Math.max(0, Math.min(dots.length - 1, Math.round(carouselEl.scrollLeft / STEP)));
+        dots.forEach((dot, dotIdx) => {
+          dot.classList.toggle("is-active", dotIdx === currentIdx);
+        });
+      };
+
+      const onStart = (clientX) => {
+        if (isDragging) return;
+        cancelMomentum();
+        isDragging = true;
+        hasDragged = false;
+        startX = clientX;
+        scrollStart = carouselEl.scrollLeft;
+        velocitySamples = [{ x: clientX, t: performance.now() }];
+      };
+
+      const onMove = (clientX) => {
+        if (!isDragging) return;
+        const now = performance.now();
+        const diff = clientX - startX;
+        if (Math.abs(diff) > 5) {
+          hasDragged = true;
+        }
+        carouselEl.scrollLeft = scrollStart - diff;
+        updateDots();
+        velocitySamples.push({ x: clientX, t: now });
+
+        const cutoff = now - 80;
+        while (velocitySamples.length > 1 && velocitySamples[0].t < cutoff) {
+          velocitySamples.shift();
+        }
+      };
+
+      const onEnd = () => {
+        if (!isDragging) return;
+        isDragging = false;
+
+        if (hasDragged) {
+          const now = performance.now();
+          const cutoff = now - 80;
+          while (velocitySamples.length > 1 && velocitySamples[0].t < cutoff) {
+            velocitySamples.shift();
+          }
+
+          let velocity = 0;
+          if (velocitySamples.length >= 2) {
+            const first = velocitySamples[0];
+            const last = velocitySamples[velocitySamples.length - 1];
+            const dt = last.t - first.t;
+            if (dt > 8) {
+              velocity = -(last.x - first.x) / dt; // px/ms
+            }
+          }
+
+          const MAX_VELOCITY = 2.4;
+          velocity = Math.max(-MAX_VELOCITY, Math.min(MAX_VELOCITY, velocity));
+
+          if (Math.abs(velocity) > 0.08) {
+            let lastTime = performance.now();
+            const friction = 0.94; // Deceleration rate per frame
+
+            const momentumStep = (currentTime) => {
+              const dt = Math.min(32, Math.max(8, currentTime - lastTime));
+              lastTime = currentTime;
+
+              const decay = Math.pow(friction, dt / 16.67);
+              velocity *= decay;
+
+              carouselEl.scrollLeft += velocity * dt;
+              updateDots();
+
+              const maxScroll = carouselEl.scrollWidth - carouselEl.clientWidth;
+              if (carouselEl.scrollLeft <= 0) {
+                carouselEl.scrollLeft = 0;
+                velocity = 0;
+              } else if (carouselEl.scrollLeft >= maxScroll) {
+                carouselEl.scrollLeft = maxScroll;
+                velocity = 0;
+              }
+
+              if (Math.abs(velocity) > 0.015) {
+                momentumRaf = requestAnimationFrame(momentumStep);
+              } else {
+                momentumRaf = null;
+                updateDots();
+              }
+            };
+
+            momentumRaf = requestAnimationFrame(momentumStep);
+          }
+
+          setTimeout(() => {
+            hasDragged = false;
+          }, 80);
+        }
+      };
+
+      // Mouse drag event listeners
+      carouselEl.addEventListener("mousedown", (e) => onStart(e.clientX));
+      window.addEventListener("mousemove", (e) => onMove(e.clientX));
+      window.addEventListener("mouseup", () => onEnd());
+
+      // Pointer drag event listeners
+      carouselEl.addEventListener("pointerdown", (e) => onStart(e.clientX));
+      window.addEventListener("pointermove", (e) => onMove(e.clientX));
+      window.addEventListener("pointerup", () => onEnd());
+      window.addEventListener("pointercancel", () => onEnd());
+
+      // Touch drag event listeners
+      carouselEl.addEventListener("touchstart", (e) => {
+        if (e.touches && e.touches.length > 0) onStart(e.touches[0].clientX);
+      }, { passive: true });
+      window.addEventListener("touchmove", (e) => {
+        if (e.touches && e.touches.length > 0) onMove(e.touches[0].clientX);
+      }, { passive: true });
+      window.addEventListener("touchend", () => onEnd());
+
+      carouselEl.addEventListener("scroll", () => {
+        if (!isDragging && !momentumRaf) {
+          updateDots();
+        }
+      }, { passive: true });
+
+      // Click dots to scroll smoothly to that card
+      if (dots) {
+        dots.forEach((dot, dotIdx) => {
+          dot.addEventListener("click", (e) => {
+            e.stopPropagation();
+            cancelMomentum();
+            playSound("touch");
+            carouselEl.scrollTo({ left: dotIdx * STEP, behavior: "smooth" });
+            if (onSelectIdx) onSelectIdx(dotIdx);
+          });
+        });
+      }
+
+      // Initial sync of dots
+      updateDots();
+
+      return {
+        get hasDragged() { return hasDragged; },
+        cancelMomentum,
+        updateDots,
+        scrollToIdx(idx, smooth = true) {
+          cancelMomentum();
+          carouselEl.scrollTo({ left: idx * STEP, behavior: smooth ? "smooth" : "auto" });
+          updateDots();
+        }
+      };
+    }
+
+    // Doneness Cards Carousel Selection (Figma 3409:25294)
+    const pancakeDonenessCards = Array.from(document.querySelectorAll("#t3PancakesDonenessCarousel .t3-pancakes-card"));
+    const pancakeDonenessDots = Array.from(document.querySelectorAll("#t3PancakesDonenessDots .t3-pancakes-dot"));
+
+    const donenessScroller = setupNaturalInertiaCarousel(els.t3PancakesDonenessCarousel, pancakeDonenessDots, (dotIdx) => {
+      if (pancakeDonenessCards[dotIdx]) {
+        selectDonenessCard(pancakeDonenessCards[dotIdx], dotIdx, false);
+      }
+    });
+
+    function selectDonenessCard(card, idx, smoothScroll = true) {
+      pancakeDonenessCards.forEach(c => c.classList.remove("is-selected"));
+      card.classList.add("is-selected");
+      currentPancakeDoneness = card.dataset.doneness || "Fluffy";
+      if (els.t3PancakesValDoneness) els.t3PancakesValDoneness.textContent = currentPancakeDoneness;
+
+      pancakeDonenessDots.forEach((dot, dotIdx) => {
+        dot.classList.toggle("is-active", dotIdx === idx);
+      });
+
+      if (smoothScroll && donenessScroller) {
+        donenessScroller.scrollToIdx(idx, true);
+      }
+    }
 
     pancakeDonenessCards.forEach((card, idx) => {
       card.addEventListener("click", (e) => {
+        if (donenessScroller && donenessScroller.hasDragged) return;
         e.stopPropagation();
         playSound("touch");
-        pancakeDonenessCards.forEach(c => {
-          c.classList.remove("is-selected");
-          const check = c.querySelector(".t3-pancakes-card-check");
-          if (check) {
-            check.classList.remove("is-checked");
-            check.innerHTML = "";
-          }
-        });
-        card.classList.add("is-selected");
-        const check = card.querySelector(".t3-pancakes-card-check");
-        if (check) {
-          check.classList.add("is-checked");
-          check.innerHTML = `<svg viewBox="0 0 20 20" width="18" height="18" fill="none" stroke="#ffffff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="4 10 8 14 16 6"></polyline></svg>`;
-        }
-        currentPancakeDoneness = card.dataset.doneness || "Fluffy";
-        if (els.t3PancakesValDoneness) els.t3PancakesValDoneness.textContent = currentPancakeDoneness;
-
-        pancakeDonenessDots.forEach((dot, dotIdx) => {
-          dot.classList.toggle("is-active", dotIdx === idx);
-        });
+        selectDonenessCard(card, idx, true);
       });
     });
 
-    // Cookware Cards Carousel Selection
-    const pancakeCookwareCards = document.querySelectorAll("#t3PancakesCookwareCarousel .t3-pancakes-card");
-    const pancakeCookwareDots = document.querySelectorAll("#t3PancakesCookwareDots .t3-pancakes-dot");
+    // Cookware Cards Carousel Selection (Figma 3422:25402)
+    const pancakeCookwareCards = Array.from(document.querySelectorAll("#t3PancakesCookwareCarousel .t3-pancakes-card"));
+    const pancakeCookwareDots = Array.from(document.querySelectorAll("#t3PancakesCookwareDots .t3-pancakes-dot"));
+
+    const cookwareScroller = setupNaturalInertiaCarousel(els.t3PancakesCookwareCarousel, pancakeCookwareDots, (dotIdx) => {
+      if (pancakeCookwareCards[dotIdx]) {
+        selectCookwareCard(pancakeCookwareCards[dotIdx], dotIdx, false);
+      }
+    });
+
+    function selectCookwareCard(card, idx, smoothScroll = true) {
+      pancakeCookwareCards.forEach(c => c.classList.remove("is-selected"));
+      card.classList.add("is-selected");
+      const rawCookware = card.dataset.cookware || "Cast Iron";
+      currentPancakeCookware = rawCookware === "Stainless" ? "Stainless Steel" : rawCookware;
+      if (els.t3PancakesValCookware) els.t3PancakesValCookware.textContent = currentPancakeCookware;
+
+      // Also update Cookware value in Tips prep details
+      const tipsCookwareVal = document.querySelector("#t3TipsPanelInstructions .t3-prep-item:last-child .t3-prep-val");
+      if (tipsCookwareVal) tipsCookwareVal.textContent = currentPancakeCookware;
+
+      pancakeCookwareDots.forEach((dot, dotIdx) => {
+        dot.classList.toggle("is-active", dotIdx === idx);
+      });
+
+      if (smoothScroll && cookwareScroller) {
+        cookwareScroller.scrollToIdx(idx, true);
+      }
+    }
 
     pancakeCookwareCards.forEach((card, idx) => {
       card.addEventListener("click", (e) => {
+        if (cookwareScroller && cookwareScroller.hasDragged) return;
         e.stopPropagation();
         playSound("touch");
-        pancakeCookwareCards.forEach(c => {
-          c.classList.remove("is-selected");
-          const check = c.querySelector(".t3-pancakes-card-check");
-          if (check) {
-            check.classList.remove("is-checked");
-            check.innerHTML = "";
-          }
-        });
-        card.classList.add("is-selected");
-        const check = card.querySelector(".t3-pancakes-card-check");
-        if (check) {
-          check.classList.add("is-checked");
-          check.innerHTML = `<svg viewBox="0 0 20 20" width="18" height="18" fill="none" stroke="#ffffff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="4 10 8 14 16 6"></polyline></svg>`;
-        }
-        const rawCookware = card.dataset.cookware || "Cast Iron";
-        currentPancakeCookware = rawCookware === "Stainless" ? "Stainless Steel" : rawCookware;
-        if (els.t3PancakesValCookware) els.t3PancakesValCookware.textContent = currentPancakeCookware;
-
-        // Also update Cookware value in Tips prep details
-        const tipsCookwareVal = document.querySelector("#t3TipsPanelInstructions .t3-prep-item:last-child .t3-prep-val");
-        if (tipsCookwareVal) tipsCookwareVal.textContent = currentPancakeCookware;
-
-        pancakeCookwareDots.forEach((dot, dotIdx) => {
-          dot.classList.toggle("is-active", dotIdx === idx);
-        });
+        selectCookwareCard(card, idx, true);
       });
     });
-
-    // Drag-scroll for Pancakes Carousels
-    if (els.t3PancakesDonenessCarousel) enableDragScroll(els.t3PancakesDonenessCarousel, "horizontal");
-    if (els.t3PancakesCookwareCarousel) enableDragScroll(els.t3PancakesCookwareCarousel, "horizontal");
 
     // Ingredients Checklist Toggling
     const ingredientItems = document.querySelectorAll(".t3-ingredient-item");
