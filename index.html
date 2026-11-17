@@ -131,6 +131,7 @@
               <option value="t3:pancakesIngredients">3C-pancakesIngredients (Pancakes Ingredients)</option>
               <option value="t3:pancakesCookware">3C-pancakesCookware (Pancakes Cookware)</option>
               <option value="t3:pancakesPreheat">3C-pancakesPreheat (Pancakes Preheating - Figma 3299:24045)</option>
+              <option value="t3:pancakesPreheatDone">3C-pancakesPreheatDone (Pancakes 400°F Reached - Figma 3299:24163)</option>
               <option value="t3:guidedCooking">3C-guidedCooking (Pancakes Guided Cooking - Figma 3321:34955)</option>
               <option value="t3:beefMenu">3-beefmenu (Beef Menu 6-Tile Drawer)</option>
               <option value="t3:beefType">3C-beefType (Beef Cuts Selection)</option>
@@ -1829,20 +1830,20 @@
               
               <!-- Pancakes Burner Tile (Front Left) -->
               <div class="t3-pancakes-burner-tile" id="t3PancakesBurnerTile">
-                <!-- Chef Icon Button (48x48) -->
-                <div class="t3-pancakes-chef-btn" id="t3PancakesChefBtn">
-                  <img src="./assets/task3c/pancakes/chef_button_48.png" alt="Chef Icon" class="t3-pancakes-chef-img">
-                </div>
-                <!-- Tile Texts (Pancakes, Temp, Preheat Subtitle) -->
-                <div class="t3-pancakes-tile-texts" id="t3PancakesTileTexts">
-                  <div class="t3-pancakes-tile-title">Pancakes</div>
-                  <div class="t3-pancakes-tile-temp" id="t3PancakesPreheatTemp">178°F</div>
-                  <div class="t3-pancakes-tile-sub" id="t3PancakesPreheatSub">Preheat to 400°F</div>
-                </div>
-              </div>
+                <!-- Tile Body / Edit Hotspot (Pancakes, Temp, Preheat Subtitle) -->
+                <button type="button" class="t3-pancakes-edit-hotspot" id="t3BtnEditPancakesPreheat" aria-label="Edit Pancakes">
+                  <div class="t3-pancakes-tile-texts" id="t3PancakesTileTexts">
+                    <div class="t3-pancakes-tile-title">Pancakes</div>
+                    <div class="t3-pancakes-tile-temp" id="t3PancakesPreheatTemp">178°F</div>
+                    <div class="t3-pancakes-tile-sub" id="t3PancakesPreheatSub">Preheat to 400°F</div>
+                  </div>
+                </button>
 
-              <!-- Hotspot to return to Pancakes config -->
-              <button type="button" class="t3-pancakes-edit-hotspot" id="t3BtnEditPancakesPreheat" aria-label="Edit Pancakes"></button>
+                <!-- Chef Hat Icon Button (48x48) - Starts Guided Cooking (Figma 3345:37922 & 3320:34573) -->
+                <button type="button" class="t3-pancakes-chef-btn" id="t3PancakesChefBtn" aria-label="Start Guided Cooking">
+                  <img src="./assets/task3c/pancakes/chef_button_48.png" alt="Chef Icon" class="t3-pancakes-chef-img">
+                </button>
+              </div>
             </div>
 
             <!-- SCREEN: 3C-PANCAKES-GUIDED (PANCAKES STEP-BY-STEP GUIDED COOKING - FIGMA 3321:34955 & SECTION 3436:25475) -->

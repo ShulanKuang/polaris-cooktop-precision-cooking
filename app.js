@@ -638,7 +638,10 @@
         { el: els.t3ScreenFoodBurnerStatus, name: "3C-foodBurnerStatus" },
         { el: els.t3ScreenSelectCookware, name: "3B-selectCookware" },
         { el: els.t3ScreenGuidedCooking, name: "3C-guidedCooking" },
-        { el: els.t3ScreenPancakesPreheat, name: "3C-pancakesPreheat" },
+        {
+          el: els.t3ScreenPancakesPreheat,
+          getName: () => (els.t3PancakesBurnerTile && els.t3PancakesBurnerTile.classList.contains("is-reached")) ? "3C-pancakesPreheatDone" : "3C-pancakesPreheat"
+        },
         { el: els.t3ScreenTemperature, name: "3B-temperature" },
         { el: els.t3ScreenDigipad, name: "3B-digipad" },
         { el: els.t3ScreenPreheat, name: "3B-preheat" },
@@ -650,7 +653,7 @@
 
       for (const item of screenMap) {
         if (item.el && !item.el.hidden && item.el.style.display !== "none") {
-          return item.name;
+          return item.getName ? item.getName() : item.name;
         }
       }
       return `3-${t3Stage || "start"}`;
@@ -6371,6 +6374,16 @@
     }
     if (els.t3BtnEditPancakesPreheat) {
       els.t3BtnEditPancakesPreheat.addEventListener("click", (e) => {
+        if (e.target.closest("#t3PancakesChefBtn")) return;
+        e.stopPropagation();
+        playSound("touch");
+        clearT3Timers();
+        showT3Screen(lastPancakesStage || "pancakesDoneness");
+      });
+    }
+    if (els.t3PancakesBurnerTile) {
+      els.t3PancakesBurnerTile.addEventListener("click", (e) => {
+        if (e.target.closest("#t3PancakesChefBtn")) return;
         e.stopPropagation();
         playSound("touch");
         clearT3Timers();
@@ -6378,12 +6391,23 @@
       });
     }
 
-    // Chef hat icon button on reached preheat tile -> Start Guided Cooking (Figma 3321:34955)
+    // Chef hat icon button on preheat tile -> Start Guided Cooking (Figma 3345:37922 & 3320:34573 -> 3321:34955)
+    // Works BOTH when preheat is running (Figma 3299:24045) AND when preheat is done (Figma 3299:24163)
     if (els.t3PancakesChefBtn) {
-      els.t3PancakesChefBtn.addEventListener("click", (e) => {
-        e.stopPropagation();
+      let lastChefTrigger = 0;
+      const triggerGuidedCooking = (e) => {
+        const now = Date.now();
+        if (now - lastChefTrigger < 350) return;
+        lastChefTrigger = now;
+        if (e) {
+          e.stopPropagation();
+        }
+        playSound("toggleOn");
+        clearT3Timers();
         startGuidedCooking(1);
-      });
+      };
+      els.t3PancakesChefBtn.addEventListener("click", triggerGuidedCooking);
+      els.t3PancakesChefBtn.addEventListener("touchend", triggerGuidedCooking);
     }
 
     // Guided cooking back & exit buttons
@@ -6693,6 +6717,18 @@
             state.task3Mode = "food";
             if (stage === "pancakesPreheat") {
               startT3PancakesPreheat();
+            } else if (stage === "pancakesPreheatDone") {
+              clearT3Timers();
+              showT3Screen("pancakesPreheat");
+              state.task3TargetTemp = 400;
+              state.task3IsRunning = true;
+              if (els.t3PancakesPreheatTemp) {
+                els.t3PancakesPreheatTemp.textContent = "400°F";
+              }
+              if (els.t3PancakesBurnerTile) {
+                els.t3PancakesBurnerTile.classList.add("is-reached");
+              }
+              updateScreenBadge();
             } else {
               showT3Screen(stage);
             }
