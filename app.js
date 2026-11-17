@@ -512,6 +512,35 @@
     t3PancakesChefBtn: document.getElementById("t3PancakesChefBtn"),
     t3BtnEditPancakesPreheat: document.getElementById("t3BtnEditPancakesPreheat"),
 
+    // Guided Cooking Elements (Figma 3321:34955 & Section 3436:25475)
+    t3ScreenGuidedCooking: document.getElementById("t3ScreenGuidedCooking"),
+    t3GuidedBackBtn: document.getElementById("t3GuidedBackBtn"),
+    t3GuidedExitBtn: document.getElementById("t3GuidedExitBtn"),
+    t3GuidedTrack: document.getElementById("t3GuidedTrack"),
+    t3GuidedCards: Array.from(document.querySelectorAll(".t3-guided-card")),
+    t3GuidedCard1Text: document.getElementById("t3GuidedCard1Text"),
+    t3GuidedPreheatInfo: document.getElementById("t3GuidedPreheatInfo"),
+    t3GuidedPreheatFill: document.getElementById("t3GuidedPreheatFill"),
+    t3GuidedTimer3: document.getElementById("t3GuidedTimer3"),
+    t3GuidedTimerVal3: document.getElementById("t3GuidedTimerVal3"),
+    t3GuidedTimerFill3: document.getElementById("t3GuidedTimerFill3"),
+    t3GuidedTimer4: document.getElementById("t3GuidedTimer4"),
+    t3GuidedTimerVal4: document.getElementById("t3GuidedTimerVal4"),
+    t3GuidedTimerFill4: document.getElementById("t3GuidedTimerFill4"),
+    t3GuidedBtnStartPreheat: document.getElementById("t3GuidedBtnStartPreheat"),
+    t3GuidedBtnPreheating: document.getElementById("t3GuidedBtnPreheating"),
+    t3GuidedBtnDone2: document.getElementById("t3GuidedBtnDone2"),
+    t3GuidedBtnStartTimer3: document.getElementById("t3GuidedBtnStartTimer3"),
+    t3GuidedBtnCooking3: document.getElementById("t3GuidedBtnCooking3"),
+    t3GuidedBtnStartTimer4: document.getElementById("t3GuidedBtnStartTimer4"),
+    t3GuidedBtnCooking4: document.getElementById("t3GuidedBtnCooking4"),
+    t3GuidedStep5Btns: document.getElementById("t3GuidedStep5Btns"),
+    t3GuidedBtnDone5: document.getElementById("t3GuidedBtnDone5"),
+    t3GuidedBtnStartNext: document.getElementById("t3GuidedBtnStartNext"),
+    t3GuidedModal: document.getElementById("t3GuidedModal"),
+    t3GuidedModalCancel: document.getElementById("t3GuidedModalCancel"),
+    t3GuidedModalConfirm: document.getElementById("t3GuidedModalConfirm"),
+
     t3SubflowControls: document.getElementById("t3SubflowControls"),
     btnT3FlowTemp: document.getElementById("btnT3FlowTemp"),
     btnT3FlowStatus: document.getElementById("btnT3FlowStatus"),
@@ -608,6 +637,8 @@
         { el: els.t3ScreenFoodComplete, name: "3C-foodComplete" },
         { el: els.t3ScreenFoodBurnerStatus, name: "3C-foodBurnerStatus" },
         { el: els.t3ScreenSelectCookware, name: "3B-selectCookware" },
+        { el: els.t3ScreenGuidedCooking, name: "3C-guidedCooking" },
+        { el: els.t3ScreenPancakesPreheat, name: "3C-pancakesPreheat" },
         { el: els.t3ScreenTemperature, name: "3B-temperature" },
         { el: els.t3ScreenDigipad, name: "3B-digipad" },
         { el: els.t3ScreenPreheat, name: "3B-preheat" },
@@ -653,6 +684,7 @@
           pancakesIngredients: "3C-pancakesIngredients",
           pancakesCookware: "3C-pancakesCookware",
           pancakesPreheat: "3C-pancakesPreheat",
+          guidedCooking: "3C-guidedCooking",
           beefMenu: "3-beefmenu",
           beefType: "3C-beefType",
           beefDoneness: "3C-beefDoneness",
@@ -1615,6 +1647,7 @@
       }
     }
     if (els.t3ScreenPancakesPreheat) els.t3ScreenPancakesPreheat.hidden = (stage !== "pancakesPreheat");
+    if (els.t3ScreenGuidedCooking) els.t3ScreenGuidedCooking.hidden = (stage !== "guidedCooking");
     if (els.t3ScreenBeefMenu) els.t3ScreenBeefMenu.hidden = (stage !== "beefMenu");
     if (els.t3ScreenBeefType) els.t3ScreenBeefType.hidden = (stage !== "beefType");
     if (els.t3ScreenBeefDoneness) els.t3ScreenBeefDoneness.hidden = (stage !== "beefDoneness");
@@ -2066,6 +2099,9 @@
     if (t3PancakesPreheatInterval) {
       clearInterval(t3PancakesPreheatInterval);
       t3PancakesPreheatInterval = null;
+    }
+    if (typeof clearT3GuidedTimers === "function") {
+      clearT3GuidedTimers();
     }
     if (els.t3PancakesBurnerTile) {
       els.t3PancakesBurnerTile.classList.remove("is-reached");
@@ -2960,6 +2996,171 @@
     }, 50);
   }
   window.startT3PancakesPreheat = startT3PancakesPreheat;
+
+  // ==========================================================================
+  // PANCAKES STEP-BY-STEP GUIDED COOKING (FIGMA 3321:34955 & SECTION 3436:25475)
+  // ==========================================================================
+  let t3GuidedStep = 1;
+  let t3GuidedInterval = null;
+
+  function clearT3GuidedTimers() {
+    if (t3GuidedInterval) {
+      clearInterval(t3GuidedInterval);
+      t3GuidedInterval = null;
+    }
+  }
+
+  function setGuidedStep(step, isRunning = false) {
+    t3GuidedStep = step;
+    if (els.t3GuidedTrack) {
+      els.t3GuidedTrack.setAttribute("data-step", String(step));
+    }
+
+    if (els.t3GuidedCards && els.t3GuidedCards.length > 0) {
+      els.t3GuidedCards.forEach((card, idx) => {
+        const cardStep = idx + 1;
+        if (cardStep === step) {
+          card.classList.add("is-active");
+        } else {
+          card.classList.remove("is-active");
+        }
+      });
+    }
+
+    // Step 1: Preheating flame row & progress bar
+    if (els.t3GuidedPreheatInfo && els.t3GuidedCard1Text) {
+      if (step === 1 && isRunning) {
+        els.t3GuidedPreheatInfo.hidden = false;
+        els.t3GuidedCard1Text.style.display = "none";
+      } else {
+        els.t3GuidedPreheatInfo.hidden = true;
+        els.t3GuidedCard1Text.style.display = "";
+        if (els.t3GuidedPreheatFill) els.t3GuidedPreheatFill.style.width = "0%";
+      }
+    }
+
+    // Step 3: Timer & progress bar
+    if (els.t3GuidedTimer3) {
+      if (step === 3 && isRunning) {
+        els.t3GuidedTimer3.hidden = false;
+      } else {
+        els.t3GuidedTimer3.hidden = true;
+        if (els.t3GuidedTimerFill3) els.t3GuidedTimerFill3.style.width = "0%";
+        if (els.t3GuidedTimerVal3) els.t3GuidedTimerVal3.textContent = "2:59:00";
+      }
+    }
+
+    // Step 4: Timer & progress bar
+    if (els.t3GuidedTimer4) {
+      if (step === 4 && isRunning) {
+        els.t3GuidedTimer4.hidden = false;
+      } else {
+        els.t3GuidedTimer4.hidden = true;
+        if (els.t3GuidedTimerFill4) els.t3GuidedTimerFill4.style.width = "0%";
+        if (els.t3GuidedTimerVal4) els.t3GuidedTimerVal4.textContent = "0:35:00";
+      }
+    }
+
+    // Buttons visibility
+    if (els.t3GuidedBtnStartPreheat) els.t3GuidedBtnStartPreheat.hidden = !(step === 1 && !isRunning);
+    if (els.t3GuidedBtnPreheating) els.t3GuidedBtnPreheating.hidden = !(step === 1 && isRunning);
+    if (els.t3GuidedBtnDone2) els.t3GuidedBtnDone2.hidden = !(step === 2);
+    if (els.t3GuidedBtnStartTimer3) els.t3GuidedBtnStartTimer3.hidden = !(step === 3 && !isRunning);
+    if (els.t3GuidedBtnCooking3) els.t3GuidedBtnCooking3.hidden = !(step === 3 && isRunning);
+    if (els.t3GuidedBtnStartTimer4) els.t3GuidedBtnStartTimer4.hidden = !(step === 4 && !isRunning);
+    if (els.t3GuidedBtnCooking4) els.t3GuidedBtnCooking4.hidden = !(step === 4 && isRunning);
+    if (els.t3GuidedStep5Btns) els.t3GuidedStep5Btns.hidden = !(step === 5);
+
+    // Modal
+    if (els.t3GuidedModal) els.t3GuidedModal.hidden = true;
+
+    updateScreenBadge("guidedCooking");
+  }
+
+  function startGuidedCooking(initialStep = 1) {
+    clearT3Timers();
+    clearT3GuidedTimers();
+    showT3Screen("guidedCooking");
+    setGuidedStep(initialStep, false);
+    playSound("touch");
+  }
+
+  function startGuidedPreheat() {
+    clearT3GuidedTimers();
+    setGuidedStep(1, true);
+    playSound("toggleOn");
+
+    const durationMs = 3500;
+    const startTime = Date.now();
+
+    t3GuidedInterval = setInterval(() => {
+      const elapsed = Date.now() - startTime;
+      const progress = Math.min(1.0, elapsed / durationMs);
+      if (els.t3GuidedPreheatFill) {
+        els.t3GuidedPreheatFill.style.width = `${(progress * 100).toFixed(1)}%`;
+      }
+
+      if (progress >= 1.0) {
+        clearT3GuidedTimers();
+        playSound("toggleOn");
+        setGuidedStep(2, false);
+      }
+    }, 40);
+  }
+
+  function startGuidedTimer(step) {
+    clearT3GuidedTimers();
+    setGuidedStep(step, true);
+    playSound("touch");
+
+    const totalSeconds = (step === 3) ? 179 : 35; // Step 3: 2:59, Step 4: 0:35
+    const durationMs = (step === 3) ? 4500 : 3500; // prototype speed
+    const startTime = Date.now();
+
+    t3GuidedInterval = setInterval(() => {
+      const elapsed = Date.now() - startTime;
+      const progress = Math.min(1.0, elapsed / durationMs);
+      const remainingSec = Math.max(0, Math.ceil(totalSeconds * (1.0 - progress)));
+
+      const mins = Math.floor(remainingSec / 60);
+      const secs = remainingSec % 60;
+      const valStr = `${mins}:${String(secs).padStart(2, "0")}:00`;
+
+      if (step === 3) {
+        if (els.t3GuidedTimerFill3) els.t3GuidedTimerFill3.style.width = `${(progress * 100).toFixed(1)}%`;
+        if (els.t3GuidedTimerVal3) els.t3GuidedTimerVal3.textContent = valStr;
+      } else if (step === 4) {
+        if (els.t3GuidedTimerFill4) els.t3GuidedTimerFill4.style.width = `${(progress * 100).toFixed(1)}%`;
+        if (els.t3GuidedTimerVal4) els.t3GuidedTimerVal4.textContent = valStr;
+      }
+
+      if (progress >= 1.0) {
+        clearT3GuidedTimers();
+        playSound("toggleOn");
+        if (step === 3) {
+          setGuidedStep(4, false);
+        } else if (step === 4) {
+          setGuidedStep(5, false);
+        }
+      }
+    }, 50);
+  }
+
+  function exitGuidedCooking() {
+    clearT3GuidedTimers();
+    showT3Screen("pancakesPreheat");
+    playSound("touch");
+    if (els.t3PancakesBurnerTile) {
+      els.t3PancakesBurnerTile.classList.add("is-reached");
+    }
+    if (els.t3PancakesPreheatTemp) {
+      els.t3PancakesPreheatTemp.textContent = "400°F";
+    }
+  }
+
+  window.startGuidedCooking = startGuidedCooking;
+  window.setGuidedStep = setGuidedStep;
+  window.exitGuidedCooking = exitGuidedCooking;
 
   function transitionToT3Spotlight() {
     transitionToT3Temperature();
@@ -6177,6 +6378,154 @@
       });
     }
 
+    // Chef hat icon button on reached preheat tile -> Start Guided Cooking (Figma 3321:34955)
+    if (els.t3PancakesChefBtn) {
+      els.t3PancakesChefBtn.addEventListener("click", (e) => {
+        e.stopPropagation();
+        startGuidedCooking(1);
+      });
+    }
+
+    // Guided cooking back & exit buttons
+    if (els.t3GuidedBackBtn) {
+      els.t3GuidedBackBtn.addEventListener("click", (e) => {
+        e.stopPropagation();
+        exitGuidedCooking();
+      });
+    }
+    if (els.t3GuidedExitBtn) {
+      els.t3GuidedExitBtn.addEventListener("click", (e) => {
+        e.stopPropagation();
+        exitGuidedCooking();
+      });
+    }
+
+    // Step cards click to switch steps
+    if (els.t3GuidedCards && els.t3GuidedCards.length > 0) {
+      els.t3GuidedCards.forEach((card, idx) => {
+        card.addEventListener("click", (e) => {
+          e.stopPropagation();
+          const targetStep = idx + 1;
+          if (targetStep !== t3GuidedStep) {
+            clearT3GuidedTimers();
+            setGuidedStep(targetStep, false);
+            playSound("touch");
+          }
+        });
+      });
+    }
+
+    // Step 1: Start Preheat
+    if (els.t3GuidedBtnStartPreheat) {
+      els.t3GuidedBtnStartPreheat.addEventListener("click", (e) => {
+        e.stopPropagation();
+        startGuidedPreheat();
+      });
+    }
+    // Step 1: Skip preheating when clicking Preheating...
+    if (els.t3GuidedBtnPreheating) {
+      els.t3GuidedBtnPreheating.addEventListener("click", (e) => {
+        e.stopPropagation();
+        clearT3GuidedTimers();
+        playSound("toggleOn");
+        setGuidedStep(2, false);
+      });
+    }
+
+    // Step 2: Done -> advances to Step 3
+    if (els.t3GuidedBtnDone2) {
+      els.t3GuidedBtnDone2.addEventListener("click", (e) => {
+        e.stopPropagation();
+        playSound("touch");
+        setGuidedStep(3, false);
+      });
+    }
+
+    // Step 3: Start Timer
+    if (els.t3GuidedBtnStartTimer3) {
+      els.t3GuidedBtnStartTimer3.addEventListener("click", (e) => {
+        e.stopPropagation();
+        startGuidedTimer(3);
+      });
+    }
+    // Step 3: Skip timer when clicking Cooking...
+    if (els.t3GuidedBtnCooking3) {
+      els.t3GuidedBtnCooking3.addEventListener("click", (e) => {
+        e.stopPropagation();
+        clearT3GuidedTimers();
+        playSound("toggleOn");
+        setGuidedStep(4, false);
+      });
+    }
+
+    // Step 4: Start Timer
+    if (els.t3GuidedBtnStartTimer4) {
+      els.t3GuidedBtnStartTimer4.addEventListener("click", (e) => {
+        e.stopPropagation();
+        startGuidedTimer(4);
+      });
+    }
+    // Step 4: Skip timer when clicking Cooking...
+    if (els.t3GuidedBtnCooking4) {
+      els.t3GuidedBtnCooking4.addEventListener("click", (e) => {
+        e.stopPropagation();
+        clearT3GuidedTimers();
+        playSound("toggleOn");
+        setGuidedStep(5, false);
+      });
+    }
+
+    // Step 5: Done -> exits guided cooking
+    if (els.t3GuidedBtnDone5) {
+      els.t3GuidedBtnDone5.addEventListener("click", (e) => {
+        e.stopPropagation();
+        exitGuidedCooking();
+      });
+    }
+
+    // Step 5: + Start Next One -> shows modal dialog (Figma 3330:37455)
+    if (els.t3GuidedBtnStartNext) {
+      els.t3GuidedBtnStartNext.addEventListener("click", (e) => {
+        e.stopPropagation();
+        playSound("touch");
+        if (els.t3GuidedModal) {
+          els.t3GuidedModal.hidden = false;
+        }
+      });
+    }
+
+    // Confirmation Modal: Cancel
+    if (els.t3GuidedModalCancel) {
+      els.t3GuidedModalCancel.addEventListener("click", (e) => {
+        e.stopPropagation();
+        playSound("touch");
+        if (els.t3GuidedModal) {
+          els.t3GuidedModal.hidden = true;
+        }
+      });
+    }
+
+    // Confirmation Modal: Yes, start next -> loops directly back to Step 2 (Vector 14)
+    if (els.t3GuidedModalConfirm) {
+      els.t3GuidedModalConfirm.addEventListener("click", (e) => {
+        e.stopPropagation();
+        playSound("toggleOn");
+        if (els.t3GuidedModal) {
+          els.t3GuidedModal.hidden = true;
+        }
+        setGuidedStep(2, false);
+      });
+    }
+
+    // Backdrop click dismisses modal
+    if (els.t3GuidedModal) {
+      els.t3GuidedModal.addEventListener("click", (e) => {
+        if (e.target === els.t3GuidedModal) {
+          els.t3GuidedModal.hidden = true;
+        }
+      });
+    }
+
     // Drawer Header Back Button (< Burners | Pancakes)
     if (els.t3BtnBackFromPancakes) {
       els.t3BtnBackFromPancakes.addEventListener("click", (e) => {
@@ -6230,6 +6579,10 @@
             showT3Screen(lastPancakesStage || "pancakesDoneness");
             return;
           }
+          if (t3Stage === "guidedCooking") {
+            exitGuidedCooking();
+            return;
+          }
           if (t3Stage && t3Stage.startsWith("pancakes")) {
             showT3Screen("foodOptions");
             return;
@@ -6259,6 +6612,10 @@
         if (t3Stage === "pancakesPreheat") {
           clearT3Timers();
           showT3Screen(lastPancakesStage || "pancakesDoneness");
+          return;
+        }
+        if (t3Stage === "guidedCooking") {
+          exitGuidedCooking();
           return;
         }
         if (t3Stage && t3Stage.startsWith("pancakes")) {
@@ -6339,6 +6696,9 @@
             } else {
               showT3Screen(stage);
             }
+          } else if (stage === "guidedCooking") {
+            state.task3Mode = "food";
+            startGuidedCooking(1);
           } else {
             showT3Screen(stage);
           }

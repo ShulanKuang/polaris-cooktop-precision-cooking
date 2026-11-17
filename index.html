@@ -131,6 +131,7 @@
               <option value="t3:pancakesIngredients">3C-pancakesIngredients (Pancakes Ingredients)</option>
               <option value="t3:pancakesCookware">3C-pancakesCookware (Pancakes Cookware)</option>
               <option value="t3:pancakesPreheat">3C-pancakesPreheat (Pancakes Preheating - Figma 3299:24045)</option>
+              <option value="t3:guidedCooking">3C-guidedCooking (Pancakes Guided Cooking - Figma 3321:34955)</option>
               <option value="t3:beefMenu">3-beefmenu (Beef Menu 6-Tile Drawer)</option>
               <option value="t3:beefType">3C-beefType (Beef Cuts Selection)</option>
               <option value="t3:beefDoneness">3C-beefDoneness (Doneness Selection)</option>
@@ -1842,6 +1843,161 @@
 
               <!-- Hotspot to return to Pancakes config -->
               <button type="button" class="t3-pancakes-edit-hotspot" id="t3BtnEditPancakesPreheat" aria-label="Edit Pancakes"></button>
+            </div>
+
+            <!-- SCREEN: 3C-PANCAKES-GUIDED (PANCAKES STEP-BY-STEP GUIDED COOKING - FIGMA 3321:34955 & SECTION 3436:25475) -->
+            <div class="t3-screen" id="t3ScreenGuidedCooking" hidden>
+              <!-- Clean background with Rail, Status Bar, Header, Pancake Preview, and Burner Badge -->
+              <img class="t3-screen-bg" src="./assets/task3c/pancakes/guided_clean_bg.png" alt="Guided Cooking Background">
+
+              <!-- Back button (< Cooktop / Return to Preheat Complete) -->
+              <button type="button" class="t3-back-btn" id="t3GuidedBackBtn" aria-label="Exit Guided Cooking"></button>
+
+              <!-- Exit button at bottom-left -->
+              <button type="button" class="t3-guided-exit-btn" id="t3GuidedExitBtn" aria-label="Exit Guided Cooking">
+                <img src="./assets/task3c/pancakes/guided_back.svg" alt="" class="t3-guided-exit-icon">
+                <span>Exit</span>
+              </button>
+
+              <!-- Step Cards Carousel Viewport & Track -->
+              <div class="t3-guided-cards-viewport">
+                <div class="t3-guided-cards-track" id="t3GuidedTrack">
+                  <!-- Card 1: Preheat pan to 400ºF. -->
+                  <div class="t3-guided-card is-active" id="t3GuidedCard1" data-step="1">
+                    <div class="t3-guided-card-num">1</div>
+                    <div class="t3-guided-card-body">
+                      <div class="t3-guided-card-text" id="t3GuidedCard1Text">Preheat pan to 400ºF.</div>
+                      <!-- Preheating status (shown when preheating) -->
+                      <div class="t3-guided-preheating-info" id="t3GuidedPreheatInfo" hidden>
+                        <div class="t3-guided-flame-row">
+                          <img class="t3-guided-flame-icon" src="./assets/task3c/pancakes/guided_flame.svg" alt="Flame">
+                          <span class="t3-guided-flame-text">Heating to 400ºF</span>
+                        </div>
+                        <div class="t3-guided-bar-track">
+                          <div class="t3-guided-bar-fill" id="t3GuidedPreheatFill"></div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Card 2: Add butter to coat pan. -->
+                  <div class="t3-guided-card" id="t3GuidedCard2" data-step="2">
+                    <div class="t3-guided-card-num">2</div>
+                    <div class="t3-guided-card-body">
+                      <div class="t3-guided-card-text">Add butter to coat pan.</div>
+                    </div>
+                  </div>
+
+                  <!-- Card 3: Pour batter. Cook for 3 mins. -->
+                  <div class="t3-guided-card" id="t3GuidedCard3" data-step="3">
+                    <div class="t3-guided-card-num">3</div>
+                    <!-- Timer display (shown when cooking) -->
+                    <div class="t3-guided-card-timer" id="t3GuidedTimer3" hidden>
+                      <div class="t3-guided-timer-row">
+                        <img class="t3-guided-timer-icon" src="./assets/task3c/pancakes/guided_timer.svg" alt="Timer">
+                        <span class="t3-guided-timer-val" id="t3GuidedTimerVal3">2:59:00</span>
+                      </div>
+                      <div class="t3-guided-bar-track is-timer-bar">
+                        <div class="t3-guided-bar-fill" id="t3GuidedTimerFill3"></div>
+                      </div>
+                    </div>
+                    <div class="t3-guided-card-body">
+                      <div class="t3-guided-card-text">Pour batter. Cook for 3 mins.</div>
+                    </div>
+                  </div>
+
+                  <!-- Card 4: Flip pancake. Cook for 1 minute. -->
+                  <div class="t3-guided-card" id="t3GuidedCard4" data-step="4">
+                    <div class="t3-guided-card-num">4</div>
+                    <!-- Timer display (shown when cooking) -->
+                    <div class="t3-guided-card-timer" id="t3GuidedTimer4" hidden>
+                      <div class="t3-guided-timer-row">
+                        <img class="t3-guided-timer-icon" src="./assets/task3c/pancakes/guided_timer.svg" alt="Timer">
+                        <span class="t3-guided-timer-val" id="t3GuidedTimerVal4">0:35:00</span>
+                      </div>
+                      <div class="t3-guided-bar-track is-timer-bar">
+                        <div class="t3-guided-bar-fill" id="t3GuidedTimerFill4"></div>
+                      </div>
+                    </div>
+                    <div class="t3-guided-card-body">
+                      <div class="t3-guided-card-text">Flip pancake. Cook for 1 minute.</div>
+                    </div>
+                  </div>
+
+                  <!-- Card 5: Remove pancake and serve. -->
+                  <div class="t3-guided-card" id="t3GuidedCard5" data-step="5">
+                    <div class="t3-guided-card-num">5</div>
+                    <div class="t3-guided-card-body">
+                      <div class="t3-guided-card-text">Remove pancake and serve.</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Action Buttons Area -->
+              <div class="t3-guided-actions" id="t3GuidedActions">
+                <!-- Step 1: Start Preheat (Idle) -->
+                <button type="button" class="t3-guided-action-btn is-primary is-step1-start" id="t3GuidedBtnStartPreheat">
+                  <img src="./assets/task3c/pancakes/guided_play.svg" alt="" class="t3-guided-btn-icon">
+                  <span>Start Preheat</span>
+                </button>
+                <!-- Step 1: Preheating... (Running) -->
+                <button type="button" class="t3-guided-action-btn is-running is-step1-running" id="t3GuidedBtnPreheating" hidden>
+                  <span>Preheating...</span>
+                </button>
+
+                <!-- Step 2: Done -->
+                <button type="button" class="t3-guided-action-btn is-primary is-step2-done" id="t3GuidedBtnDone2" hidden>
+                  <img src="./assets/task3c/pancakes/guided_check.svg" alt="" class="t3-guided-btn-icon">
+                  <span>Done</span>
+                </button>
+
+                <!-- Step 3: Start Timer (Idle) -->
+                <button type="button" class="t3-guided-action-btn is-primary is-step3-start" id="t3GuidedBtnStartTimer3" hidden>
+                  <img src="./assets/task3c/pancakes/guided_timer.svg" alt="" class="t3-guided-btn-icon">
+                  <span>Start Timer</span>
+                </button>
+                <!-- Step 3: Cooking... (Running) -->
+                <button type="button" class="t3-guided-action-btn is-running is-step3-running" id="t3GuidedBtnCooking3" hidden>
+                  <span>Cooking...</span>
+                </button>
+
+                <!-- Step 4: Start Timer (Idle) -->
+                <button type="button" class="t3-guided-action-btn is-primary is-step4-start" id="t3GuidedBtnStartTimer4" hidden>
+                  <img src="./assets/task3c/pancakes/guided_timer.svg" alt="" class="t3-guided-btn-icon">
+                  <span>Start Timer</span>
+                </button>
+                <!-- Step 4: Cooking... (Running) -->
+                <button type="button" class="t3-guided-action-btn is-running is-step4-running" id="t3GuidedBtnCooking4" hidden>
+                  <span>Cooking...</span>
+                </button>
+
+                <!-- Step 5: Done + Start Next One -->
+                <div class="t3-guided-step5-btns" id="t3GuidedStep5Btns" hidden>
+                  <button type="button" class="t3-guided-action-btn is-primary is-step5-done" id="t3GuidedBtnDone5">
+                    <img src="./assets/task3c/pancakes/guided_check.svg" alt="" class="t3-guided-btn-icon">
+                    <span>Done</span>
+                  </button>
+                  <button type="button" class="t3-guided-action-btn is-outline is-step5-next" id="t3GuidedBtnStartNext">
+                    <img src="./assets/task3c/pancakes/guided_plus.svg" alt="" class="t3-guided-btn-icon">
+                    <span>Start Next One</span>
+                  </button>
+                </div>
+              </div>
+
+              <!-- Step 5 Confirmation Dialog Modal (Figma 3330:37455) -->
+              <div class="t3-guided-modal-backdrop" id="t3GuidedModal" hidden>
+                <div class="t3-guided-modal-card">
+                  <div class="t3-guided-modal-heading">Ready to make another pancake?</div>
+                  <div class="t3-guided-modal-desc">
+                    Before cooking more pancakes, thoroughly wipe the pan and add fresh butter.
+                  </div>
+                  <div class="t3-guided-modal-btns">
+                    <button type="button" class="t3-guided-modal-btn is-cancel" id="t3GuidedModalCancel">Cancel</button>
+                    <button type="button" class="t3-guided-modal-btn is-confirm" id="t3GuidedModalConfirm">Yes, start next</button>
+                  </div>
+                </div>
+              </div>
             </div>
 
             <!-- 13. SCREEN: 3C-FOOD-PREHEAT (STEAK MED RARE PREHEATING RAMP UP - FIGMA 2348:17304) -->

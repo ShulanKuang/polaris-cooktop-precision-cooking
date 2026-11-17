@@ -6531,3 +6531,489 @@ input,
   background: rgba(255, 255, 255, 0.06);
 }
 
+/* ==========================================================================
+   PANCAKES STEP-BY-STEP GUIDED COOKING (FIGMA 3321:34955 & SECTION 3436:25475)
+   ========================================================================== */
+
+#t3ScreenGuidedCooking {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 1024px;
+  height: 384px;
+  overflow: hidden;
+  user-select: none;
+}
+
+#t3GuidedBackBtn {
+  position: absolute;
+  left: 10px;
+  top: 0;
+  width: 72px;
+  height: 64px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  z-index: 20;
+  outline: none;
+}
+
+/* Exit button at bottom-left (rel_x: 197.7, rel_y: 300) */
+.t3-guided-exit-btn {
+  position: absolute;
+  left: 198px;
+  top: 300px;
+  width: 129px;
+  height: 48px;
+  border-radius: 999px;
+  background: rgba(75, 76, 82, 0.8);
+  border: none;
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-family: "Profile Display", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  font-size: 26px;
+  font-weight: 600;
+  line-height: 1;
+  cursor: pointer;
+  z-index: 15;
+  outline: none;
+  transition: background-color 0.2s ease, transform 0.1s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.t3-guided-exit-btn:active {
+  background: rgba(95, 96, 102, 0.9);
+  transform: scale(0.98);
+}
+
+.t3-guided-exit-icon {
+  width: 16px;
+  height: 24px;
+  display: block;
+}
+
+/* Viewport and Track for Cards */
+.t3-guided-cards-viewport {
+  position: absolute;
+  left: 0;
+  top: 94px;
+  width: 1024px;
+  height: 178px;
+  overflow: visible;
+  z-index: 10;
+  pointer-events: none;
+}
+
+.t3-guided-cards-track {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  gap: 12px;
+  position: absolute;
+  left: 386px;
+  top: 0;
+  height: 178px;
+  transition: transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+/* Step 1..5 Track Positions: active card is anchored at x = 386 */
+.t3-guided-cards-track[data-step="1"] { transform: translateX(0px); }
+.t3-guided-cards-track[data-step="2"] { transform: translateX(-92px); }
+.t3-guided-cards-track[data-step="3"] { transform: translateX(-184px); }
+.t3-guided-cards-track[data-step="4"] { transform: translateX(-276px); }
+.t3-guided-cards-track[data-step="5"] { transform: translateX(-368px); }
+
+/* Card styles */
+.t3-guided-card {
+  position: relative;
+  height: 178px;
+  border-radius: 12px;
+  box-sizing: border-box;
+  backdrop-filter: blur(30px);
+  -webkit-backdrop-filter: blur(30px);
+  cursor: pointer;
+  pointer-events: auto;
+  transition: width 0.4s cubic-bezier(0.2, 0.8, 0.2, 1),
+              background-color 0.3s ease,
+              border-color 0.3s ease;
+  overflow: hidden;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Inactive / Collapsed card */
+.t3-guided-card:not(.is-active) {
+  width: 80px;
+  flex: 0 0 80px;
+  background: rgba(97, 100, 107, 0.2);
+  border: 1px solid rgba(204, 204, 202, 0.3);
+}
+
+.t3-guided-card:not(.is-active) .t3-guided-card-num {
+  position: absolute;
+  left: 22px;
+  top: 20px;
+  font-family: "Profile Display", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  font-size: 50px;
+  font-weight: 700;
+  color: #F8EEDF;
+  line-height: 1;
+}
+
+.t3-guided-card:not(.is-active) .t3-guided-card-body,
+.t3-guided-card:not(.is-active) .t3-guided-card-timer {
+  display: none !important;
+}
+
+/* Active card */
+.t3-guided-card.is-active {
+  width: 350px;
+  flex: 0 0 350px;
+  background: rgba(45, 49, 57, 0.4);
+  border: 1px solid #ffffff;
+  cursor: default;
+}
+
+.t3-guided-card.is-active .t3-guided-card-num {
+  position: absolute;
+  left: 21px;
+  top: 21px;
+  font-family: "Profile Display", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  font-size: 50px;
+  font-weight: 700;
+  color: #F8EEDF;
+  line-height: 1;
+}
+
+.t3-guided-card.is-active .t3-guided-card-body {
+  position: absolute;
+  left: 21px;
+  right: 21px;
+  bottom: 21px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+}
+
+.t3-guided-card-text {
+  font-family: "Profile Text", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  font-size: 26px;
+  font-weight: 500;
+  line-height: 36.4px;
+  color: #ffffff;
+  word-break: break-word;
+}
+
+/* Preheating Progress in Card 1 (Figma 3321:35509) */
+.t3-guided-preheating-info {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+.t3-guided-flame-row {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.t3-guided-flame-icon {
+  width: 24px;
+  height: 26px;
+}
+
+.t3-guided-flame-text {
+  font-family: "Profile Text", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  font-size: 20px;
+  font-weight: 500;
+  color: #ffffff;
+  line-height: 1.2;
+}
+
+.t3-guided-bar-track {
+  width: 100%;
+  height: 8px;
+  background: #000000;
+  border-radius: 999px;
+  overflow: hidden;
+  position: relative;
+}
+
+.t3-guided-bar-fill {
+  height: 100%;
+  background: #ffffff;
+  border-radius: 999px;
+  width: 0%;
+  transition: width 0.1s linear;
+}
+
+/* Timer display in Step 3 & 4 (Figma 3321:36458 & 3321:36904) */
+.t3-guided-card-timer {
+  position: absolute;
+  right: 21px;
+  top: 25px;
+  width: 176px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.t3-guided-timer-row {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.t3-guided-timer-icon {
+  width: 22px;
+  height: 22px;
+}
+
+.t3-guided-timer-val {
+  font-family: "Profile Text", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  font-size: 22px;
+  font-weight: 500;
+  color: #ffffff;
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+}
+
+.t3-guided-bar-track.is-timer-bar {
+  width: 176px;
+  height: 8px;
+}
+
+/* Action Buttons Container (y: 282..366) */
+.t3-guided-actions {
+  position: absolute;
+  left: 0;
+  top: 282px;
+  width: 1024px;
+  height: 84px;
+  display: flex;
+  align-items: center;
+  z-index: 12;
+  pointer-events: none;
+}
+
+.t3-guided-action-btn {
+  pointer-events: auto;
+  border-radius: 999px;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  font-family: "Profile Display", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  font-size: 26px;
+  font-weight: 600;
+  line-height: 1;
+  outline: none;
+  -webkit-tap-highlight-color: transparent;
+  transition: background-color 0.2s ease, transform 0.1s ease;
+}
+
+.t3-guided-action-btn:active {
+  transform: scale(0.98);
+}
+
+.t3-guided-btn-icon {
+  width: 28px;
+  height: 28px;
+  display: block;
+}
+
+/* Primary Button (White Pill) */
+.t3-guided-action-btn.is-primary {
+  background: #F4F4F2;
+  color: #1F2024;
+  height: 64px;
+}
+
+.t3-guided-action-btn.is-primary:active {
+  background: #E0E0DE;
+}
+
+/* Running / Inactive Button (Gray Pill) */
+.t3-guided-action-btn.is-running {
+  background: rgba(75, 76, 82, 0.8);
+  color: #ffffff;
+  height: 64px;
+  cursor: pointer;
+}
+
+.t3-guided-action-btn.is-running:active {
+  background: rgba(95, 96, 102, 0.9);
+}
+
+/* Outline Button */
+.t3-guided-action-btn.is-outline {
+  border: 1px solid #ffffff;
+  background: transparent;
+  color: #ffffff;
+  height: 48px;
+  padding: 0 28px;
+}
+
+.t3-guided-action-btn.is-outline:active {
+  background: rgba(255, 255, 255, 0.12);
+}
+
+/* Specific button coordinates from Figma */
+.is-step1-start {
+  position: absolute;
+  left: 415px;
+  top: 10px;
+  width: 284px;
+  height: 64px;
+}
+
+.is-step1-running {
+  position: absolute;
+  left: 442px;
+  top: 10px;
+  width: 230px;
+  height: 64px;
+}
+
+.is-step2-done {
+  position: absolute;
+  left: 477px;
+  top: 10px;
+  width: 160px;
+  height: 64px;
+}
+
+.is-step3-start,
+.is-step4-start {
+  position: absolute;
+  left: 431px;
+  top: 10px;
+  width: 252px;
+  height: 64px;
+}
+
+.is-step3-running,
+.is-step4-running {
+  position: absolute;
+  left: 442px;
+  top: 10px;
+  width: 230px;
+  height: 64px;
+}
+
+/* Step 5 Buttons Row (Figma 3321:36716) */
+.t3-guided-step5-btns {
+  position: absolute;
+  left: 477px;
+  top: 10px;
+  height: 64px;
+  display: flex;
+  align-items: center;
+  gap: 58px;
+  pointer-events: auto;
+}
+
+.is-step5-done {
+  width: 160px;
+  height: 64px;
+}
+
+.is-step5-next {
+  width: 299px;
+  height: 48px;
+}
+
+/* Step 5 Confirmation Dialog Modal (Figma 3330:37455) */
+.t3-guided-modal-backdrop {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 1024px;
+  height: 384px;
+  background: rgba(0, 0, 0, 0.6);
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.t3-guided-modal-card {
+  position: absolute;
+  left: 245px;
+  top: 59px;
+  width: 625px;
+  height: 266px;
+  background: #303238;
+  border-radius: 8px;
+  box-sizing: border-box;
+  padding: 32px 32px 24px 32px;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.6);
+}
+
+.t3-guided-modal-heading {
+  font-family: "Profile Display", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  font-size: 32px;
+  font-weight: 600;
+  color: #ffffff;
+  line-height: 1.2;
+}
+
+.t3-guided-modal-desc {
+  font-family: "Profile Text", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  font-size: 22px;
+  font-weight: 500;
+  color: #D9D8D7;
+  line-height: 31px;
+  margin-top: 14px;
+}
+
+.t3-guided-modal-btns {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 16px;
+  margin-top: auto;
+}
+
+.t3-guided-modal-btn {
+  height: 48px;
+  border-radius: 999px;
+  border: none;
+  cursor: pointer;
+  font-family: "Profile Display", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  font-size: 26px;
+  font-weight: 600;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  outline: none;
+  transition: opacity 0.15s ease, transform 0.1s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.t3-guided-modal-btn:active {
+  transform: scale(0.98);
+}
+
+.t3-guided-modal-btn.is-cancel {
+  background: rgba(75, 76, 82, 0.8);
+  color: #ffffff;
+  width: 127px;
+}
+
+.t3-guided-modal-btn.is-confirm {
+  background: #F4F4F2;
+  color: #1F2024;
+  width: 243px;
+}
+
