@@ -5939,9 +5939,42 @@ input,
   pointer-events: none;
 }
 
+/* Cookware Carousel Card Overrides (Figma 3422:25402) */
+#t3PancakesCookwareCarousel .t3-pancakes-card {
+  padding: 18px 12px 14px 12px;
+  justify-content: space-between;
+}
+
+#t3PancakesCookwareCarousel .t3-pancakes-card-name {
+  font-size: 22px;
+  font-weight: 600;
+  letter-spacing: 0.2px;
+  text-align: center;
+  width: 100%;
+  white-space: nowrap;
+  overflow: visible;
+  text-overflow: clip;
+  line-height: 1.2;
+}
+
+#t3PancakesCookwareCarousel .t3-card-sublabel {
+  font-size: 15px;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.72);
+  letter-spacing: 0.1px;
+  margin-left: 5px;
+  vertical-align: baseline;
+}
+
+#t3PancakesCookwareCarousel .t3-pancakes-card-img-wrap {
+  height: 84px;
+  margin-top: 0;
+  margin-bottom: 2px;
+}
+
 #t3PancakesCookwareCarousel .t3-pancakes-card-img {
   width: 156px;
-  height: 72px;
+  height: 78px;
   object-fit: contain;
   padding: 0;
 }
