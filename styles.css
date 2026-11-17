@@ -5766,21 +5766,30 @@ input,
 
 /* Pancakes Header (Doneness and Cookware views) */
 .t3-pancakes-header {
-  padding: 48px 28px 6px;
+  padding: 48px 0 6px;
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: center;
   flex-shrink: 0;
 }
 
+.t3-pancakes-cookware-header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  padding: 48px 0 6px;
+}
+
 .t3-pancakes-view-title {
-  font-family: var(--font-display, inherit);
-  font-size: 32px;
+  font-family: var(--font-text, sans-serif);
+  font-size: 36px;
   font-weight: 600;
   color: #ffffff;
   margin: 0;
   line-height: 1.2;
-  letter-spacing: 0.5px;
+  letter-spacing: 0.72px;
+  text-align: center;
 }
 
 .t3-pancakes-info-btn {
@@ -5788,13 +5797,14 @@ input,
   height: 48px;
   border-radius: 50%;
   border: none;
-  background: rgba(75, 76, 82, 0.8);
+  background: transparent;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
   padding: 0;
   outline: none;
+  flex-shrink: 0;
   transition: transform 0.12s ease;
   -webkit-tap-highlight-color: transparent;
 }
@@ -5804,8 +5814,8 @@ input,
 }
 
 .t3-pancakes-info-btn img {
-  width: 24px;
-  height: 24px;
+  width: 48px;
+  height: 48px;
   display: block;
 }
 
