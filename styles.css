@@ -5766,7 +5766,7 @@ input,
 
 /* Pancakes Header (Doneness and Cookware views) */
 .t3-pancakes-header {
-  padding: 22px 28px 6px;
+  padding: 48px 28px 6px;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -6003,7 +6003,7 @@ input,
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 20px 0;
+  padding: 48px 0 16px;
 }
 
 .t3-pancakes-burner-container {
@@ -6035,7 +6035,7 @@ input,
   display: flex;
   padding: 3px;
   box-sizing: border-box;
-  margin-top: 14px;
+  margin-top: 48px;
   gap: 4px;
   flex-shrink: 0;
 }

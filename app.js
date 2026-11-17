@@ -1410,7 +1410,8 @@
         t3Stage === "foodPreheat" ||
         t3Stage === "foodComplete" ||
         t3Stage === "techniquePreheat" ||
-        t3Stage === "techniqueComplete"
+        t3Stage === "techniqueComplete" ||
+        (t3Stage && t3Stage.startsWith("pancakes"))
       ) {
         return true;
       }
@@ -1619,8 +1620,13 @@
     // Task 3F Recent Used screen:
     if (els.t3ScreenRecentUsed) els.t3ScreenRecentUsed.hidden = (stage !== "recentUsed");
 
-    // Top status bar visibility (Figma 2323:15134) - 48px tall status bar on 3C-beefType, doneness, and thickness screens
-    const needsTopStatus = (stage === "beefType" || stage === "beefDoneness" || stage === "beefThickness");
+    // Top status bar visibility (Figma 2323:15134, 3198:22619) - 48px tall status bar on 3C-beefType, doneness, thickness, and all pancakes screens
+    const needsTopStatus = (
+      stage === "beefType" ||
+      stage === "beefDoneness" ||
+      stage === "beefThickness" ||
+      stage.startsWith("pancakes")
+    );
     if (els.topStatus) {
       els.topStatus.hidden = !needsTopStatus;
     }
@@ -2818,6 +2824,11 @@
 
     t3Stage = stageKey;
     updateScreenBadge(stageKey);
+    if (els.topStatus) {
+      els.topStatus.hidden = false;
+    }
+    updateCooktopActiveState();
+    updateNavbarState();
   }
 
   function transitionToT3Pancakes(initialView = "doneness") {
@@ -2836,6 +2847,11 @@
     if (drawerScroll && initialView === "doneness") {
       drawerScroll.scrollTop = 0;
     }
+    if (els.topStatus) {
+      els.topStatus.hidden = false;
+    }
+    updateCooktopActiveState();
+    updateNavbarState();
     slideTransition(els.t3ScreenFoodOptions, els.t3ScreenPancakes, "left");
   }
 
@@ -5860,6 +5876,11 @@
         t3Stage = "foodOptions";
         updateScreenBadge("foodOptions");
         t3FoodCards.forEach(c => c.classList.remove("is-selected"));
+        if (els.topStatus) {
+          els.topStatus.hidden = true;
+        }
+        updateCooktopActiveState();
+        updateNavbarState();
         slideTransition(els.t3ScreenPancakes, els.t3ScreenFoodOptions, "right");
       });
     }
