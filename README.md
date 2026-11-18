@@ -11,7 +11,7 @@ Choose any of the following methods to open and test the prototype directly:
 * **⚡ [Live Web Tunnel Link (Active Now)](https://crazy-lies-shave.loca.lt/?task=3#task3)**  
   *(Live web mirror hosted directly from this machine for testing anywhere, even outside office Wi-Fi. If prompted for a tunnel password / Endpoint IP, enter: `4.53.66.82`)*
 
-* **📶 Local iPad / Lab Wi-Fi Link**: `http://10.35.122.163:8080/?task=3#task3`  
+* **📶 Local iPad / Lab Wi-Fi Link**: `http://10.35.123.196:8080/?task=3#task3`  
   *(Recommended for zero-latency in-person testing when your iPad is connected to the same Wi-Fi network as this computer)*
 
 * **💻 Direct Local Browser**:  
