@@ -6566,9 +6566,9 @@ input,
 
 #t3ScreenGuidedCooking {
   position: absolute;
-  left: 0;
+  left: 90px;
   top: 0;
-  width: 1024px;
+  width: 934px;
   height: 384px;
   overflow: hidden;
   user-select: none;
@@ -6576,9 +6576,9 @@ input,
 
 #t3GuidedBackBtn {
   position: absolute;
-  left: 10px;
+  left: 0;
   top: 0;
-  width: 72px;
+  width: 190px;
   height: 64px;
   background: transparent;
   border: none;
@@ -6590,7 +6590,7 @@ input,
 /* Exit button at bottom-left (rel_x: 197.7, rel_y: 300) */
 .t3-guided-exit-btn {
   position: absolute;
-  left: 198px;
+  left: 108px;
   top: 300px;
   width: 129px;
   height: 48px;
@@ -6629,7 +6629,7 @@ input,
   position: absolute;
   left: 0;
   top: 94px;
-  width: 1024px;
+  width: 934px;
   height: 178px;
   overflow: visible;
   z-index: 10;
@@ -6642,7 +6642,7 @@ input,
   align-items: flex-start;
   gap: 12px;
   position: absolute;
-  left: 386px;
+  left: 296px;
   top: 0;
   height: 178px;
   transition: transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
@@ -6822,7 +6822,7 @@ input,
   position: absolute;
   left: 0;
   top: 282px;
-  width: 1024px;
+  width: 934px;
   height: 84px;
   display: flex;
   align-items: center;
@@ -6897,7 +6897,7 @@ input,
 /* Specific button coordinates from Figma */
 .is-step1-start {
   position: absolute;
-  left: 415px;
+  left: 325px;
   top: 10px;
   width: 284px;
   height: 64px;
@@ -6905,7 +6905,7 @@ input,
 
 .is-step1-running {
   position: absolute;
-  left: 442px;
+  left: 352px;
   top: 10px;
   width: 230px;
   height: 64px;
@@ -6913,7 +6913,7 @@ input,
 
 .is-step2-done {
   position: absolute;
-  left: 477px;
+  left: 387px;
   top: 10px;
   width: 160px;
   height: 64px;
@@ -6922,7 +6922,7 @@ input,
 .is-step3-start,
 .is-step4-start {
   position: absolute;
-  left: 431px;
+  left: 341px;
   top: 10px;
   width: 252px;
   height: 64px;
@@ -6931,7 +6931,7 @@ input,
 .is-step3-running,
 .is-step4-running {
   position: absolute;
-  left: 442px;
+  left: 352px;
   top: 10px;
   width: 230px;
   height: 64px;
@@ -6940,7 +6940,7 @@ input,
 /* Step 5 Buttons Row (Figma 3321:36716) */
 .t3-guided-step5-btns {
   position: absolute;
-  left: 477px;
+  left: 387px;
   top: 10px;
   height: 64px;
   display: flex;
