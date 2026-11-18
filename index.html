@@ -9,7 +9,7 @@
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
   <title>Polaris Cooktop Precision Cooking Prototype</title>
-  <link rel="stylesheet" href="./styles.css?v=20261118-pancakes-guided-align-1">
+  <link rel="stylesheet" href="./styles.css?v=20261118-temp350-1">
 </head>
 <body>
   <div class="test-environment">
@@ -87,7 +87,7 @@
           3B: Temp Flow
         </button>
         <button type="button" class="glance-btn" id="btnT3FlowStatus">
-          Status (375°F)
+          Status (350°F)
         </button>
         <button type="button" class="glance-btn" id="btnT3FlowFood">
           3C: Food Flow
@@ -112,7 +112,7 @@
           <select id="screenJumperSelect" class="screen-jumper-select" aria-label="Jump to screen">
             <optgroup label="Task 3: Usability Flow">
               <option value="t3:start">3-start (Burners Overview - OFF)</option>
-              <option value="t3:burnerStatus">3-burnerStatus (1 Burner at 375°F)</option>
+              <option value="t3:burnerStatus">3-burnerStatus (1 Burner at 350°F)</option>
               <option value="t3:turnknob">3A-turnknob (Knob Turn Level Setting)</option>
               <option value="t3:spotlight">3A-spotlight (Precision Spotlight Screen)</option>
               <option value="t3:temperature">3B-temperature (PC Temperature Picker)</option>
@@ -494,7 +494,7 @@
               <div class="t3-start-active-burner1" id="tStartActiveBurner1" hidden>
                 <div class="t3-start-card-info">
                   <span class="t3-start-card-label">Temperature</span>
-                  <span class="t3-start-card-val" id="tStartBurner1Temp">375°F</span>
+                  <span class="t3-start-card-val" id="tStartBurner1Temp">350°F</span>
                 </div>
                 <div class="t3-start-card-icon">
                   <svg width="58" height="58" viewBox="0 0 58 58" fill="none">
@@ -690,7 +690,7 @@
                   <img class="t3-cookware-edit-icon" src="./assets/icon-pencil-edit.png" alt="" aria-hidden="true">
                 </button>
 
-                <!-- Dynamic Horizontal Temperature Carousel (200°F - 500°F in 25° increments, centered at 375°F, 3 numbers on screen) -->
+                <!-- Dynamic Horizontal Temperature Carousel (200°F - 500°F in 25° increments, centered at 350°F, 3 numbers on screen) -->
                 <div class="t3-picker-wheel-container" id="t3PickerWheelContainer">
                   <div class="t3-picker-track" id="t3PickerTrack"></div>
                 </div>
@@ -719,7 +719,7 @@
 
               <!-- Dynamic Temperature Display on Digipad Screen -->
               <div class="t3-digipad-temp-display" id="t3DigipadTempDisplay">
-                <span class="t3-digipad-temp-num" id="t3DigipadTempNum">375</span>
+                <span class="t3-digipad-temp-num" id="t3DigipadTempNum">350</span>
                 <span class="t3-digipad-temp-unit">°F</span>
               </div>
 
@@ -798,7 +798,7 @@
               <!-- Back button (< Cooktop) -->
               <button type="button" class="t3-back-btn" id="t3BtnBackFromPreheat" aria-label="Back to Cooktop"></button>
 
-              <!-- Current Temperature Display (grows from 182°F to 375°F over 5s) -->
+              <!-- Current Temperature Display (grows from 182°F to 350°F over 5s) -->
               <div class="t3-preheat-current-display">
                 <span class="t3-temp-val-num" id="t3PreheatCurrent">182</span>
                 <span class="t3-temp-val-unit">°F</span>
@@ -806,7 +806,7 @@
 
               <!-- Target Temperature Display -->
               <div class="t3-preheat-target-display">
-                <span class="t3-temp-val-num" id="t3PreheatTarget">375</span>
+                <span class="t3-temp-val-num" id="t3PreheatTarget">350</span>
                 <span class="t3-temp-val-unit">°F</span>
               </div>
 
@@ -822,7 +822,7 @@
 
               <!-- Dynamic Target Temperature Display (Figma Node 2294-11878) -->
               <div class="t3-completed-temp-display">
-                <span class="t3-completed-temp-num" id="t3CompleteTarget">375</span>
+                <span class="t3-completed-temp-num" id="t3CompleteTarget">350</span>
                 <span class="t3-completed-temp-unit">°F</span>
               </div>
 
@@ -840,7 +840,7 @@
               <div class="t3-burner-text-tile" id="t3BurnerTextTile">
                 <div class="t3-tile-mode">Temperature</div>
                 <div class="t3-tile-live-temp" id="t3TileLiveTemp">178°F</div>
-                <div class="t3-tile-target-text" id="t3TileTargetText">Preheat to 375°F</div>
+                <div class="t3-tile-target-text" id="t3TileTargetText">Preheat to 350°F</div>
               </div>
 
               <!-- Active Burner Circle Overlay (Rear Left Burner Circle) -->
@@ -2041,7 +2041,7 @@
 
               <!-- Rear Left Burner Readout -->
               <div class="t3-burner-status-temp-display" id="t3FoodBurnerStatusTempDisplay">
-                <span class="t3-burner-status-temp-val" id="t3FoodBurnerStatusTemp1">375°F</span>
+                <span class="t3-burner-status-temp-val" id="t3FoodBurnerStatusTemp1">350°F</span>
               </div>
               <!-- Front Left Food Burner Dynamic Readout -->
               <div class="t3-food-burner-status-fl-text" id="t3FoodBurnerStatusFLText">
@@ -2194,6 +2194,6 @@
     </footer>
   </div>
 
-  <script src="./app.js?v=20261118-pancakes-guided-align-1"></script>
+  <script src="./app.js?v=20261118-temp350-1"></script>
 </body>
 </html>

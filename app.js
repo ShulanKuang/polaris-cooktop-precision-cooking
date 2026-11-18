@@ -152,10 +152,10 @@
     currentTask: 3,
     shutterHidden: true,
     shutterTimer: null,
-    targetTemp: 375,
+    targetTemp: 350,
     selectedBurner: "rear-left",
     burners: {
-      "rear-left": { state: "off", temp: 375, mode: null, label: "OFF" },
+      "rear-left": { state: "off", temp: 350, mode: null, label: "OFF" },
       "front-left": { state: "off", temp: null, mode: null, label: "OFF" },
       "center": { state: "off", temp: null, mode: null, label: "OFF" },
       "top-right": { state: "off", temp: null, mode: null, label: "OFF" },
@@ -169,7 +169,7 @@
       digipadBuffer: "375",
       hasEditedKeypad: false
     },
-    task3TargetTemp: 375,
+    task3TargetTemp: 350,
     task3BeefType: "Steak",
     task3BeefDoneness: "Med Rare",
     task3BeefThickness: 0.5,
@@ -579,7 +579,7 @@
     },
     3: {
       title: "Task 3: Precision Cooking Flow",
-      prompt: "Turn any PRC-enabled knob to PRC (1s delay -> 3s countdown toast -> Spotlight). Tap Temperature tab -> pick temp (e.g. 375°F) -> click START. Live 5s preheat -> complete toast -> Burner status. Turn another burner knob to see live level setting animation, or turn to PRC for Food mode."
+      prompt: "Turn any PRC-enabled knob to PRC (1s delay -> 3s countdown toast -> Spotlight). Tap Temperature tab -> pick temp (e.g. 350°F) -> click START. Live 5s preheat -> complete toast -> Burner status. Turn another burner knob to see live level setting animation, or turn to PRC for Food mode."
     },
     4: {
       title: "Task 4: End & Turn Off",
@@ -1699,10 +1699,10 @@
         });
       }
       requestAnimationFrame(() => {
-        scrollToT3Temp(state.task3TargetTemp || 375, false);
+        scrollToT3Temp(state.task3TargetTemp || 350, false);
       });
       setTimeout(() => {
-        scrollToT3Temp(state.task3TargetTemp || 375, false);
+        scrollToT3Temp(state.task3TargetTemp || 350, false);
       }, 50);
     } else if (stage === "tempRun") {
       const drawer = document.getElementById("t3SideDrawerTempRun");
@@ -1712,10 +1712,10 @@
         });
       }
       requestAnimationFrame(() => {
-        scrollToT3RunTemp(state.task3TargetTemp || 375, false);
+        scrollToT3RunTemp(state.task3TargetTemp || 350, false);
       });
       setTimeout(() => {
-        scrollToT3RunTemp(state.task3TargetTemp || 375, false);
+        scrollToT3RunTemp(state.task3TargetTemp || 350, false);
       }, 50);
     } else if (stage === "technique") {
       const drawer = document.getElementById("t3SideDrawerTech");
@@ -1751,11 +1751,11 @@
     updateCooktopActiveState();
 
     if (stage === "completed") {
-      const targetTemp = state.task3TargetTemp || 375;
+      const targetTemp = state.task3TargetTemp || 350;
       if (els.t3CompleteTarget) els.t3CompleteTarget.textContent = targetTemp;
     }
     if (stage === "burnerStatus") {
-      const targetTemp = state.task3TargetTemp || 375;
+      const targetTemp = state.task3TargetTemp || 350;
       if (els.tStartActiveBurner1) {
         els.tStartActiveBurner1.hidden = false;
         if (els.tStartBurner1Temp) {
@@ -1813,7 +1813,7 @@
     }
     if (stage === "foodBurnerStatus") {
       clearT3Timers();
-      const targetTemp = state.task3TargetTemp || 375;
+      const targetTemp = state.task3TargetTemp || 350;
       if (els.t3FoodBurnerStatusTemp1) els.t3FoodBurnerStatusTemp1.textContent = `${targetTemp}°F`;
       // In foodBurnerStatus (Figma 2327:15934): BOTH Rear Left and Front Left are running!
       if (!knobsState[1] || Math.abs(knobsState[1].angle) <= 5) setKnobAngle(2, -56, false, false);
@@ -1836,7 +1836,7 @@
       if (els.tStartActiveBurner1) {
         els.tStartActiveBurner1.hidden = !isFoodFlow;
         if (els.tStartBurner1Temp) {
-          els.tStartBurner1Temp.textContent = `${state.task3TargetTemp || 375}°F`;
+          els.tStartBurner1Temp.textContent = `${state.task3TargetTemp || 350}°F`;
         }
       }
       clearT3Timers();
@@ -2553,16 +2553,16 @@
       updateCooktopActiveState();
 
       requestAnimationFrame(() => {
-        scrollToT3Temp(state.task3TargetTemp || 375, false);
+        scrollToT3Temp(state.task3TargetTemp || 350, false);
       });
 
       slideTransition(outgoingScreen, els.t3ScreenTemperature, "left", () => {
-        scrollToT3Temp(state.task3TargetTemp || 375, false);
+        scrollToT3Temp(state.task3TargetTemp || 350, false);
       });
     } else {
       showT3Screen("temperature");
       requestAnimationFrame(() => {
-        scrollToT3Temp(state.task3TargetTemp || 375, false);
+        scrollToT3Temp(state.task3TargetTemp || 350, false);
       });
     }
     if (stage === "selectCookware") {
@@ -2608,7 +2608,7 @@
         screen: els.t3ScreenTemperature,
         getContent: () => [els.t3PickerWheelContainer, els.t3BtnCookwareEdit, els.t3BtnStartTemp, els.t3BtnKeypadFromTemp].filter(Boolean),
         onInit: () => {
-          scrollToT3Temp(state.task3TargetTemp || 375, false);
+          scrollToT3Temp(state.task3TargetTemp || 350, false);
         }
       },
       digipad: {
@@ -2689,7 +2689,7 @@
     toDef.screen.style.zIndex = "1";
 
     if (toKey === "temperature" || toDef.stage === "temperature") {
-      scrollToT3Temp(state.task3TargetTemp || 375, false);
+      scrollToT3Temp(state.task3TargetTemp || 350, false);
     }
 
     fromDef.screen.style.transition = "none";
@@ -2772,7 +2772,7 @@
 
       if (toKey === "temperature" || toDef.stage === "temperature") {
         requestAnimationFrame(() => {
-          scrollToT3Temp(state.task3TargetTemp || 375, false);
+          scrollToT3Temp(state.task3TargetTemp || 350, false);
         });
       }
       isT3ContentTransitioning = false;
@@ -3199,13 +3199,13 @@
     }
   }
 
-  let digipadInput = "375";
+  let digipadInput = "350";
   let digipadIsFresh = true;
   let digipadSourceScreen = "temperature";
 
   function openT3Digipad(source = "temperature") {
     digipadSourceScreen = source;
-    digipadInput = String(state.task3TargetTemp || 375);
+    digipadInput = String(state.task3TargetTemp || 350);
     digipadIsFresh = true;
     if (els.t3DigipadTempNum) {
       els.t3DigipadTempNum.textContent = digipadInput;
@@ -3215,7 +3215,7 @@
 
   function closeT3DigipadToPicker() {
     let temp = parseInt(digipadInput, 10);
-    if (isNaN(temp) || temp < T3_TEMP_MIN) temp = 375;
+    if (isNaN(temp) || temp < T3_TEMP_MIN) temp = 350;
     if (temp > T3_TEMP_MAX) temp = 500;
     temp = Math.round(temp / T3_TEMP_STEP) * T3_TEMP_STEP;
     state.task3TargetTemp = temp;
@@ -3279,7 +3279,7 @@
     showT3Screen("burnerStatus");
     playSound("toggleOn");
 
-    const targetTemp = state.task3TargetTemp || 375;
+    const targetTemp = state.task3TargetTemp || 350;
     const startTemp = 178; // Exact starting number from Figma 2310:12162
     const durationMs = 4000; // 4s smooth temperature growth
     const startTime = Date.now();
@@ -3331,7 +3331,7 @@
     clearT3Timers();
     showT3Screen("burnerStatus");
     playSound("toggleOn");
-    const targetTemp = state.task3TargetTemp || 375;
+    const targetTemp = state.task3TargetTemp || 350;
     if (els.t3TileLiveTemp) {
       els.t3TileLiveTemp.textContent = `${targetTemp}°F`;
     }
@@ -3422,7 +3422,7 @@
     }
     playSound("touch");
 
-    const targetTemp = state.task3TargetTemp || 375;
+    const targetTemp = state.task3TargetTemp || 350;
     if (els.t3FoodBurnerStatusTemp1) {
       els.t3FoodBurnerStatusTemp1.textContent = `${targetTemp}°F`;
     }
@@ -3626,7 +3626,7 @@
     }, { passive: true });
 
     setTimeout(() => {
-      scrollToT3Temp(state.task3TargetTemp || 375, false);
+      scrollToT3Temp(state.task3TargetTemp || 350, false);
     }, 60);
   }
 
@@ -3680,7 +3680,7 @@
     const trackWidth = els.t3PickerTrack.clientWidth || 493;
     const trackCenter = els.t3PickerTrack.scrollLeft + (trackWidth / 2);
     const items = els.t3PickerTrack.querySelectorAll(".t3-picker-item");
-    let closestTemp = 375;
+    let closestTemp = 350;
     let closestDist = Infinity;
 
     items.forEach((item, idx) => {
@@ -3816,7 +3816,7 @@
     const trackWidth = els.t3RunPickerTrack.clientWidth || 493;
     const trackCenter = els.t3RunPickerTrack.scrollLeft + (trackWidth / 2);
     const items = els.t3RunPickerTrack.querySelectorAll(".t3-picker-item");
-    let closestTemp = 375;
+    let closestTemp = 350;
     let closestDist = Infinity;
 
     items.forEach((item, idx) => {
@@ -3885,8 +3885,8 @@
           if (angle < -20 && angle > -80) {
             state.burners[k.burner].state = "precision";
             if (!state.burners[k.burner].temp && !state.burners[k.burner].mode) {
-              state.burners[k.burner].temp = 375;
-              state.burners[k.burner].label = "375°F";
+              state.burners[k.burner].temp = 350;
+              state.burners[k.burner].label = "350°F";
             }
             renderBurnerState(k.burner);
           }
@@ -4307,7 +4307,7 @@
         if (digipadSourceScreen === "tempRun") {
           showT3Screen("tempRun");
           requestAnimationFrame(() => {
-            scrollToT3RunTemp(state.task3TargetTemp || 375, false);
+            scrollToT3RunTemp(state.task3TargetTemp || 350, false);
           });
         } else {
           cancelT3A();
@@ -4362,7 +4362,7 @@
         if (now - lastStartTimeDigi < 400) return;
         lastStartTimeDigi = now;
         let temp = parseInt(digipadInput, 10);
-        if (isNaN(temp) || temp < 100) temp = 375;
+        if (isNaN(temp) || temp < 100) temp = 350;
         state.task3TargetTemp = temp;
         startT3Preheat();
       };
@@ -4692,7 +4692,7 @@
         els.t3ScreenSelectCookware.style.zIndex = "100";
       }
 
-      scrollToT3Temp(state.task3TargetTemp || 375, false);
+      scrollToT3Temp(state.task3TargetTemp || 350, false);
 
       // Animate ONLY the right side content container
       if (els.t3CookwareMainContent) {
@@ -4714,7 +4714,7 @@
         if (els.t3TempMainContent) {
           els.t3TempMainContent.classList.remove("is-entering");
         }
-        scrollToT3Temp(state.task3TargetTemp || 375, false);
+        scrollToT3Temp(state.task3TargetTemp || 350, false);
         isCookwareTransitioning = false;
       }, 260);
     };
@@ -4789,7 +4789,7 @@
       playSound("touch");
       showT3Screen("tempRun");
       requestAnimationFrame(() => {
-        scrollToT3RunTemp(state.task3TargetTemp || 375, false);
+        scrollToT3RunTemp(state.task3TargetTemp || 350, false);
       });
     };
     if (els.t3BurnerTextTile) {
@@ -4806,9 +4806,9 @@
         clearT3Timers();
         showT3Screen("temperature");
         requestAnimationFrame(() => {
-          scrollToT3Temp(state.task3TargetTemp || 375, false);
+          scrollToT3Temp(state.task3TargetTemp || 350, false);
           setTimeout(() => {
-            scrollToT3Temp(state.task3TargetTemp || 375, false);
+            scrollToT3Temp(state.task3TargetTemp || 350, false);
           }, 60);
         });
       });
@@ -4819,9 +4819,9 @@
         clearT3Timers();
         showT3Screen("temperature");
         requestAnimationFrame(() => {
-          scrollToT3Temp(state.task3TargetTemp || 375, false);
+          scrollToT3Temp(state.task3TargetTemp || 350, false);
           setTimeout(() => {
-            scrollToT3Temp(state.task3TargetTemp || 375, false);
+            scrollToT3Temp(state.task3TargetTemp || 350, false);
           }, 60);
         });
       });
@@ -4834,9 +4834,9 @@
         clearT3Timers();
         showT3Screen("temperature");
         requestAnimationFrame(() => {
-          scrollToT3Temp(state.task3TargetTemp || 375, false);
+          scrollToT3Temp(state.task3TargetTemp || 350, false);
           setTimeout(() => {
-            scrollToT3Temp(state.task3TargetTemp || 375, false);
+            scrollToT3Temp(state.task3TargetTemp || 350, false);
           }, 60);
         });
       });
@@ -4876,9 +4876,9 @@
         clearT3Timers();
         showT3Screen("temperature");
         requestAnimationFrame(() => {
-          scrollToT3Temp(state.task3TargetTemp || 375, false);
+          scrollToT3Temp(state.task3TargetTemp || 350, false);
           setTimeout(() => {
-            scrollToT3Temp(state.task3TargetTemp || 375, false);
+            scrollToT3Temp(state.task3TargetTemp || 350, false);
           }, 60);
         });
       };
@@ -4893,9 +4893,9 @@
         playSound("touch");
         showT3Screen("tempRun");
         requestAnimationFrame(() => {
-          scrollToT3RunTemp(state.task3TargetTemp || 375, false);
+          scrollToT3RunTemp(state.task3TargetTemp || 350, false);
           setTimeout(() => {
-            scrollToT3RunTemp(state.task3TargetTemp || 375, false);
+            scrollToT3RunTemp(state.task3TargetTemp || 350, false);
           }, 60);
         });
       });
@@ -4905,9 +4905,9 @@
         playSound("touch");
         showT3Screen("tempRun");
         requestAnimationFrame(() => {
-          scrollToT3RunTemp(state.task3TargetTemp || 375, false);
+          scrollToT3RunTemp(state.task3TargetTemp || 350, false);
           setTimeout(() => {
-            scrollToT3RunTemp(state.task3TargetTemp || 375, false);
+            scrollToT3RunTemp(state.task3TargetTemp || 350, false);
           }, 60);
         });
       });
@@ -4920,9 +4920,9 @@
         playSound("touch");
         showT3Screen("tempRun");
         requestAnimationFrame(() => {
-          scrollToT3RunTemp(state.task3TargetTemp || 375, false);
+          scrollToT3RunTemp(state.task3TargetTemp || 350, false);
           setTimeout(() => {
-            scrollToT3RunTemp(state.task3TargetTemp || 375, false);
+            scrollToT3RunTemp(state.task3TargetTemp || 350, false);
           }, 60);
         });
       };
@@ -4937,7 +4937,7 @@
         if (t3Stage === "burnerStatus") {
           showT3Screen("tempRun");
           requestAnimationFrame(() => {
-            scrollToT3RunTemp(state.task3TargetTemp || 375, false);
+            scrollToT3RunTemp(state.task3TargetTemp || 350, false);
           });
         }
       });
@@ -4987,7 +4987,7 @@
       els.btnT3FlowTemp.addEventListener("click", () => {
         playSound("touch");
         state.task3Mode = "temperature";
-        state.task3TargetTemp = 375;
+        state.task3TargetTemp = 350;
         els.btnT3FlowTemp.classList.add("is-active");
         if (els.btnT3FlowFood) els.btnT3FlowFood.classList.remove("is-active");
         if (els.btnT3FlowStatus) els.btnT3FlowStatus.classList.remove("is-active");
@@ -5004,7 +5004,7 @@
       els.btnT3FlowStatus.addEventListener("click", () => {
         playSound("touch");
         state.task3Mode = "temperature";
-        state.task3TargetTemp = 375;
+        state.task3TargetTemp = 350;
         els.btnT3FlowStatus.classList.add("is-active");
         if (els.btnT3FlowTemp) els.btnT3FlowTemp.classList.remove("is-active");
         if (els.btnT3FlowFood) els.btnT3FlowFood.classList.remove("is-active");
@@ -5079,14 +5079,14 @@
       } else if (tabName === "temperature") {
         if (state.task3IsRunning) {
           if (t3Stage === "tempRun") {
-            scrollToT3RunTemp(state.task3TargetTemp || 375, true);
+            scrollToT3RunTemp(state.task3TargetTemp || 350, true);
             return;
           }
           showT3Screen("tempRun");
           requestAnimationFrame(() => {
-            scrollToT3RunTemp(state.task3TargetTemp || 375, false);
+            scrollToT3RunTemp(state.task3TargetTemp || 350, false);
             setTimeout(() => {
-              scrollToT3RunTemp(state.task3TargetTemp || 375, false);
+              scrollToT3RunTemp(state.task3TargetTemp || 350, false);
             }, 60);
           });
           return;
@@ -5096,7 +5096,7 @@
           t3Stage = "temperature";
           updateScreenBadge("temperature");
           slideTransition(els.t3ScreenBeefMenu, els.t3ScreenTemperature, "right", () => {
-            scrollToT3Temp(state.task3TargetTemp || 375, false);
+            scrollToT3Temp(state.task3TargetTemp || 350, false);
           });
         } else if (t3Stage === "selectCookware") {
           if (typeof transitionCookwareToTemperature === "function") {
@@ -5109,9 +5109,9 @@
         } else {
           showT3Screen("temperature");
           requestAnimationFrame(() => {
-            scrollToT3Temp(state.task3TargetTemp || 375, false);
+            scrollToT3Temp(state.task3TargetTemp || 350, false);
             setTimeout(() => {
-              scrollToT3Temp(state.task3TargetTemp || 375, false);
+              scrollToT3Temp(state.task3TargetTemp || 350, false);
             }, 60);
           });
         }
@@ -6695,7 +6695,7 @@
             showT3Screen("turnknob");
           } else if (stage === "temperature") {
             showT3Screen("temperature");
-            requestAnimationFrame(() => scrollToT3Temp(state.task3TargetTemp || 375, false));
+            requestAnimationFrame(() => scrollToT3Temp(state.task3TargetTemp || 350, false));
           } else if (stage === "digipad") {
             openT3Digipad();
           } else if (stage === "preheat") {
