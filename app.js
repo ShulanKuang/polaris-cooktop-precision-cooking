@@ -518,28 +518,34 @@
     t3GuidedExitBtn: document.getElementById("t3GuidedExitBtn"),
     t3GuidedTrack: document.getElementById("t3GuidedTrack"),
     t3GuidedCards: Array.from(document.querySelectorAll(".t3-guided-card")),
-    t3GuidedCard1Text: document.getElementById("t3GuidedCard1Text"),
+    t3GuidedCardPreheat: document.getElementById("t3GuidedCardPreheat"),
     t3GuidedPreheatInfo: document.getElementById("t3GuidedPreheatInfo"),
     t3GuidedPreheatFill: document.getElementById("t3GuidedPreheatFill"),
+    t3GuidedCard1: document.getElementById("t3GuidedCard1"),
+    t3GuidedCard2: document.getElementById("t3GuidedCard2"),
+    t3GuidedStartTimer2: document.getElementById("t3GuidedStartTimer2"),
+    t3GuidedTimer2: document.getElementById("t3GuidedTimer2"),
+    t3GuidedTimerVal2: document.getElementById("t3GuidedTimerVal2"),
+    t3GuidedTimerFill2: document.getElementById("t3GuidedTimerFill2"),
+    t3GuidedCard2Text: document.getElementById("t3GuidedCard2Text"),
+    t3GuidedCard3: document.getElementById("t3GuidedCard3"),
+    t3GuidedStartTimer3: document.getElementById("t3GuidedStartTimer3"),
     t3GuidedTimer3: document.getElementById("t3GuidedTimer3"),
     t3GuidedTimerVal3: document.getElementById("t3GuidedTimerVal3"),
     t3GuidedTimerFill3: document.getElementById("t3GuidedTimerFill3"),
-    t3GuidedTimer4: document.getElementById("t3GuidedTimer4"),
-    t3GuidedTimerVal4: document.getElementById("t3GuidedTimerVal4"),
-    t3GuidedTimerFill4: document.getElementById("t3GuidedTimerFill4"),
-    t3GuidedBtnStartPreheat: document.getElementById("t3GuidedBtnStartPreheat"),
+    t3GuidedCard3Text: document.getElementById("t3GuidedCard3Text"),
+    t3GuidedCard4: document.getElementById("t3GuidedCard4"),
     t3GuidedBtnPreheating: document.getElementById("t3GuidedBtnPreheating"),
-    t3GuidedBtnDone2: document.getElementById("t3GuidedBtnDone2"),
-    t3GuidedBtnStartTimer3: document.getElementById("t3GuidedBtnStartTimer3"),
-    t3GuidedBtnCooking3: document.getElementById("t3GuidedBtnCooking3"),
-    t3GuidedBtnStartTimer4: document.getElementById("t3GuidedBtnStartTimer4"),
-    t3GuidedBtnCooking4: document.getElementById("t3GuidedBtnCooking4"),
-    t3GuidedStep5Btns: document.getElementById("t3GuidedStep5Btns"),
-    t3GuidedBtnDone5: document.getElementById("t3GuidedBtnDone5"),
-    t3GuidedBtnStartNext: document.getElementById("t3GuidedBtnStartNext"),
-    t3GuidedModal: document.getElementById("t3GuidedModal"),
-    t3GuidedModalCancel: document.getElementById("t3GuidedModalCancel"),
-    t3GuidedModalConfirm: document.getElementById("t3GuidedModalConfirm"),
+    t3GuidedBtnNext: document.getElementById("t3GuidedBtnNext"),
+    t3GuidedBtnCooking: document.getElementById("t3GuidedBtnCooking"),
+    t3GuidedStep4Btns: document.getElementById("t3GuidedStep4Btns"),
+    t3GuidedBtnDone4: document.getElementById("t3GuidedBtnDone4"),
+    t3GuidedBtnStartNext4: document.getElementById("t3GuidedBtnStartNext4"),
+    t3GuidedDoneModal: document.getElementById("t3GuidedDoneModal"),
+    t3GuidedDoneModalBtn: document.getElementById("t3GuidedDoneModalBtn"),
+    t3GuidedNextModal: document.getElementById("t3GuidedNextModal"),
+    t3GuidedNextModalCancel: document.getElementById("t3GuidedNextModalCancel"),
+    t3GuidedNextModalConfirm: document.getElementById("t3GuidedNextModalConfirm"),
 
     t3SubflowControls: document.getElementById("t3SubflowControls"),
     btnT3FlowTemp: document.getElementById("btnT3FlowTemp"),
@@ -2236,6 +2242,10 @@
     }
 
     if (t3Stage !== "start" && t3Stage !== "burnerStatus") {
+      if (t3Stage === "guidedCooking" && (index === 1 || index === activePrcKnobIndex) && Math.abs(angle) <= 12) {
+        finishGuidedCookingAndTurnOff();
+        return;
+      }
       // If user turns the active knob to OFF while on another Task 3 screen (like Spotlight), cancel back to start
       if (Math.abs(angle) <= 10 && index === activePrcKnobIndex) {
         cancelT3A();
@@ -3019,78 +3029,95 @@
       els.t3GuidedTrack.setAttribute("data-step", String(step));
     }
 
-    if (els.t3GuidedCards && els.t3GuidedCards.length > 0) {
-      els.t3GuidedCards.forEach((card, idx) => {
-        const cardStep = idx + 1;
-        if (cardStep === step) {
-          card.classList.add("is-active");
+    const cards = [
+      { el: els.t3GuidedCardPreheat, step: 0 },
+      { el: els.t3GuidedCard1, step: 1 },
+      { el: els.t3GuidedCard2, step: 2 },
+      { el: els.t3GuidedCard3, step: 3 },
+      { el: els.t3GuidedCard4, step: 4 }
+    ];
+
+    cards.forEach(({ el, step: s }) => {
+      if (el) {
+        if (s === step) {
+          el.classList.add("is-active");
         } else {
-          card.classList.remove("is-active");
+          el.classList.remove("is-active");
         }
-      });
+      }
+    });
+
+    // Step 0: Preheating
+    if (els.t3GuidedBtnPreheating) {
+      els.t3GuidedBtnPreheating.hidden = (step !== 0);
     }
 
-    // Step 1: Preheating flame row & progress bar
-    if (els.t3GuidedPreheatInfo && els.t3GuidedCard1Text) {
-      if (step === 1 && isRunning) {
-        els.t3GuidedPreheatInfo.hidden = false;
-        els.t3GuidedCard1Text.style.display = "none";
+    // Step 2: Pour batter (inside-card timer & text)
+    if (els.t3GuidedTimer2 && els.t3GuidedStartTimer2 && els.t3GuidedCard2Text) {
+      if (step === 2 && isRunning) {
+        els.t3GuidedTimer2.hidden = false;
+        els.t3GuidedStartTimer2.hidden = true;
+        els.t3GuidedCard2Text.textContent = "Pour batter. Cook for 3 mins.";
       } else {
-        els.t3GuidedPreheatInfo.hidden = true;
-        els.t3GuidedCard1Text.style.display = "";
-        if (els.t3GuidedPreheatFill) els.t3GuidedPreheatFill.style.width = "0%";
+        els.t3GuidedTimer2.hidden = true;
+        els.t3GuidedStartTimer2.hidden = false;
+        els.t3GuidedCard2Text.textContent = "Pour batter. Cook for 3 mins. Then press “Next”.";
+        if (els.t3GuidedTimerFill2) els.t3GuidedTimerFill2.style.width = "0%";
+        if (els.t3GuidedTimerVal2) els.t3GuidedTimerVal2.textContent = "2:59:00";
       }
     }
 
-    // Step 3: Timer & progress bar
-    if (els.t3GuidedTimer3) {
+    // Step 3: Flip pancake (inside-card timer & text)
+    if (els.t3GuidedTimer3 && els.t3GuidedStartTimer3 && els.t3GuidedCard3Text) {
       if (step === 3 && isRunning) {
         els.t3GuidedTimer3.hidden = false;
+        els.t3GuidedStartTimer3.hidden = true;
+        els.t3GuidedCard3Text.textContent = "Flip pancake. Cook for 1 minute.";
       } else {
         els.t3GuidedTimer3.hidden = true;
+        els.t3GuidedStartTimer3.hidden = false;
+        els.t3GuidedCard3Text.textContent = "Flip pancake. Cook for 1 minute. Then press “Next”.";
         if (els.t3GuidedTimerFill3) els.t3GuidedTimerFill3.style.width = "0%";
-        if (els.t3GuidedTimerVal3) els.t3GuidedTimerVal3.textContent = "2:59:00";
+        if (els.t3GuidedTimerVal3) els.t3GuidedTimerVal3.textContent = "0:35:00";
       }
     }
 
-    // Step 4: Timer & progress bar
-    if (els.t3GuidedTimer4) {
-      if (step === 4 && isRunning) {
-        els.t3GuidedTimer4.hidden = false;
-      } else {
-        els.t3GuidedTimer4.hidden = true;
-        if (els.t3GuidedTimerFill4) els.t3GuidedTimerFill4.style.width = "0%";
-        if (els.t3GuidedTimerVal4) els.t3GuidedTimerVal4.textContent = "0:35:00";
-      }
-    }
+    // Next button: visible on steps 1, 2 (when not running), 3 (when not running)
+    const showNext = (step === 1) || (step === 2 && !isRunning) || (step === 3 && !isRunning);
+    if (els.t3GuidedBtnNext) els.t3GuidedBtnNext.hidden = !showNext;
 
-    // Buttons visibility
-    if (els.t3GuidedBtnStartPreheat) els.t3GuidedBtnStartPreheat.hidden = !(step === 1 && !isRunning);
-    if (els.t3GuidedBtnPreheating) els.t3GuidedBtnPreheating.hidden = !(step === 1 && isRunning);
-    if (els.t3GuidedBtnDone2) els.t3GuidedBtnDone2.hidden = !(step === 2);
-    if (els.t3GuidedBtnStartTimer3) els.t3GuidedBtnStartTimer3.hidden = !(step === 3 && !isRunning);
-    if (els.t3GuidedBtnCooking3) els.t3GuidedBtnCooking3.hidden = !(step === 3 && isRunning);
-    if (els.t3GuidedBtnStartTimer4) els.t3GuidedBtnStartTimer4.hidden = !(step === 4 && !isRunning);
-    if (els.t3GuidedBtnCooking4) els.t3GuidedBtnCooking4.hidden = !(step === 4 && isRunning);
-    if (els.t3GuidedStep5Btns) els.t3GuidedStep5Btns.hidden = !(step === 5);
+    // Cooking button: visible on steps 2 & 3 when running
+    const showCooking = (step === 2 || step === 3) && isRunning;
+    if (els.t3GuidedBtnCooking) els.t3GuidedBtnCooking.hidden = !showCooking;
 
-    // Modal
-    if (els.t3GuidedModal) els.t3GuidedModal.hidden = true;
+    // Step 4 buttons
+    if (els.t3GuidedStep4Btns) els.t3GuidedStep4Btns.hidden = (step !== 4);
+
+    // Modals hidden when switching steps
+    if (els.t3GuidedDoneModal) els.t3GuidedDoneModal.hidden = true;
+    if (els.t3GuidedNextModal) els.t3GuidedNextModal.hidden = true;
 
     updateScreenBadge("guidedCooking");
   }
 
   function startGuidedCooking(initialStep = 1) {
-    clearT3Timers();
     clearT3GuidedTimers();
+    if (t3PancakesPreheatInterval) {
+      clearInterval(t3PancakesPreheatInterval);
+      t3PancakesPreheatInterval = null;
+    }
     showT3Screen("guidedCooking");
     setGuidedStep(initialStep, false);
     playSound("touch");
+
+    if (initialStep === 0) {
+      startGuidedPreheat();
+    }
   }
 
   function startGuidedPreheat() {
     clearT3GuidedTimers();
-    setGuidedStep(1, true);
+    setGuidedStep(0, true);
     playSound("toggleOn");
 
     const durationMs = 3500;
@@ -3106,7 +3133,13 @@
       if (progress >= 1.0) {
         clearT3GuidedTimers();
         playSound("toggleOn");
-        setGuidedStep(2, false);
+        if (els.t3PancakesBurnerTile) {
+          els.t3PancakesBurnerTile.classList.add("is-reached");
+        }
+        if (els.t3PancakesPreheatTemp) {
+          els.t3PancakesPreheatTemp.textContent = "400°F";
+        }
+        setGuidedStep(1, false);
       }
     }, 40);
   }
@@ -3116,8 +3149,8 @@
     setGuidedStep(step, true);
     playSound("touch");
 
-    const totalSeconds = (step === 3) ? 179 : 35; // Step 3: 2:59, Step 4: 0:35
-    const durationMs = (step === 3) ? 4500 : 3500; // prototype speed
+    const totalSeconds = (step === 2) ? 179 : 35; // Step 2: 2:59, Step 3: 0:35
+    const durationMs = (step === 2) ? 4500 : 3500; // prototype speed
     const startTime = Date.now();
 
     t3GuidedInterval = setInterval(() => {
@@ -3129,22 +3162,18 @@
       const secs = remainingSec % 60;
       const valStr = `${mins}:${String(secs).padStart(2, "0")}:00`;
 
-      if (step === 3) {
+      if (step === 2) {
+        if (els.t3GuidedTimerFill2) els.t3GuidedTimerFill2.style.width = `${(progress * 100).toFixed(1)}%`;
+        if (els.t3GuidedTimerVal2) els.t3GuidedTimerVal2.textContent = valStr;
+      } else if (step === 3) {
         if (els.t3GuidedTimerFill3) els.t3GuidedTimerFill3.style.width = `${(progress * 100).toFixed(1)}%`;
         if (els.t3GuidedTimerVal3) els.t3GuidedTimerVal3.textContent = valStr;
-      } else if (step === 4) {
-        if (els.t3GuidedTimerFill4) els.t3GuidedTimerFill4.style.width = `${(progress * 100).toFixed(1)}%`;
-        if (els.t3GuidedTimerVal4) els.t3GuidedTimerVal4.textContent = valStr;
       }
 
       if (progress >= 1.0) {
         clearT3GuidedTimers();
         playSound("toggleOn");
-        if (step === 3) {
-          setGuidedStep(4, false);
-        } else if (step === 4) {
-          setGuidedStep(5, false);
-        }
+        setGuidedStep(step, false);
       }
     }, 50);
   }
@@ -3161,9 +3190,43 @@
     }
   }
 
+  let isFinishingGuided = false;
+  function finishGuidedCookingAndTurnOff() {
+    if (isFinishingGuided) return;
+    isFinishingGuided = true;
+    try {
+      clearT3GuidedTimers();
+      clearT3Timers();
+      if (els.t3GuidedDoneModal) {
+        els.t3GuidedDoneModal.hidden = true;
+      }
+      if (els.t3GuidedNextModal) {
+        els.t3GuidedNextModal.hidden = true;
+      }
+      showT3Screen("start");
+      const knobIdx = activePrcKnobIndex || 1;
+      setKnobAngle(knobIdx, 0, true, true);
+      currentT3BurnerLevels[knobIdx] = "off";
+      if (els.tStartActiveBurner1) {
+        els.tStartActiveBurner1.hidden = true;
+      }
+      if (els.t3PancakesBurnerTile) {
+        els.t3PancakesBurnerTile.classList.remove("is-reached");
+      }
+      updateCooktopActiveState();
+      updateNavbarState();
+      playSound("toggleOff");
+    } finally {
+      isFinishingGuided = false;
+    }
+  }
+
   window.startGuidedCooking = startGuidedCooking;
   window.setGuidedStep = setGuidedStep;
   window.exitGuidedCooking = exitGuidedCooking;
+  window.finishGuidedCookingAndTurnOff = finishGuidedCookingAndTurnOff;
+  window.startGuidedPreheat = startGuidedPreheat;
+  window.startGuidedTimer = startGuidedTimer;
 
   function transitionToT3Spotlight() {
     transitionToT3Temperature();
@@ -6403,8 +6466,9 @@
           e.stopPropagation();
         }
         playSound("toggleOn");
-        clearT3Timers();
-        startGuidedCooking(1);
+        const isPreheatDone = !!(els.t3PancakesBurnerTile && els.t3PancakesBurnerTile.classList.contains("is-reached"));
+        const initialStep = isPreheatDone ? 1 : 0;
+        startGuidedCooking(initialStep);
       };
       els.t3PancakesChefBtn.addEventListener("click", triggerGuidedCooking);
       els.t3PancakesChefBtn.addEventListener("touchend", triggerGuidedCooking);
@@ -6426,11 +6490,14 @@
 
     // Step cards click to switch steps
     if (els.t3GuidedCards && els.t3GuidedCards.length > 0) {
-      els.t3GuidedCards.forEach((card, idx) => {
+      els.t3GuidedCards.forEach((card) => {
         card.addEventListener("click", (e) => {
+          if (e.target.closest("#t3GuidedStartTimer2") || e.target.closest("#t3GuidedStartTimer3")) {
+            return;
+          }
           e.stopPropagation();
-          const targetStep = idx + 1;
-          if (targetStep !== t3GuidedStep) {
+          const targetStep = parseInt(card.getAttribute("data-step"), 10);
+          if (!isNaN(targetStep) && targetStep !== t3GuidedStep) {
             clearT3GuidedTimers();
             setGuidedStep(targetStep, false);
             playSound("touch");
@@ -6439,113 +6506,124 @@
       });
     }
 
-    // Step 1: Start Preheat
-    if (els.t3GuidedBtnStartPreheat) {
-      els.t3GuidedBtnStartPreheat.addEventListener("click", (e) => {
-        e.stopPropagation();
-        startGuidedPreheat();
-      });
-    }
-    // Step 1: Skip preheating when clicking Preheating...
+    // Step 0: Preheating button -> click skips preheat and advances to Step 1
     if (els.t3GuidedBtnPreheating) {
       els.t3GuidedBtnPreheating.addEventListener("click", (e) => {
         e.stopPropagation();
         clearT3GuidedTimers();
         playSound("toggleOn");
-        setGuidedStep(2, false);
+        if (els.t3PancakesBurnerTile) {
+          els.t3PancakesBurnerTile.classList.add("is-reached");
+        }
+        if (els.t3PancakesPreheatTemp) {
+          els.t3PancakesPreheatTemp.textContent = "400°F";
+        }
+        setGuidedStep(1, false);
       });
     }
 
-    // Step 2: Done -> advances to Step 3
-    if (els.t3GuidedBtnDone2) {
-      els.t3GuidedBtnDone2.addEventListener("click", (e) => {
+    // Step 1, 2, 3: Next button
+    if (els.t3GuidedBtnNext) {
+      els.t3GuidedBtnNext.addEventListener("click", (e) => {
         e.stopPropagation();
         playSound("touch");
-        setGuidedStep(3, false);
+        clearT3GuidedTimers();
+        const nextStep = Math.min(4, t3GuidedStep + 1);
+        setGuidedStep(nextStep, false);
       });
     }
 
-    // Step 3: Start Timer
-    if (els.t3GuidedBtnStartTimer3) {
-      els.t3GuidedBtnStartTimer3.addEventListener("click", (e) => {
+    // Step 2 & 3: Inside-card Start Timer buttons
+    if (els.t3GuidedStartTimer2) {
+      els.t3GuidedStartTimer2.addEventListener("click", (e) => {
+        e.stopPropagation();
+        startGuidedTimer(2);
+      });
+    }
+    if (els.t3GuidedStartTimer3) {
+      els.t3GuidedStartTimer3.addEventListener("click", (e) => {
         e.stopPropagation();
         startGuidedTimer(3);
       });
     }
-    // Step 3: Skip timer when clicking Cooking...
-    if (els.t3GuidedBtnCooking3) {
-      els.t3GuidedBtnCooking3.addEventListener("click", (e) => {
+
+    // Step 2 & 3: Cooking... button skips timer and restores Next
+    if (els.t3GuidedBtnCooking) {
+      els.t3GuidedBtnCooking.addEventListener("click", (e) => {
         e.stopPropagation();
         clearT3GuidedTimers();
         playSound("toggleOn");
-        setGuidedStep(4, false);
+        setGuidedStep(t3GuidedStep, false);
       });
     }
 
-    // Step 4: Start Timer
-    if (els.t3GuidedBtnStartTimer4) {
-      els.t3GuidedBtnStartTimer4.addEventListener("click", (e) => {
-        e.stopPropagation();
-        startGuidedTimer(4);
-      });
-    }
-    // Step 4: Skip timer when clicking Cooking...
-    if (els.t3GuidedBtnCooking4) {
-      els.t3GuidedBtnCooking4.addEventListener("click", (e) => {
-        e.stopPropagation();
-        clearT3GuidedTimers();
-        playSound("toggleOn");
-        setGuidedStep(5, false);
-      });
-    }
-
-    // Step 5: Done -> exits guided cooking
-    if (els.t3GuidedBtnDone5) {
-      els.t3GuidedBtnDone5.addEventListener("click", (e) => {
-        e.stopPropagation();
-        exitGuidedCooking();
-      });
-    }
-
-    // Step 5: + Start Next One -> shows modal dialog (Figma 3330:37455)
-    if (els.t3GuidedBtnStartNext) {
-      els.t3GuidedBtnStartNext.addEventListener("click", (e) => {
+    // Step 4: Done -> shows Enjoy modal (Figma 3451:25661)
+    if (els.t3GuidedBtnDone4) {
+      els.t3GuidedBtnDone4.addEventListener("click", (e) => {
         e.stopPropagation();
         playSound("touch");
-        if (els.t3GuidedModal) {
-          els.t3GuidedModal.hidden = false;
+        if (els.t3GuidedDoneModal) {
+          els.t3GuidedDoneModal.hidden = false;
         }
       });
     }
 
-    // Confirmation Modal: Cancel
-    if (els.t3GuidedModalCancel) {
-      els.t3GuidedModalCancel.addEventListener("click", (e) => {
+    // Step 4: + Start Next One -> shows modal dialog (Figma 3330:37455)
+    if (els.t3GuidedBtnStartNext4) {
+      els.t3GuidedBtnStartNext4.addEventListener("click", (e) => {
         e.stopPropagation();
         playSound("touch");
-        if (els.t3GuidedModal) {
-          els.t3GuidedModal.hidden = true;
+        if (els.t3GuidedNextModal) {
+          els.t3GuidedNextModal.hidden = false;
         }
       });
     }
 
-    // Confirmation Modal: Yes, start next -> loops directly back to Step 2 (Vector 14)
-    if (els.t3GuidedModalConfirm) {
-      els.t3GuidedModalConfirm.addEventListener("click", (e) => {
+    // Done Modal: Done button turns off burner and returns to idle start
+    if (els.t3GuidedDoneModalBtn) {
+      els.t3GuidedDoneModalBtn.addEventListener("click", (e) => {
+        e.stopPropagation();
+        finishGuidedCookingAndTurnOff();
+      });
+    }
+
+    // Done Modal: Backdrop click
+    if (els.t3GuidedDoneModal) {
+      els.t3GuidedDoneModal.addEventListener("click", (e) => {
+        if (e.target === els.t3GuidedDoneModal) {
+          els.t3GuidedDoneModal.hidden = true;
+        }
+      });
+    }
+
+    // Start Next Modal: Cancel
+    if (els.t3GuidedNextModalCancel) {
+      els.t3GuidedNextModalCancel.addEventListener("click", (e) => {
+        e.stopPropagation();
+        playSound("touch");
+        if (els.t3GuidedNextModal) {
+          els.t3GuidedNextModal.hidden = true;
+        }
+      });
+    }
+
+    // Start Next Modal: Yes, start next -> pan already hot, start at Step 1 (Figma 3321:35633)
+    if (els.t3GuidedNextModalConfirm) {
+      els.t3GuidedNextModalConfirm.addEventListener("click", (e) => {
         e.stopPropagation();
         playSound("toggleOn");
-        if (els.t3GuidedModal) {
-          els.t3GuidedModal.hidden = true;
+        if (els.t3GuidedNextModal) {
+          els.t3GuidedNextModal.hidden = true;
         }
-        setGuidedStep(2, false);
+        startGuidedCooking(1);
       });
     }
 
-    // Backdrop click dismisses modal
-    if (els.t3GuidedModal) {
-      els.t3GuidedModal.addEventListener("click", (e) => {
-        if (e.target === els.t3GuidedModal) {
-          els.t3GuidedModal.hidden = true;
+    // Start Next Modal: Backdrop click
+    if (els.t3GuidedNextModal) {
+      els.t3GuidedNextModal.addEventListener("click", (e) => {
+        if (e.target === els.t3GuidedNextModal) {
+          els.t3GuidedNextModal.hidden = true;
         }
       });
     }

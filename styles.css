@@ -6648,12 +6648,17 @@ input,
   transition: transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 
-/* Step 1..5 Track Positions: active card is anchored at x = 386 */
+/* Step 0..4 Track Positions */
+.t3-guided-cards-track[data-step="0"] { transform: translateX(0px); }
 .t3-guided-cards-track[data-step="1"] { transform: translateX(0px); }
 .t3-guided-cards-track[data-step="2"] { transform: translateX(-92px); }
 .t3-guided-cards-track[data-step="3"] { transform: translateX(-184px); }
 .t3-guided-cards-track[data-step="4"] { transform: translateX(-276px); }
-.t3-guided-cards-track[data-step="5"] { transform: translateX(-368px); }
+
+/* When not in step 0, hide the Preheat Card completely */
+.t3-guided-cards-track:not([data-step="0"]) .t3-guided-card.is-preheat {
+  display: none !important;
+}
 
 /* Card styles */
 .t3-guided-card {
@@ -6692,7 +6697,7 @@ input,
 }
 
 .t3-guided-card:not(.is-active) .t3-guided-card-body,
-.t3-guided-card:not(.is-active) .t3-guided-card-timer {
+.t3-guided-card:not(.is-active) .t3-guided-card-header-row {
   display: none !important;
 }
 
@@ -6706,14 +6711,38 @@ input,
 }
 
 .t3-guided-card.is-active .t3-guided-card-num {
-  position: absolute;
-  left: 21px;
-  top: 21px;
   font-family: "Profile Display", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   font-size: 50px;
   font-weight: 700;
   color: #F8EEDF;
   line-height: 1;
+}
+
+/* For cards without header-row (Card 1, 4) */
+.t3-guided-card.is-active > .t3-guided-card-num {
+  position: absolute;
+  left: 21px;
+  top: 21px;
+}
+
+/* Card 0: Preheat Card */
+.t3-guided-card.is-preheat {
+  width: 350px;
+  flex: 0 0 350px;
+  background: rgba(45, 49, 57, 0.4);
+  border: 1px solid #ffffff;
+  cursor: default;
+}
+
+.t3-guided-card.is-preheat .t3-guided-card-body.is-preheat-body {
+  position: absolute;
+  left: 21px;
+  right: 21px;
+  bottom: 21px;
+  top: 21px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
 }
 
 .t3-guided-card.is-active .t3-guided-card-body {
@@ -6735,7 +6764,86 @@ input,
   word-break: break-word;
 }
 
-/* Preheating Progress in Card 1 (Figma 3321:35509) */
+/* Header row for Step 2 and 3 */
+.t3-guided-card-header-row {
+  position: absolute;
+  left: 21px;
+  right: 21px;
+  top: 21px;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  z-index: 2;
+}
+
+/* Start timer button inside card */
+.t3-guided-card-timer-btn {
+  height: 36px;
+  border-radius: 999px;
+  background: rgba(75, 76, 82, 0.8);
+  border: none;
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0 16px;
+  font-family: "Profile Display", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  font-size: 20px;
+  font-weight: 600;
+  line-height: 1;
+  cursor: pointer;
+  outline: none;
+  -webkit-tap-highlight-color: transparent;
+  transition: background-color 0.2s ease, transform 0.1s ease;
+}
+
+.t3-guided-card-timer-btn:active {
+  background: rgba(95, 96, 102, 0.9);
+  transform: scale(0.97);
+}
+
+.t3-guided-timer-btn-icon {
+  width: 18px;
+  height: 18px;
+  display: block;
+}
+
+/* Timer display inside header row */
+.t3-guided-card-header-row .t3-guided-card-timer {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  width: 176px;
+}
+
+.t3-guided-timer-row {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.t3-guided-timer-icon {
+  width: 22px;
+  height: 22px;
+}
+
+.t3-guided-timer-val {
+  font-family: "Profile Text", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  font-size: 22px;
+  font-weight: 500;
+  color: #ffffff;
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+}
+
+.t3-guided-bar-track.is-timer-bar {
+  width: 176px;
+  height: 8px;
+}
+
+/* Preheating Progress in Card 0 */
 .t3-guided-preheating-info {
   display: flex;
   flex-direction: column;
@@ -6778,43 +6886,6 @@ input,
   border-radius: 999px;
   width: 0%;
   transition: width 0.1s linear;
-}
-
-/* Timer display in Step 3 & 4 (Figma 3321:36458 & 3321:36904) */
-.t3-guided-card-timer {
-  position: absolute;
-  right: 21px;
-  top: 25px;
-  width: 176px;
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-}
-
-.t3-guided-timer-row {
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-  gap: 8px;
-}
-
-.t3-guided-timer-icon {
-  width: 22px;
-  height: 22px;
-}
-
-.t3-guided-timer-val {
-  font-family: "Profile Text", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-  font-size: 22px;
-  font-weight: 500;
-  color: #ffffff;
-  font-variant-numeric: tabular-nums;
-  line-height: 1;
-}
-
-.t3-guided-bar-track.is-timer-bar {
-  width: 176px;
-  height: 8px;
 }
 
 /* Action Buttons Container (y: 282..366) */
@@ -6895,15 +6966,8 @@ input,
 }
 
 /* Specific button coordinates from Figma */
-.is-step1-start {
-  position: absolute;
-  left: 325px;
-  top: 10px;
-  width: 284px;
-  height: 64px;
-}
-
-.is-step1-running {
+.is-step-preheating,
+.is-step-cooking {
   position: absolute;
   left: 352px;
   top: 10px;
@@ -6911,36 +6975,18 @@ input,
   height: 64px;
 }
 
-.is-step2-done {
+.is-step-next {
   position: absolute;
-  left: 387px;
+  left: 410px;
   top: 10px;
-  width: 160px;
+  width: 114px;
   height: 64px;
 }
 
-.is-step3-start,
-.is-step4-start {
+/* Step 4 Buttons Row (Figma 3321:36716) */
+.t3-guided-step4-btns {
   position: absolute;
-  left: 341px;
-  top: 10px;
-  width: 252px;
-  height: 64px;
-}
-
-.is-step3-running,
-.is-step4-running {
-  position: absolute;
-  left: 352px;
-  top: 10px;
-  width: 230px;
-  height: 64px;
-}
-
-/* Step 5 Buttons Row (Figma 3321:36716) */
-.t3-guided-step5-btns {
-  position: absolute;
-  left: 387px;
+  left: 345px;
   top: 10px;
   height: 64px;
   display: flex;
@@ -6949,12 +6995,12 @@ input,
   pointer-events: auto;
 }
 
-.is-step5-done {
+.is-step4-done {
   width: 160px;
   height: 64px;
 }
 
-.is-step5-next {
+.is-step4-next {
   width: auto;
   min-width: 240px;
   height: 48px;
@@ -6964,17 +7010,17 @@ input,
   letter-spacing: 0.3px;
 }
 
-.is-step5-next .t3-guided-btn-icon {
+.is-step4-next .t3-guided-btn-icon {
   width: 20px;
   height: 20px;
   flex-shrink: 0;
 }
 
-.is-step5-next span {
+.is-step4-next span {
   white-space: nowrap;
 }
 
-/* Step 5 Confirmation Dialog Modal (Figma 3330:37455) */
+/* Modals */
 .t3-guided-modal-backdrop {
   position: absolute;
   left: 0;
@@ -7003,12 +7049,24 @@ input,
   box-shadow: 0 12px 36px rgba(0, 0, 0, 0.6);
 }
 
+/* Done Modal (Figma 3451:25661) */
+.t3-guided-modal-card.is-done-modal {
+  height: 220px;
+  top: 82px;
+  justify-content: center;
+  gap: 28px;
+}
+
 .t3-guided-modal-heading {
   font-family: "Profile Display", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   font-size: 32px;
   font-weight: 600;
   color: #ffffff;
-  line-height: 1.2;
+  line-height: 1.25;
+}
+
+.t3-guided-modal-heading.is-center {
+  text-align: center;
 }
 
 .t3-guided-modal-desc {
@@ -7026,6 +7084,11 @@ input,
   align-items: center;
   gap: 16px;
   margin-top: auto;
+}
+
+.t3-guided-modal-btns.is-center {
+  justify-content: center;
+  margin-top: 0;
 }
 
 .t3-guided-modal-btn {
@@ -7059,5 +7122,9 @@ input,
   background: #F4F4F2;
   color: #1F2024;
   width: 243px;
+}
+
+.t3-guided-modal-btn.is-done-btn {
+  width: 140px;
 }
 
