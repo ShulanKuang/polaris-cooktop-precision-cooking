@@ -2246,6 +2246,26 @@
         finishGuidedCookingAndTurnOff();
         return;
       }
+      if (t3Stage === "pancakesPreheat" && (index === 1 || index === activePrcKnobIndex) && Math.abs(angle) <= 12) {
+        clearT3Timers();
+        clearT3GuidedTimers();
+        state.task3IsRunning = false;
+        if (state.burners && state.burners[0]) {
+          state.burners[0].state = "off";
+        }
+        currentT3BurnerLevels[index] = "off";
+        if (els.tStartActiveBurner1) {
+          els.tStartActiveBurner1.hidden = true;
+        }
+        if (els.t3PancakesBurnerTile) {
+          els.t3PancakesBurnerTile.classList.remove("is-reached");
+        }
+        showT3Screen("start");
+        updateCooktopActiveState();
+        updateNavbarState();
+        playSound("toggleOff");
+        return;
+      }
       // If user turns the active knob to OFF while on another Task 3 screen (like Spotlight), cancel back to start
       if (Math.abs(angle) <= 10 && index === activePrcKnobIndex) {
         cancelT3A();
@@ -6579,11 +6599,26 @@
       });
     }
 
-    // Done Modal: Done button turns off burner and returns to idle start
+    // Done Modal: Done button returns to running burner screen (Figma 3299:24163)
     if (els.t3GuidedDoneModalBtn) {
       els.t3GuidedDoneModalBtn.addEventListener("click", (e) => {
         e.stopPropagation();
-        finishGuidedCookingAndTurnOff();
+        playSound("touch");
+        clearT3GuidedTimers();
+        if (els.t3GuidedDoneModal) {
+          els.t3GuidedDoneModal.hidden = true;
+        }
+        showT3Screen("pancakesPreheat");
+        if (els.t3PancakesBurnerTile) {
+          els.t3PancakesBurnerTile.classList.add("is-reached");
+        }
+        if (els.t3PancakesPreheatTemp) {
+          els.t3PancakesPreheatTemp.textContent = "400°F";
+        }
+        currentT3BurnerLevels[1] = "prc";
+        updateScreenBadge("pancakesPreheat");
+        updateCooktopActiveState();
+        updateNavbarState();
       });
     }
 

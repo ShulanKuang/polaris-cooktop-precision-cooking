@@ -6952,6 +6952,15 @@ input,
   background: rgba(95, 96, 102, 0.9);
 }
 
+/* Disabled Mode Action Button (Figma 3321:34971: state disabled, primary style, dark text #1F2024, 50% opacity) */
+.t3-guided-action-btn.is-disabled {
+  background: #F4F4F2;
+  color: #1F2024;
+  opacity: 0.5;
+  cursor: default;
+  pointer-events: none;
+}
+
 /* Outline Button */
 .t3-guided-action-btn.is-outline {
   border: 1px solid #ffffff;
@@ -6973,6 +6982,11 @@ input,
   top: 10px;
   width: 230px;
   height: 64px;
+  background: #F4F4F2;
+  color: #1F2024;
+  opacity: 0.5;
+  cursor: default;
+  pointer-events: none;
 }
 
 .is-step-next {
@@ -7020,12 +7034,12 @@ input,
   white-space: nowrap;
 }
 
-/* Modals */
+/* Modals centered in content screen area (90px navbar to 1024px screen edge = 934px content area) */
 .t3-guided-modal-backdrop {
   position: absolute;
-  left: 0;
+  left: 90px;
   top: 0;
-  width: 1024px;
+  width: 934px;
   height: 384px;
   background: rgba(0, 0, 0, 0.6);
   z-index: 50;
@@ -7035,9 +7049,9 @@ input,
 }
 
 .t3-guided-modal-card {
-  position: absolute;
-  left: 245px;
-  top: 59px;
+  position: relative;
+  left: auto;
+  top: auto;
   width: 625px;
   height: 266px;
   background: #303238;
@@ -7052,7 +7066,6 @@ input,
 /* Done Modal (Figma 3451:25661) */
 .t3-guided-modal-card.is-done-modal {
   height: 220px;
-  top: 82px;
   justify-content: center;
   gap: 28px;
 }
