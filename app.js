@@ -546,6 +546,7 @@
     t3GuidedNextModal: document.getElementById("t3GuidedNextModal"),
     t3GuidedNextModalCancel: document.getElementById("t3GuidedNextModalCancel"),
     t3GuidedNextModalConfirm: document.getElementById("t3GuidedNextModalConfirm"),
+    t3GuidedHotIndicator: document.getElementById("t3GuidedHotIndicator"),
 
     t3SubflowControls: document.getElementById("t3SubflowControls"),
     btnT3FlowTemp: document.getElementById("btnT3FlowTemp"),
@@ -1461,6 +1462,7 @@
         t3Stage === "foodComplete" ||
         t3Stage === "techniquePreheat" ||
         t3Stage === "techniqueComplete" ||
+        t3Stage === "guidedCooking" ||
         (t3Stage && t3Stage.startsWith("pancakes"))
       ) {
         return true;
@@ -1523,6 +1525,17 @@
         els.cooktopHotIndicator.hidden = !isActive;
         els.cooktopHotIndicator.classList.toggle("is-visible", isActive);
       }
+    }
+
+    // 2b. Guided cooking status bar hot indicator (Figma 3321:34955)
+    if (els.t3GuidedHotIndicator) {
+      els.t3GuidedHotIndicator.hidden = !isActive;
+      els.t3GuidedHotIndicator.classList.toggle("is-visible", isActive);
+    }
+
+    // 2c. Start screen status bar if burner active
+    if (t3Stage === "start" && els.topStatus) {
+      els.topStatus.hidden = !isActive;
     }
 
     // 3. Left Navbar running state
@@ -1677,7 +1690,8 @@
       stage === "beefType" ||
       stage === "beefDoneness" ||
       stage === "beefThickness" ||
-      (stage.startsWith("pancakes") && stage !== "pancakesPreheat")
+      (stage.startsWith("pancakes") && stage !== "pancakesPreheat") ||
+      (stage === "start" && isAnyKnobOrBurnerActive())
     );
     if (els.topStatus) {
       els.topStatus.hidden = !needsTopStatus;

@@ -9,7 +9,7 @@
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
   <title>Polaris Cooktop Precision Cooking Prototype</title>
-  <link rel="stylesheet" href="./styles.css?v=20261118-guided-v5">
+  <link rel="stylesheet" href="./styles.css?v=20261118-guided-v6">
 </head>
 <body>
   <div class="test-environment">
@@ -1851,6 +1851,11 @@
               <!-- Clean background with Rail, Status Bar, Header, Pancake Preview, and Burner Badge -->
               <img class="t3-screen-bg" src="./assets/task3c/pancakes/guided_clean_bg.png" alt="Guided Cooking Background">
 
+              <!-- Cooktop Hot Status Indicator (Figma 3321:34955 / 3321:36716) 12px left of Beta tag -->
+              <div class="t3-guided-hot-indicator" id="t3GuidedHotIndicator" aria-label="Cooktop Hot">
+                <img class="cooktop-hot-img" src="./assets/cooktop-hot.png" alt="COOKTOP HOT">
+              </div>
+
               <!-- Back button (< Cooktop / Return to Preheat Complete) -->
               <button type="button" class="t3-back-btn" id="t3GuidedBackBtn" aria-label="Exit Guided Cooking"></button>
 
@@ -1889,8 +1894,8 @@
 
                   <!-- Card 2: Pour batter. Cook for 3 mins. (Figma 3321:35808 & 3321:36458) -->
                   <div class="t3-guided-card" id="t3GuidedCard2" data-step="2">
+                    <div class="t3-guided-card-num">2</div>
                     <div class="t3-guided-card-header-row">
-                      <div class="t3-guided-card-num">2</div>
                       <!-- Start Timer button inside card (Idle) -->
                       <button type="button" class="t3-guided-card-timer-btn" id="t3GuidedStartTimer2">
                         <img src="./assets/task3c/pancakes/guided_timer.svg" alt="" class="t3-guided-timer-btn-icon">
@@ -1914,8 +1919,8 @@
 
                   <!-- Card 3: Flip pancake. Cook for 1 minute. (Figma 3321:36584 & 3321:36904) -->
                   <div class="t3-guided-card" id="t3GuidedCard3" data-step="3">
+                    <div class="t3-guided-card-num">3</div>
                     <div class="t3-guided-card-header-row">
-                      <div class="t3-guided-card-num">3</div>
                       <!-- Start Timer button inside card (Idle) -->
                       <button type="button" class="t3-guided-card-timer-btn" id="t3GuidedStartTimer3">
                         <img src="./assets/task3c/pancakes/guided_timer.svg" alt="" class="t3-guided-timer-btn-icon">
@@ -2195,6 +2200,6 @@
     </footer>
   </div>
 
-  <script src="./app.js?v=20261118-guided-v5"></script>
+  <script src="./app.js?v=20261118-guided-v6"></script>
 </body>
 </html>

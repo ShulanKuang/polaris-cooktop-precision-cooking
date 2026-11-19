@@ -1063,16 +1063,16 @@ input,
 }
 
 .cooktop-hot-indicator {
-  width: 130px;
-  height: 24px;
-  min-width: 130px;
-  max-width: 130px;
-  min-height: 24px;
-  max-height: 24px;
+  width: 124px;
+  height: 23px;
+  min-width: 124px;
+  max-width: 124px;
+  min-height: 23px;
+  max-height: 23px;
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-right: 4px;
+  margin-right: 0;
   opacity: 0;
   transform: scale(0.92);
   transition: opacity 0.22s cubic-bezier(0.16, 1, 0.3, 1), transform 0.22s cubic-bezier(0.16, 1, 0.3, 1);
@@ -1090,10 +1090,10 @@ input,
 }
 
 .cooktop-hot-img {
-  width: 130px;
-  height: 24px;
+  width: 124px;
+  height: 23px;
   display: block;
-  object-fit: fill;
+  object-fit: contain;
   pointer-events: none !important;
   user-select: none;
   -webkit-user-select: none;
@@ -6767,13 +6767,12 @@ input,
 /* Header row for Step 2 and 3 */
 .t3-guided-card-header-row {
   position: absolute;
-  left: 21px;
   right: 21px;
   top: 21px;
   height: 50px;
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: flex-end;
   z-index: 2;
 }
 
@@ -6998,30 +6997,36 @@ input,
 }
 
 /* Step 4 Buttons Row (Figma 3321:36716) */
+/* Step 4 Buttons Row (Figma 3321:36716) */
 .t3-guided-step4-btns {
   position: absolute;
-  left: 345px;
-  top: 10px;
-  height: 64px;
-  display: flex;
-  align-items: center;
-  gap: 32px;
-  pointer-events: auto;
+  left: 0;
+  top: 0;
+  width: 934px;
+  height: 84px;
+  pointer-events: none;
 }
 
 .is-step4-done {
+  position: absolute;
+  left: 387px;
+  top: 10px;
   width: 160px;
   height: 64px;
+  pointer-events: auto;
 }
 
 .is-step4-next {
-  width: auto;
-  min-width: 240px;
+  position: absolute;
+  right: 30px;
+  top: 18px;
+  width: 299px;
   height: 48px;
-  padding: 0 24px;
+  padding: 0 20px;
   font-size: 20px;
   white-space: nowrap;
   letter-spacing: 0.3px;
+  pointer-events: auto;
 }
 
 .is-step4-next .t3-guided-btn-icon {
@@ -7034,13 +7039,39 @@ input,
   white-space: nowrap;
 }
 
+/* Guided cooking status bar Cooktop Hot indicator (Figma 3321:34955 / 3321:36716) 12px left of Beta tag */
+.t3-guided-hot-indicator {
+  position: absolute;
+  left: 602px;
+  top: 12px;
+  width: 124px;
+  height: 23px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+  pointer-events: none;
+  filter: drop-shadow(0 0 5px rgba(255, 0, 0, 0.6));
+}
+
+.t3-guided-hot-indicator[hidden] {
+  display: none !important;
+}
+
+.t3-guided-hot-indicator .cooktop-hot-img {
+  width: 124px;
+  height: 23px;
+  display: block;
+  object-fit: contain;
+}
+
 /* Modals centered in content screen area (90px navbar to 1024px screen edge = 934px content area) */
 .t3-guided-modal-backdrop {
   position: absolute;
-  left: 90px;
+  left: 0;
   top: 0;
-  width: 934px;
-  height: 384px;
+  width: 100%;
+  height: 100%;
   background: rgba(0, 0, 0, 0.6);
   z-index: 50;
   display: flex;
