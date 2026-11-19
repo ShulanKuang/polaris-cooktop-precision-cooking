@@ -1517,8 +1517,9 @@
     }
 
     // 2. Cooktop Hot Red Color Indicator in top status bar (Figma node 2315:14550)
+    const isGuided = (t3Stage === "guidedCooking");
     if (els.cooktopHotIndicator) {
-      if (state.currentTask === 1) {
+      if (state.currentTask === 1 || isGuided) {
         els.cooktopHotIndicator.hidden = true;
         els.cooktopHotIndicator.classList.remove("is-visible");
       } else {
@@ -1531,11 +1532,6 @@
     if (els.t3GuidedHotIndicator) {
       els.t3GuidedHotIndicator.hidden = !isActive;
       els.t3GuidedHotIndicator.classList.toggle("is-visible", isActive);
-    }
-
-    // 2c. Start screen status bar if burner active
-    if (t3Stage === "start" && els.topStatus) {
-      els.topStatus.hidden = !isActive;
     }
 
     // 3. Left Navbar running state
@@ -1685,13 +1681,11 @@
     // Task 3F Recent Used screen:
     if (els.t3ScreenRecentUsed) els.t3ScreenRecentUsed.hidden = (stage !== "recentUsed");
 
-    // Top status bar visibility (Figma 2323:15134, 3198:22619) - 48px tall status bar on 3C-beefType, doneness, thickness, and all pancakes config screens
+    // Top status bar visibility (Figma 2323:15134, 3198:22619) - 48px tall status bar on pancakes config screens (bg_purple.png lacks baked status bar)
     const needsTopStatus = (
-      stage === "beefType" ||
-      stage === "beefDoneness" ||
-      stage === "beefThickness" ||
-      (stage.startsWith("pancakes") && stage !== "pancakesPreheat") ||
-      (stage === "start" && isAnyKnobOrBurnerActive())
+      stage.startsWith("pancakes") &&
+      stage !== "pancakesPreheat" &&
+      stage !== "guidedCooking"
     );
     if (els.topStatus) {
       els.topStatus.hidden = !needsTopStatus;
@@ -1852,15 +1846,17 @@
     }
 
     if (stage === "start") {
-      const isFoodFlow = (state.task3Mode === "food");
+      const isKnob2Active = Boolean(knobsState[1] && Math.abs(knobsState[1].angle) > 12);
       if (els.tStartActiveBurner1) {
-        els.tStartActiveBurner1.hidden = !isFoodFlow;
+        els.tStartActiveBurner1.hidden = !isKnob2Active;
         if (els.tStartBurner1Temp) {
           els.tStartBurner1Temp.textContent = `${state.task3TargetTemp || 350}°F`;
         }
       }
       clearT3Timers();
-      if (!isFoodFlow) {
+      const anyKnobActive = knobsState.some(k => k && Math.abs(k.angle) > 12);
+      if (!anyKnobActive) {
+        state.task3Mode = "temp";
         state.task3IsRunning = false;
         [1, 2, 3, 4, 5].forEach(i => {
           setKnobAngle(i, 0, false, false);
@@ -1868,14 +1864,13 @@
           resetT3BurnerToOff(i);
         });
         activePrcKnobIndex = null;
+        if (els.tStartActiveBurner1) els.tStartActiveBurner1.hidden = true;
       } else {
-        // In Food flow, Rear Left is running: Knob 2 stays ON!
-        if (!knobsState[1] || Math.abs(knobsState[1].angle) <= 5) {
-          setKnobAngle(2, -56, false, false);
+        if (isKnob2Active) {
+          currentT3BurnerLevels[2] = "prc";
+          resetT3BurnerToOff(2);
+          if (els.t3BurnerRoller2) els.t3BurnerRoller2.classList.remove("is-active");
         }
-        currentT3BurnerLevels[2] = "prc";
-        resetT3BurnerToOff(2);
-        if (els.t3BurnerRoller2) els.t3BurnerRoller2.classList.remove("is-active");
       }
       if (els.t3ToastCard) {
         els.t3ToastCard.hidden = true;
@@ -2214,10 +2209,14 @@
       if (isOff) {
         currentT3BurnerLevels[2] = "off";
         if (els.tStartActiveBurner1) els.tStartActiveBurner1.hidden = true;
+        state.task3Mode = "temp";
+        state.task3IsRunning = false;
+        updateCooktopActiveState();
         updateNavbarState();
       } else if (isPRC) {
         currentT3BurnerLevels[2] = "prc";
         if (els.tStartActiveBurner1) els.tStartActiveBurner1.hidden = false;
+        updateCooktopActiveState();
         updateNavbarState();
       }
       return;
@@ -2263,6 +2262,7 @@
       if (t3Stage === "pancakesPreheat" && (index === 1 || index === activePrcKnobIndex) && Math.abs(angle) <= 12) {
         clearT3Timers();
         clearT3GuidedTimers();
+        state.task3Mode = "temp";
         state.task3IsRunning = false;
         if (state.burners && state.burners[0]) {
           state.burners[0].state = "off";
@@ -2422,9 +2422,24 @@
       }
       currentT3BurnerLevels[targetIndex] = "off";
 
+      // If Knob 2 (Rear Left) turned off, hide its active burner card
+      if (targetIndex === 2 && els.tStartActiveBurner1) {
+        els.tStartActiveBurner1.hidden = true;
+      }
+
+      // Check if all knobs are now off
+      const allOff = knobsState.every(k => !k || Math.abs(k.angle) <= 12);
+      if (allOff) {
+        state.task3Mode = "temp";
+        state.task3IsRunning = false;
+        if (els.tStartActiveBurner1) els.tStartActiveBurner1.hidden = true;
+      }
+
       updateRollersStrip(0);
 
       rollers.forEach(r => r.classList.remove("is-active"));
+      updateCooktopActiveState();
+      updateNavbarState();
     } else {
       dismissPrcTimerAndToast(targetIndex);
       cancelT3BurnerArc(targetIndex);
@@ -3237,16 +3252,21 @@
       if (els.t3GuidedNextModal) {
         els.t3GuidedNextModal.hidden = true;
       }
-      showT3Screen("start");
-      const knobIdx = activePrcKnobIndex || 1;
-      setKnobAngle(knobIdx, 0, true, true);
-      currentT3BurnerLevels[knobIdx] = "off";
+      state.task3Mode = "temp";
+      state.task3IsRunning = false;
+      [1, 2, 3, 4, 5].forEach(i => {
+        setKnobAngle(i, 0, false, false);
+        currentT3BurnerLevels[i] = "off";
+        resetT3BurnerToOff(i);
+      });
+      activePrcKnobIndex = null;
       if (els.tStartActiveBurner1) {
         els.tStartActiveBurner1.hidden = true;
       }
       if (els.t3PancakesBurnerTile) {
         els.t3PancakesBurnerTile.classList.remove("is-reached");
       }
+      showT3Screen("start");
       updateCooktopActiveState();
       updateNavbarState();
       playSound("toggleOff");
@@ -7050,7 +7070,17 @@
     playTickSound,
     resetTickQueue,
     getAudioCtx: () => audioCtx,
-    getAudioBuffers: () => audioBuffers
+    getAudioBuffers: () => audioBuffers,
+    get t3Stage() { return t3Stage; },
+    set t3Stage(val) { t3Stage = val; },
+    updateFoodBurnerStatusDisplay
   };
   window.PolarisApp = window.__polaris;
+  window.knobsState = knobsState;
+  window.updateFoodBurnerStatusDisplay = updateFoodBurnerStatusDisplay;
+  Object.defineProperty(window, "t3Stage", {
+    get() { return t3Stage; },
+    set(v) { t3Stage = v; },
+    configurable: true
+  });
 })();

@@ -1021,48 +1021,12 @@ input,
 }
 
 /* ============================================== */
-/* TOP STATUS BAR (FIGMA NODE 2323:15134) - 48PX TALL */
+/* COOKTOP HOT INDICATOR (FIGMA NODE 2315:14550)  */
 /* ============================================== */
-.top-status {
-  position: absolute;
-  top: 0;
-  left: 90px;
-  right: 0;
-  height: 48px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0 16px 0 24px;
-  z-index: 750;
-  pointer-events: none;
-  box-sizing: border-box;
-}
-
-.top-status[hidden] {
-  display: none !important;
-}
-
-.status-pull {
-  position: absolute;
-  left: 50%;
-  top: 21px;
-  transform: translateX(-50%);
-  width: 64px;
-  height: 6px;
-  background: rgba(255, 255, 255, 0.4);
-  border-radius: 3px;
-  pointer-events: none;
-}
-
-.status-right {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  margin-left: auto;
-  height: 100%;
-}
-
 .cooktop-hot-indicator {
+  position: absolute;
+  left: 692px;
+  top: 12px;
   width: 124px;
   height: 23px;
   min-width: 124px;
@@ -1072,7 +1036,7 @@ input,
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-right: 0;
+  z-index: 760;
   opacity: 0;
   transform: scale(0.92);
   transition: opacity 0.22s cubic-bezier(0.16, 1, 0.3, 1), transform 0.22s cubic-bezier(0.16, 1, 0.3, 1);
@@ -1097,6 +1061,47 @@ input,
   pointer-events: none !important;
   user-select: none;
   -webkit-user-select: none;
+}
+
+/* ============================================== */
+/* TOP STATUS BAR (FIGMA NODE 2323:15134) - 48PX TALL */
+/* (FOR SCREENS WITHOUT BAKED STATUS BAR)        */
+/* ============================================== */
+.top-status {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 1024px;
+  height: 48px;
+  z-index: 750;
+  pointer-events: none;
+  box-sizing: border-box;
+}
+
+.top-status[hidden] {
+  display: none !important;
+}
+
+.status-pull {
+  position: absolute;
+  left: 512px;
+  top: 21px;
+  transform: translateX(-50%);
+  width: 64px;
+  height: 6px;
+  background: rgba(255, 255, 255, 0.4);
+  border-radius: 3px;
+  pointer-events: none;
+}
+
+.status-right {
+  position: absolute;
+  right: 14px;
+  top: 0;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
 }
 
 .beta-tag-img {
