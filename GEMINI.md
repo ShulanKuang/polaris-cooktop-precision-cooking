@@ -65,7 +65,7 @@ This is an interactive high-fidelity web prototype deployed on an **iPad Pro 13"
       - **Cancel / Reset**: Turning the active PRC knob back to OFF ($0^\circ$) or clicking `< Cooktop` resets the burner roller, cancels arc/countdown timers, and returns the knob to OFF.
    - **Task 3B: Temperature Picker, Digital Pad, Preheat & Burner Status Flow**:
      - **Spotlight $\rightarrow$ Temperature**: Tapping the **Temperature** tab navigates to the horizontal temperature picker screen (`task3b-pc-temperature.png`).
-     - **Horizontal Carousel Wheel**: Allows scrolling and picking temperatures from $200^\circ\text{F}$ to $500^\circ\text{F}$ in $25^\circ$ increments, centered by default on $375^\circ\text{F}$ with active scaling and snapping.
+     - **Horizontal Carousel Wheel**: Allows scrolling and picking temperatures from $200^\circ\text{F}$ to $500^\circ\text{F}$ in $25^\circ$ increments, centered by default on **$350^\circ\text{F}$** as the default landing temperature with active scaling and snapping.
      - **Digital Pad Switcher (Figma `3017:25641`)**: Secondary circular keypad button switches seamlessly back and forth between the Horizontal Carousel Wheel and the 10-key Digital Pad screen (`#t3ScreenDigipad`) while preserving target temperature.
      - **START Button Tap**:
        - Directly transitions to the **3-Burner Status Screen (`task3b-burner-status-clean.png` / Figma `2310:12162`)** without intermediate screen detour.
@@ -193,20 +193,27 @@ This is an interactive high-fidelity web prototype deployed on an **iPad Pro 13"
 ---
 
 ## 🥞 7. Pancakes Guided Cooking Flow (Figma Section 3436:25475 & Nodes 3321:34955, 3345:37922, 3330:37455, 3451:25661, 3299:24163)
-1. **Chef Hat Trigger Hit Area**:
+1. **Chef Hat Trigger Hit Area (Node 3345:37922 & 3320:34573)**:
    - Hit area on Pancakes burner tile covers Chef Hat icon and text: opens Guided Cooking whether the burner is still preheating or preheat is already complete.
    - Dynamic Entry: If preheating, opens at Step 0 ("Preheat to 400°F"); if preheat is completed, opens directly at Step 1 ("Add butter to coat pan").
 2. **Layout & Coordinates**:
    - Container `#t3ScreenGuidedCooking` is offset by `left: 90px; width: 934px;` cleanly starting to the right of the persistent left navbar.
-   - All 4 step numbers (`1`, `2`, `3`, `4`) remain visible across inactive and active states as direct children of `.t3-guided-card`.
-   - On Steps 2 and 3, number sits at `left: 21px; top: 21px;` while the dark-themed `"Start timer"` button sits on the right (`right: 21px; top: 21px;`).
-   - "Start next one" button right edge is anchored at `x = 994px` (exactly `30px` from 1024px screen right edge).
-3. **Centered Modals**:
-   - Both `.t3-guided-modal-backdrop` popups ("Ready to make another pancake?" loop modal and "Enjoy! Use the knob to turn off the burner" completion modal) are centered at $x = 557\text{px}$ across the 934px content area.
+   - Single, non-duplicated `< Cooktop` exit button at top left (`left: 90px`).
+   - All 4 step numbers (`1`, `2`, `3`, `4`) remain visible across inactive and active states as direct children of `.t3-guided-card` (`.t3-guided-card-num`).
+   - On Steps 2 and 3, number sits at `left: 21px; top: 21px;` while the dark-themed `"Start timer"` button (`#303238`) sits on the right (`right: 21px; top: 21px;`) with an 85px gap.
+   - "Start next one" button text is small (`16px`), single line (`white-space: nowrap`), and right edge is anchored at `x = 994px` (exactly `30px` from 1024px screen right edge).
+3. **Action Button Disabled Styling (Node 3321:34971)**:
+   - During active countdown on Step 0, Step 2, and Step 3, action buttons display in authentic disabled mode:
+     - Background: dark grey (`#2a2b30`)
+     - Text: muted grey (`rgba(255, 255, 255, 0.45)`, never pure white)
+     - Cursor: not-allowed, non-interactive
+   - When timer finishes (or preheat finishes), button smoothly switches to active state (solid white `#ffffff` or Roux token, dark text `#1f2024`).
+4. **Centered Modals**:
+   - Both `.t3-guided-modal-backdrop` popups ("Ready to make another pancake?" loop modal and "Enjoy! Use the knob to turn off the burner" completion modal) are centered at $x = 557\text{px}$ across the 934px content area ($x = 90\text{px} \dots 1024\text{px}$).
    - Tapping "Done" on Enjoy modal returns to the active burner screen (`3299:24163`).
-4. **Physical Knob Integration**:
+5. **Physical Knob Integration**:
    - Turning the corresponding burner knob back to `OFF` turns off the burner, deactivates the activity bar, and returns cleanly to standby `3-start`.
-5. **Cooktop Hot Status Bar Indicator**:
+6. **Cooktop Hot Status Bar Indicator**:
    - Added `#t3GuidedHotIndicator` at `x = 692px`, right edge `816px`, maintaining an exact **12px gap** to the left edge of the Beta icon (`x = 828px`).
    - Dynamically shown whenever any burner is active across both the main Cooktop screen and Guided Cooking screen, and hidden when all burners are OFF.
 
