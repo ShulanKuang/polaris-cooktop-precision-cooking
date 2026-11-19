@@ -8,8 +8,8 @@ Interactive prototype for the **October 2026 Polaris Cooktop Precision Cooking U
 
 Choose any of the following methods to open and test the prototype directly:
 
-* **⚡ [Live Web Tunnel Link (Active Now)](https://crazy-lies-shave.loca.lt/?task=3#task3)**  
-  *(Live web mirror hosted directly from this machine for testing anywhere, even outside office Wi-Fi. If prompted for a tunnel password / Endpoint IP, enter: `4.53.66.82`)*
+* **⚡ [Live Web Tunnel Link (Active Now)](https://e48738366e84c57c-4-53-66-82.serveousercontent.com/?task=3#task3)**  
+  *(Live web mirror hosted directly from this machine for testing anywhere, even outside office Wi-Fi)*
 
 * **📶 Local iPad / Lab Wi-Fi Link**: `http://10.35.123.196:8080/?task=3#task3`  
   *(Recommended for zero-latency in-person testing when your iPad is connected to the same Wi-Fi network as this computer)*
@@ -134,6 +134,32 @@ To prevent unintentional viewport shifting, bounce, or accidental zooming when p
   - **Preheat complete** toast (Figma `2348:17877`) smoothly slides up from the bottom with spring motion.
   - Clicking **OK** or **✕** dismisses the toast while maintaining the Preheated state.
   - Turning Knob 4 back to **OFF** turns off the burner, deactivates the activity bar, and cleanly returns to `3-start`.
+
+### 5. Pancakes Step-by-Step Guided Cooking Flow (Figma Section 3436:25475)
+- **Chef Hat Trigger Icon (Figma 3345:37922 & 3320:34573)**:
+  - Tapping the Chef Hat icon on the Pancakes burner card launches Guided Cooking from either state:
+    - **During Preheat**: If tapped while preheating, Guided Cooking opens at **Step 0 ("Preheat to 400°F")** with the action button showing disabled `"Preheating..."`.
+    - **After Preheat Complete**: If tapped when preheated (or after preheat finishes), Guided Cooking dynamically opens directly at **Step 1 ("Add butter to coat pan")**.
+- **Full-Bleed Content Layout (Navbar Offset)**:
+  - Guided cooking content starts cleanly at $x = 90\text{px}$ (immediately to the right of the persistent left navbar) spanning $934\text{px}$ width across the display.
+- **Persistent Step Numbers Across Inactive and Active Cards**:
+  - Step numbers `1`, `2`, `3`, `4` remain permanently visible across all card states.
+  - In active states on Steps 2 and 3, the step number sits on the left while the dark-themed `"Start timer"` button (`#303238`) sits on the right with an 85px gap.
+- **Action Buttons & Dynamic Timers**:
+  - Step 1: `"Butter melted"` advances to Step 2.
+  - Step 2 (Cook Side 1): Inside-card timer counts down 2:30. Action button displays disabled `"Cooking..."` until timer completes, then activates `"Flip"`.
+  - Step 3 (Flip & Cook Side 2): Inside-card timer counts down 1:30. Action button displays disabled `"Cooking..."` until timer completes, then activates `"Done"`.
+  - Step 4 (Slide to Plate): Provides two options:
+    - **"Start next one" Button**: Single-row button positioned with its right edge exactly **30px away from the right screen edge** ($x = 994\text{px}$). Tapping triggers the centered modal card: *"Ready to make another pancake?"* with `"Start next"` (restarts at Step 1) and `"Cancel"`.
+    - **"Done" Button**: Tapping triggers the centered completion modal card: *"Enjoy! Use the knob to turn off the burner"* (Figma `3451:25661` & `3330:37455`).
+- **Centered Modal Cards**:
+  - Both modal overlay cards are centered precisely in the 934px content area between the navbar and screen edge ($x = 557\text{px}$).
+  - Tapping `"Done"` on the Enjoy modal returns to the active burner screen (Figma `3299:24163`).
+- **Hardware Knob Integration**:
+  - Turning the corresponding cooktop knob back to `OFF` immediately turns off the active burner, shuts off the activity bar, and smoothly returns to the standby home screen (`3-start`).
+- **Status Bar "Cooktop Hot" Indicator**:
+  - Dynamically displays whenever any burner is active across both the main Cooktop screen and Guided Cooking screen.
+  - Positioned in the status bar with an exact **12px gap** to the left of the Beta icon.
 
 ---
 

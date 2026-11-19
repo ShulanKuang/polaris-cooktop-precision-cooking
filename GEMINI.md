@@ -171,12 +171,10 @@ This is an interactive high-fidelity web prototype deployed on an **iPad Pro 13"
 
 ## 🚀 5. Testing & Deployment Environment
 - **Local Server**: `python3 -m http.server 8080 -d /Users/a240165853/Documents/PolarisPrototypeCooktopPrecisionCooking`
-- **Wi-Fi iPad URL**: `http://10.35.122.163:8080/?task=3#task3`
-- **Tunnel Command**: `npx --yes localtunnel --port 8080 --subdomain busy-baths-search`
-- **Current Live URL**: `https://busy-baths-search.loca.lt/?task=3#task3`
-- **Tunnel Password / Endpoint IP**: `4.53.66.82`
+- **Wi-Fi iPad URL**: `http://10.35.123.196:8080/?task=3#task3`
+- **Live Web Tunnel URL**: `https://e48738366e84c57c-4-53-66-82.serveousercontent.com/?task=3#task3`
 - **Chrome Remote Debugging (CDP)**: `http://127.0.0.1:9245`
-- **Latest Asset Cache Buster**: `?v=20261013-v9-fix`
+- **Latest Asset Cache Buster**: `?v=20261118-guided-v6`
 
 ---
 
@@ -192,14 +190,36 @@ This is an interactive high-fidelity web prototype deployed on an **iPad Pro 13"
    - JS gesture interception: `gesturestart/change/end` prevent pinch-to-zoom; multi-touch `touchstart/touchmove` (> 1 touch) prevented; double-tap zoom guarded; `touchmove` outside dedicated scroll containers prevented; `contextmenu` suppressed.
    - Dedicated scroll containers (`.t3-picker-track`, `.t2-picker-track`, `.t2-options-scroll-container`, `.t3-drawer-scrollable-options`, `.t3-doneness-carousel`, `.t3-recipe-cards-track`) retain smooth single-finger momentum scrolling with `overscroll-behavior: contain`.
 
-## 🔄 7. How to Resume Work After Antigravity Restart
+---
+
+## 🥞 7. Pancakes Guided Cooking Flow (Figma Section 3436:25475 & Nodes 3321:34955, 3345:37922, 3330:37455, 3451:25661, 3299:24163)
+1. **Chef Hat Trigger Hit Area**:
+   - Hit area on Pancakes burner tile covers Chef Hat icon and text: opens Guided Cooking whether the burner is still preheating or preheat is already complete.
+   - Dynamic Entry: If preheating, opens at Step 0 ("Preheat to 400°F"); if preheat is completed, opens directly at Step 1 ("Add butter to coat pan").
+2. **Layout & Coordinates**:
+   - Container `#t3ScreenGuidedCooking` is offset by `left: 90px; width: 934px;` cleanly starting to the right of the persistent left navbar.
+   - All 4 step numbers (`1`, `2`, `3`, `4`) remain visible across inactive and active states as direct children of `.t3-guided-card`.
+   - On Steps 2 and 3, number sits at `left: 21px; top: 21px;` while the dark-themed `"Start timer"` button sits on the right (`right: 21px; top: 21px;`).
+   - "Start next one" button right edge is anchored at `x = 994px` (exactly `30px` from 1024px screen right edge).
+3. **Centered Modals**:
+   - Both `.t3-guided-modal-backdrop` popups ("Ready to make another pancake?" loop modal and "Enjoy! Use the knob to turn off the burner" completion modal) are centered at $x = 557\text{px}$ across the 934px content area.
+   - Tapping "Done" on Enjoy modal returns to the active burner screen (`3299:24163`).
+4. **Physical Knob Integration**:
+   - Turning the corresponding burner knob back to `OFF` turns off the burner, deactivates the activity bar, and returns cleanly to standby `3-start`.
+5. **Cooktop Hot Status Bar Indicator**:
+   - Added `#t3GuidedHotIndicator` at `x = 692px`, right edge `816px`, maintaining an exact **12px gap** to the left edge of the Beta icon (`x = 828px`).
+   - Dynamically shown whenever any burner is active across both the main Cooktop screen and Guided Cooking screen, and hidden when all burners are OFF.
+
+---
+
+## 🔄 8. How to Resume Work After Antigravity Restart
 When opening a new conversation or restarting Antigravity:
 1. Open this workspace directory: `/Users/a240165853/Documents/PolarisPrototypeCooktopPrecisionCooking`.
 2. Antigravity automatically reads `GEMINI.md` to load full memory of the project.
 3. If background tasks stopped, re-launch:
    ```bash
    python3 -m http.server 8080 -d /Users/a240165853/Documents/PolarisPrototypeCooktopPrecisionCooking &
-   npx --yes localtunnel --port 8080 &
+   ssh -o StrictHostKeyChecking=no -R 80:localhost:8080 serveo.net &
    ```
 4. If Figma MCP is connected, you can directly query Figma components or tokens by node ID or frame name!
 
