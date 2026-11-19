@@ -6629,16 +6629,35 @@ input,
   display: block;
 }
 
-/* Viewport and Track for Cards */
+/* Viewport and Track for Cards - Native iPad Touch & Mouse Drag Horizontally Scrollable */
 .t3-guided-cards-viewport {
   position: absolute;
-  left: 0;
-  top: 94px;
-  width: 934px;
-  height: 178px;
-  overflow: visible;
+  left: 296px;
+  top: 92px;
+  width: 638px;
+  height: 188px;
+  overflow-x: auto;
+  overflow-y: hidden;
+  -webkit-overflow-scrolling: touch;
+  scroll-behavior: smooth;
+  touch-action: pan-x;
   z-index: 10;
-  pointer-events: none;
+  pointer-events: auto;
+  user-select: none;
+  -webkit-user-select: none;
+  cursor: grab;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.t3-guided-cards-viewport::-webkit-scrollbar {
+  display: none;
+  width: 0;
+  height: 0;
+}
+
+.t3-guided-cards-viewport:active {
+  cursor: grabbing;
 }
 
 .t3-guided-cards-track {
@@ -6646,19 +6665,20 @@ input,
   flex-direction: row;
   align-items: flex-start;
   gap: 12px;
-  position: absolute;
-  left: 296px;
+  position: relative;
+  left: 0;
   top: 0;
   height: 178px;
-  transition: transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
+  width: max-content;
+  padding-right: 64px;
+  box-sizing: border-box;
+  transform: none !important;
 }
 
-/* Step 0..4 Track Positions */
-.t3-guided-cards-track[data-step="0"] { transform: translateX(0px); }
-.t3-guided-cards-track[data-step="1"] { transform: translateX(0px); }
-.t3-guided-cards-track[data-step="2"] { transform: translateX(-92px); }
-.t3-guided-cards-track[data-step="3"] { transform: translateX(-184px); }
-.t3-guided-cards-track[data-step="4"] { transform: translateX(-276px); }
+/* Step 0..4 Track Positions - overridden by viewport scroll */
+.t3-guided-cards-track[data-step] {
+  transform: none !important;
+}
 
 /* When not in step 0, hide the Preheat Card completely */
 .t3-guided-cards-track:not([data-step="0"]) .t3-guided-card.is-preheat {
@@ -6680,6 +6700,7 @@ input,
               border-color 0.3s ease;
   overflow: hidden;
   -webkit-tap-highlight-color: transparent;
+  flex-shrink: 0;
 }
 
 /* Inactive / Collapsed card */
