@@ -170,3 +170,18 @@ stateDiagram-v2
      - Swipe flick detection (`|velocity| > 0.28`) enables quick flicks to advance or rewind steps with natural momentum.
      - Expanded `.t3-guided-cards-track` `padding-right: 500px;` (from 64px) so Step 4 can freely center over the action button without hitting the track boundary.
      - Updated cache busters in `index.html` to `?v=20261120-center-expand-v2`.
+18. **Damped Touch/Mouse Drag Physics & Synchronized 500ms Ease-Out Glide (Smooth Slower Transitions)**:
+   - **User Feedback**: "good, but it move to fast, make it slower, so it doesn't feel like it's not responsive", "good, but these cards moved too fast, make them slower, so it doesn't feel like it's not responsive".
+   - **Root Cause Analysis**:
+     1. **Unweighted Sensitivity & Scale Distortion**: Under `--app-scale: 0.8146`, dividing unscaled delta by 0.8146 amplified physical drag distance by 1.228x. Because card pitch is only 92px, a normal 250px iPad finger swipe traversed over 300px of layout scroll—overshooting all 4 steps in a single stroke.
+     2. **Browser Default Snap Rush**: WebKit and Blink's native `scrollTo({ behavior: "smooth" })` over a short 92px distance completes in ~100ms, creating a jarring, near-instantaneous snap.
+     3. **Unconstrained Multi-Step Flipping**: Unrestricted momentum decay and high flick sensitivity allowed a single swipe to blow past multiple cooking steps at high velocity.
+     4. **Abrupt Card Content Pop**: Expanding card width at 0.4s while content snapped from `display: none` to `display: flex` caused text and timer buttons to pop in jarringly.
+   - **Resolution**:
+     - **Tactile Drag Weighting (`DRAG_FACTOR = 0.60`)**: Applied a deliberate 0.60 damping factor to scaled drag movements (`scaledDiff = (diff / scale) * 0.60`), requiring ~150px of natural touch travel on iPad to traverse one 92px card slot.
+     - **1-Step Per Gesture Pagination Constraint**: Clamped active drag scroll travel to `[dragStartStep - 1, dragStartStep + 1]` with soft rubber-band resistance beyond boundaries (`(delta) * 0.25`). Each swipe gesture advances or rewinds by at most 1 step, ensuring the user never accidentally skips a cooking instruction.
+     - **Custom 500ms `easeOutCubic` Smooth Scroll Loop (`smoothScrollGuidedViewport`)**: Replaced browser `scrollTo({ behavior: "smooth" })` with a synchronized RequestAnimationFrame animation loop utilizing `easeOutCubic: 1 - Math.pow(1 - progress, 3)` over 500ms. Applies to swipe release snaps, direct card taps, and "Next Step" button clicks.
+     - **Synchronized CSS Card Expansion**: Slowed `.t3-guided-card` CSS width transition to `0.5s cubic-bezier(0.25, 1, 0.5, 1)`, perfectly matching the 500ms scroll glide.
+     - **Content Fade-In Animation**: Added `@keyframes t3CardFadeIn` (`opacity: 0 -> 1`, `translateY: 3px -> 0` over `0.35s ease-out`) for `.t3-guided-card.is-active .t3-guided-card-body` and `.t3-guided-card-header-row`, creating a graceful visual reveal of cooking instructions and timer controls.
+     - **Scroll Event Loop Guard**: Added `isSmoothScrolling` flag so native `scroll` event listeners do not fire competing settle timers during programmatic glide animations.
+     - **Updated Cache Busters**: Bumped `index.html` link and script tags to `?v=20261120-slower-scroll`.

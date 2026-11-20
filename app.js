@@ -3166,21 +3166,12 @@
     }
   }
 
-  function scrollGuidedCardIntoView(step, smooth = true) {
-    if (!els.t3GuidedViewport) return;
-    const targetScroll = (step <= 1) ? 0 : (step - 1) * 92;
-    requestAnimationFrame(() => {
-      els.t3GuidedViewport.scrollTo({
-        left: targetScroll,
-        behavior: smooth ? "smooth" : "auto"
-      });
-    });
-  }
-
   let isMouseDragging = false;
+  let isSmoothScrolling = false;
   let hasCardDragged = false;
   let cardScrollStartX = 0;
   let cardScrollStartLeft = 0;
+  let dragStartStep = 1;
   let cardVelocitySamples = [];
   let cardMomentumRaf = null;
 
@@ -3188,6 +3179,55 @@
     if (cardMomentumRaf) {
       cancelAnimationFrame(cardMomentumRaf);
       cardMomentumRaf = null;
+    }
+    isSmoothScrolling = false;
+  }
+
+  function smoothScrollGuidedViewport(targetLeft, duration = 500, onDone) {
+    const vp = els.t3GuidedViewport;
+    if (!vp) return;
+    cancelCardMomentum();
+    const startLeft = vp.scrollLeft;
+    const distance = targetLeft - startLeft;
+    if (Math.abs(distance) < 0.5) {
+      vp.scrollLeft = targetLeft;
+      if (onDone) onDone();
+      return;
+    }
+
+    isSmoothScrolling = true;
+    const startTime = performance.now();
+
+    function easeOutCubic(t) {
+      return 1 - Math.pow(1 - t, 3);
+    }
+
+    function stepAnim(currentTime) {
+      const elapsed = currentTime - startTime;
+      const progress = Math.min(1, elapsed / duration);
+      const ease = easeOutCubic(progress);
+      vp.scrollLeft = startLeft + distance * ease;
+
+      if (progress < 1) {
+        cardMomentumRaf = requestAnimationFrame(stepAnim);
+      } else {
+        vp.scrollLeft = targetLeft;
+        cardMomentumRaf = null;
+        isSmoothScrolling = false;
+        if (onDone) onDone();
+      }
+    }
+    cardMomentumRaf = requestAnimationFrame(stepAnim);
+  }
+
+  function scrollGuidedCardIntoView(step, smooth = true) {
+    if (!els.t3GuidedViewport) return;
+    const targetScroll = (step <= 1) ? 0 : (step - 1) * 92;
+    if (smooth) {
+      smoothScrollGuidedViewport(targetScroll, 500);
+    } else {
+      cancelCardMomentum();
+      els.t3GuidedViewport.scrollLeft = targetScroll;
     }
   }
 
@@ -3203,10 +3243,12 @@
     function snapToActiveCard(smooth = true) {
       if (!vp) return;
       const targetScroll = (t3GuidedStep <= 1) ? 0 : (t3GuidedStep - 1) * 92;
-      vp.scrollTo({
-        left: targetScroll,
-        behavior: smooth ? "smooth" : "auto"
-      });
+      if (smooth) {
+        smoothScrollGuidedViewport(targetScroll, 500);
+      } else {
+        cancelCardMomentum();
+        vp.scrollLeft = targetScroll;
+      }
     }
 
     function checkAndExpandCenterCard() {
@@ -3249,6 +3291,7 @@
       hasCardDragged = false;
       cardScrollStartX = clientX;
       cardScrollStartLeft = vp.scrollLeft;
+      dragStartStep = t3GuidedStep;
       cardVelocitySamples = [{ x: clientX, t: performance.now() }];
     }
 
@@ -3257,15 +3300,35 @@
       const now = performance.now();
       const diff = clientX - cardScrollStartX;
       const scale = getAppScale();
-      const scaledDiff = diff / scale;
 
       if (Math.abs(diff) > 4) {
         hasCardDragged = true;
       }
 
-      vp.scrollLeft = cardScrollStartLeft - scaledDiff;
-      cardVelocitySamples.push({ x: clientX, t: now });
+      // Weight / dampen the drag motion so it feels tactile, steady, and deliberate
+      // DRAG_FACTOR = 0.60 means ~150px of finger movement corresponds to ~90px (1 card) of layout scroll
+      const DRAG_FACTOR = 0.60;
+      const scaledDiff = (diff / scale) * DRAG_FACTOR;
 
+      let newScroll = cardScrollStartLeft - scaledDiff;
+
+      // Single-gesture pagination boundary constraint:
+      // Each swipe should only advance or rewind by at most 1 step relative to dragStartStep
+      const minAllowedStep = Math.max(1, dragStartStep - 1);
+      const maxAllowedStep = Math.min(4, dragStartStep + 1);
+      const minAllowedScroll = (minAllowedStep - 1) * 92;
+      const maxAllowedScroll = (maxAllowedStep - 1) * 92;
+
+      // Apply soft rubber-banding beyond the 1-step boundaries
+      if (newScroll < minAllowedScroll) {
+        newScroll = minAllowedScroll + (newScroll - minAllowedScroll) * 0.25;
+      } else if (newScroll > maxAllowedScroll) {
+        newScroll = maxAllowedScroll + (newScroll - maxAllowedScroll) * 0.25;
+      }
+
+      vp.scrollLeft = newScroll;
+
+      cardVelocitySamples.push({ x: clientX, t: now });
       const cutoff = now - 80;
       while (cardVelocitySamples.length > 1 && cardVelocitySamples[0].t < cutoff) {
         cardVelocitySamples.shift();
@@ -3296,63 +3359,41 @@
           }
         }
 
-        const MAX_VELOCITY = 2.4;
-        velocity = Math.max(-MAX_VELOCITY, Math.min(MAX_VELOCITY, velocity));
+        const FLICK_VELOCITY_THRESHOLD = 0.35;
+        let targetStep = dragStartStep;
 
-        // Swipe flick detection: quickly flick to advance or go back
-        if (Math.abs(velocity) > 0.28) {
-          let targetStep = t3GuidedStep;
-          if (velocity > 0.28) {
-            targetStep = Math.min(4, t3GuidedStep + 1);
-          } else if (velocity < -0.28) {
-            targetStep = Math.max(1, t3GuidedStep - 1);
-          }
-          if (targetStep !== t3GuidedStep) {
-            setGuidedStep(targetStep, false, true);
+        if (Math.abs(velocity) > FLICK_VELOCITY_THRESHOLD) {
+          // Intentional flick gesture: advance or rewind by exactly 1 step
+          if (velocity > FLICK_VELOCITY_THRESHOLD) {
+            targetStep = Math.min(4, dragStartStep + 1);
           } else {
-            snapToActiveCard(true);
+            targetStep = Math.max(1, dragStartStep - 1);
           }
-        } else if (Math.abs(velocity) > 0.08) {
-          let lastTime = performance.now();
-          const friction = 0.94;
-
-          const momentumStep = (currentTime) => {
-            const dt = Math.min(32, Math.max(8, currentTime - lastTime));
-            lastTime = currentTime;
-
-            const decay = Math.pow(friction, dt / 16.67);
-            velocity *= decay;
-
-            vp.scrollLeft += velocity * dt;
-
-            const maxScroll = vp.scrollWidth - vp.clientWidth;
-            if (vp.scrollLeft <= 0) {
-              vp.scrollLeft = 0;
-              velocity = 0;
-            } else if (vp.scrollLeft >= maxScroll) {
-              vp.scrollLeft = maxScroll;
-              velocity = 0;
-            }
-
-            checkAndExpandCenterCard();
-
-            if (Math.abs(velocity) > 0.015) {
-              cardMomentumRaf = requestAnimationFrame(momentumStep);
-            } else {
-              cardMomentumRaf = null;
-              snapToActiveCard(true);
-            }
-          };
-
-          cardMomentumRaf = requestAnimationFrame(momentumStep);
         } else {
-          snapToActiveCard(true);
+          // Slow drag release: choose the nearest step based on scroll position
+          const s = vp.scrollLeft;
+          if (s < 46) {
+            targetStep = 1;
+          } else if (s < 138) {
+            targetStep = 2;
+          } else if (s < 230) {
+            targetStep = 3;
+          } else {
+            targetStep = 4;
+          }
+          // Clamp targetStep to 1 step relative to dragStartStep
+          targetStep = Math.max(Math.max(1, dragStartStep - 1), Math.min(Math.min(4, dragStartStep + 1), targetStep));
         }
+
+        // Apply target step and smooth scroll glide
+        clearT3GuidedTimers();
+        setGuidedStep(targetStep, false, true);
 
         setTimeout(() => {
           hasCardDragged = false;
-        }, 80);
+        }, 120);
       } else {
+        // If no drag occurred (tap), snap neatly
         snapToActiveCard(true);
       }
     }
@@ -3360,11 +3401,11 @@
     // Scroll listener for trackpad / native wheel scrolling
     let scrollSettleTimer = null;
     vp.addEventListener("scroll", () => {
-      if (isMouseDragging) return;
+      if (isMouseDragging || isSmoothScrolling) return;
       checkAndExpandCenterCard();
       clearTimeout(scrollSettleTimer);
       scrollSettleTimer = setTimeout(() => {
-        if (!isMouseDragging) {
+        if (!isMouseDragging && !isSmoothScrolling) {
           snapToActiveCard(true);
         }
       }, 120);

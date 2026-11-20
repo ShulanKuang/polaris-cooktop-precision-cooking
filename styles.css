@@ -6701,12 +6701,23 @@ input,
   cursor: pointer;
   pointer-events: auto;
   touch-action: pan-x !important;
-  transition: width 0.4s cubic-bezier(0.2, 0.8, 0.2, 1),
-              background-color 0.3s ease,
-              border-color 0.3s ease;
+  transition: width 0.5s cubic-bezier(0.25, 1, 0.5, 1),
+              background-color 0.35s ease,
+              border-color 0.35s ease;
   overflow: hidden;
   -webkit-tap-highlight-color: transparent;
   flex-shrink: 0;
+}
+
+@keyframes t3CardFadeIn {
+  0% {
+    opacity: 0;
+    transform: translateY(3px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 /* Inactive / Collapsed card */
@@ -6785,6 +6796,7 @@ input,
   display: flex;
   flex-direction: column;
   justify-content: flex-end;
+  animation: t3CardFadeIn 0.35s ease-out forwards;
 }
 
 .t3-guided-card-text {
@@ -6806,6 +6818,7 @@ input,
   align-items: center;
   justify-content: flex-end;
   z-index: 2;
+  animation: t3CardFadeIn 0.35s ease-out forwards;
 }
 
 /* Start timer button inside card */
