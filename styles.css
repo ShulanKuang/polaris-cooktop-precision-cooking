@@ -272,7 +272,12 @@ input,
 .t3-picker-track,
 .t2-picker-track,
 .t3-doneness-carousel,
-.t3-recipe-cards-track {
+.t3-recipe-cards-track,
+.t3-guided-cards-viewport,
+.t3-guided-cards-track,
+.t3-cookware-carousel-viewport,
+.t3-pancakes-cards-carousel,
+.t3-beef-carousel {
   touch-action: pan-x !important;
   overscroll-behavior-x: contain !important;
   overscroll-behavior-y: none !important;
@@ -6639,7 +6644,6 @@ input,
   overflow-x: auto;
   overflow-y: hidden;
   -webkit-overflow-scrolling: touch;
-  scroll-behavior: smooth;
   touch-action: pan-x;
   z-index: 10;
   pointer-events: auto;
@@ -6673,6 +6677,7 @@ input,
   padding-right: 64px;
   box-sizing: border-box;
   transform: none !important;
+  touch-action: pan-x !important;
 }
 
 /* Step 0..4 Track Positions - overridden by viewport scroll */
@@ -6695,6 +6700,7 @@ input,
   -webkit-backdrop-filter: blur(30px);
   cursor: pointer;
   pointer-events: auto;
+  touch-action: pan-x !important;
   transition: width 0.4s cubic-bezier(0.2, 0.8, 0.2, 1),
               background-color 0.3s ease,
               border-color 0.3s ease;

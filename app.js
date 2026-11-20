@@ -3194,61 +3194,163 @@
   }
 
   let isMouseDragging = false;
-  let dragStartX = 0;
-  let dragStartScrollLeft = 0;
   let hasCardDragged = false;
+  let cardScrollStartX = 0;
+  let cardScrollStartLeft = 0;
+  let cardVelocitySamples = [];
+  let cardMomentumRaf = null;
+
+  function cancelCardMomentum() {
+    if (cardMomentumRaf) {
+      cancelAnimationFrame(cardMomentumRaf);
+      cardMomentumRaf = null;
+    }
+  }
 
   function setupGuidedCardsScroll() {
     const vp = els.t3GuidedViewport;
     if (!vp) return;
 
-    vp.addEventListener("mousedown", (e) => {
-      if (e.button !== 0) return;
+    function getAppScale() {
+      const val = parseFloat(getComputedStyle(document.documentElement).getPropertyValue("--app-scale"));
+      return isNaN(val) || val <= 0 ? 1 : val;
+    }
+
+    function onDragStart(clientX) {
+      cancelCardMomentum();
+      vp.style.scrollBehavior = "auto";
       isMouseDragging = true;
       hasCardDragged = false;
-      dragStartX = e.pageX;
-      dragStartScrollLeft = vp.scrollLeft;
+      cardScrollStartX = clientX;
+      cardScrollStartLeft = vp.scrollLeft;
+      cardVelocitySamples = [{ x: clientX, t: performance.now() }];
+    }
+
+    function onDragMove(clientX) {
+      if (!isMouseDragging || !vp) return;
+      const now = performance.now();
+      const diff = clientX - cardScrollStartX;
+      const scale = getAppScale();
+      const scaledDiff = diff / scale;
+
+      if (Math.abs(diff) > 4) {
+        hasCardDragged = true;
+      }
+
+      vp.scrollLeft = cardScrollStartLeft - scaledDiff;
+      cardVelocitySamples.push({ x: clientX, t: now });
+
+      const cutoff = now - 80;
+      while (cardVelocitySamples.length > 1 && cardVelocitySamples[0].t < cutoff) {
+        cardVelocitySamples.shift();
+      }
+    }
+
+    function onDragEnd() {
+      if (!isMouseDragging || !vp) return;
+      isMouseDragging = false;
+
+      if (hasCardDragged) {
+        const now = performance.now();
+        const cutoff = now - 80;
+        while (cardVelocitySamples.length > 1 && cardVelocitySamples[0].t < cutoff) {
+          cardVelocitySamples.shift();
+        }
+
+        let velocity = 0;
+        if (cardVelocitySamples.length >= 2) {
+          const first = cardVelocitySamples[0];
+          const last = cardVelocitySamples[cardVelocitySamples.length - 1];
+          const dt = last.t - first.t;
+          if (dt > 8) {
+            const scale = getAppScale();
+            velocity = -(last.x - first.x) / dt / scale;
+          }
+        }
+
+        const MAX_VELOCITY = 2.4;
+        velocity = Math.max(-MAX_VELOCITY, Math.min(MAX_VELOCITY, velocity));
+
+        if (Math.abs(velocity) > 0.08) {
+          let lastTime = performance.now();
+          const friction = 0.94;
+
+          const momentumStep = (currentTime) => {
+            const dt = Math.min(32, Math.max(8, currentTime - lastTime));
+            lastTime = currentTime;
+
+            const decay = Math.pow(friction, dt / 16.67);
+            velocity *= decay;
+
+            vp.scrollLeft += velocity * dt;
+
+            const maxScroll = vp.scrollWidth - vp.clientWidth;
+            if (vp.scrollLeft <= 0) {
+              vp.scrollLeft = 0;
+              velocity = 0;
+            } else if (vp.scrollLeft >= maxScroll) {
+              vp.scrollLeft = maxScroll;
+              velocity = 0;
+            }
+
+            if (Math.abs(velocity) > 0.015) {
+              cardMomentumRaf = requestAnimationFrame(momentumStep);
+            } else {
+              cardMomentumRaf = null;
+            }
+          };
+
+          cardMomentumRaf = requestAnimationFrame(momentumStep);
+        }
+
+        setTimeout(() => {
+          hasCardDragged = false;
+        }, 80);
+      }
+    }
+
+    // Mouse drag events
+    vp.addEventListener("mousedown", (e) => {
+      if (e.button !== 0) return;
+      if (e.target.closest("#t3GuidedStartTimer2") || e.target.closest("#t3GuidedStartTimer3")) return;
+      onDragStart(e.clientX);
     });
 
     window.addEventListener("mousemove", (e) => {
-      if (!isMouseDragging || !vp) return;
-      const dx = e.pageX - dragStartX;
-      if (Math.abs(dx) > 4) {
-        hasCardDragged = true;
+      if (isMouseDragging) {
+        onDragMove(e.clientX);
       }
-      vp.scrollLeft = dragStartScrollLeft - dx;
     });
 
     window.addEventListener("mouseup", () => {
       if (isMouseDragging) {
-        isMouseDragging = false;
-        setTimeout(() => {
-          hasCardDragged = false;
-        }, 60);
+        onDragEnd();
       }
     });
 
-    let touchStartX = 0;
+    // Native Touch drag events for iPad Pro
     vp.addEventListener("touchstart", (e) => {
       if (e.touches && e.touches.length === 1) {
-        touchStartX = e.touches[0].pageX;
-        hasCardDragged = false;
+        if (e.target.closest("#t3GuidedStartTimer2") || e.target.closest("#t3GuidedStartTimer3")) return;
+        onDragStart(e.touches[0].clientX);
       }
     }, { passive: true });
 
-    vp.addEventListener("touchmove", (e) => {
-      if (e.touches && e.touches.length === 1) {
-        if (Math.abs(e.touches[0].pageX - touchStartX) > 6) {
-          hasCardDragged = true;
-        }
+    window.addEventListener("touchmove", (e) => {
+      if (isMouseDragging && e.touches && e.touches.length === 1) {
+        onDragMove(e.touches[0].clientX);
       }
     }, { passive: true });
 
-    vp.addEventListener("touchend", () => {
-      if (hasCardDragged) {
-        setTimeout(() => {
-          hasCardDragged = false;
-        }, 80);
+    window.addEventListener("touchend", () => {
+      if (isMouseDragging) {
+        onDragEnd();
+      }
+    });
+
+    window.addEventListener("touchcancel", () => {
+      if (isMouseDragging) {
+        onDragEnd();
       }
     });
   }
@@ -7205,12 +7307,42 @@
         return;
       }
       const targetEl = (e.target instanceof Element) ? e.target : (e.target && e.target.parentElement);
-      const scrollable = targetEl && typeof targetEl.closest === "function" ? targetEl.closest(
-        ".t3-picker-track, .t2-picker-track, .t2-options-scroll-container, .t2-tile-scroll-container, .t3-options-scroll-container, .t3-drawer-scrollable-options, .t3-doneness-carousel, .t3-recipe-cards-track, .t3-food-scroll-container"
-      ) : null;
-      if (!scrollable) {
+      if (!targetEl) {
         e.preventDefault();
+        return;
       }
+
+      // Check explicit known scrollable containers and tracks
+      const scrollable = typeof targetEl.closest === "function" ? targetEl.closest(
+        ".t3-guided-cards-viewport, .t3-guided-cards-track, .t3-guided-card, " +
+        ".t3-cookware-carousel-viewport, .t3-pancakes-cards-carousel, .t3-pancakes-drawer-tiles, " +
+        ".t3-beef-drawer-tiles, .t3-beef-carousel, .t3-tips-steps-scroll, .t3-ingredients-scroll, " +
+        ".t3-tech-scroll-container, .t3-recent-container, " +
+        ".t3-picker-track, .t2-picker-track, .t2-options-scroll-container, .t2-tile-scroll-container, " +
+        ".t3-options-scroll-container, .t3-drawer-scrollable-options, .t3-doneness-carousel, " +
+        ".t3-recipe-cards-track, .t3-food-scroll-container, [data-scrollable='true']"
+      ) : null;
+
+      if (scrollable) {
+        return; // Allow native/touch scrolling
+      }
+
+      // Dynamic check for any overflow container that can scroll
+      let el = targetEl;
+      while (el && el !== document.body && el !== document.documentElement) {
+        const style = window.getComputedStyle(el);
+        const ox = style.overflowX;
+        const oy = style.overflowY;
+        if (
+          ((ox === "auto" || ox === "scroll") && el.scrollWidth > el.clientWidth) ||
+          ((oy === "auto" || oy === "scroll") && el.scrollHeight > el.clientHeight)
+        ) {
+          return; // Allow touch scrolling
+        }
+        el = el.parentElement;
+      }
+
+      e.preventDefault();
     }, { passive: false });
 
     // 4. Block double-tap to zoom
@@ -7219,7 +7351,10 @@
       const now = Date.now();
       if (now - lastTouchEndTime <= 300) {
         const targetEl = (e.target instanceof Element) ? e.target : (e.target && e.target.parentElement);
-        const isClickable = targetEl && typeof targetEl.closest === "function" ? targetEl.closest("button, select, input, a, [role='button'], .task-btn, .scale-btn") : false;
+        const isClickable = targetEl && typeof targetEl.closest === "function" ? targetEl.closest(
+          "button, select, input, a, [role='button'], .task-btn, .scale-btn, " +
+          ".t3-guided-card, .t3-doneness-card, .t3-beef-card, .t3-option-card, .t2-buttontile, .t3-tile"
+        ) : false;
         if (!isClickable) {
           e.preventDefault();
         }
