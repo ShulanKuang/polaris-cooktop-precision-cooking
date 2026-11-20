@@ -1429,6 +1429,7 @@
   let t3PreheatInterval = null;
   const t3PrcQuietTimers = { 1: null, 2: null, 3: null, 4: null, 5: null };
   const currentT3BurnerLevels = { 1: "off", 2: "off", 3: "off", 4: "off", 5: "off" };
+  const t3BurnerTargetTemps = { 1: 350, 2: 350, 4: 350, 5: 350 };
   let activePrcKnobIndex = 1;
   let t3Stage = "start"; // "start" | "turnknob" | "spotlight" | "temperature" | "preheat" | "completed" | "burnerStatus"
   let transitionCookwareToTemperature = null;
@@ -1770,7 +1771,7 @@
       if (els.t3CompleteTarget) els.t3CompleteTarget.textContent = targetTemp;
     }
     if (stage === "burnerStatus") {
-      const targetTemp = state.task3TargetTemp || 350;
+      const targetTemp = t3BurnerTargetTemps[2] || state.task3TargetTemp || 350;
       if (els.tStartActiveBurner1) {
         els.tStartActiveBurner1.hidden = false;
         if (els.tStartBurner1Temp) {
@@ -1779,6 +1780,9 @@
       }
       if (els.t3BurnerStatusTemp) {
         els.t3BurnerStatusTemp.textContent = `${targetTemp}°F`;
+      }
+      if (els.t3TileLiveTemp) {
+        els.t3TileLiveTemp.textContent = `${targetTemp}°F`;
       }
       clearT3Timers();
 
@@ -1860,7 +1864,7 @@
         if (els.tStartActiveBurner1) {
           els.tStartActiveBurner1.hidden = !isKnob2Prc;
           if (els.tStartBurner1Temp) {
-            els.tStartBurner1Temp.textContent = `${state.task3TargetTemp || 350}°F`;
+            els.tStartBurner1Temp.textContent = `${t3BurnerTargetTemps[2] || state.task3TargetTemp || 350}°F`;
           }
         }
       }
@@ -1884,22 +1888,31 @@
       [1, 2, 4, 5].forEach(idx => cancelT3BurnerArc(idx));
     }
     const burnerConfigs = {
-      1: { roller: els.t3BurnerRoller1, strip: els.t3BurnerStrip1, itemH: 38, baseOffset: 45 },
-      2: { roller: els.t3BurnerRoller2, strip: els.t3BurnerStrip2, itemH: 38, baseOffset: 45 },
-      3: { roller: els.t3BurnerRoller3, strip: els.t3BurnerStrip3, itemH: 36, baseOffset: 36 },
-      4: { roller: els.t3BurnerRoller4, strip: els.t3BurnerStrip4, itemH: 52, baseOffset: 62 },
-      5: { roller: els.t3BurnerRoller5, strip: els.t3BurnerStrip5, itemH: 38, baseOffset: 45 }
+      1: { itemH: 38, baseOffset: 45 },
+      2: { itemH: 38, baseOffset: 45 },
+      3: { itemH: 36, baseOffset: 36 },
+      4: { itemH: 52, baseOffset: 62 },
+      5: { itemH: 38, baseOffset: 45 }
     };
-    const cfg = burnerConfigs[i];
-    if (!cfg || !cfg.roller || !cfg.strip) return;
-    cfg.strip.style.webkitTransform = `translate3d(0, ${cfg.baseOffset}px, 0)`;
-    cfg.strip.style.transform = `translate3d(0, ${cfg.baseOffset}px, 0)`;
-    const items = cfg.strip.querySelectorAll(".t3-burner-roller-item");
-    items.forEach(it => {
-      const idx = parseInt(it.dataset.index, 10);
-      it.classList.toggle("is-selected", idx === 0);
+    const targets = i ? [i] : [1, 2, 3, 4, 5];
+    targets.forEach(idx => {
+      const cfg = burnerConfigs[idx];
+      if (!cfg) return;
+      const rollers = getT3Rollers(idx);
+      rollers.forEach(roller => {
+        roller.classList.remove("is-active", "is-prc-mode", "has-arc", "is-arcing", "is-confirmed");
+        const strip = roller.querySelector(".t3-burner-roller-strip");
+        if (strip) {
+          strip.style.webkitTransform = `translate3d(0, ${cfg.baseOffset}px, 0)`;
+          strip.style.transform = `translate3d(0, ${cfg.baseOffset}px, 0)`;
+          const items = strip.querySelectorAll(".t3-burner-roller-item");
+          items.forEach(it => {
+            const itemIdx = parseInt(it.dataset.index, 10);
+            it.classList.toggle("is-selected", itemIdx === 0);
+          });
+        }
+      });
     });
-    cfg.roller.classList.remove("is-active");
   }
 
   const t3BurnerArcTimers = {
@@ -2414,20 +2427,23 @@
         cancelT3BurnerArc(targetIndex);
       }
       currentT3BurnerLevels[targetIndex] = "prc";
-      if (t3Stage === "start") {
+      if (t3Stage === "start" || t3Stage === "burnerStatus") {
         activePrcKnobIndex = index;
       }
 
       // Translate strip to center index 11 (temp icon)
       updateRollersStrip(11);
 
-      if ((targetIndex === 1 || targetIndex === 2 || targetIndex === 4 || targetIndex === 5) && t3Stage === "start") {
+      if ((targetIndex === 1 || targetIndex === 2 || targetIndex === 4 || targetIndex === 5) && (t3Stage === "start" || t3Stage === "burnerStatus")) {
         if (els.t3ToastCard) {
           els.t3ToastCard.classList.remove("is-visible", "is-dismissing");
           els.t3ToastCard.setAttribute("hidden", "");
         }
+        if (typeof hideT3CompleteToast === "function") {
+          hideT3CompleteToast();
+        }
         const t = t3BurnerArcTimers[targetIndex];
-        const isPrcConfirmed = rollers[0].classList.contains("is-confirmed") && rollers[0].classList.contains("is-prc-mode");
+        const isPrcConfirmed = rollers.some(r => r.classList.contains("is-confirmed") && r.classList.contains("is-prc-mode"));
         const isPrcArcRunning = t && (t.preArc || t.arc);
         if (!isPrcConfirmed && !isPrcArcRunning) {
           startT3BurnerArc(targetIndex, { transitToSpotlight: true });
@@ -2687,14 +2703,15 @@
 
     playSound("toggleOn");
 
-    if (t3Stage === "burnerStatus") {
-      state.task3Mode = "food";
-    }
+    state.task3Mode = "temp";
 
     if (state.currentTask === 2) {
       showT2Precision("temperature", "picker");
       return;
     }
+
+    const activeKnob = activePrcKnobIndex || 1;
+    state.task3TargetTemp = t3BurnerTargetTemps[activeKnob] || 350;
 
     const outgoingScreen = (t3Stage === "burnerStatus" && els.t3ScreenBurnerStatus && !els.t3ScreenBurnerStatus.hidden)
       ? els.t3ScreenBurnerStatus
@@ -2704,6 +2721,13 @@
       t3Stage = "temperature";
       updateScreenBadge("temperature");
       updateCooktopActiveState();
+
+      const drawer = document.getElementById("t3SideDrawerTemp");
+      if (drawer) {
+        drawer.querySelectorAll(".pc-drawer-item").forEach(item => {
+          item.classList.toggle("is-active", item.dataset.t3tab === "temperature");
+        });
+      }
 
       requestAnimationFrame(() => {
         scrollToT3Temp(state.task3TargetTemp || 350, false);
@@ -3725,6 +3749,7 @@
     if (temp > T3_TEMP_MAX) temp = 500;
     temp = Math.round(temp / T3_TEMP_STEP) * T3_TEMP_STEP;
     state.task3TargetTemp = temp;
+    t3BurnerTargetTemps[activePrcKnobIndex || (digipadSourceScreen === "tempRun" ? 2 : 1)] = temp;
     if (digipadSourceScreen === "tempRun") {
       showT3Screen("tempRun");
       requestAnimationFrame(() => {
@@ -3756,6 +3781,7 @@
       }
       if (digipadInput) {
         state.task3TargetTemp = parseInt(digipadInput, 10);
+        t3BurnerTargetTemps[activePrcKnobIndex || 1] = state.task3TargetTemp;
       }
       return;
     }
@@ -3774,6 +3800,7 @@
     const val = parseInt(digipadInput, 10);
     if (!isNaN(val)) {
       state.task3TargetTemp = val;
+      t3BurnerTargetTemps[activePrcKnobIndex || 1] = val;
     }
   }
 
@@ -3785,7 +3812,7 @@
     showT3Screen("burnerStatus");
     playSound("toggleOn");
 
-    const targetTemp = state.task3TargetTemp || 350;
+    const targetTemp = t3BurnerTargetTemps[activePrcKnobIndex || 2] || state.task3TargetTemp || 350;
     const startTemp = 178; // Exact starting number from Figma 2310:12162
     const durationMs = 4000; // 4s smooth temperature growth
     const startTime = Date.now();
@@ -3816,6 +3843,12 @@
         if (els.t3TileLiveTemp) {
           els.t3TileLiveTemp.textContent = `${targetTemp}°F`;
         }
+        if (els.t3BurnerStatusTemp) {
+          els.t3BurnerStatusTemp.textContent = `${targetTemp}°F`;
+        }
+        if (els.tStartBurner1Temp) {
+          els.tStartBurner1Temp.textContent = `${targetTemp}°F`;
+        }
 
         // 1-second delay when temp reaches target temp before changing to two row text card!
         t3HoldingTimeout = setTimeout(() => {
@@ -3837,9 +3870,15 @@
     clearT3Timers();
     showT3Screen("burnerStatus");
     playSound("toggleOn");
-    const targetTemp = state.task3TargetTemp || 350;
+    const targetTemp = t3BurnerTargetTemps[activePrcKnobIndex || 2] || state.task3TargetTemp || 350;
     if (els.t3TileLiveTemp) {
       els.t3TileLiveTemp.textContent = `${targetTemp}°F`;
+    }
+    if (els.t3BurnerStatusTemp) {
+      els.t3BurnerStatusTemp.textContent = `${targetTemp}°F`;
+    }
+    if (els.tStartBurner1Temp) {
+      els.tStartBurner1Temp.textContent = `${targetTemp}°F`;
     }
     if (els.t3BurnerTextTile) {
       els.t3BurnerTextTile.classList.add("is-complete");
@@ -4029,22 +4068,35 @@
 
     currentT3BurnerLevels[knobToReset] = "off";
     resetT3BurnerToOff(knobToReset);
-    activePrcKnobIndex = null;
     setKnobAngle(knobToReset, 0, false, false);
 
-    if (activeScreen && els.t3ScreenStart && activeScreen !== els.t3ScreenStart) {
-      t3Stage = "start";
-      updateScreenBadge("start");
+    const isRearLeftActive = Boolean(
+      (knobsState[1] && knobsState[1].angle < -20 && knobsState[1].angle > -80) ||
+      currentT3BurnerLevels[2] === "prc" ||
+      (els.tStartActiveBurner1 && !els.tStartActiveBurner1.hidden)
+    );
+    const targetScreen = (isRearLeftActive && els.t3ScreenBurnerStatus) ? els.t3ScreenBurnerStatus : els.t3ScreenStart;
+    const targetStage = targetScreen === els.t3ScreenBurnerStatus ? "burnerStatus" : "start";
+
+    if (isRearLeftActive) {
+      activePrcKnobIndex = 2;
+    } else {
+      activePrcKnobIndex = null;
+    }
+
+    if (activeScreen && targetScreen && activeScreen !== targetScreen) {
+      t3Stage = targetStage;
+      updateScreenBadge(targetStage);
       updateCooktopActiveState();
 
-      // 1. Prepare start screen positioned slightly to the left (-25%) with opacity 0.4
-      els.t3ScreenStart.hidden = false;
-      els.t3ScreenStart.style.transition = "none";
-      els.t3ScreenStart.style.webkitTransition = "none";
-      els.t3ScreenStart.style.transform = "translate3d(-25%, 0, 0)";
-      els.t3ScreenStart.style.webkitTransform = "translate3d(-25%, 0, 0)";
-      els.t3ScreenStart.style.opacity = "0.4";
-      els.t3ScreenStart.style.zIndex = "100";
+      // 1. Prepare target screen positioned slightly to the left (-25%) with opacity 0.4
+      targetScreen.hidden = false;
+      targetScreen.style.transition = "none";
+      targetScreen.style.webkitTransition = "none";
+      targetScreen.style.transform = "translate3d(-25%, 0, 0)";
+      targetScreen.style.webkitTransform = "translate3d(-25%, 0, 0)";
+      targetScreen.style.opacity = "0.4";
+      targetScreen.style.zIndex = "100";
 
       // 2. Active screen is visible at (0, 0, 0)
       activeScreen.hidden = false;
@@ -4055,7 +4107,7 @@
       activeScreen.style.zIndex = "110";
 
       void activeScreen.offsetWidth;
-      void els.t3ScreenStart.offsetWidth;
+      void targetScreen.offsetWidth;
 
       requestAnimationFrame(() => {
         const ease = "cubic-bezier(0.16, 1, 0.3, 1)";
@@ -4066,29 +4118,29 @@
         activeScreen.style.transform = "translate3d(100%, 0, 0)";
         activeScreen.style.webkitTransform = "translate3d(100%, 0, 0)";
 
-        els.t3ScreenStart.style.transition = `transform ${dur} ${ease}, opacity ${dur} ease`;
-        els.t3ScreenStart.style.webkitTransition = `-webkit-transform ${dur} ${ease}, opacity ${dur} ease`;
-        els.t3ScreenStart.style.transform = "translate3d(0, 0, 0)";
-        els.t3ScreenStart.style.webkitTransform = "translate3d(0, 0, 0)";
-        els.t3ScreenStart.style.opacity = "1";
+        targetScreen.style.transition = `transform ${dur} ${ease}, opacity ${dur} ease`;
+        targetScreen.style.webkitTransition = `-webkit-transform ${dur} ${ease}, opacity ${dur} ease`;
+        targetScreen.style.transform = "translate3d(0, 0, 0)";
+        targetScreen.style.webkitTransform = "translate3d(0, 0, 0)";
+        targetScreen.style.opacity = "1";
 
         setTimeout(() => {
-          showT3Screen("start");
+          showT3Screen(targetStage);
           ensureNavbarVisible();
           activeScreen.style.transition = "";
           activeScreen.style.webkitTransition = "";
           activeScreen.style.transform = "";
           activeScreen.style.webkitTransform = "";
-          els.t3ScreenStart.style.transition = "";
-          els.t3ScreenStart.style.webkitTransition = "";
-          els.t3ScreenStart.style.transform = "";
-          els.t3ScreenStart.style.webkitTransform = "";
+          targetScreen.style.transition = "";
+          targetScreen.style.webkitTransition = "";
+          targetScreen.style.transform = "";
+          targetScreen.style.webkitTransform = "";
           updateCooktopActiveState();
           updateNavbarState();
         }, 430);
       });
     } else {
-      showT3Screen("start");
+      showT3Screen(targetStage);
       updateCooktopActiveState();
       updateNavbarState();
     }
@@ -4194,6 +4246,7 @@
       const tempVal = parseInt(closestItem.dataset.temp, 10);
       if (tempVal !== state.task3TargetTemp) {
         state.task3TargetTemp = tempVal;
+        t3BurnerTargetTemps[activePrcKnobIndex || 1] = tempVal;
         if (tempVal !== lastT3TickTemp) {
           lastT3TickTemp = tempVal;
           playSound("touch");
@@ -4235,6 +4288,7 @@
       behavior: smooth ? "smooth" : "auto"
     });
     state.task3TargetTemp = temp;
+    t3BurnerTargetTemps[activePrcKnobIndex || 1] = temp;
     updateT3PickerVisuals();
     setTimeout(updateT3PickerVisuals, smooth ? 250 : 50);
   }
@@ -4371,6 +4425,7 @@
       behavior: smooth ? "smooth" : "auto"
     });
     state.task3TargetTemp = temp;
+    t3BurnerTargetTemps[activePrcKnobIndex || 2] = temp;
     updateT3RunPickerVisuals();
     setTimeout(updateT3RunPickerVisuals, smooth ? 250 : 50);
   }
@@ -4891,6 +4946,7 @@
         let temp = parseInt(digipadInput, 10);
         if (isNaN(temp) || temp < 100) temp = 350;
         state.task3TargetTemp = temp;
+        t3BurnerTargetTemps[activePrcKnobIndex || 1] = temp;
         startT3Preheat();
       };
       els.t3BtnStartDigipad.addEventListener("click", handleStartDigi);
@@ -7523,14 +7579,25 @@
     getAudioBuffers: () => audioBuffers,
     get t3Stage() { return t3Stage; },
     set t3Stage(val) { t3Stage = val; },
+    get activePrcKnobIndex() { return activePrcKnobIndex; },
+    set activePrcKnobIndex(val) { activePrcKnobIndex = val; },
+    t3BurnerTargetTemps,
+    startT3PreheatCompleted,
     updateFoodBurnerStatusDisplay
   };
   window.PolarisApp = window.__polaris;
   window.knobsState = knobsState;
   window.updateFoodBurnerStatusDisplay = updateFoodBurnerStatusDisplay;
+  window.startT3PreheatCompleted = startT3PreheatCompleted;
+  window.t3BurnerTargetTemps = t3BurnerTargetTemps;
   Object.defineProperty(window, "t3Stage", {
     get() { return t3Stage; },
     set(v) { t3Stage = v; },
+    configurable: true
+  });
+  Object.defineProperty(window, "activePrcKnobIndex", {
+    get() { return activePrcKnobIndex; },
+    set(v) { activePrcKnobIndex = v; },
     configurable: true
   });
 })();

@@ -211,3 +211,22 @@ stateDiagram-v2
        - All existing `scrollLeft` targets (`(step - 1) * 92`), slot thresholds (`< 46`, `46..138`, `138..230`, `>= 230`), drag damping (`DRAG_FACTOR = 0.60`), and 500ms `easeOutCubic` animations remain completely preserved with zero regression.
      - **Zero Button Collisions**: Back button (`#t3GuidedBackBtn` at $y = 0\dots 64\text{px}$, `z-index: 20`) and Exit button (`.t3-guided-exit-btn` at $y = 300\dots 348\text{px}$, `z-index: 15`) remain fully clickable and outside the card viewport Y boundary ($y = 92\dots 280\text{px}$).
      - **Updated Cache Busters**: Bumped `index.html` link and script tags to `?v=20261120-overlap-pancake`.
+20. **Precision Cooking Activation on Active Burner Status Screen (2s Circular Arc Countdown & Dynamic Burner Isolation)**:
+   - **User Request**: "after I finished the 500deg on rear left burrner, then turn on the precision cooking for the front left one, it didn't show the circular 2s count down and start on precision cooking screen. Fix it."
+   - **Root Cause Analysis**:
+     1. **Strict Stage Guard in Knob Handler**: In `app.js` (`updateT3BurnerFromKnob`), the PRC detection block checked `if ((targetIndex === 1 || targetIndex === 2 || targetIndex === 4 || targetIndex === 5) && t3Stage === "start")`. When Rear Left finished preheating, `t3Stage` was `"burnerStatus"`, so turning Knob 1 (Front Left) to PRC was completely ignored.
+     2. **Active Precision Knob Index Hardcoding**: `activePrcKnobIndex` was only assigned when `t3Stage === "start"`, leaving it stuck on Knob 2.
+     3. **Mode Inversion on Transition**: `transitionToT3Temperature()` contained a legacy override: `if (t3Stage === "burnerStatus") state.task3Mode = "food";`, which erroneously pushed the user into food selection instead of the Precision Cooking temperature screen (`3B-temperature`).
+     4. **Cancellation Flow Destructive Fallback**: `cancelT3A()` unconditionally set `t3Stage = "start"` and revealed `els.t3ScreenStart`, wiping out any actively running burners (such as Rear Left at 500°F).
+     5. **Shared State Variable Clobbering**: Both burners previously shared a single `state.task3TargetTemp`. Changing Knob 1 to default 350°F overwrote Rear Left's 500°F setting.
+     6. **Partial Reset in `resetT3BurnerToOff`**: `resetT3BurnerToOff` only targeted the `#t3ScreenStart` roller DOM elements, failing to reset status screen rollers (`#t3StatusBurnerRoller1`), leaving faint dashed borders and selected item styling.
+   - **Resolution**:
+     1. **Dual Stage Burner Activation (`(t3Stage === "start" || t3Stage === "burnerStatus")`)**: Updated `updateT3BurnerFromKnob` so any precision burner (1, 2, 4, 5) can trigger its 2-second circular countdown arc and transition while on `burnerStatus`.
+     2. **Dynamic Active Knob Binding**: `activePrcKnobIndex = index;` is updated dynamically on both `"start"` and `"burnerStatus"`.
+     3. **Per-Burner Target Temperature Tracking (`t3BurnerTargetTemps`)**: Added independent tracking (`t3BurnerTargetTemps = { 1: 350, 2: 350, 4: 350, 5: 350 }`). Setting Front Left to 350°F leaves Rear Left at 500°F completely intact.
+     4. **Smooth Slide Transition from Burner Status**: `transitionToT3Temperature()` now determines `outgoingScreen` dynamically (`els.t3ScreenBurnerStatus` vs `els.t3ScreenStart`) and slides smoothly to `els.t3ScreenTemperature` with Front Left active and the "Temperature" tab pre-selected in `#t3SideDrawerTemp`.
+     5. **Context-Aware Cancellation & Slide-Back**: In `cancelT3A()`, if Rear Left is still running (`isRearLeftActive`), clicking `< Precision Cooking` (`#t3BtnBackFromTemp`) smoothly slides back to `els.t3ScreenBurnerStatus` and restores `activePrcKnobIndex = 2` without interrupting Rear Left's 500°F run. If Rear Left is off, it slides back to `els.t3ScreenStart`.
+     6. **Universal Roller Reset (`getT3Rollers`)**: Refactored `resetT3BurnerToOff` to iterate through all matching DOM rollers across start and status screens, cleanly stripping all active, prc, arc, and confirmed classes and resetting the strip translateY to base offset.
+     7. **All Knobs Off Cleanup**: Turning Knob 2 to OFF returns cleanly to `3-start` with all burners shut off, Cooktop Hot indicator removed, and activity bar deactivated.
+     8. **Cache Buster**: Bumped `index.html` script tag to `?v=20261120-prc-arc-fix`.
+
