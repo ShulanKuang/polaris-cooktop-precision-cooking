@@ -3168,28 +3168,12 @@
 
   function scrollGuidedCardIntoView(step, smooth = true) {
     if (!els.t3GuidedViewport) return;
-    const card = document.querySelector(`.t3-guided-card[data-step="${step}"]`);
-    if (!card) return;
-
+    const targetScroll = (step <= 1) ? 0 : (step - 1) * 92;
     requestAnimationFrame(() => {
-      const cardLeft = card.offsetLeft;
-      const targetWidth = card.classList.contains("is-active") ? 350 : (card.offsetWidth || 80);
-      const cardRight = cardLeft + targetWidth;
-      const vp = els.t3GuidedViewport;
-      const vpScroll = vp.scrollLeft;
-      const vpWidth = vp.clientWidth || 638;
-
-      if (cardLeft < vpScroll) {
-        vp.scrollTo({
-          left: Math.max(0, cardLeft - 16),
-          behavior: smooth ? "smooth" : "auto"
-        });
-      } else if (cardRight > vpScroll + vpWidth) {
-        vp.scrollTo({
-          left: Math.max(0, cardRight - vpWidth + 30),
-          behavior: smooth ? "smooth" : "auto"
-        });
-      }
+      els.t3GuidedViewport.scrollTo({
+        left: targetScroll,
+        behavior: smooth ? "smooth" : "auto"
+      });
     });
   }
 
@@ -3214,6 +3198,48 @@
     function getAppScale() {
       const val = parseFloat(getComputedStyle(document.documentElement).getPropertyValue("--app-scale"));
       return isNaN(val) || val <= 0 ? 1 : val;
+    }
+
+    function snapToActiveCard(smooth = true) {
+      if (!vp) return;
+      const targetScroll = (t3GuidedStep <= 1) ? 0 : (t3GuidedStep - 1) * 92;
+      vp.scrollTo({
+        left: targetScroll,
+        behavior: smooth ? "smooth" : "auto"
+      });
+    }
+
+    function checkAndExpandCenterCard() {
+      if (!vp) return;
+
+      // When in step 0 (Preheat)
+      if (t3GuidedStep === 0) {
+        if (vp.scrollLeft > 46) {
+          setGuidedStep(1, false, false);
+        }
+        return;
+      }
+
+      // Steps 1..4: determine target step from scroll position relative to primary action button
+      // Step 1 center: 0px (range: < 46px)
+      // Step 2 center: 92px (range: 46px .. 138px)
+      // Step 3 center: 184px (range: 138px .. 230px)
+      // Step 4 center: 276px (range: >= 230px)
+      const s = vp.scrollLeft;
+      let targetStep = 1;
+      if (s < 46) {
+        targetStep = 1;
+      } else if (s < 138) {
+        targetStep = 2;
+      } else if (s < 230) {
+        targetStep = 3;
+      } else {
+        targetStep = 4;
+      }
+
+      if (targetStep !== t3GuidedStep && targetStep >= 1 && targetStep <= 4) {
+        setGuidedStep(targetStep, false, false);
+      }
     }
 
     function onDragStart(clientX) {
@@ -3244,6 +3270,8 @@
       while (cardVelocitySamples.length > 1 && cardVelocitySamples[0].t < cutoff) {
         cardVelocitySamples.shift();
       }
+
+      checkAndExpandCenterCard();
     }
 
     function onDragEnd() {
@@ -3271,7 +3299,20 @@
         const MAX_VELOCITY = 2.4;
         velocity = Math.max(-MAX_VELOCITY, Math.min(MAX_VELOCITY, velocity));
 
-        if (Math.abs(velocity) > 0.08) {
+        // Swipe flick detection: quickly flick to advance or go back
+        if (Math.abs(velocity) > 0.28) {
+          let targetStep = t3GuidedStep;
+          if (velocity > 0.28) {
+            targetStep = Math.min(4, t3GuidedStep + 1);
+          } else if (velocity < -0.28) {
+            targetStep = Math.max(1, t3GuidedStep - 1);
+          }
+          if (targetStep !== t3GuidedStep) {
+            setGuidedStep(targetStep, false, true);
+          } else {
+            snapToActiveCard(true);
+          }
+        } else if (Math.abs(velocity) > 0.08) {
           let lastTime = performance.now();
           const friction = 0.94;
 
@@ -3293,21 +3334,41 @@
               velocity = 0;
             }
 
+            checkAndExpandCenterCard();
+
             if (Math.abs(velocity) > 0.015) {
               cardMomentumRaf = requestAnimationFrame(momentumStep);
             } else {
               cardMomentumRaf = null;
+              snapToActiveCard(true);
             }
           };
 
           cardMomentumRaf = requestAnimationFrame(momentumStep);
+        } else {
+          snapToActiveCard(true);
         }
 
         setTimeout(() => {
           hasCardDragged = false;
         }, 80);
+      } else {
+        snapToActiveCard(true);
       }
     }
+
+    // Scroll listener for trackpad / native wheel scrolling
+    let scrollSettleTimer = null;
+    vp.addEventListener("scroll", () => {
+      if (isMouseDragging) return;
+      checkAndExpandCenterCard();
+      clearTimeout(scrollSettleTimer);
+      scrollSettleTimer = setTimeout(() => {
+        if (!isMouseDragging) {
+          snapToActiveCard(true);
+        }
+      }, 120);
+    }, { passive: true });
 
     // Mouse drag events
     vp.addEventListener("mousedown", (e) => {
@@ -3355,7 +3416,7 @@
     });
   }
 
-  function setGuidedStep(step, isRunning = false) {
+  function setGuidedStep(step, isRunning = false, shouldScroll = true) {
     t3GuidedStep = step;
     if (els.t3GuidedTrack) {
       els.t3GuidedTrack.setAttribute("data-step", String(step));
@@ -3379,7 +3440,9 @@
       }
     });
 
-    scrollGuidedCardIntoView(step, true);
+    if (shouldScroll) {
+      scrollGuidedCardIntoView(step, true);
+    }
 
     // Step 0: Preheating
     if (els.t3GuidedBtnPreheating) {

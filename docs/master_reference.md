@@ -149,3 +149,24 @@ stateDiagram-v2
      - Added unified touch/mouse inertia drag physics to `setupGuidedCardsScroll()`: tracks `touchstart`, `touchmove`, and `touchend` with `--app-scale` compensation (`diff / scale`), real-time `scrollLeft` updates, momentum velocity decay loop (`friction = 0.94`, `requestAnimationFrame`), and an 80ms tap cooldown to prevent inadvertent card clicks during a swipe gesture.
      - Removed conflicting `scroll-behavior: smooth;` from `.t3-guided-cards-viewport` CSS so real-time touch tracking is crisp and 1:1 on glass without animation lag.
      - Bumped asset version cache busters in `index.html` to `?v=20261120-ipad-scroll-fix`.
+17. **Scroll-Driven Active Step Expansion & Centering Alignment**:
+   - **Requirement**: As step cards scroll horizontally (via touch drag on iPad Pro, mouse drag on desktop, or trackpad wheel), whichever card is moved to the center of the screen / primary action button automatically expands to its 350px active state showing instructions and timer controls, while non-centered cards collapse to 80px summary cards, rather than requiring the user to tap to expand.
+   - **Root Cause & Geometry Analysis**:
+     - In `.t3-guided-cards-track`, collapsed cards are 80px wide with a 12px gap (92px pitch).
+     - Expanded cards are 350px wide. The primary action button center is aligned with the active card at canonical scroll offsets:
+       - Step 1: `scrollLeft = 0px`
+       - Step 2: `scrollLeft = 92px`
+       - Step 3: `scrollLeft = 184px`
+       - Step 4: `scrollLeft = 276px`
+     - Measuring dynamic `getBoundingClientRect()` of transitioning cards caused severe hysteresis because an expanded 350px card had an asymmetrical attraction basin against 80px collapsed cards. At Step 2, Card 1's collapsed center in the track (40px) could never physically reach the button center in the viewport (171px) because `scrollLeft` clamped at 0.
+   - **Resolution**:
+     - Implemented exact slot midpoint thresholding in `checkAndExpandCenterCard()`:
+       - Step 1: `scrollLeft < 46px`
+       - Step 2: `46px <= scrollLeft < 138px`
+       - Step 3: `138px <= scrollLeft < 230px`
+       - Step 4: `scrollLeft >= 230px`
+     - Enables completely fluid, bidirectional scrolling: dragging forward smoothly expands 1 $\to$ 2 $\to$ 3 $\to$ 4; dragging backward smoothly expands 4 $\to$ 3 $\to$ 2 $\to$ 1 with zero jumps, zero jitter, and no boundary locking.
+     - On drag end and scroll settle, smoothly snaps (`snapToActiveCard(true)`) to center the active card directly over the action button (`(step - 1) * 92px`).
+     - Swipe flick detection (`|velocity| > 0.28`) enables quick flicks to advance or rewind steps with natural momentum.
+     - Expanded `.t3-guided-cards-track` `padding-right: 500px;` (from 64px) so Step 4 can freely center over the action button without hitting the track boundary.
+     - Updated cache busters in `index.html` to `?v=20261120-center-expand-v2`.
