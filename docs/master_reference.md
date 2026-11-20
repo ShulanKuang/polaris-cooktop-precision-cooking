@@ -185,3 +185,29 @@ stateDiagram-v2
      - **Content Fade-In Animation**: Added `@keyframes t3CardFadeIn` (`opacity: 0 -> 1`, `translateY: 3px -> 0` over `0.35s ease-out`) for `.t3-guided-card.is-active .t3-guided-card-body` and `.t3-guided-card-header-row`, creating a graceful visual reveal of cooking instructions and timer controls.
      - **Scroll Event Loop Guard**: Added `isSmoothScrolling` flag so native `scroll` event listeners do not fire competing settle timers during programmatic glide animations.
      - **Updated Cache Busters**: Bumped `index.html` link and script tags to `?v=20261120-slower-scroll`.
+19. **Pancakes Guided Cooking Card Overlap on Pancake Art (Eliminated Artificial Left Cutoff)**:
+   - **User Request**: "these card should not be cutoff, it should be overlap on the pancake image."
+   - **Root Cause & Figma Geometry Analysis**:
+     - In Figma Section `3436:25475` (Frames `3321:35633`, `3321:35808`, `3321:36584`, `3321:36716`):
+       - Screen width is 1024px. The left navigation rail occupies $x = 0\dots 90\text{px}$. The `#t3ScreenGuidedCooking` content area starts at $x = 90\text{px}$ (`width: 934px`).
+       - The pancake illustration (`pancakes_light_golden`) is positioned at screen $x = 114\text{px}$, $y = 137\text{px}$, width = 228px (spanning $x_{\text{rel}} = 24\dots 252\text{px}$ inside `#t3ScreenGuidedCooking`).
+       - In Figma:
+         - **Step 1**: Card 1 is active (350px) at $x_{\text{rel}} = 296\text{px}$ (just right of the pancake image).
+         - **Step 2**: Card 1 collapses to 80px and slides left to $x_{\text{rel}} = 204\dots 284\text{px}$, directly OVERLAPPING the right side of the pancake image.
+         - **Step 3**: Card 1 slides further left to $x_{\text{rel}} = 112\dots 192\text{px}$ and Card 2 sits at $x_{\text{rel}} = 204\dots 284\text{px}$, BOTH cards overlapping the pancake image.
+         - **Step 4**: Card 1 sits at $x_{\text{rel}} = 20\dots 100\text{px}$, Card 2 at $x_{\text{rel}} = 112\dots 192\text{px}$, Card 3 at $x_{\text{rel}} = 204\dots 284\text{px}$, ALL THREE cards overlapping the pancake image.
+       - Each collapsed card features glassmorphism styling (`backdrop-filter: blur(30px); background: rgba(97, 100, 107, 0.2); border: 1px solid rgba(204, 204, 202, 0.3)`), allowing the golden pancake art to show through with frosted translucence.
+     - **The Defect**:
+       - `.t3-guided-cards-viewport` was previously configured with `left: 296px; width: 638px; overflow-x: auto;`.
+       - Because the scroll container began at $x = 296\text{px}$, any card scrolled to the left of $296\text{px}$ was clipped by the container boundary, creating a harsh artificial cutoff line right next to the pancake and making previous step cards disappear completely.
+   - **Resolution**:
+     - **Expanded Viewport to Left Rail Edge**: Changed `.t3-guided-cards-viewport` from `left: 296px; width: 638px;` to `left: 0; width: 934px;`, spanning the entire content area from the rail ($x_{\text{screen}} = 90\text{px}$) to the right edge of the screen ($x_{\text{screen}} = 1024\text{px}$).
+     - **Padded Track Architecture (`padding-left: 296px;`)**: Added `padding-left: 296px;` to `.t3-guided-cards-track`. In Step 1 (`scrollLeft = 0`), Card 1 rests exactly at $x_{\text{rel}} = 296\text{px}$ (centered over the primary action button at $467\text{px}$), leaving the transparent padding area over the pancake image completely clear and unobstructed.
+     - **100% Mathematical & Coordinate Parity**:
+       - Step 1: `scrollLeft = 0` $\implies$ Card 1 at $296\text{px}$ (active), center at $471\text{px}$.
+       - Step 2: `scrollLeft = 92` $\implies$ Card 1 at $204\text{px}$ (overlaps pancake $24\dots 252\text{px}$), Card 2 at $296\text{px}$ (active), center at $471\text{px}$.
+       - Step 3: `scrollLeft = 184` $\implies$ Card 1 at $112\text{px}$, Card 2 at $204\text{px}$ (both overlap pancake), Card 3 at $296\text{px}$ (active), center at $471\text{px}$.
+       - Step 4: `scrollLeft = 276` $\implies$ Card 1 at $20\text{px}$, Card 2 at $112\text{px}$, Card 3 at $204\text{px}$ (all 3 overlap pancake without cutoff), Card 4 at $296\text{px}$ (active), center at $471\text{px}$.
+       - All existing `scrollLeft` targets (`(step - 1) * 92`), slot thresholds (`< 46`, `46..138`, `138..230`, `>= 230`), drag damping (`DRAG_FACTOR = 0.60`), and 500ms `easeOutCubic` animations remain completely preserved with zero regression.
+     - **Zero Button Collisions**: Back button (`#t3GuidedBackBtn` at $y = 0\dots 64\text{px}$, `z-index: 20`) and Exit button (`.t3-guided-exit-btn` at $y = 300\dots 348\text{px}$, `z-index: 15`) remain fully clickable and outside the card viewport Y boundary ($y = 92\dots 280\text{px}$).
+     - **Updated Cache Busters**: Bumped `index.html` link and script tags to `?v=20261120-overlap-pancake`.
