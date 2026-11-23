@@ -2304,8 +2304,12 @@
     // "When all two knob turned off, the activity bar should off as well. When all off back to screen 3-start."
     if (isKnob1Off && isKnob2Off) {
       state.task3Mode = "temp";
+      state.task3IsRunning = false;
       currentT3BurnerLevels[1] = "off";
       currentT3BurnerLevels[2] = "off";
+      resetT3BurnerToOff(1);
+      resetT3BurnerToOff(2);
+      activePrcKnobIndex = null;
       if (els.tStartActiveBurner1) els.tStartActiveBurner1.hidden = true;
       showT3Screen("start");
       return;
@@ -2332,12 +2336,16 @@
       if (index === 1) {
         if (isOff) {
           currentT3BurnerLevels[1] = "off";
+          resetT3BurnerToOff(1);
+          playSound("toggleOff");
         } else if (isPRC || isMinToMax) {
           currentT3BurnerLevels[1] = "prc";
         }
       } else if (index === 2) {
         if (isOff) {
           currentT3BurnerLevels[2] = "off";
+          resetT3BurnerToOff(2);
+          playSound("toggleOff");
         } else if (isPRC || isMinToMax) {
           currentT3BurnerLevels[2] = "prc";
         }
@@ -2423,13 +2431,35 @@
           currentT3BurnerLevels[index] = "off";
           resetT3BurnerToOff(index);
           setKnobAngle(index, 0, false, false);
-          if (els.tStartActiveBurner1) {
-            els.tStartActiveBurner1.hidden = true;
+
+          const isRearLeftActive = Boolean(
+            (knobsState[1] && Math.abs(knobsState[1].angle) > 12) ||
+            currentT3BurnerLevels[2] === "prc" ||
+            (typeof currentT3BurnerLevels[2] === "number" && currentT3BurnerLevels[2] > 0)
+          );
+
+          if (isRearLeftActive) {
+            activePrcKnobIndex = 2;
+            if (els.tStartActiveBurner1) {
+              els.tStartActiveBurner1.hidden = false;
+              if (els.tStartBurner1Temp) {
+                els.tStartBurner1Temp.textContent = `${t3BurnerTargetTemps[2] || state.task3TargetTemp || 500}°F`;
+              }
+            }
+            if (els.t3PancakesBurnerTile) {
+              els.t3PancakesBurnerTile.classList.remove("is-reached");
+            }
+            showT3Screen("burnerStatus");
+          } else {
+            activePrcKnobIndex = null;
+            if (els.tStartActiveBurner1) {
+              els.tStartActiveBurner1.hidden = true;
+            }
+            if (els.t3PancakesBurnerTile) {
+              els.t3PancakesBurnerTile.classList.remove("is-reached");
+            }
+            showT3Screen("start");
           }
-          if (els.t3PancakesBurnerTile) {
-            els.t3PancakesBurnerTile.classList.remove("is-reached");
-          }
-          showT3Screen("start");
           updateCooktopActiveState();
           updateNavbarState();
           playSound("toggleOff");
@@ -2581,6 +2611,10 @@
         }
       }
       currentT3BurnerLevels[targetIndex] = "off";
+      resetT3BurnerToOff(targetIndex);
+      if (prevLevel !== "off") {
+        playSound("toggleOff");
+      }
 
       // If Knob 2 (Rear Left) turned off, hide its active burner card
       if (targetIndex === 2 && els.tStartActiveBurner1) {
@@ -2592,7 +2626,11 @@
       if (allOff) {
         state.task3Mode = "temp";
         state.task3IsRunning = false;
+        activePrcKnobIndex = null;
         if (els.tStartActiveBurner1) els.tStartActiveBurner1.hidden = true;
+        if (t3Stage === "burnerStatus" || t3Stage === "foodBurnerStatus" || t3Stage === "tempRun") {
+          showT3Screen("start");
+        }
       }
 
       updateRollersStrip(0);
@@ -3721,15 +3759,35 @@
       setKnobAngle(knobToReset, 0, false, false);
       currentT3BurnerLevels[knobToReset] = "off";
       resetT3BurnerToOff(knobToReset);
-      activePrcKnobIndex = null;
-      if (els.tStartActiveBurner1) {
-        const isKnob2Prc = Boolean(knobsState[1] && knobsState[1].angle < -20 && knobsState[1].angle > -80);
-        els.tStartActiveBurner1.hidden = !isKnob2Prc;
+
+      const isRearLeftActive = Boolean(
+        (knobsState[1] && Math.abs(knobsState[1].angle) > 12) ||
+        currentT3BurnerLevels[2] === "prc" ||
+        (typeof currentT3BurnerLevels[2] === "number" && currentT3BurnerLevels[2] > 0)
+      );
+
+      if (isRearLeftActive) {
+        activePrcKnobIndex = 2;
+        if (els.tStartActiveBurner1) {
+          els.tStartActiveBurner1.hidden = false;
+          if (els.tStartBurner1Temp) {
+            els.tStartBurner1Temp.textContent = `${t3BurnerTargetTemps[2] || state.task3TargetTemp || 500}°F`;
+          }
+        }
+        if (els.t3PancakesBurnerTile) {
+          els.t3PancakesBurnerTile.classList.remove("is-reached");
+        }
+        showT3Screen("burnerStatus");
+      } else {
+        activePrcKnobIndex = null;
+        if (els.tStartActiveBurner1) {
+          els.tStartActiveBurner1.hidden = true;
+        }
+        if (els.t3PancakesBurnerTile) {
+          els.t3PancakesBurnerTile.classList.remove("is-reached");
+        }
+        showT3Screen("start");
       }
-      if (els.t3PancakesBurnerTile) {
-        els.t3PancakesBurnerTile.classList.remove("is-reached");
-      }
-      showT3Screen("start");
       updateCooktopActiveState();
       updateNavbarState();
       playSound("toggleOff");
@@ -7632,11 +7690,13 @@
     get activePrcKnobIndex() { return activePrcKnobIndex; },
     set activePrcKnobIndex(val) { activePrcKnobIndex = val; },
     t3BurnerTargetTemps,
+    currentT3BurnerLevels,
     startT3PreheatCompleted,
     updateFoodBurnerStatusDisplay
   };
   window.PolarisApp = window.__polaris;
   window.knobsState = knobsState;
+  window.currentT3BurnerLevels = currentT3BurnerLevels;
   window.updateFoodBurnerStatusDisplay = updateFoodBurnerStatusDisplay;
   window.startT3PreheatCompleted = startT3PreheatCompleted;
   window.t3BurnerTargetTemps = t3BurnerTargetTemps;

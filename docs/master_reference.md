@@ -324,3 +324,69 @@ stateDiagram-v2
        - `verify_step3_timer_running.png`
        - `verify_step3_timer_completed.png`
 
+### 23. Omni-Stage & Arbitrary Sequence Knob Turn-Off
+- **Date**: 2026-11-23
+- **Context & Issue**:
+  - During usability research tests, participants finish cooking at different stages and in unpredictable sequences. Specifically at the end of the test when both Rear Left (500°F on Knob 2) and Front Left (Pancakes Guided Cooking on Knob 1) are active:
+    - Researchers and participants may turn off **Rear Left first**, then **Front Left second** (Sequence A).
+    - Or turn off **Front Left first**, then **Rear Left second** (Sequence B).
+    - Or turn off knobs during earlier stages such as Pancakes Preheat, Food Burner Status, Cookware/Doneness setup, or Temp Run.
+  - Previously, `finishGuidedCookingAndTurnOff()` unconditionally redirected to `3-start` ignoring whether Rear Left was still actively cooking at 500°F. In addition, turning off non-active knobs while on certain screens failed to reset roller DOM classes or play turn-off audio feedback, leading to inconsistent burner states on screen.
+- **Resolution**:
+  1. **Dual-Burner Awareness in Guided Cooking & Preheat Turn-Off**:
+     - In both `finishGuidedCookingAndTurnOff()` and `updateT3BurnerFromKnob()` (`pancakesPreheat`, `preheat`, `foodPreheat`, `techniquePreheat`):
+       - Checked whether Rear Left (Knob 2) is active:
+         ```javascript
+         const isRearLeftActive = Boolean(
+           (knobsState[1] && Math.abs(knobsState[1].angle) > 12) ||
+           currentT3BurnerLevels[2] === "prc" ||
+           (typeof currentT3BurnerLevels[2] === "number" && currentT3BurnerLevels[2] > 0)
+         );
+         ```
+       - If Rear Left **is active**:
+         - Retain `activePrcKnobIndex = 2`.
+         - Keep active burner card (`#tStartActiveBurner1`) visible showing Rear Left target temperature (e.g. 500°F).
+         - Transition screen to `3-burnerStatus`, where Rear Left displays live 500°F running status while Front Left roller (`t3StatusBurnerRoller1`) cleanly displays "OFF" (inactive).
+       - If Rear Left **is already off**:
+         - Set `activePrcKnobIndex = null`.
+         - Hide `#tStartActiveBurner1`.
+         - Transition screen directly to `3-start` with ALL burners showing OFF.
+  2. **Rear-Left-First Turn-Off Handling**:
+     - When Knob 2 is turned to OFF while Front Left is in Guided Cooking (Step 1-4, Enjoy modal, or preheat):
+       - In `updateT3BurnerFromKnob()` (`else if (isOff)`):
+         - Cleanly set `currentT3BurnerLevels[2] = "off"`.
+         - Call `resetT3BurnerToOff(2)` to reset roller strip position and remove active/confirmed/prc classes.
+         - Hide `#tStartActiveBurner1`.
+         - Play `playSound("toggleOff")`.
+         - Guided cooking for Front Left continues uninterrupted.
+       - When Knob 1 is subsequently turned to OFF:
+         - `finishGuidedCookingAndTurnOff()` detects `isRearLeftActive` is false.
+         - Clears timers, hides Enjoy/Next modals, resets Knob 1 roller to OFF, and transitions to `3-start`.
+         - Screen shows **ALL burners OFF** (`#tStartActiveBurner1` hidden, all rollers at "OFF", activity bar hidden, hot indicator hidden).
+  3. **Front-Left-First Turn-Off Handling**:
+     - When Knob 1 is turned to OFF while Rear Left is still cooking:
+       - `finishGuidedCookingAndTurnOff()` detects `isRearLeftActive` is true.
+       - Clears timers, hides modals, resets Knob 1 roller to OFF, and transitions to `3-burnerStatus`.
+       - Screen displays Rear Left running at 500°F and Front Left roller as "OFF".
+       - Activity bar and Cooktop Hot indicator remain visible.
+     - When Knob 2 is subsequently turned to OFF from `3-burnerStatus`:
+       - `updateT3BurnerFromKnob()` cleanly turns off Knob 2, resets its roller, hides `#tStartActiveBurner1`, and transitions to `3-start`.
+       - Screen shows **ALL burners OFF** (`#tStartActiveBurner1` hidden, all rollers at "OFF", activity bar hidden, hot indicator hidden).
+  4. **Multi-Stage & Food Burner Status Turn-Off**:
+     - Updated `updateFoodBurnerStatusDisplay()` to invoke `resetT3BurnerToOff(1)` and `resetT3BurnerToOff(2)`.
+     - Turning off Knob 1 displays Front Left OFF badge (`#t3FoodBurnerOffFL`).
+     - Turning off Knob 2 displays Rear Left OFF badge (`#t3FoodBurnerOffRL`).
+     - Turning off both cleanly transitions back to `3-start` with activity bar off.
+     - Updated `else if (isOff)` in `updateT3BurnerFromKnob()` to check `allOff` and automatically transition from `burnerStatus`, `foodBurnerStatus`, or `tempRun` to `3-start` when every knob is at 0°.
+  5. **Verification via Automated CDP Suite (`scripts/verify_knob_turn_off_sequences.mjs`)**:
+     - **Sequence 1 (Rear Left first, then Front Left)**: Passed. Verified Rear Left turns off while Enjoy modal stays active; turning off Front Left transitions to `3-start` with all burners OFF.
+     - **Sequence 2 (Front Left first, then Rear Left)**: Passed. Verified Front Left turn-off transitions to `3-burnerStatus` showing 500°F Rear Left active and Front Left roller OFF; turning off Rear Left transitions to `3-start` with all burners OFF.
+     - **Sequence 3 (Pancakes Preheat turn-off)**: Passed. Verified Knob 1 turn-off transitions to `3-burnerStatus`, subsequent Knob 2 turn-off transitions to `3-start`.
+     - **Sequence 4 (Food Burner Status turn-off)**: Passed. Verified individual burner OFF badges and clean transition to `3-start` with activity bar hidden when both are off.
+     - Screenshots captured and archived:
+       - `verify_turn_off_seq1_rear_off_first.png`
+       - `verify_turn_off_seq1_all_off.png`
+       - `verify_turn_off_seq2_front_off_first.png`
+       - `verify_turn_off_seq2_all_off.png`
+
+
