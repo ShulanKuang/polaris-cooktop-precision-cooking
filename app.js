@@ -2792,7 +2792,12 @@
     }
   }
 
+  // Bumped whenever the user navigates back; a slide animation that finishes after that must not
+  // hide its outgoing screen (it may be the screen the user just went back to).
+  let t3NavSeq = 0;
+
   function slideTransition(outgoingScreen, incomingScreen, direction = "left", onComplete) {
+    const navSeq = ++t3NavSeq;
     ensureNavbarVisible();
     if (!outgoingScreen || !incomingScreen) {
       if (incomingScreen) incomingScreen.hidden = false;
@@ -2840,7 +2845,8 @@
       outgoingScreen.style.opacity = "0.4";
 
       setTimeout(() => {
-        outgoingScreen.hidden = true;
+        const superseded = navSeq !== t3NavSeq;
+        if (!superseded) outgoingScreen.hidden = true;
         outgoingScreen.style.transition = "";
         outgoingScreen.style.webkitTransition = "";
         outgoingScreen.style.transform = "";
@@ -2851,7 +2857,7 @@
         incomingScreen.style.transform = "";
         incomingScreen.style.webkitTransform = "";
         ensureNavbarVisible();
-        if (onComplete) onComplete();
+        if (onComplete && !superseded) onComplete();
       }, 480);
     });
   }
@@ -4219,7 +4225,11 @@
     playSound("touch");
   }
 
-  function cancelT3A() {
+  // turnOffBurner = true  -> knob turned to OFF: reset burner + knob, slide back to Burners.
+  // turnOffBurner = false -> on-screen Back / side-nav buttons: only navigate back to Burners.
+  //   Only the physical knobs may turn a burner off, so the knob and burner state are kept.
+  function cancelT3A(turnOffBurner = true) {
+    t3NavSeq++;
     clearT3Timers();
     dismissPrcTimerAndToast();
     ensureNavbarVisible();
@@ -4244,9 +4254,11 @@
     ];
     const activeScreen = candidateScreens.find(s => s && !s.hidden);
 
-    currentT3BurnerLevels[knobToReset] = "off";
-    resetT3BurnerToOff(knobToReset);
-    setKnobAngle(knobToReset, 0, false, false);
+    if (turnOffBurner) {
+      currentT3BurnerLevels[knobToReset] = "off";
+      resetT3BurnerToOff(knobToReset);
+      setKnobAngle(knobToReset, 0, false, false);
+    }
 
     const isRearLeftActive = Boolean(
       (knobsState[1] && knobsState[1].angle < -20 && knobsState[1].angle > -80) ||
@@ -4258,7 +4270,7 @@
 
     if (isRearLeftActive) {
       activePrcKnobIndex = 2;
-    } else {
+    } else if (turnOffBurner) {
       activePrcKnobIndex = null;
     }
 
@@ -4322,7 +4334,7 @@
       updateCooktopActiveState();
       updateNavbarState();
     }
-    playSound("toggleOff");
+    if (turnOffBurner) playSound("toggleOff");
   }
 
   // TASK 3: HORIZONTAL TEMPERATURE CAROUSEL PICKER
@@ -5023,7 +5035,7 @@
     if (els.t3BtnBack) {
       els.t3BtnBack.addEventListener("click", () => {
         playSound("touch");
-        cancelT3A();
+        cancelT3A(false);
       });
     }
 
@@ -5048,7 +5060,7 @@
     if (els.t3BtnBackFromTemp) {
       els.t3BtnBackFromTemp.addEventListener("click", () => {
         playSound("touch");
-        cancelT3A();
+        cancelT3A(false);
       });
     }
 
@@ -5070,7 +5082,7 @@
             scrollToT3RunTemp(state.task3TargetTemp || 350, false);
           });
         } else {
-          cancelT3A();
+          cancelT3A(false);
         }
       });
     }
@@ -7393,52 +7405,15 @@
       });
     }
 
-    // Home & Cooktop navbar buttons
-    if (els.navHomeBtn) {
-      els.navHomeBtn.addEventListener("click", () => {
-        playSound("touch");
-        if (state.currentTask === 3 && t3Stage !== "start") {
-          if (t3Stage === "selectCookware") {
-            if (typeof transitionCookwareToTemperature === "function") {
-              transitionCookwareToTemperature();
-              return;
-            }
-          }
-          if (t3Stage === "pancakesPreheat") {
-            clearT3Timers();
-            const isRearLeftActive = Boolean(
-              knobsState[1] && Math.abs(knobsState[1].angle) > 12 &&
-              currentT3BurnerLevels[2] !== "off"
-            );
-            if (isRearLeftActive) {
-              showT3Screen("burnerStatus");
-            } else {
-              showT3Screen("start");
-            }
-            return;
-          }
-          if (t3Stage === "guidedCooking") {
-            exitGuidedCooking();
-            return;
-          }
-          if (t3Stage && t3Stage.startsWith("pancakes")) {
-            showT3Screen("foodOptions");
-            return;
-          }
-          cancelT3A();
-        } else if (state.currentTask === 2) {
-          showT2Explore(true);
-        }
-        closeDrawer();
-      });
-    }
-
+    // Home, Cooktop & Back navbar buttons share onNavReturn below (a second Home listener used to
+    // run the same back-navigation twice on mouse click, leaving a blank screen).
     const navBack = document.getElementById("navBackBtn");
     const navCooktop = document.getElementById("navCooktopBtn");
     const navHome = document.getElementById("navHomeBtn");
 
     const onNavReturn = (e) => {
       if (e) e.preventDefault();
+      t3NavSeq++;
       playSound("touch");
       if (state.currentTask === 3 && t3Stage !== "start") {
         if (t3Stage === "selectCookware") {
@@ -7468,10 +7443,11 @@
           showT3Screen("foodOptions");
           return;
         }
-        cancelT3A();
+        cancelT3A(false);
       } else if (state.currentTask === 2) {
         showT2Explore(true);
       }
+      closeDrawer();
     };
 
     [navBack, navCooktop, navHome].forEach((btn) => {
