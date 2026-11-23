@@ -7378,3 +7378,10 @@ body.is-test-mode .test-mode-exit-hotspot {
   opacity: 1;
   transform: translate(-50%, 0);
 }
+
+/* Side panel title ("Burners | Pancakes", "Cooktop | Beef") is a label only: the small back
+   caret was removed; use the Back button in the left nav bar instead. */
+.t3-drawer-back-btn {
+  pointer-events: none;
+  cursor: default;
+}
