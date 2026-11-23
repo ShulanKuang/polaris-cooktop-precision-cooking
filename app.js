@@ -7436,6 +7436,12 @@
       if (e) e.preventDefault();
       // Pancakes preheating: only the Back caret is locked (knob OFF is the only way back to settings)
       if (isPancakesLocked() && e && e.currentTarget && e.currentTarget.id === "navBackBtn") return;
+      // Cooktop while pancakes is running: this overview already is the Cooktop screen, so stay here
+      // (going to the plain Burners screen would drop the Pancakes tile and allow re-setup).
+      if (isPancakesLocked() && e && e.currentTarget && e.currentTarget.id === "navCooktopBtn") {
+        playSound("touch");
+        return;
+      }
       t3NavSeq++;
       playSound("touch");
       if (state.currentTask === 3 && t3Stage !== "start") {
