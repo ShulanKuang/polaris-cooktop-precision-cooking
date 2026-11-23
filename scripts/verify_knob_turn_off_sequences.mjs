@@ -296,17 +296,66 @@ async function run() {
   await captureScreenshot('verify_turn_off_seq2_all_off');
 
   // =========================================================================
-  // TEST SEQUENCE 3: Turn off during Pancakes Preheat (both sequences)
+  // TEST SEQUENCE 3A: Turn off Rear Left (Knob 2) FIRST during Pancakes Preheat
   // =========================================================================
   console.log('\n======================================================');
-  console.log('TEST SEQUENCE 3: Turn off during Pancakes Preheat');
+  console.log('TEST SEQUENCE 3A: Turn off Rear Left (Knob 2) FIRST on Pancakes Preheat');
   console.log('======================================================');
 
   // Setup: Rear Left at 500°F, Front Left at Pancakes Preheat
   await evaluate(`
     setKnobAngle(2, -56, false, true);
     if (window.t3BurnerTargetTemps) window.t3BurnerTargetTemps[2] = 500;
-    showT3Screen('burnerStatus');
+    setKnobAngle(1, -56, false, true);
+    if (window.t3BurnerTargetTemps) window.t3BurnerTargetTemps[1] = 400;
+    showT3Screen('pancakesPreheat');
+  `);
+  await sleep(400);
+
+  // Turn Knob 2 off from pancakesPreheat while Front Left is running
+  console.log('Action: Turning off Knob 2 (Rear Left) first from pancakesPreheat...');
+  await evaluate(`setKnobAngle(2, 0, false, true);`);
+  await sleep(500);
+
+  let seq3AStep1 = await evaluate(`({
+    pancakesPreheatVisible: !document.getElementById('t3ScreenPancakesPreheat').hidden,
+    rlOffVisible: !document.getElementById('t3PancakesBurnerOffRL').hidden,
+    rlTempHidden: document.getElementById('t3PancakesRLTempDisplay').style.display === 'none',
+    k1Level: window.currentT3BurnerLevels[1],
+    k2Level: window.currentT3BurnerLevels[2]
+  })`);
+  console.log('State after Knob 2 turned off first from pancakesPreheat:', seq3AStep1);
+
+  if (!seq3AStep1.pancakesPreheatVisible || !seq3AStep1.rlOffVisible || !seq3AStep1.rlTempHidden) {
+    throw new Error('Turning off Knob 2 first in pancakesPreheat should show Rear Left OFF overlay and keep Pancakes screen visible');
+  }
+
+  // Turn Knob 1 off second -> both off -> back to start screen
+  console.log('Action: Turning off Knob 1 (Front Left) second to complete turn-off...');
+  await evaluate(`setKnobAngle(1, 0, false, true);`);
+  await sleep(500);
+
+  let seq3AFinal = await evaluate(`({
+    startScreenVisible: !document.getElementById('t3ScreenStart').hidden,
+    allOff: [1, 2, 3, 4, 5].every(i => window.currentT3BurnerLevels[i] === 'off')
+  })`);
+  console.log('Final state after both off (Sequence 3A):', seq3AFinal);
+
+  if (!seq3AFinal.startScreenVisible || !seq3AFinal.allOff) {
+    throw new Error('Turning off Knob 1 second should transition to start with all burners off');
+  }
+
+  // =========================================================================
+  // TEST SEQUENCE 3B: Turn off Front Left (Knob 1) FIRST during Pancakes Preheat
+  // =========================================================================
+  console.log('\n======================================================');
+  console.log('TEST SEQUENCE 3B: Turn off Front Left (Knob 1) FIRST on Pancakes Preheat');
+  console.log('======================================================');
+
+  // Setup: Rear Left at 500°F, Front Left at Pancakes Preheat
+  await evaluate(`
+    setKnobAngle(2, -56, false, true);
+    if (window.t3BurnerTargetTemps) window.t3BurnerTargetTemps[2] = 500;
     setKnobAngle(1, -56, false, true);
     if (window.t3BurnerTargetTemps) window.t3BurnerTargetTemps[1] = 400;
     showT3Screen('pancakesPreheat');
@@ -318,15 +367,15 @@ async function run() {
   await evaluate(`setKnobAngle(1, 0, false, true);`);
   await sleep(500);
 
-  let seq3PreheatResult = await evaluate(`({
+  let seq3BStep1 = await evaluate(`({
     burnerStatusVisible: !document.getElementById('t3ScreenBurnerStatus').hidden,
     rearLeftCardVisible: !document.getElementById('tStartActiveBurner1').hidden,
     k1Level: window.currentT3BurnerLevels[1],
     k2Level: window.currentT3BurnerLevels[2]
   })`);
-  console.log('State after Knob 1 turned off from pancakesPreheat:', seq3PreheatResult);
+  console.log('State after Knob 1 turned off from pancakesPreheat:', seq3BStep1);
 
-  if (!seq3PreheatResult.burnerStatusVisible || !seq3PreheatResult.rearLeftCardVisible) {
+  if (!seq3BStep1.burnerStatusVisible || !seq3BStep1.rearLeftCardVisible) {
     throw new Error('Turning off Knob 1 in pancakesPreheat while Knob 2 is ON should transition to burnerStatus');
   }
 
@@ -335,13 +384,13 @@ async function run() {
   await evaluate(`setKnobAngle(2, 0, false, true);`);
   await sleep(500);
 
-  let seq3Final = await evaluate(`({
+  let seq3BFinal = await evaluate(`({
     startScreenVisible: !document.getElementById('t3ScreenStart').hidden,
     allOff: [1, 2, 3, 4, 5].every(i => window.currentT3BurnerLevels[i] === 'off')
   })`);
-  console.log('Final state after both off:', seq3Final);
+  console.log('Final state after both off (Sequence 3B):', seq3BFinal);
 
-  if (!seq3Final.startScreenVisible || !seq3Final.allOff) {
+  if (!seq3BFinal.startScreenVisible || !seq3BFinal.allOff) {
     throw new Error('Turning off Knob 2 should transition to start with all burners off');
   }
 
