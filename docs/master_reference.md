@@ -390,3 +390,42 @@ stateDiagram-v2
        - `verify_turn_off_seq2_all_off.png`
 
 
+
+### 2026-11-23: Pancakes Running Overview Screen (pancakesPreheat / Figma 3299:24163) Dual Turn-Off & Arbitrary Sequence Support
+- **Issue**:
+  - In user testing scenarios where Rear Left (Knob 2) is running at 500°F (or target temperature) and Front Left (Knob 1) is running in Pancakes Precision Cooking (400°F):
+  - When the participant completes Guided Cooking and returns to the dual-burner overview screen (`pancakesPreheat` / Figma `3299:24163`), turning off the Rear Left burner (Knob 2) first did not reflect any visual changes on the screen.
+- **Root Cause**:
+  1. Screen background asset `assets/task3c/pancakes/3299_24045_clean.png` (1024x384) had the Rear Left active burner card with text "375°F" permanently baked into pixel coordinates `(110, 60, 450, 205)`.
+  2. `updateT3BurnerFromKnob()` did not intercept turn-off events specifically for `t3Stage === "pancakesPreheat"` when `index === 2`, leaving the baked active card unchanged.
+  3. `isAnyKnobOrBurnerActive()` did not account for `pancakesPreheat` when checking if either knob was on, causing potential mismatch in Cooktop Hot indicator state.
+  4. Back navigation buttons (`#t3BtnBackFromPancakesPreheat`, `#navCooktopBtn`, `#navHomeBtn`) incorrectly routed backwards into doneness selection (`pancakesDoneness`) instead of returning cleanly to the burner overview.
+- **Resolution**:
+  1. **Clean Overlay Asset**:
+     - Created `assets/task3c/pancakes/pancakes_burner_rl_off_clean.png` (340x145) directly cropped from `task3a-start-burners.png` at `(110, 60, 450, 205)` containing the wood/rice surface texture and the circular OFF burner badge for Rear Left.
+     - Added `#t3PancakesBurnerOffRL` containing this image into `#t3ScreenPancakesPreheat`. Positioned at `left: 20px; top: 60px; width: 340px; height: 145px; z-index: 15; pointer-events: none;`.
+     - Added dynamic target temperature overlay `#t3PancakesRLTempDisplay` (`left: 90px; top: 106px; width: 125px; height: 40px; z-index: 12;`) with `#t3PancakesRLTemp` to dynamically overlay the baked 375°F with the actual target temperature (e.g. 500°F).
+  2. **Dual-Knob Turn-Off Handler in `updateT3BurnerFromKnob()`**:
+     - For `t3Stage === "pancakesPreheat"` when `index === 2`:
+       - If `isOff`: marks level `"off"`, shows `#t3PancakesBurnerOffRL`, hides `#t3PancakesRLTempDisplay`, plays `playSound("toggleOff")`.
+       - Checks if Knob 1 is also off: if both are off, resets active PRC state and transitions to `3-start`.
+       - If `isPRC`: hides `#t3PancakesBurnerOffRL`, shows `#t3PancakesRLTempDisplay` with `${rlTemp}°F`.
+     - In `showT3Screen("pancakesPreheat")`: checks `knobsState[1]` and initializes the overlay and dynamic temp visibility accordingly.
+     - In `isAnyKnobOrBurnerActive()`: added explicit check for `t3Stage === "pancakesPreheat"` returning `k1On || k2On` so Cooktop Hot stays ON as long as either burner is active.
+     - Updated `isRearLeftActive` checks across `app.js` to ensure `currentT3BurnerLevels[2] !== "off"`.
+  3. **Back Navigation & Rail Button Cleanup**:
+     - Updated `#t3BtnBackFromPancakesPreheat`, `onNavReturn`, and `#navHomeBtn` from `pancakesPreheat` to route to `burnerStatus` (if Rear Left active) or `start`, preventing backwards jump into configuration wizard screens.
+  4. **CDP Verification Results**:
+     - **Sequence A (Rear Left off first)**: Knob 2 to 0° -> Rear Left OFF overlay shown immediately, Front Left Pancakes still running at 400°F, Cooktop Hot remains ON. Knob 1 to 0° -> transitions to `start`, all burners OFF, Cooktop Hot turns OFF.
+     - **Sequence B (Front Left off first)**: Knob 1 to 0° -> Front Left turns off, Rear Left remains running at 500°F, Cooktop Hot remains ON. Knob 2 to 0° -> transitions to `start`, all burners OFF, Cooktop Hot turns OFF.
+     - **Sequence C (Enjoy Modal Done flow)**: Enjoy modal -> "Done" tapped -> lands on `pancakesPreheat` -> turn off either burner first -> works seamlessly.
+     - Screenshots captured and verified:
+       - `verify_both_burners_running_pancakes.png`
+       - `verify_seqA_rear_off_first.png`
+       - `verify_seqA_all_off.png`
+       - `verify_seqB_front_off_first.png`
+       - `verify_seqB_all_off.png`
+       - `verify_enjoy_modal_visible.png`
+       - `verify_after_enjoy_done_on_burner_screen.png`
+       - `verify_enjoy_flow_rl_off_first.png`
+       - `verify_enjoy_flow_all_off.png`

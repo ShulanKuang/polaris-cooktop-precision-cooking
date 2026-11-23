@@ -9,7 +9,7 @@
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
   <title>Polaris Cooktop Precision Cooking Prototype</title>
-  <link rel="stylesheet" href="./styles.css?v=20261123-enjoy-modal-chime">
+  <link rel="stylesheet" href="./styles.css?v=20261123-pancakes-dual-off">
 </head>
 <body>
   <div class="test-environment">
@@ -1826,8 +1826,18 @@
             <div class="t3-screen" id="t3ScreenPancakesPreheat" hidden>
               <img class="t3-screen-bg" src="./assets/task3c/pancakes/3299_24045_clean.png" alt="Pancakes Preheating">
               <!-- Back button (< Burners) -->
-              <button type="button" class="t3-back-btn" id="t3BtnBackFromPancakesPreheat" aria-label="Back to Pancakes"></button>
+              <button type="button" class="t3-back-btn" id="t3BtnBackFromPancakesPreheat" aria-label="Back to Burners"></button>
               
+              <!-- Rear Left Burner OFF Overlay (shown when Knob 2 is turned off) -->
+              <div class="t3-pancakes-burner-off-rl" id="t3PancakesBurnerOffRL" hidden aria-hidden="true">
+                <img src="./assets/task3c/pancakes/pancakes_burner_rl_off_clean.png" alt="" class="t3-pancakes-burner-off-img">
+              </div>
+
+              <!-- Rear Left Dynamic Target Temperature (replaces baked 375°F with actual target temp e.g. 500°F) -->
+              <div class="t3-pancakes-rl-temp-display" id="t3PancakesRLTempDisplay">
+                <span class="t3-pancakes-rl-temp-val" id="t3PancakesRLTemp">500°F</span>
+              </div>
+
               <!-- Pancakes Burner Tile (Front Left) -->
               <div class="t3-pancakes-burner-tile" id="t3PancakesBurnerTile">
                 <!-- Tile Body / Edit Hotspot (Pancakes, Temp, Preheat Subtitle) -->
@@ -2201,6 +2211,6 @@
     </footer>
   </div>
 
-  <script src="./app.js?v=20261123-knob-turn-off-sequence"></script>
+  <script src="./app.js?v=20261123-pancakes-dual-off"></script>
 </body>
 </html>
