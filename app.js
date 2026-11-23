@@ -1842,6 +1842,12 @@
       if (els.t3TileLiveTemp) {
         els.t3TileLiveTemp.textContent = `${targetTemp}°F`;
       }
+      // Returning to Burner Status (e.g. after Pancakes guided cooking): Rear Left is already at target,
+      // so show the 2-row complete card (Temperature / 500°F) and hide the stale "Preheat to" line.
+      // startT3Preheat() removes this class again right after calling showT3Screen for a fresh preheat.
+      if (els.t3BurnerTextTile) {
+        els.t3BurnerTextTile.classList.add("is-complete");
+      }
       clearT3Timers();
 
       // On Burner Status (Figma 2310:12162): Rear Left is running with tStartActiveBurner1.
