@@ -1957,6 +1957,24 @@
 
     updateCooktopActiveState();
     updateScreenBadge(stage);
+    updatePancakesLockState();
+  }
+
+  // Once the Pancakes burner has started preheating (pancakesPreheat overview, incl. after guided
+  // cooking), its settings are locked: Back / Home / Cooktop in the nav rail and the in-screen back,
+  // tile and edit hotspots do nothing. The only way to change it is to turn the knob OFF and start over.
+  function isPancakesLocked() {
+    return state.currentTask === 3 && t3Stage === "pancakesPreheat";
+  }
+  function updatePancakesLockState() {
+    const locked = isPancakesLocked();
+    ["navBackBtn", "navCooktopBtn", "navHomeBtn"].forEach(id => {
+      const b = document.getElementById(id);
+      if (b) {
+        b.classList.toggle("is-disabled", locked);
+        b.setAttribute("aria-disabled", locked ? "true" : "false");
+      }
+    });
   }
 
   function resetT3BurnerToOff(i) {
@@ -7140,6 +7158,7 @@
     if (els.t3BtnBackFromPancakesPreheat) {
       els.t3BtnBackFromPancakesPreheat.addEventListener("click", (e) => {
         e.stopPropagation();
+        if (isPancakesLocked()) return;
         playSound("touch");
         clearT3Timers();
         const isRearLeftActive = Boolean(
@@ -7157,6 +7176,7 @@
       els.t3BtnEditPancakesPreheat.addEventListener("click", (e) => {
         if (e.target.closest("#t3PancakesChefBtn")) return;
         e.stopPropagation();
+        if (isPancakesLocked()) return;
         playSound("touch");
         clearT3Timers();
         showT3Screen(lastPancakesStage || "pancakesDoneness");
@@ -7166,6 +7186,7 @@
       els.t3PancakesBurnerTile.addEventListener("click", (e) => {
         if (e.target.closest("#t3PancakesChefBtn")) return;
         e.stopPropagation();
+        if (isPancakesLocked()) return;
         playSound("touch");
         clearT3Timers();
         showT3Screen(lastPancakesStage || "pancakesDoneness");
@@ -7413,6 +7434,7 @@
 
     const onNavReturn = (e) => {
       if (e) e.preventDefault();
+      if (isPancakesLocked()) return; // Pancakes preheating: settings locked, knob OFF is the only way out
       t3NavSeq++;
       playSound("touch");
       if (state.currentTask === 3 && t3Stage !== "start") {
