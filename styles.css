@@ -319,6 +319,13 @@ input,
 
 .toolbar-left {
   display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 16px;
+}
+
+.toolbar-left-text {
+  display: flex;
   flex-direction: column;
   gap: 2px;
 }
@@ -7297,9 +7304,28 @@ input,
 /* ======================================================== */
 /* TEST MODE: hide all researcher UI, keep HMI screen + knobs */
 /* ======================================================== */
+.test-mode-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  height: 40px;
+  padding: 0 18px;
+  border-radius: 10px;
+  border: 1px solid #d6006e;
+  background: rgba(214, 0, 110, 0.18);
+  color: #ffffff;
+  font-family: var(--font-display);
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+  cursor: pointer;
+  white-space: nowrap;
+  touch-action: manipulation;
+}
+
+.test-mode-btn:active,
 .test-mode-btn.is-active {
   background: #d6006e;
-  color: #ffffff;
 }
 
 body.is-test-mode .researcher-toolbar,

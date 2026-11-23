@@ -9,15 +9,23 @@
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
   <title>Polaris Cooktop Precision Cooking Prototype</title>
-  <link rel="stylesheet" href="./styles.css?v=20261123-162809">
+  <link rel="stylesheet" href="./styles.css?v=20261123-163057">
 </head>
 <body>
   <div class="test-environment">
     <!-- RESEARCHER CONTROLS (OUTSIDE 1024x384 MAIN SCREEN) -->
     <header class="researcher-toolbar" aria-label="Researcher testing control bar">
       <div class="toolbar-left">
-        <span class="researcher-tag">RESEARCHER CONTROLS</span>
-        <span class="device-spec">Polaris ROUX 6.75" Screen [1024 × 384]</span>
+        <div class="toolbar-left-text">
+          <span class="researcher-tag">RESEARCHER CONTROLS</span>
+          <span class="device-spec">Polaris ROUX 6.75" Screen [1024 × 384]</span>
+        </div>
+        <!-- TEST MODE: hides all researcher UI, leaving only the HMI screen + knobs.
+             Exit: triple-tap the top-right corner of the page (or press Esc). -->
+        <button type="button" class="test-mode-btn" id="btnTestMode" title="Hide researcher controls for participant sessions">
+          <span class="test-mode-icon">🎬</span>
+          <span class="test-mode-label">Test Mode</span>
+        </button>
       </div>
 
       <div class="toolbar-center">
@@ -39,12 +47,6 @@
       </div>
 
       <div class="toolbar-right">
-        <!-- TEST MODE: hides all researcher UI, leaving only the HMI screen + knobs.
-             Exit: triple-tap the top-right corner of the page (or press Esc). -->
-        <button type="button" class="scale-btn test-mode-btn" id="btnTestMode" title="Hide researcher controls for participant sessions">
-          <span class="scale-icon">🎬</span>
-          <span class="scale-label">Test Mode</span>
-        </button>
         <div class="scale-switcher" role="group" aria-label="Screen Scale">
           <button type="button" class="scale-btn is-active" id="btnScalePhysical" data-scale="0.8146" title="Exact 160.5mm x 60.2mm on iPad Pro 13">
             <span class="scale-icon">📏</span>
@@ -2222,6 +2224,6 @@
     <div class="test-mode-hint" id="testModeHint" aria-live="polite"></div>
   </div>
 
-  <script src="./app.js?v=20261123-162809"></script>
+  <script src="./app.js?v=20261123-163057"></script>
 </body>
 </html>
