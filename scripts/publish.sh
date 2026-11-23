@@ -40,6 +40,20 @@ fi
 
 # 3. Commit + push to main (GitHub Pages builds from main /)
 git add -A
+
+# Images/fonts/sounds edited in place keep their filename, so iPad Safari keeps its cached copy.
+# Give every modified asset a fresh ?v= tag wherever index.html / styles.css / app.js reference it.
+git fetch -q origin main || true
+CHANGED_ASSETS="$(git diff --cached --name-only --diff-filter=M origin/main -- assets fonts || true)"
+if [ -n "$CHANGED_ASSETS" ]; then
+  while IFS= read -r asset; do
+    [ -z "$asset" ] && continue
+    ASSET="$asset" VER="$VER" perl -pi -e 's/(\Q$ENV{ASSET}\E)(\?v=[^"\x27)\s]*)?(?=["\x27)\s])/$1?v=$ENV{VER}/g' index.html styles.css app.js
+    echo "Cache tag -> $asset"
+  done <<< "$CHANGED_ASSETS"
+  git add index.html styles.css app.js
+fi
+
 if git diff --cached --quiet; then
   echo "Nothing to commit."
 else
