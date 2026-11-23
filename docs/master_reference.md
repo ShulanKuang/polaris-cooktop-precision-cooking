@@ -28,7 +28,7 @@
 | **Chef Hat Launch Button** | [Node `3345:37922`](https://www.figma.com/design/9Pcrjaycs7PhYgxEaGC9Fj/Polaris-Prototype?node-id=3345-37922) & `3320:34573` | Trigger icon on Pancakes tile (active in preheating & preheated) |
 | **Disabled Action Button** | [Node `3321:34971`](https://www.figma.com/design/9Pcrjaycs7PhYgxEaGC9Fj/Polaris-Prototype?node-id=3321-34971) | `rgba(255, 255, 255, 0.45)` text on `#2a2b30` dark background |
 | **Loop Modal ("Ready for another?")** | [Node `3330:37455`](https://www.figma.com/design/9Pcrjaycs7PhYgxEaGC9Fj/Polaris-Prototype?node-id=3330-37455) | 625px card, centered at $x = 557\text{px}$ in 934px content area |
-| **Completion Modal ("Enjoy!")** | [Node `3451:25661`](https://www.figma.com/design/9Pcrjaycs7PhYgxEaGC9Fj/Polaris-Prototype?node-id=3451-25661) | 625px card, centered at $x = 557\text{px}$; directs knob turn-off |
+| **Completion Modal ("Enjoy!")** | [Node `3451:25661` & `3451:25773`](https://www.figma.com/design/9Pcrjaycs7PhYgxEaGC9Fj/Polaris-Prototype?node-id=3451-25773&t=fbWvFYuwgbyAF8RH-11) | 625px card, centered at $x = 557\text{px}$; 266px height with 33px balanced bottom spacing |
 | **Active Burner Running Screen** | [Node `3299:24163`](https://www.figma.com/design/9Pcrjaycs7PhYgxEaGC9Fj/Polaris-Prototype?node-id=3299-24163) | Destination when tapping "Done" on Enjoy modal |
 | **Cooktop Hot Status Indicator** | [Node `2323:15134`](https://www.figma.com/design/9Pcrjaycs7PhYgxEaGC9Fj/Polaris-Prototype?node-id=2323-15134) & `2315:14060` | $124 \times 23\text{px}$ red pill, exactly **12px to the left of Beta icon** |
 | **Temperature Landing Screen** | `Task3B-PCTemperature` | Default landing temperature set to **350°F** |
@@ -269,4 +269,58 @@ stateDiagram-v2
           - `#t3ScreenPancakes` (Doneness view): pagination `display: none`, drawer `z-index: 100`, handle `z-index: 101`, right pane `z-index: 20`.
           - `#t3ScreenPancakes` (Cookware view): pagination `display: none`, drawer `z-index: 100`, right pane `z-index: 20`, handle bar cleanly over "Stainless Steel" card.
           - High-resolution visual screenshots saved: `verify_cookware_no_pagination.png`, `verify_beef_doneness_no_pagination.png`, `verify_pancakes_doneness_panel_above.png`, `verify_pancakes_cookware_panel_above.png`.
+
+### 22. Enjoy Modal Done Button Bottom Spacing & Guided Cooking Timer End Sound Notifications (November 23, 2026)
+- **Figma Reference**:
+  - [Node `3451:25773` & `3451:25661`](https://www.figma.com/design/9Pcrjaycs7PhYgxEaGC9Fj/Polaris-Prototype?node-id=3451-25773&t=fbWvFYuwgbyAF8RH-11): Completion Dialog Popup ("Enjoy! Use the knob to turn off the burner.")
+  - [Section `3436:25475` & Nodes `3321:35808`, `3321:36584`](https://www.figma.com/design/9Pcrjaycs7PhYgxEaGC9Fj/Polaris-Prototype?node-id=3436-25475): Step 2 (3-minute timer) and Step 3 (1-minute timer) inside-card countdowns.
+- **Problem Statement**:
+  1. **Done Button Spacing in Enjoy Modal**:
+     - The "Enjoy! Use the knob to turn off the burner." dialog card (`.t3-guided-modal-card.is-done-modal`) previously had `height: 220px; justify-content: center; gap: 28px;`.
+     - With a 2-line heading (font-size 32px, line-height 1.25 -> 80px), 28px gap, and 48px high "Done" button, total content height was 156px.
+     - Inside a 220px card with 32px top padding and 24px bottom padding, flex alignment left only ~8px of clearance between the bottom edge of the Done button and the bottom edge of the card, creating an uncomfortable, cramped visual appearance.
+  2. **Timer End Sound Notifications**:
+     - Guided cooking for Pancakes has two active countdown timers:
+       - **Step 2 (Cook Side 1)**: 3-minute timer ("Pour batter. Cook for 3 mins.").
+       - **Step 3 (Cook Side 2)**: 1-minute timer ("Flip pancake. Cook for 1 minute.").
+     - Previously, the timer only triggered a generic UI click (`playSound("toggleOn")`), with no audible appliance notification chime to alert the user that the timer had finished.
+     - In addition, Step 3 had static text copied from a mid-countdown mockup (`0:35:00` / 35s), rather than starting at 1 minute (`0:59:00` / 60s) like the 3-minute timer (`2:59:00` / 180s).
+- **Resolution**:
+  1. **Enjoy Modal Card Proportions & Balanced Spacing**:
+     - Standardized `.t3-guided-modal-card.is-done-modal` to `height: 266px;` (matching the standard Polaris modal card height).
+     - Configured `padding: 36px 32px 36px 32px;`, `justify-content: center;`, `align-items: center;`, and `gap: 32px;`.
+     - Resulting geometry (verified via Chrome CDP):
+       - Card height: 266px (216.68px in scaled viewport).
+       - Top space from card edge to heading text: **33px**.
+       - Middle gap between heading text and Done button: **32px**.
+       - Bottom space from Done button to card bottom edge: **33px** (increased from 8px to 33px!).
+       - The Done button now sits gracefully with equal, balanced breathing room above and below.
+  2. **1-Minute Timer Initialization & Consistency**:
+     - Updated Step 3 timer in `index.html` and `app.js` (`setGuidedStep`) to initialize to `0:59:00` (1-minute countdown, matching Step 2's `2:59:00`).
+     - Set `totalSeconds = 59` for Step 3 in `startGuidedTimer` so it counts down properly from 1 minute.
+  3. **Appliance Chime Sound Notification (`sounds/TimerChime.wav` & Web Audio API)**:
+     - Generated high-fidelity 44.1kHz 16-bit PCM kitchen appliance chime `./sounds/TimerChime.wav` featuring a pleasant, melodic two-tone ascending chime sequence:
+       - Pair 1: A5 (880 Hz) -> D6 (1174.66 Hz) with smooth bell harmonics (octave & overtone) and exponential decay.
+       - Pause: 150ms.
+       - Pair 2: A5 (880 Hz) -> D6 (1174.66 Hz) with lingering resonance.
+     - Registered `timerEnd: "./sounds/TimerChime.wav"` in `SOUND_FILES`, automatically preloading and decoding into Web Audio buffer cache.
+     - Implemented `playTimerNotificationSound()` with direct Web Audio API synthesized synthesis fallback for 100% offline and immediate latency-free playback.
+     - Wired `playTimerNotificationSound()` to trigger automatically when `progress >= 1.0` (when timer reaches 0) for both:
+       - Step 2 (3-minute timer completion).
+       - Step 3 (1-minute timer completion).
+  4. **Cache Busting**:
+     - Updated `styles.css?v=20261123-enjoy-modal-chime` and `app.js?v=20261123-enjoy-modal-chime` in `index.html`.
+  5. **Verification via Chrome CDP**:
+     - Automated test script confirmed:
+       - Modal card measurements: top distance = 33px, middle gap = 32px, bottom distance = 33px.
+       - Step 2 timer countdown from `2:59:00` to completion triggers `playTimerNotificationSound()` at $t = 0$.
+       - Step 3 timer countdown from `0:59:00` to completion triggers `playTimerNotificationSound()` at $t = 0$.
+       - Clicking "Done" on Enjoy modal dismisses cleanly and transitions back to the preheat-reached burner state.
+     - Captured and archived screenshots:
+       - `verify_enjoy_modal_spacing.png`
+       - `verify_enjoy_modal_dismissed.png`
+       - `verify_step2_timer_running.png`
+       - `verify_step2_timer_completed.png`
+       - `verify_step3_timer_running.png`
+       - `verify_step3_timer_completed.png`
 

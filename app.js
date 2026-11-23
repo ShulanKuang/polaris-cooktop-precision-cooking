@@ -8,6 +8,7 @@
     toggleOn: "./sounds/ToggleOn.wav",
     toggleOff: "./sounds/ToggleOff.wav",
     cancel: "./sounds/Cancel.wav",
+    timerEnd: "./sounds/TimerChime.wav",
   };
 
   const audioCache = {};
@@ -146,6 +147,55 @@
       }
     } catch (e) {}
   }
+
+  function playTimerNotificationSound() {
+    window.__timerChimeCount = (window.__timerChimeCount || 0) + 1;
+    window.__lastTimerChimePlayedAt = Date.now();
+    initAudioContext();
+    if (audioCtx && audioBuffers["timerEnd"]) {
+      try {
+        const source = audioCtx.createBufferSource();
+        source.buffer = audioBuffers["timerEnd"];
+        source.connect(audioCtx.destination);
+        source.start(0);
+        return;
+      } catch (e) {}
+    }
+    try {
+      const sound = audioCache["timerEnd"];
+      if (sound) {
+        sound.currentTime = 0;
+        sound.play().catch(() => {});
+        return;
+      }
+    } catch (e) {}
+
+    // Web Audio API synthesized dual-harmonic chime fallback
+    try {
+      if (!audioCtx) return;
+      const now = (audioCtx.state === "running") ? audioCtx.currentTime : 0;
+      const notes = [
+        { t: 0.00, f: 880.00, dur: 0.25, gain: 0.25 },
+        { t: 0.18, f: 1174.66, dur: 0.40, gain: 0.30 },
+        { t: 0.60, f: 880.00, dur: 0.25, gain: 0.25 },
+        { t: 0.78, f: 1174.66, dur: 0.60, gain: 0.32 },
+      ];
+      notes.forEach(({ t, f, dur, gain }) => {
+        const osc = audioCtx.createOscillator();
+        const g = audioCtx.createGain();
+        osc.type = "sine";
+        osc.frequency.setValueAtTime(f, now + t);
+        g.gain.setValueAtTime(0.0001, now + t);
+        g.gain.linearRampToValueAtTime(gain, now + t + 0.006);
+        g.gain.exponentialRampToValueAtTime(0.0001, now + t + dur);
+        osc.connect(g);
+        g.connect(audioCtx.destination);
+        osc.start(now + t);
+        osc.stop(now + t + dur);
+      });
+    } catch (e) {}
+  }
+  window.playTimerNotificationSound = playTimerNotificationSound;
 
   // STATE MANAGEMENT
   const state = {
@@ -3540,7 +3590,7 @@
         els.t3GuidedStartTimer3.hidden = false;
         els.t3GuidedCard3Text.textContent = "Flip pancake. Cook for 1 minute. Then press “Next”.";
         if (els.t3GuidedTimerFill3) els.t3GuidedTimerFill3.style.width = "0%";
-        if (els.t3GuidedTimerVal3) els.t3GuidedTimerVal3.textContent = "0:35:00";
+        if (els.t3GuidedTimerVal3) els.t3GuidedTimerVal3.textContent = "0:59:00";
       }
     }
 
@@ -3611,7 +3661,7 @@
     setGuidedStep(step, true);
     playSound("touch");
 
-    const totalSeconds = (step === 2) ? 179 : 35; // Step 2: 2:59, Step 3: 0:35
+    const totalSeconds = (step === 2) ? 179 : 59; // Step 2: 3 min (2:59), Step 3: 1 min (0:59)
     const durationMs = (step === 2) ? 4500 : 3500; // prototype speed
     const startTime = Date.now();
 
@@ -3634,7 +3684,7 @@
 
       if (progress >= 1.0) {
         clearT3GuidedTimers();
-        playSound("toggleOn");
+        playTimerNotificationSound();
         setGuidedStep(step, false);
       }
     }, 50);

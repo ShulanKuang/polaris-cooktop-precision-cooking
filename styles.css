@@ -7147,11 +7147,13 @@ input,
   box-shadow: 0 12px 36px rgba(0, 0, 0, 0.6);
 }
 
-/* Done Modal (Figma 3451:25661) */
+/* Done Modal (Figma 3451:25661 / 3451:25773) */
 .t3-guided-modal-card.is-done-modal {
-  height: 220px;
+  height: 266px;
+  padding: 36px 32px 36px 32px;
   justify-content: center;
-  gap: 28px;
+  align-items: center;
+  gap: 32px;
 }
 
 .t3-guided-modal-heading {
