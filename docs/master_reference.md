@@ -229,4 +229,44 @@ stateDiagram-v2
      6. **Universal Roller Reset (`getT3Rollers`)**: Refactored `resetT3BurnerToOff` to iterate through all matching DOM rollers across start and status screens, cleanly stripping all active, prc, arc, and confirmed classes and resetting the strip translateY to base offset.
      7. **All Knobs Off Cleanup**: Turning Knob 2 to OFF returns cleanly to `3-start` with all burners shut off, Cooktop Hot indicator removed, and activity bar deactivated.
      8. **Cache Buster**: Bumped `index.html` script tag to `?v=20261120-prc-arc-fix`.
+21. **Pagination Removal on Doneness & Cookware Screens + Strict Z-Index Hierarchy (Left Panel & Caret Buttons Strictly Above All Selection Cards)**:
+   - **User Request**: "tkae out the paginate on select doneness screen and cookware slection screen. and the left panel including the caret button should above all slection cards, shouldn't be covered"
+   - **Root Cause Analysis**:
+     1. **Pagination Dots Across Selection Screens**:
+        - Standalone Cookware Selection (`#t3ScreenSelectCookware`): Included `#t3CookwarePagination` (`.t3-cookware-pagination`) with 3 dots between the carousel viewport and the "Select" button.
+        - Beef Doneness Screens (`#t3ScreenBeefDoneness` and `#t3ScreenBeefCook`): Included `#t3DonenessPagination` (`.t3-doneness-pagination`) and `#t3BeefDonenessDots` (`.t3-beef-carousel-dots`) with 5 dots positioned between the steak cards and the START button.
+        - Pancakes Flow Screens (`#t3ScreenPancakes`): Both Doneness view (`#t3PancakesDonenessDots`) and Cookware view (`#t3PancakesCookwareDots`) rendered `.t3-pancakes-pagination` dots above their respective START buttons.
+     2. **Layering Inversion & Clipping on Left Navigation Drawers**:
+        - On Pancakes Mode (`#t3ScreenPancakes`):
+          - The left collapsible drawer (`.t3-drawer-collapsible`) contains the pinned header with the caret back button (`.t3-drawer-back-btn` with `< Burners | Pancakes`), 4 option tiles, and the drawer handle (`.t3-drawer-handle` at width 37px spanning $x = 353\dots 390\text{px}$).
+          - Previously, `.t3-pancakes-right-pane` had `z-index: 50;` while `.t3-drawer-collapsible` had `z-index: 25;`. In the $x = 353\dots 390\text{px}$ overlap zone, selection cards (such as "Stainless Steel" or "Cast Iron") painted directly over the drawer handle bar and caret button.
+          - During touch scrolling, swiping, or dragging, active/adjacent cards clipped or covered the left panel's handle and caret back button.
+        - On Select Cookware Screen (`#t3ScreenSelectCookware`):
+          - `.t3-back-btn` (`#t3BtnBackFromCookware`) had `z-index: 30;` overriding its earlier `z-index: 102;`, placing it underneath `.t3-cookware-main-content` (`z-index: 50;`) and `.t3-cookware-carousel-viewport` (`z-index: 50;`).
+        - On Beef Screens (`#t3ScreenBeefDoneness`, `#t3ScreenBeefType`, `#t3ScreenBeefThickness`):
+          - `.t3-drawer-collapsible` had `z-index: 25;`, risking card overlap against `.t3-beef-doneness-main`.
+   - **Resolution**:
+     1. **Complete Pagination Removal**:
+        - Applied `display: none !important;` to `.t3-cookware-pagination`, `.t3-doneness-pagination`, `.t3-pancakes-pagination`, and `.t3-beef-carousel-dots`.
+        - Verified that all existing JavaScript dot update routines (`updatePaginationDots`, `updateDots`, scroll snap listeners) safely handle hidden dots without throwing exceptions.
+        - Balanced vertical spacing:
+          - Increased `.t3-doneness-footer` `margin-top` from `10px` to `22px` to center the START and Info toggle buttons comfortably in the 384px height.
+          - Added `margin-top: 14px;` to `.t3-pancakes-start-btn` to preserve optical centering in both Pancakes Doneness and Cookware views.
+     2. **Strict Z-Index Hierarchy (Left Panel & Caret Buttons on Top)**:
+        - **Collapsible Left Drawer**: Elevated `.t3-drawer-collapsible` to `z-index: 100;`.
+        - **Opaque Backdrop**: Updated `.t3-drawer-content` background to `rgba(22, 23, 26, 0.98); backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);`.
+        - **Pinned Header & Caret Back Button**: Set `.t3-drawer-pinned-header` to `z-index: 120;` and `.t3-drawer-back-btn` to `position: relative; z-index: 120;`.
+        - **Drawer Right Handle Bar**: Elevated `.t3-drawer-handle` to `z-index: 101;`, guaranteeing that cards passing beneath ($x = 353\dots 390\text{px}$) slide cleanly behind the handle and its `<` caret.
+        - **Back Button Global Rule**: Enforced `.t3-back-btn { z-index: 120 !important; }` across all screens.
+        - **Side Drawer Navigation**: Elevated `.pc-side-drawer-nav` to `z-index: 100;`.
+        - **Right Panes & Carousels Layered Below**: Reduced `.t3-pancakes-right-pane`, `.t3-cookware-main-content`, `.t3-cookware-carousel-viewport`, `.t3-beef-doneness-main`, `.t3-beef-type-main`, and `.t3-beef-thickness-main` to `z-index: 20;`.
+     3. **Cache Buster**:
+        - Bumped stylesheet link in `index.html` to `?v=20261123-no-pagination-panel-above`.
+     4. **Verification via Chrome CDP**:
+        - Automated script `scripts/verify_pagination_and_panel_layering.mjs` verified:
+          - `#t3ScreenSelectCookware`: pagination `display: none`, back button `z-index: 120`, nav drawer `z-index: 100`, main content `z-index: 20`.
+          - `#t3ScreenBeefDoneness`: pagination `display: none`, drawer `z-index: 100`, pinned header `z-index: 120`, back button `z-index: 120`, handle `z-index: 101`, main content `z-index: 20`.
+          - `#t3ScreenPancakes` (Doneness view): pagination `display: none`, drawer `z-index: 100`, handle `z-index: 101`, right pane `z-index: 20`.
+          - `#t3ScreenPancakes` (Cookware view): pagination `display: none`, drawer `z-index: 100`, right pane `z-index: 20`, handle bar cleanly over "Stainless Steel" card.
+          - High-resolution visual screenshots saved: `verify_cookware_no_pagination.png`, `verify_beef_doneness_no_pagination.png`, `verify_pancakes_doneness_panel_above.png`, `verify_pancakes_cookware_panel_above.png`.
 
