@@ -7487,6 +7487,68 @@
     if (els.btnScaleNative) {
       els.btnScaleNative.addEventListener("click", () => setAppScale(1.0, "native"));
     }
+
+    // TEST MODE: hide researcher toolbar, screen jumper and footer; keep only HMI screen + knobs.
+    // Turn on: Test Mode button (or open the link with ?test=1). Stays on after reload.
+    // Turn off: triple-tap the top-right corner of the page, or press Esc on a keyboard.
+    (function setupTestMode() {
+      const btn = document.getElementById("btnTestMode");
+      const exitHotspot = document.getElementById("testModeExitHotspot");
+      const hint = document.getElementById("testModeHint");
+      let hintTimer = null;
+
+      function showHint(text) {
+        if (!hint) return;
+        hint.textContent = text;
+        hint.classList.add("is-visible");
+        clearTimeout(hintTimer);
+        hintTimer = setTimeout(() => hint.classList.remove("is-visible"), 2500);
+      }
+
+      function setTestMode(on, announce = true) {
+        document.body.classList.toggle("is-test-mode", on);
+        if (btn) btn.classList.toggle("is-active", on);
+        try { localStorage.setItem("polaris_test_mode", on ? "1" : "0"); } catch (e) {}
+        if (announce) {
+          showHint(on ? "Test mode on · triple-tap top-right corner to exit" : "Test mode off");
+        }
+      }
+      window.setTestMode = setTestMode;
+
+      if (btn) {
+        btn.addEventListener("click", () => setTestMode(!document.body.classList.contains("is-test-mode")));
+      }
+
+      if (exitHotspot) {
+        let taps = [];
+        exitHotspot.addEventListener("pointerdown", (e) => {
+          e.preventDefault();
+          const now = Date.now();
+          taps = taps.filter(t => now - t < 1200);
+          taps.push(now);
+          if (taps.length >= 3) {
+            taps = [];
+            setTestMode(false);
+          }
+        });
+      }
+
+      document.addEventListener("keydown", (e) => {
+        if (e.key === "Escape" && document.body.classList.contains("is-test-mode")) {
+          setTestMode(false);
+        }
+      });
+
+      // Initial state: ?test=1 / ?test=0 in the URL wins, otherwise the last saved choice.
+      let initial = false;
+      const param = new URLSearchParams(location.search).get("test");
+      if (param === "1" || param === "0") {
+        initial = param === "1";
+      } else {
+        try { initial = localStorage.getItem("polaris_test_mode") === "1"; } catch (e) {}
+      }
+      setTestMode(initial, false);
+    })();
     // Screen Jumper & Screen Badge Copy
     if (els.screenJumperSelect) {
       els.screenJumperSelect.addEventListener("change", (e) => {

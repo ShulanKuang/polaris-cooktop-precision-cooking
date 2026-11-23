@@ -9,7 +9,7 @@
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
   <title>Polaris Cooktop Precision Cooking Prototype</title>
-  <link rel="stylesheet" href="./styles.css?v=20261123-161334">
+  <link rel="stylesheet" href="./styles.css?v=20261123-162809">
 </head>
 <body>
   <div class="test-environment">
@@ -39,6 +39,12 @@
       </div>
 
       <div class="toolbar-right">
+        <!-- TEST MODE: hides all researcher UI, leaving only the HMI screen + knobs.
+             Exit: triple-tap the top-right corner of the page (or press Esc). -->
+        <button type="button" class="scale-btn test-mode-btn" id="btnTestMode" title="Hide researcher controls for participant sessions">
+          <span class="scale-icon">🎬</span>
+          <span class="scale-label">Test Mode</span>
+        </button>
         <div class="scale-switcher" role="group" aria-label="Screen Scale">
           <button type="button" class="scale-btn is-active" id="btnScalePhysical" data-scale="0.8146" title="Exact 160.5mm x 60.2mm on iPad Pro 13">
             <span class="scale-icon">📏</span>
@@ -2210,8 +2216,12 @@
     <footer class="ipad-footer">
       <span>Polaris Roux Prototype • GE Appliances Cooktop User Study</span>
     </footer>
+
+    <!-- TEST MODE EXIT: invisible top-right corner hotspot (triple-tap to exit) + brief hint toast -->
+    <button type="button" class="test-mode-exit-hotspot" id="testModeExitHotspot" aria-label="Exit test mode (triple-tap)"></button>
+    <div class="test-mode-hint" id="testModeHint" aria-live="polite"></div>
   </div>
 
-  <script src="./app.js?v=20261123-161334"></script>
+  <script src="./app.js?v=20261123-162809"></script>
 </body>
 </html>

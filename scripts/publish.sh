@@ -26,8 +26,8 @@ echo "Cache tag -> v=${VER}"
 
 # 2. Local + iPad server
 if ! lsof -Pi :$PORT -sTCP:LISTEN -t >/dev/null 2>&1; then
-  echo "Starting local server on port $PORT..."
-  nohup python3 -m http.server $PORT --bind 0.0.0.0 -d "$ROOT" >/dev/null 2>&1 &
+  echo "Starting local no-cache server on port $PORT..."
+  nohup python3 "$ROOT/scripts/serve.py" $PORT >/dev/null 2>&1 &
   sleep 1
 fi
 WIFI_IP="$(ipconfig getifaddr en0 2>/dev/null || echo "127.0.0.1")"

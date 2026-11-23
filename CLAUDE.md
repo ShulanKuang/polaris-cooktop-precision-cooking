@@ -10,7 +10,7 @@ The user expects each requested change to show up on all of these right away (or
 
 | Link | Served from |
 |---|---|
-| Local: `http://localhost:8080/?task=3#task3` | `python3 -m http.server 8080 --bind 0.0.0.0` running in **this folder** |
+| Local: `http://localhost:8080/?task=3#task3` | `python3 scripts/serve.py` (no-cache server, port 8080) running in **this folder** |
 | iPad: `http://<Wi-Fi IP>:8080/?task=3#task3` | same local server over Wi-Fi (IP: `ipconfig getifaddr en0`) |
 | Live: https://shulankuang.github.io/polaris-cooktop-precision-cooking/ | GitHub Pages, built from `main` `/` |
 

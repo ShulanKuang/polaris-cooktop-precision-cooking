@@ -7293,3 +7293,62 @@ input,
   width: 140px;
 }
 
+
+/* ======================================================== */
+/* TEST MODE: hide all researcher UI, keep HMI screen + knobs */
+/* ======================================================== */
+.test-mode-btn.is-active {
+  background: #d6006e;
+  color: #ffffff;
+}
+
+body.is-test-mode .researcher-toolbar,
+body.is-test-mode .researcher-subbar,
+body.is-test-mode .ipad-footer {
+  display: none !important;
+}
+
+body.is-test-mode .test-environment {
+  justify-content: center;
+}
+
+.test-mode-exit-hotspot {
+  display: none;
+}
+
+body.is-test-mode .test-mode-exit-hotspot {
+  display: block;
+  position: fixed;
+  top: 0;
+  right: 0;
+  width: 72px;
+  height: 72px;
+  background: transparent;
+  border: none;
+  padding: 0;
+  opacity: 0;
+  z-index: 9999;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.test-mode-hint {
+  position: fixed;
+  top: 16px;
+  left: 50%;
+  transform: translate(-50%, -8px);
+  padding: 8px 16px;
+  border-radius: 999px;
+  background: rgba(30, 32, 38, 0.92);
+  color: #ffffff;
+  font-size: 14px;
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.25s ease, transform 0.25s ease;
+  z-index: 10000;
+}
+
+.test-mode-hint.is-visible {
+  opacity: 1;
+  transform: translate(-50%, 0);
+}
