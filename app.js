@@ -557,7 +557,7 @@
     t3ScreenPancakesPreheat: document.getElementById("t3ScreenPancakesPreheat"),
     t3BtnBackFromPancakesPreheat: document.getElementById("t3BtnBackFromPancakesPreheat"),
     t3PancakesBurnerOffRL: document.getElementById("t3PancakesBurnerOffRL"),
-    t3PancakesRLTempDisplay: document.getElementById("t3PancakesRLTempDisplay"),
+    t3PancakesRLTexts: document.getElementById("t3PancakesRLTexts"),
     t3PancakesRLTemp: document.getElementById("t3PancakesRLTemp"),
     t3PancakesBurnerTile: document.getElementById("t3PancakesBurnerTile"),
     t3PancakesPreheatTemp: document.getElementById("t3PancakesPreheatTemp"),
@@ -1913,8 +1913,8 @@
       if (els.t3PancakesBurnerOffRL) {
         els.t3PancakesBurnerOffRL.hidden = !isKnob2Off;
       }
-      if (els.t3PancakesRLTempDisplay) {
-        els.t3PancakesRLTempDisplay.style.display = isKnob2Off ? "none" : "";
+      if (els.t3PancakesRLTexts) {
+        els.t3PancakesRLTexts.hidden = isKnob2Off;
       }
       if (els.t3PancakesRLTemp) {
         const rlTemp = t3BurnerTargetTemps[2] || state.task3TargetTemp || 500;
@@ -2439,8 +2439,8 @@
           if (els.t3PancakesBurnerOffRL) {
             els.t3PancakesBurnerOffRL.hidden = false;
           }
-          if (els.t3PancakesRLTempDisplay) {
-            els.t3PancakesRLTempDisplay.style.display = "none";
+          if (els.t3PancakesRLTexts) {
+            els.t3PancakesRLTexts.hidden = true;
           }
           playSound("toggleOff");
 
@@ -2461,8 +2461,8 @@
           if (els.t3PancakesBurnerOffRL) {
             els.t3PancakesBurnerOffRL.hidden = true;
           }
-          if (els.t3PancakesRLTempDisplay) {
-            els.t3PancakesRLTempDisplay.style.display = "";
+          if (els.t3PancakesRLTexts) {
+            els.t3PancakesRLTexts.hidden = false;
           }
           if (els.t3PancakesRLTemp) {
             const rlTemp = t3BurnerTargetTemps[2] || state.task3TargetTemp || 500;

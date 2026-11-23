@@ -6421,6 +6421,7 @@ input,
   width: 934px;
   height: 384px;
   overflow: hidden;
+  z-index: 20;
 }
 
 /* Rear Left Burner OFF Overlay on Pancakes Preheat Screen */
@@ -6446,28 +6447,46 @@ input,
   pointer-events: none;
 }
 
-/* Rear Left Dynamic Target Temperature on Pancakes Preheat Screen */
-.t3-pancakes-rl-temp-display {
+/* Rear Left Active Burner Texts on Pancakes Preheat Screen (Figma 3299:24045 / 3299:24163) */
+.t3-pancakes-rl-texts {
   position: absolute;
-  left: 90px;
-  top: 106px;
-  width: 125px;
-  height: 40px;
-  background-color: #313235;
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-  z-index: 12;
+  left: 45.5px;
+  top: 72px;
+  width: 166px;
+  height: 128px;
   pointer-events: none;
+  z-index: 12;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-end;
+  box-sizing: border-box;
 }
 
-.t3-pancakes-rl-temp-val {
-  font-family: var(--font-text, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif);
+.t3-pancakes-rl-texts[hidden] {
+  display: none !important;
+}
+
+.t3-pancakes-rl-title {
+  font-family: "Profile Text", var(--font-display), -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  font-size: 22px;
+  font-weight: 500;
+  line-height: 28px;
+  letter-spacing: -0.2px;
+  color: #ffffff;
+  text-align: right;
+  white-space: nowrap;
+}
+
+.t3-pancakes-rl-temp {
+  font-family: "Profile Text", var(--font-display), -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   font-size: 28px;
   font-weight: 600;
+  line-height: 34px;
+  letter-spacing: 0.5px;
   color: #ffffff;
-  line-height: 1;
-  letter-spacing: -0.5px;
+  text-align: right;
+  white-space: nowrap;
 }
 
 /* Pancakes Burner Tile (Front Left) - Figma 3299:24045 & 3299:24163 */

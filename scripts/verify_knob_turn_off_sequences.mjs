@@ -320,13 +320,13 @@ async function run() {
   let seq3AStep1 = await evaluate(`({
     pancakesPreheatVisible: !document.getElementById('t3ScreenPancakesPreheat').hidden,
     rlOffVisible: !document.getElementById('t3PancakesBurnerOffRL').hidden,
-    rlTempHidden: document.getElementById('t3PancakesRLTempDisplay').style.display === 'none',
+    rlTextsHidden: document.getElementById('t3PancakesRLTexts').hidden,
     k1Level: window.currentT3BurnerLevels[1],
     k2Level: window.currentT3BurnerLevels[2]
   })`);
   console.log('State after Knob 2 turned off first from pancakesPreheat:', seq3AStep1);
 
-  if (!seq3AStep1.pancakesPreheatVisible || !seq3AStep1.rlOffVisible || !seq3AStep1.rlTempHidden) {
+  if (!seq3AStep1.pancakesPreheatVisible || !seq3AStep1.rlOffVisible || !seq3AStep1.rlTextsHidden) {
     throw new Error('Turning off Knob 2 first in pancakesPreheat should show Rear Left OFF overlay and keep Pancakes screen visible');
   }
 
