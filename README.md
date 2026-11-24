@@ -6,20 +6,36 @@ Interactive prototype for the **October 2026 Polaris Cooktop Precision Cooking U
 
 ## 🚀 Live Interactive Prototype Links
 
-Choose any of the following methods to open and test the prototype directly:
+* **🌐 Live link (GitHub Pages — share this one, e.g. with the test moderator)**:
+  https://shulankuang.github.io/polaris-cooktop-precision-cooking/?task=3#task3
+  *Opens straight in Test Mode:* https://shulankuang.github.io/polaris-cooktop-precision-cooking/?task=3&test=1#task3
+  *(Browsers may keep the page for up to 10 minutes — refresh once to get the latest version.)*
 
-* **⚡ [Live Web Tunnel Link (Active Now)](https://e48738366e84c57c-4-53-66-82.serveousercontent.com/?task=3#task3)**  
-  *(Live web mirror hosted directly from this machine for testing anywhere, even outside office Wi-Fi)*
+* **📶 iPad / Lab Wi-Fi link**: `http://<this Mac's Wi-Fi IP>:8080/?task=3#task3` (currently `http://10.35.123.196:8080/?task=3#task3`)
+  *(Zero-latency in-person testing; the iPad must be on the same Wi-Fi and the local server must be running.)*
 
-* **📶 Local iPad / Lab Wi-Fi Link**: `http://10.35.123.196:8080/?task=3#task3`  
-  *(Recommended for zero-latency in-person testing when your iPad is connected to the same Wi-Fi network as this computer)*
-
-* **💻 Direct Local Browser**:  
-  Clone or download this repository, and open [`index.html`](index.html) directly in Safari, Chrome, or Edge. You can also run:
+* **💻 Local link**: `http://localhost:8080/?task=3#task3`
+  Start the local server from the project folder:
   ```bash
-  python3 -m http.server 8080
+  python3 scripts/serve.py
   ```
-  and visit `http://localhost:8080/?task=3#task3`.
+  `scripts/serve.py` serves on port 8080 with **no-cache** headers, so a plain refresh on the laptop or iPad always shows the latest files.
+
+---
+
+## 🔄 Publishing Changes (keeps all three links in sync)
+
+After any change, run:
+```bash
+scripts/publish.sh "fix: <what changed>"
+```
+The script:
+1. Bumps the `?v=` cache tags on `styles.css` and `app.js` in `index.html` (and on any image/font/sound edited in place) so iPad Safari and the home-screen app never show stale files.
+2. Makes sure the local no-cache server is running on port 8080.
+3. Commits and pushes to `main` (GitHub Pages publishes from `main` `/`).
+4. Waits until the live GitHub Pages link serves the new version.
+
+> Antigravity edits made in this folder show up on the local/iPad links right away, but reach the live link only after they are published.
 
 ---
 
@@ -42,6 +58,40 @@ To ensure true-to-life ergonomics, reachability, and touch target sizing during 
 * **Calibrated Scale Ratio**: **0.8146×** (`834.16 CSS px ÷ 1024 px`)
 * **Researcher Controls**: Tap **`📏 Physical 1:1 (160.5mm)`** or **`100% Canvas`** in the top right corner of the toolbar to instantly switch between physical size and full-width presentation.
 * **Vertical Position Stability**: The researcher subbar (`.researcher-subbar`) is locked to an exact fixed height of **52px** across all three tasks, guaranteeing zero vertical shifting or jumping of the appliance screen when switching between tasks.
+
+---
+
+## 🎬 Test Mode (participant sessions)
+
+* Tap **🎬 Test Mode** next to **RESEARCHER CONTROLS** to hide the researcher toolbar, screen badge / Jump bar and footer — only the **HMI screen and knobs** remain.
+* **Exit:** triple-tap the **top-right corner** of the screen (or press **Esc** on a keyboard). A 2.5 s hint shows when Test Mode turns on.
+* Test Mode stays on after a reload. Add `&test=1` to the link to open directly in Test Mode, or `&test=0` to force the researcher controls back.
+
+---
+
+## 🔥 Burner & Navigation Rules (Task 3)
+
+* **Only the physical knobs turn a burner off.** The nav rail **Back / Cooktop / Home** and the on-screen **‹** back buttons just return to the Burners screen; the knob and burner stay on.
+* **Pancakes (Food mode) after START:** the nav rail **Back caret is dimmed and disabled** on the Pancakes burner screen, and **Cooktop** stays on that screen. To change the Pancakes burner, turn its knob **OFF** and start over.
+* **Info tags after START:**
+  * **Temperature-mode tags** (e.g. Rear Left "Temperature 500°F") can be tapped at **any** stage — including while Pancakes is running — to edit the temperature. **UPDATE** saves and returns to the screen you came from; Back returns without changes.
+  * **Food (Pancakes, Steak) and Technique (Caramelize) tags are display-only.**
+  * The Pancakes **chef hat** button always opens step-by-step guided cooking.
+* The side panel title ("Burners | Pancakes", "Cooktop | Beef") is a label only — use the nav rail Back button.
+
+---
+
+## 🔘 Burner Mode Icons
+
+Running burners show the icon of the mode that was selected and started (Figma exports in `assets/burner-modes/`):
+
+| Mode | Figma node | Shown on |
+|---|---|---|
+| Temperature (thermometer + °F) | 3508:26715 | Rear Left burner on Burner Status, Burners start card, Pancakes and Steak burner screens |
+| Food (thermometer + food) | 3508:26692 | Pancakes / Steak burner on their Burners screens and the selected burner in the mini cooktop map (Steak preheating / preheated) |
+| Technique (thermometer + pan) | 3508:26701 | Selected burner in the mini cooktop map (Caramelize preheating / preheated) |
+
+A burner that is only turned on (no mode started yet) keeps the plain thermometer icon. Mode icons hide when that burner is shown OFF.
 
 ---
 
@@ -238,4 +288,5 @@ Task 3 replicates the full physical-to-digital interaction model between the 5 c
 * **Appliance Display Canvas**: Exact 1024 × 384 pixels (ROUX 6.75" display aspect ratio).
 * **Typography**: GE Appliances Profile Display and Profile Text font families loaded via local `@font-face`.
 * **Architecture**: Vanilla HTML5, CSS3, and JavaScript — zero external dependencies, no build steps required.
-* **Cache Busting**: Versioned CSS/JS URLs (e.g. `?v=20261001-manifold-15x`) preventing iOS Safari cache issues.
+* **Cache Busting**: Versioned CSS/JS/asset URLs (e.g. `?v=20261124-092939`), bumped automatically by `scripts/publish.sh`, plus a no-cache local server (`scripts/serve.py`).
+* **Project notes for Claude Code**: see [`CLAUDE.md`](CLAUDE.md); Antigravity notes: [`GEMINI.md`](GEMINI.md).
