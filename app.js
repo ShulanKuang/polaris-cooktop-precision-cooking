@@ -7172,24 +7172,9 @@
         }
       });
     }
-    if (els.t3BtnEditPancakesPreheat) {
-      els.t3BtnEditPancakesPreheat.addEventListener("click", (e) => {
-        if (e.target.closest("#t3PancakesChefBtn")) return;
-        e.stopPropagation();
-        playSound("touch");
-        clearT3Timers();
-        showT3Screen(lastPancakesStage || "pancakesDoneness");
-      });
-    }
-    if (els.t3PancakesBurnerTile) {
-      els.t3PancakesBurnerTile.addEventListener("click", (e) => {
-        if (e.target.closest("#t3PancakesChefBtn")) return;
-        e.stopPropagation();
-        playSound("touch");
-        clearT3Timers();
-        showT3Screen(lastPancakesStage || "pancakesDoneness");
-      });
-    }
+    // Pancakes running tile / edit hotspot are info-only after START (like all food & technique
+    // tags): no tap-to-edit. Only the Rear Left temperature-mode tag reopens its settings.
+    // The chef hat button below stays functional and opens step-by-step guided cooking.
 
     // Chef hat icon button on preheat tile -> Start Guided Cooking (Figma 3345:37922 & 3320:34573 -> 3321:34955)
     // Works BOTH when preheat is running (Figma 3299:24045) AND when preheat is done (Figma 3299:24163)

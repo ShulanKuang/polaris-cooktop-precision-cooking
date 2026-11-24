@@ -7391,3 +7391,23 @@ body.is-test-mode .test-mode-exit-hotspot {
   background: rgba(22, 23, 25, 0.62);
   pointer-events: none;
 }
+
+/* Running burner info tags for Food / Technique modes are display-only after START (no tap-to-edit).
+   Only the Rear Left temperature-mode tag stays tappable. The Pancakes chef hat button stays active. */
+#t3BtnEditFoodPreheat,
+#t3BtnEditFoodComplete,
+#t3BtnEditTechPreheat,
+#t3BtnEditTechComplete,
+#t3HotspotFrontLeftBurner {
+  pointer-events: none !important;
+}
+
+#t3PancakesBurnerTile,
+#t3BtnEditPancakesPreheat {
+  cursor: default;
+}
+
+#t3PancakesChefBtn {
+  pointer-events: auto;
+  cursor: pointer;
+}
