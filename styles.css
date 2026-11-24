@@ -3128,19 +3128,21 @@ input,
   pointer-events: auto !important;
 }
 
+/* Picker fonts match Figma 3516:27571 and the digipad: Profile Display throughout
+   (side numbers are Aktiv Grotesk Ex in Figma; Profile Display Bold is the closest bundled face) */
 .t3-item-num {
-  font-family: var(--roux-typography-subtitle-small-font-family);
+  font-family: var(--font-display);
   font-size: 46px;
   font-weight: 700;
   color: #ffffff;
-  opacity: 0.75;
-  letter-spacing: -0.5px;
+  opacity: 1;
+  letter-spacing: 1.84px;
   line-height: 1;
   transition: font-size 0.15s ease, opacity 0.15s ease, font-weight 0.15s ease;
 }
 
 .t3-item-unit {
-  font-family: var(--roux-typography-subtitle-small-font-family);
+  font-family: var(--font-display);
   font-size: 24px;
   font-weight: 700;
   color: #ffffff;
@@ -3154,19 +3156,21 @@ input,
 .t3-picker-item.is-neighbor-1 .t3-item-num {
   font-size: 46px;
   font-weight: 700;
-  opacity: 0.75;
+  opacity: 1;
+  letter-spacing: 1.84px;
 }
 
 .t3-picker-item.is-active .t3-item-num {
   font-size: 90px;
   font-weight: 500;
   opacity: 1;
-  letter-spacing: -1px;
+  letter-spacing: 1.8px;
 }
 
 .t3-picker-item.is-active .t3-item-unit {
   font-size: 44px;
   font-weight: 700;
+  letter-spacing: 0.88px;
   margin-left: 6px;
   margin-top: -34px;
   opacity: 1;
@@ -7623,4 +7627,13 @@ body.is-test-mode .test-mode-exit-hotspot {
 .t3-smart-hide-neighbors .t3-picker-item:not(.t3-smart-keep) {
   opacity: 0 !important;
   transition: none !important;
+}
+
+/* Side numbers sit clear of the wider Profile Display centre number (Figma 3516:27571:
+   28px gap left of the number, 22px gap right of °F) */
+.t3-picker-item.is-neighbor-1:has(+ .t3-picker-item.is-active) .t3-item-num {
+  transform: translateX(-29px);
+}
+.t3-picker-item.is-active + .t3-picker-item.is-neighbor-1 .t3-item-num {
+  transform: translateX(52px);
 }
