@@ -3084,7 +3084,9 @@ input,
 #t3ScreenTemperature .t3-picker-wheel-container,
 #t3PickerWheelContainer,
 #t3RunPickerWheelContainer {
-  left: 371px;
+  /* 40px wider on each side (same centre) so the shifted side numbers are never clipped */
+  left: 331px;
+  width: 573px;
   top: 143px;
 }
 
