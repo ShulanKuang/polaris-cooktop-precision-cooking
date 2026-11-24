@@ -1961,8 +1961,8 @@
   }
 
   // Once the Pancakes burner has started preheating (pancakesPreheat overview, incl. after guided
-  // cooking), its settings are locked: the nav rail Back caret and the in-screen back, tile and
-  // edit hotspots do nothing (Cooktop and Home still work). The only way to change it is to turn the knob OFF and start over.
+  // cooking), the nav rail Back caret and the in-screen back hotspot do nothing, and Cooktop stays
+  // on this overview. Tapping the Pancakes temperature tile still opens its settings to change them. The only way to change it is to turn the knob OFF and start over.
   function isPancakesLocked() {
     return state.currentTask === 3 && t3Stage === "pancakesPreheat";
   }
@@ -7176,7 +7176,6 @@
       els.t3BtnEditPancakesPreheat.addEventListener("click", (e) => {
         if (e.target.closest("#t3PancakesChefBtn")) return;
         e.stopPropagation();
-        if (isPancakesLocked()) return;
         playSound("touch");
         clearT3Timers();
         showT3Screen(lastPancakesStage || "pancakesDoneness");
@@ -7186,7 +7185,6 @@
       els.t3PancakesBurnerTile.addEventListener("click", (e) => {
         if (e.target.closest("#t3PancakesChefBtn")) return;
         e.stopPropagation();
-        if (isPancakesLocked()) return;
         playSound("touch");
         clearT3Timers();
         showT3Screen(lastPancakesStage || "pancakesDoneness");
