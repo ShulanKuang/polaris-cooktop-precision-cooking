@@ -1928,6 +1928,9 @@
       }
     }
 
+    if (stage === "start" || stage === "burnerStatus") {
+      tempRunReturnStage = null;
+    }
     if (stage === "start") {
       clearT3Timers();
       syncAllT3RollersWithKnobs();
@@ -3951,7 +3954,7 @@
     if (temp > T3_TEMP_MAX) temp = 500;
     temp = Math.round(temp / T3_TEMP_STEP) * T3_TEMP_STEP;
     state.task3TargetTemp = temp;
-    t3BurnerTargetTemps[activePrcKnobIndex || (digipadSourceScreen === "tempRun" ? 2 : 1)] = temp;
+    t3BurnerTargetTemps[digipadSourceScreen === "tempRun" ? 2 : (activePrcKnobIndex || 1)] = temp;
     if (digipadSourceScreen === "tempRun") {
       showT3Screen("tempRun");
       requestAnimationFrame(() => {
@@ -4241,6 +4244,26 @@
       els.t3ToastPreheatComplete.classList.add("is-dismissing");
     }
     playSound("touch");
+  }
+
+  // Where the Rear Left temperature editor (tempRun) returns to: null = Burner Status (default),
+  // "pancakesPreheat" when it was opened from the Pancakes running screen's Rear Left tag.
+  var tempRunReturnStage = null; // var: also read by showT3Screen, which can run before this line
+  function returnFromTempRunToPancakes(applyNewTemp) {
+    tempRunReturnStage = null;
+    if (applyNewTemp) {
+      t3BurnerTargetTemps[2] = state.task3TargetTemp || t3BurnerTargetTemps[2] || 500;
+      playSound("toggleOn");
+    }
+    state.task3TargetTemp = 400; // Pancakes target
+    activePrcKnobIndex = 1;
+    showT3Screen("pancakesPreheat"); // refreshes the 500°F (new) Rear Left text
+    if (!t3PancakesPreheatInterval && els.t3PancakesBurnerTile) {
+      els.t3PancakesBurnerTile.classList.add("is-reached");
+      if (els.t3PancakesPreheatTemp) els.t3PancakesPreheatTemp.textContent = "400°F";
+    }
+    updateCooktopActiveState();
+    updateNavbarState();
   }
 
   // turnOffBurner = true  -> knob turned to OFF: reset burner + knob, slide back to Burners.
@@ -5738,6 +5761,7 @@
     if (els.t3BtnBackFromTempRun) {
       els.t3BtnBackFromTempRun.addEventListener("click", () => {
         playSound("touch");
+        if (tempRunReturnStage === "pancakesPreheat") { returnFromTempRunToPancakes(false); return; }
         showT3Screen("burnerStatus");
       });
     }
@@ -5748,6 +5772,7 @@
         const now = Date.now();
         if (now - lastUpdateTime < 400) return;
         lastUpdateTime = now;
+        if (tempRunReturnStage === "pancakesPreheat") { returnFromTempRunToPancakes(true); return; }
         startT3Preheat();
       };
       els.t3BtnUpdateTemp.addEventListener("click", handleUpdate);
@@ -7172,6 +7197,22 @@
         }
       });
     }
+    // Rear Left temperature-mode tag on the Pancakes screen: editable at any stage. Opens the
+    // temperature editor (tempRun) for burner 2 and returns to this Pancakes screen afterwards.
+    const rlHotspot = document.getElementById("t3PancakesRLHotspot");
+    if (rlHotspot) {
+      rlHotspot.addEventListener("click", (e) => {
+        e.stopPropagation();
+        const rlOn = els.t3PancakesRLTexts && !els.t3PancakesRLTexts.hidden &&
+          currentT3BurnerLevels[2] !== "off";
+        if (!rlOn) return;
+        playSound("touch");
+        tempRunReturnStage = "pancakesPreheat";
+        state.task3TargetTemp = t3BurnerTargetTemps[2] || 500;
+        showT3Screen("tempRun");
+      });
+    }
+
     // Pancakes running tile / edit hotspot are info-only after START (like all food & technique
     // tags): no tap-to-edit. Only the Rear Left temperature-mode tag reopens its settings.
     // The chef hat button below stays functional and opens step-by-step guided cooking.
@@ -7427,6 +7468,10 @@
       }
       t3NavSeq++;
       playSound("touch");
+      if (tempRunReturnStage === "pancakesPreheat" && (t3Stage === "tempRun" || t3Stage === "digipad")) {
+        returnFromTempRunToPancakes(false);
+        return;
+      }
       if (state.currentTask === 3 && t3Stage !== "start") {
         if (t3Stage === "selectCookware") {
           if (typeof transitionCookwareToTemperature === "function") {

@@ -7411,3 +7411,19 @@ body.is-test-mode .test-mode-exit-hotspot {
   pointer-events: auto;
   cursor: pointer;
 }
+
+/* Rear Left temperature tag on the Pancakes running screen: tappable (opens temperature editor) */
+.t3-pancakes-rl-hotspot {
+  position: absolute;
+  left: 19px;
+  top: 70px;
+  width: 338px;
+  height: 128px;
+  background: transparent;
+  border: none;
+  padding: 0;
+  border-radius: 12px;
+  cursor: pointer;
+  z-index: 25;
+  -webkit-tap-highlight-color: transparent;
+}
