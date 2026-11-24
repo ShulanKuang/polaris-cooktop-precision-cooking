@@ -9,7 +9,7 @@
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
   <title>Polaris Cooktop Precision Cooking Prototype</title>
-  <link rel="stylesheet" href="./styles.css?v=20261124-142931">
+  <link rel="stylesheet" href="./styles.css?v=20261124-160133">
 </head>
 <body>
   <div class="test-environment">
@@ -25,6 +25,12 @@
         <button type="button" class="test-mode-btn" id="btnTestMode" title="Hide researcher controls for participant sessions">
           <span class="test-mode-icon">🎬</span>
           <span class="test-mode-label">Test Mode</span>
+        </button>
+        <!-- START OVER: reloads the prototype fresh for the next participant (all knobs off,
+             default temperatures, doneness, guided-cooking and ingredient state cleared). -->
+        <button type="button" class="start-over-btn" id="btnStartOver" title="Reset everything for the next participant">
+          <span class="test-mode-icon">↺</span>
+          <span class="test-mode-label">Start Over</span>
         </button>
       </div>
 
@@ -2214,6 +2220,6 @@
     <div class="test-mode-hint" id="testModeHint" aria-live="polite"></div>
   </div>
 
-  <script src="./app.js?v=20261124-142931"></script>
+  <script src="./app.js?v=20261124-160133"></script>
 </body>
 </html>

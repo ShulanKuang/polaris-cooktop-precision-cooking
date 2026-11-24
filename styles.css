@@ -7526,3 +7526,26 @@ body.is-test-mode .test-mode-exit-hotspot {
   fill: #fff;
   stroke: #fff;
 }
+
+/* START OVER: researcher reset button next to Test Mode */
+.start-over-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  height: 40px;
+  padding: 0 18px;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.45);
+  background: rgba(255, 255, 255, 0.08);
+  color: #ffffff;
+  font-family: var(--font-display);
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+  cursor: pointer;
+  white-space: nowrap;
+  touch-action: manipulation;
+}
+.start-over-btn:active {
+  background: rgba(255, 255, 255, 0.3);
+}

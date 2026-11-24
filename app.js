@@ -7283,6 +7283,18 @@
       });
     }
 
+    // Cooking Tips "Start Step-by-Step": start the pancakes burner (same as START) and go
+    // straight into step-by-step guided cooking at the Preheating step.
+    const btnTipsStartSteps = document.getElementById("t3TipsBtnStartSteps");
+    if (btnTipsStartSteps) {
+      btnTipsStartSteps.addEventListener("click", (e) => {
+        e.stopPropagation();
+        lastPancakesStage = (t3Stage && t3Stage.startsWith("pancakes") && t3Stage !== "pancakesPreheat") ? t3Stage : "pancakesCookware";
+        startT3PancakesPreheat();
+        startGuidedCooking(0);
+      });
+    }
+
     // START Buttons (Doneness, Burner, Cookware)
     [els.t3BtnStartPancakesDoneness, els.t3BtnStartPancakesBurner, els.t3BtnStartPancakesCookware].forEach(btn => {
       if (btn) {
@@ -7634,6 +7646,17 @@
     }
     if (els.btnScaleNative) {
       els.btnScaleNative.addEventListener("click", () => setAppScale(1.0, "native"));
+    }
+
+    // START OVER: reload the prototype from scratch so the next participant gets a clean state
+    // (knobs off, default temps/doneness, guided cooking and ingredients reset). Test Mode and
+    // screen scale preferences are kept.
+    const btnStartOver = document.getElementById("btnStartOver");
+    if (btnStartOver) {
+      btnStartOver.addEventListener("click", () => {
+        try { localStorage.setItem("polaris_active_task", "3"); } catch (e) {}
+        window.location.replace(window.location.pathname + "?task=3&reset=" + Date.now() + "#task3");
+      });
     }
 
     // TEST MODE: hide researcher toolbar, screen jumper and footer; keep only HMI screen + knobs.
