@@ -3816,7 +3816,14 @@
 
     // Step 2: Pour batter (inside-card timer & text)
     if (els.t3GuidedTimer2 && els.t3GuidedStartTimer2 && els.t3GuidedCard2Text) {
-      if (step === 2 && isRunning) {
+      if (step === 2 && isRunning === "done") {
+        // Timer finished: keep it on screen at 0:00 with a full bar until the user presses Next
+        els.t3GuidedTimer2.hidden = false;
+        els.t3GuidedStartTimer2.hidden = true;
+        els.t3GuidedCard2Text.textContent = "Done! Press “Next”.";
+        if (els.t3GuidedTimerFill2) els.t3GuidedTimerFill2.style.width = "100%";
+        if (els.t3GuidedTimerVal2) els.t3GuidedTimerVal2.textContent = "0:00";
+      } else if (step === 2 && isRunning) {
         els.t3GuidedTimer2.hidden = false;
         els.t3GuidedStartTimer2.hidden = true;
         els.t3GuidedCard2Text.textContent = "Pour batter. Cook for 3 mins.";
@@ -3825,13 +3832,20 @@
         els.t3GuidedStartTimer2.hidden = false;
         els.t3GuidedCard2Text.textContent = "Pour batter. Cook for 3 mins. Then press “Next”.";
         if (els.t3GuidedTimerFill2) els.t3GuidedTimerFill2.style.width = "0%";
-        if (els.t3GuidedTimerVal2) els.t3GuidedTimerVal2.textContent = "2:59:00";
+        if (els.t3GuidedTimerVal2) els.t3GuidedTimerVal2.textContent = "3:00";
       }
     }
 
     // Step 3: Flip pancake (inside-card timer & text)
     if (els.t3GuidedTimer3 && els.t3GuidedStartTimer3 && els.t3GuidedCard3Text) {
-      if (step === 3 && isRunning) {
+      if (step === 3 && isRunning === "done") {
+        // Timer finished: keep it on screen at 0:00 with a full bar until the user presses Next
+        els.t3GuidedTimer3.hidden = false;
+        els.t3GuidedStartTimer3.hidden = true;
+        els.t3GuidedCard3Text.textContent = "Done! Press “Next”.";
+        if (els.t3GuidedTimerFill3) els.t3GuidedTimerFill3.style.width = "100%";
+        if (els.t3GuidedTimerVal3) els.t3GuidedTimerVal3.textContent = "0:00";
+      } else if (step === 3 && isRunning) {
         els.t3GuidedTimer3.hidden = false;
         els.t3GuidedStartTimer3.hidden = true;
         els.t3GuidedCard3Text.textContent = "Flip pancake. Cook for 1 minute.";
@@ -3840,16 +3854,17 @@
         els.t3GuidedStartTimer3.hidden = false;
         els.t3GuidedCard3Text.textContent = "Flip pancake. Cook for 1 minute. Then press “Next”.";
         if (els.t3GuidedTimerFill3) els.t3GuidedTimerFill3.style.width = "0%";
-        if (els.t3GuidedTimerVal3) els.t3GuidedTimerVal3.textContent = "0:59:00";
+        if (els.t3GuidedTimerVal3) els.t3GuidedTimerVal3.textContent = "1:00";
       }
     }
 
     // Next button: visible on steps 1, 2 (when not running), 3 (when not running)
-    const showNext = (step === 1) || (step === 2 && !isRunning) || (step === 3 && !isRunning);
+    const timerDone = isRunning === "done";
+    const showNext = (step === 1) || (step === 2 && (!isRunning || timerDone)) || (step === 3 && (!isRunning || timerDone));
     if (els.t3GuidedBtnNext) els.t3GuidedBtnNext.hidden = !showNext;
 
     // Cooking button: visible on steps 2 & 3 when running
-    const showCooking = (step === 2 || step === 3) && isRunning;
+    const showCooking = (step === 2 || step === 3) && isRunning && !timerDone;
     if (els.t3GuidedBtnCooking) els.t3GuidedBtnCooking.hidden = !showCooking;
 
     // Step 4 buttons
@@ -3911,7 +3926,7 @@
     setGuidedStep(step, true);
     playSound("touch");
 
-    const totalSeconds = (step === 2) ? 179 : 59; // Step 2: 3 min (2:59), Step 3: 1 min (0:59)
+    const totalSeconds = (step === 2) ? 180 : 60; // Step 2: 3 min (3:00), Step 3: 1 min (1:00)
     const durationMs = (step === 2) ? 4500 : 3500; // prototype speed
     const startTime = Date.now();
 
@@ -3922,7 +3937,7 @@
 
       const mins = Math.floor(remainingSec / 60);
       const secs = remainingSec % 60;
-      const valStr = `${mins}:${String(secs).padStart(2, "0")}:00`;
+      const valStr = `${mins}:${String(secs).padStart(2, "0")}`;
 
       if (step === 2) {
         if (els.t3GuidedTimerFill2) els.t3GuidedTimerFill2.style.width = `${(progress * 100).toFixed(1)}%`;
@@ -3935,7 +3950,7 @@
       if (progress >= 1.0) {
         clearT3GuidedTimers();
         playTimerNotificationSound();
-        setGuidedStep(step, false);
+        setGuidedStep(step, "done", false);
       }
     }, 50);
   }
