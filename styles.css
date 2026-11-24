@@ -6094,31 +6094,31 @@ input,
   margin-top: 24px;
 }
 
-/* VIEW 3: COOKING TIPS */
+/* VIEW 3: COOKING TIPS (Figma 3511:26938 Instructions, 3511:27010 Ingredients) */
 .t3-tips-segmented-control {
   align-self: center;
-  width: 420px;
+  width: 424px;
   height: 40px;
   border-radius: 999px;
-  background: rgba(75, 76, 82, 0.5);
   display: flex;
-  padding: 3px;
-  box-sizing: border-box;
+  overflow: hidden;
   margin-top: 48px;
-  gap: 4px;
   flex-shrink: 0;
 }
 
 .t3-tips-segment-btn {
   flex: 1;
   height: 100%;
-  border-radius: 999px;
   border: none;
-  background: transparent;
+  border-radius: 0;
+  background: rgba(75, 76, 82, 0.8);
   color: #ffffff;
-  font-family: var(--font-display, inherit);
-  font-size: 18px;
+  font-family: var(--font-display);
+  font-size: 22px;
   font-weight: 600;
+  line-height: 22px;
+  letter-spacing: 0.44px;
+  padding: 0 24px;
   cursor: pointer;
   transition: background-color 0.15s ease, color 0.15s ease;
   outline: none;
@@ -6129,19 +6129,38 @@ input,
 }
 
 .t3-tips-segment-btn.is-active {
-  background: #F4F4F2;
-  color: #1F2024;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+  background: #f4f4f2;
+  color: #1f2024;
 }
 
+/* The grey card scrolls as one piece (prep details, button and steps / buttons and checklist) */
 .t3-tips-panel,
 .t3-tips-subpanel {
   flex: 1;
   min-height: 0;
-  padding: 10px 24px 14px;
-  display: flex;
-  flex-direction: column;
+  width: 540px;
+  margin: 20px auto 14px;
+  background: rgba(61, 62, 68, 0.9);
+  border-radius: 8px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  display: block;
   box-sizing: border-box;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
+}
+
+.t3-tips-subpanel::-webkit-scrollbar {
+  display: none;
+}
+
+#t3TipsPanelInstructions {
+  padding: 8px 20px 32px;
+}
+
+#t3TipsPanelIngredients {
+  padding: 4px 12px;
 }
 
 .t3-tips-panel[hidden],
@@ -6149,178 +6168,174 @@ input,
   display: none !important;
 }
 
-/* Instructions Panel */
+/* Instructions: recipe prep details */
 .t3-tips-prep-details {
-  background: rgba(61, 62, 68, 0.9);
-  border-radius: 12px;
-  padding: 8px 16px;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  flex-shrink: 0;
+  padding: 12px 0;
+  border-bottom: 2px solid #4a4c51;
+  margin-bottom: 20px;
 }
 
 .t3-prep-item {
   display: flex;
   flex-direction: column;
   align-items: center;
+  gap: 4px;
   text-align: center;
+  white-space: nowrap;
 }
 
 .t3-prep-label,
 .t3-prep-title {
-  font-size: 13px;
-  color: rgba(255, 255, 255, 0.6);
+  font-family: var(--font-text);
+  font-size: 23px;
+  line-height: 23px;
   font-weight: 500;
+  letter-spacing: 0.46px;
+  color: #d9d8d7;
 }
 
 .t3-prep-val {
-  font-size: 17px;
-  color: #ffffff;
+  font-family: var(--font-text);
+  font-size: 23px;
+  line-height: 27.6px;
   font-weight: 600;
-  margin-top: 2px;
+  letter-spacing: 0.46px;
+  color: #ffffff;
 }
 
 .t3-prep-divider {
-  width: 1px;
-  height: 28px;
-  background: rgba(255, 255, 255, 0.2);
+  width: 2px;
+  height: 48px;
+  background: #4a4c51;
+  flex-shrink: 0;
 }
 
-.t3-tips-step-by-step-btn {
-  width: 100%;
-  height: 38px;
+/* Outlined pill buttons (Start Step-by-Step, Add to List) */
+.t3-tips-step-by-step-btn,
+.t3-ingredients-add-btn {
+  height: 36px;
   border-radius: 999px;
-  border: 1px solid rgba(255, 255, 255, 0.35);
-  background: rgba(75, 76, 82, 0.35);
+  border: 2px solid #ffffff;
+  background: transparent;
   color: #ffffff;
-  font-family: var(--font-display, inherit);
-  font-size: 16px;
+  font-family: var(--font-display);
+  font-size: 26px;
   font-weight: 600;
+  line-height: 26px;
+  letter-spacing: 0.52px;
+  padding: 0 12px;
   cursor: pointer;
-  margin-top: 8px;
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 8px;
+  box-sizing: border-box;
+  white-space: nowrap;
   transition: background-color 0.15s ease;
-  flex-shrink: 0;
   outline: none;
   -webkit-tap-highlight-color: transparent;
 }
 
-.t3-tips-step-by-step-btn:active {
+.t3-tips-step-by-step-btn {
+  width: 378px;
+  margin: 0 auto 12px;
+}
+
+.t3-tips-step-by-step-btn:active,
+.t3-ingredients-add-btn:active {
   background: rgba(255, 255, 255, 0.15);
 }
 
+.t3-tips-btn-icon {
+  width: 24px;
+  height: 24px;
+  flex-shrink: 0;
+  display: block;
+}
+
+/* Instructions: numbered steps */
 .t3-tips-steps-scroll {
-  flex: 1;
-  overflow-y: auto;
-  margin-top: 8px;
-  padding-right: 6px;
-  scrollbar-width: thin;
-  scrollbar-color: rgba(255, 255, 255, 0.2) transparent;
-  -webkit-overflow-scrolling: touch;
-}
-
-.t3-tips-steps-scroll::-webkit-scrollbar {
-  width: 4px;
-}
-
-.t3-tips-steps-scroll::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.2);
-  border-radius: 4px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
 }
 
 .t3-tips-step-item {
   display: flex;
-  gap: 12px;
-  padding: 8px 0;
+  gap: 8px;
   align-items: flex-start;
 }
 
 .t3-step-num {
-  font-family: var(--font-display, inherit);
-  font-size: 18px;
-  font-weight: 700;
+  font-family: var(--font-text);
+  font-size: 23px;
+  line-height: 27.6px;
+  font-weight: 600;
+  letter-spacing: 0.46px;
   color: #ffffff;
-  min-width: 18px;
-  line-height: 1.3;
+  width: 29px;
+  flex-shrink: 0;
 }
 
 .t3-step-content {
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: 4px;
+  min-width: 0;
 }
 
 .t3-step-title {
-  font-family: var(--font-display, inherit);
-  font-size: 16px;
+  font-family: var(--font-text);
+  font-size: 23px;
+  line-height: 27.6px;
   font-weight: 600;
+  letter-spacing: 0.46px;
   color: #ffffff;
   margin: 0;
-  line-height: 1.3;
 }
 
 .t3-step-desc {
-  font-family: var(--font-text, inherit);
-  font-size: 14px;
-  color: rgba(255, 255, 255, 0.75);
-  line-height: 1.35;
+  font-family: var(--font-text);
+  font-size: 23px;
+  line-height: 32.2px;
+  font-weight: 500;
+  letter-spacing: 0.46px;
+  color: #d9d8d7;
   margin: 0;
 }
 
 .t3-step-separator {
-  height: 1px;
+  height: 2px;
   width: 100%;
-  background: rgba(255, 255, 255, 0.1);
-  margin: 2px 0;
-}
-
-/* Ingredients Panel */
-.t3-ingredients-top-bar {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 8px;
+  background: #4a4c51;
   flex-shrink: 0;
 }
 
-.t3-ingredients-add-btn {
-  height: 38px;
-  border-radius: 999px;
-  background: rgba(75, 76, 82, 0.5);
-  border: 1px solid rgba(255, 255, 255, 0.3);
-  color: #ffffff;
-  font-family: var(--font-display, inherit);
-  font-size: 16px;
-  font-weight: 600;
-  padding: 0 16px;
-  cursor: pointer;
+/* Ingredients: top buttons row */
+.t3-ingredients-top-bar {
+  height: 58px;
+  padding: 0 8px;
   display: flex;
   align-items: center;
-  gap: 8px;
-  transition: background-color 0.15s ease;
-  outline: none;
-  -webkit-tap-highlight-color: transparent;
-}
-
-.t3-ingredients-add-btn:active {
-  background: rgba(255, 255, 255, 0.2);
+  justify-content: space-between;
+  gap: 18px;
 }
 
 .t3-ingredients-cart-btn {
-  width: 38px;
-  height: 38px;
+  width: 48px;
+  height: 48px;
   border-radius: 50%;
-  background: #F4F4F2;
+  background: #f4f4f2;
   border: none;
+  padding: 0;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+  flex-shrink: 0;
   transition: transform 0.12s ease;
   outline: none;
   -webkit-tap-highlight-color: transparent;
@@ -6330,58 +6345,44 @@ input,
   transform: scale(0.92);
 }
 
-.t3-ingredients-cart-btn svg {
-  stroke: #1F2024;
+.t3-ingredients-cart-btn img {
+  width: 32px;
+  height: 32px;
+  display: block;
 }
 
+/* Ingredients: checklist */
 .t3-ingredients-scroll {
-  flex: 1;
-  overflow-y: auto;
-  padding-right: 6px;
-  scrollbar-width: thin;
-  scrollbar-color: rgba(255, 255, 255, 0.2) transparent;
-  -webkit-overflow-scrolling: touch;
-}
-
-.t3-ingredients-scroll::-webkit-scrollbar {
-  width: 4px;
-}
-
-.t3-ingredients-scroll::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.2);
-  border-radius: 4px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
 }
 
 .t3-ingredient-item {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  padding: 8px 12px;
-  border-radius: 8px;
-  background: rgba(61, 62, 68, 0.4);
-  margin-bottom: 6px;
+  gap: 12px;
+  min-height: 64px;
+  padding: 8px 20px;
+  box-sizing: border-box;
+  border-bottom: 1px solid #4b4c52;
   cursor: pointer;
-  transition: background-color 0.15s ease;
   -webkit-tap-highlight-color: transparent;
 }
 
-.t3-ingredient-item:hover {
-  background: rgba(61, 62, 68, 0.6);
-}
-
 .t3-ingredient-item:active {
-  background: rgba(61, 62, 68, 0.8);
+  background: rgba(255, 255, 255, 0.06);
 }
 
 .t3-ingredient-checkbox {
-  width: 22px;
-  height: 22px;
+  width: 32px;
+  height: 32px;
   border-radius: 50%;
-  border: 2px solid rgba(255, 255, 255, 0.4);
+  background: #1f2024;
+  border: 2px solid #999999;
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-right: 12px;
   flex-shrink: 0;
   box-sizing: border-box;
   transition: background-color 0.15s ease, border-color 0.15s ease;
@@ -6395,27 +6396,33 @@ input,
 
 .t3-ingredient-item.is-checked .t3-ingredient-checkbox::after {
   content: "";
-  width: 5px;
-  height: 9px;
-  border: solid #1F2024;
-  border-width: 0 2px 2px 0;
+  width: 7px;
+  height: 13px;
+  border: solid #1f2024;
+  border-width: 0 3px 3px 0;
   transform: rotate(45deg);
-  margin-top: -2px;
+  margin-top: -3px;
   display: block;
 }
 
-.t3-ingredient-name {
-  font-family: var(--font-display, inherit);
-  font-size: 16px;
+.t3-ingredient-name,
+.t3-ingredient-amount {
+  font-family: var(--font-text);
+  font-size: 26px;
+  line-height: 26px;
   font-weight: 500;
+  letter-spacing: 0.52px;
   color: #ffffff;
+  white-space: nowrap;
+}
+
+.t3-ingredient-name {
   flex: 1;
+  min-width: 0;
 }
 
 .t3-ingredient-amount {
-  font-family: var(--font-text, inherit);
-  font-size: 15px;
-  color: rgba(255, 255, 255, 0.7);
+  text-align: right;
 }
 
 /* ==========================================================================
