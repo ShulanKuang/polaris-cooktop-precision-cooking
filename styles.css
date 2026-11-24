@@ -7427,3 +7427,44 @@ body.is-test-mode .test-mode-exit-hotspot {
   z-index: 25;
   -webkit-tap-highlight-color: transparent;
 }
+
+/* ======================================================== */
+/* BURNER MODE ICONS (Figma 3508:26715 temp / 3508:26692 food / 3508:26701 technique) */
+/* Shown on a running burner's circle once a mode was selected and started.            */
+/* ======================================================== */
+.t3-start-card-mode-img {
+  width: 128px;
+  height: 128px;
+  border-radius: 50%;
+  display: block;
+}
+
+.t3-mode-icon {
+  position: absolute;
+  left: 229px;
+  width: 128px;
+  height: 128px;
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 22;
+}
+.t3-mode-icon-rl { top: 70px; }
+.t3-mode-icon-fl { top: 218px; }
+
+/* Hide a burner's mode icon while that burner is shown as OFF */
+#t3PancakesRLTexts[hidden] ~ .t3-mode-icon-rl,
+#t3FoodBurnerOffRL:not([hidden]) ~ .t3-mode-icon-rl,
+#t3FoodBurnerOffFL:not([hidden]) ~ .t3-mode-icon-fl {
+  display: none;
+}
+
+/* Selected (magenta-ringed) burner in the mini cooktop map on Food / Technique running screens */
+.t3-mini-mode-icon {
+  position: absolute;
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 5;
+}
+.t3-mini-icon-food-preheat { left: 54.5px; top: 218px; width: 76px; height: 76px; }
+.t3-mini-icon-food-done    { left: 51.5px; top: 218px; width: 76px; height: 76px; }
+.t3-mini-icon-tech         { left: 181.5px; top: 182.5px; width: 111px; height: 111px; }

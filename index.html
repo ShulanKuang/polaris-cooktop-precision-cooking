@@ -9,7 +9,7 @@
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
   <title>Polaris Cooktop Precision Cooking Prototype</title>
-  <link rel="stylesheet" href="./styles.css?v=20261124-092050">
+  <link rel="stylesheet" href="./styles.css?v=20261124-092939">
 </head>
 <body>
   <div class="test-environment">
@@ -505,12 +505,7 @@
                   <span class="t3-start-card-val" id="tStartBurner1Temp">350°F</span>
                 </div>
                 <div class="t3-start-card-icon">
-                  <svg width="58" height="58" viewBox="0 0 58 58" fill="none">
-                    <path fill-rule="evenodd" clip-rule="evenodd" d="M24.1666 4.83398C28.1706 4.83398 31.4166 8.07992 31.4166 12.084V31.4173C34.3513 33.6218 36.2499 37.1309 36.2499 41.084C36.2499 47.7574 30.84 53.1673 24.1666 53.1673C17.4931 53.1673 12.0833 47.7574 12.0833 41.084C12.0833 37.1309 13.9819 33.6218 16.9166 31.4173V12.084C16.9166 8.07992 20.1625 4.83398 24.1666 4.83398ZM21.8888 34.0054L20.0693 35.3712C18.3989 36.6259 17.3333 38.6089 17.3333 40.8409C17.3333 44.6148 20.3927 47.6742 24.1666 47.6742C27.9405 47.6742 30.9999 44.6148 30.9999 40.8409C30.9999 38.6089 29.9342 36.6259 28.2639 35.3712L26.4444 34.0054V26.0354H21.8888V34.0054ZM24.1666 9.75018C22.9086 9.75018 21.8888 10.77 21.8888 12.0279V21.0001H26.4443V12.0279C26.4443 10.77 25.4245 9.75018 24.1666 9.75018Z" fill="#303238"/>
-                    <path d="M43.4999 26.584C44.8346 26.584 45.9166 27.666 45.9166 29.0007C45.9166 30.3353 44.8346 31.4173 43.4999 31.4173H38.6666C37.3319 31.4173 36.2499 30.3353 36.2499 29.0007C36.2499 27.666 37.3319 26.584 38.6666 26.584H43.4999Z" fill="#303238"/>
-                    <path d="M43.4999 16.9173C44.8346 16.9173 45.9166 17.9993 45.9166 19.334C45.9166 20.6687 44.8346 21.7507 43.4999 21.7507H38.6666C37.3319 21.7507 36.2499 20.6687 36.2499 19.334C36.2499 17.9993 37.3319 16.9173 38.6666 16.9173H43.4999Z" fill="#303238"/>
-                    <path d="M43.4999 7.25065C44.8346 7.25065 45.9166 8.33263 45.9166 9.66732C45.9166 11.002 44.8346 12.084 43.4999 12.084H38.6666C37.3319 12.084 36.2499 11.002 36.2499 9.66732C36.2499 8.33263 37.3319 7.25065 38.6666 7.25065H43.4999Z" fill="#303238"/>
-                  </svg>
+                  <img src="./assets/burner-modes/burner-mode-temperature.png" alt="" class="t3-start-card-mode-img" aria-hidden="true">
                 </div>
               </div>
 
@@ -853,7 +848,7 @@
 
               <!-- Active Burner Circle Overlay (Rear Left Burner Circle) -->
               <div class="t3-active-burner-overlay" id="t3ActiveBurnerOverlay" role="button" aria-label="Rear Left Active Burner">
-                <img src="./assets/task3a-active-burner-circle.png" alt="" class="t3-active-burner-img" aria-hidden="true">
+                <img src="./assets/burner-modes/burner-mode-temperature.png" alt="" class="t3-active-burner-img" aria-hidden="true">
               </div>
 
               <!-- Active Burner Hotspot -->
@@ -1835,6 +1830,10 @@
                 <div class="t3-pancakes-rl-temp" id="t3PancakesRLTemp">500°F</div>
               </div>
 
+              <!-- Burner mode icons (Figma 3508:26715 temperature / 3508:26692 food) -->
+              <img class="t3-mode-icon t3-mode-icon-rl" src="./assets/burner-modes/burner-mode-temperature.png" alt="" aria-hidden="true">
+              <img class="t3-mode-icon t3-mode-icon-fl" src="./assets/burner-modes/burner-mode-food.png" alt="" aria-hidden="true">
+
               <!-- Rear Left Temperature tag hotspot: temperature-mode tags stay editable at any stage -->
               <button type="button" class="t3-pancakes-rl-hotspot" id="t3PancakesRLHotspot" aria-label="Edit Rear Left Temperature"></button>
 
@@ -2020,6 +2019,7 @@
             <!-- 13. SCREEN: 3C-FOOD-PREHEAT (STEAK MED RARE PREHEATING RAMP UP - FIGMA 2348:17304) -->
             <div class="t3-screen" id="t3ScreenFoodPreheat" hidden>
               <img class="t3-screen-bg" src="./assets/task3c/2348_17304_clean.png" alt="Steak Med Rare Preheating">
+              <img class="t3-mini-mode-icon t3-mini-icon-food-preheat" src="./assets/burner-modes/burner-mode-food.png" alt="" aria-hidden="true">
               <!-- Back button (< Cooktop) -->
               <button type="button" class="t3-back-btn" id="t3BtnBackFromFoodPreheat" aria-label="Back to Cooktop"></button>
               <!-- Dynamic Current Temperature (counts up from 182 to 375) -->
@@ -2033,6 +2033,7 @@
             <!-- 14. SCREEN: 3C-FOOD-COMPLETE (STEAK MED RARE PREHEATED COMPLETE - FIGMA 2348:17501) -->
             <div class="t3-screen" id="t3ScreenFoodComplete" hidden>
               <img class="t3-screen-bg" src="./assets/task3c/2348_17501_clean.png" alt="Steak Med Rare Preheated">
+              <img class="t3-mini-mode-icon t3-mini-icon-food-done" src="./assets/burner-modes/burner-mode-food.png" alt="" aria-hidden="true">
               <!-- Back button (< Cooktop) -->
               <button type="button" class="t3-back-btn" id="t3BtnBackFromFoodComplete" aria-label="Back to Cooktop"></button>
               <!-- Edit button -->
@@ -2055,6 +2056,10 @@
                 <img src="./assets/task3c/burner-front-left-off.png" alt="" class="t3-food-burner-off-img">
               </div>
 
+              <!-- Burner mode icons: Rear Left temperature, Front Left food (steak) -->
+              <img class="t3-mode-icon t3-mode-icon-rl" src="./assets/burner-modes/burner-mode-temperature.png" alt="" aria-hidden="true">
+              <img class="t3-mode-icon t3-mode-icon-fl" src="./assets/burner-modes/burner-mode-food.png" alt="" aria-hidden="true">
+
               <!-- Rear Left Burner Readout -->
               <div class="t3-burner-status-temp-display" id="t3FoodBurnerStatusTempDisplay">
                 <span class="t3-burner-status-temp-val" id="t3FoodBurnerStatusTemp1">350°F</span>
@@ -2073,6 +2078,7 @@
             <!-- 16. SCREEN: 3E-TECHNIQUE-PREHEAT (CARAMELIZE PREHEATING - FIGMA 2348:17716) -->
             <div class="t3-screen" id="t3ScreenTechniquePreheat" hidden>
               <img class="t3-screen-bg" src="./assets/task3c/2348_17716_clean.png" alt="Technique Preheating">
+              <img class="t3-mini-mode-icon t3-mini-icon-tech" src="./assets/burner-modes/burner-mode-technique.png" alt="" aria-hidden="true">
               <!-- Back button (< Cooktop) -->
               <button type="button" class="t3-back-btn" id="t3BtnBackFromTechPreheat" aria-label="Back to Cooktop"></button>
               <!-- Dynamic Current Temperature (counts up from 182 to 375) -->
@@ -2086,6 +2092,7 @@
             <!-- 17. SCREEN: 3E-TECHNIQUE-COMPLETE (CARAMELIZE PREHEATED - FIGMA 2348:17836) -->
             <div class="t3-screen" id="t3ScreenTechniqueComplete" hidden>
               <img class="t3-screen-bg" src="./assets/task3c/2348_17836_clean.png" alt="Technique Preheated">
+              <img class="t3-mini-mode-icon t3-mini-icon-tech" src="./assets/burner-modes/burner-mode-technique.png" alt="" aria-hidden="true">
               <!-- Back button (< Cooktop) -->
               <button type="button" class="t3-back-btn" id="t3BtnBackFromTechComplete" aria-label="Back to Cooktop"></button>
               <!-- Edit button -->
@@ -2215,6 +2222,6 @@
     <div class="test-mode-hint" id="testModeHint" aria-live="polite"></div>
   </div>
 
-  <script src="./app.js?v=20261124-092050"></script>
+  <script src="./app.js?v=20261124-092939"></script>
 </body>
 </html>
