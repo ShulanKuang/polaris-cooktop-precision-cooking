@@ -3080,8 +3080,10 @@ input,
   overflow: hidden;
 }
 
+/* Same spot on every temperature picker screen (Temperature, edit/UPDATE) so it never moves */
 #t3ScreenTemperature .t3-picker-wheel-container,
-#t3PickerWheelContainer {
+#t3PickerWheelContainer,
+#t3RunPickerWheelContainer {
   left: 371px;
   top: 143px;
 }
