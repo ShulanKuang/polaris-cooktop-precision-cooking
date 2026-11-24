@@ -2630,7 +2630,7 @@ input,
   pointer-events: none;
 }
 
-/* Precision Cooking 1s Magenta Arc Ring (Figma 2990:6407 -> 2990:6457) */
+/* Precision Cooking 0.8s Magenta Arc Ring (Figma 2990:6407 -> 2990:6457) */
 .t3-burner-prc-arc {
   position: absolute;
   inset: 0;
@@ -2671,7 +2671,7 @@ input,
   stroke-dashoffset: 527.79;
 }
 
-/* Confirmed active state (Figma 2989:5712 & 2989:5720) - 1s PRC arc or 1s Power Level delay */
+/* Confirmed active state (Figma 2989:5712 & 2989:5720) - 0.8s PRC arc or 1s Power Level delay */
 .t3-burner-roller.is-confirmed .t3-burner-roller-bg circle {
   fill: #D9D8D7;
   stroke: none;

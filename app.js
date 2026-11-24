@@ -2193,7 +2193,7 @@
       t.preArc = null;
       if (currentT3BurnerLevels[index] !== "prc") return;
 
-      // Begin 1s magenta arc animation from 12 o'clock top point
+      // Begin 0.8s magenta arc animation from 12 o'clock top point
       rollers.forEach(roller => {
         roller.classList.add("has-arc");
         const arcCircle = roller.querySelector(".t3-burner-prc-arc-circle");
@@ -2201,13 +2201,13 @@
           if (!roller.classList.contains("has-arc")) return;
           roller.classList.add("is-arcing");
           if (arcCircle) {
-            arcCircle.style.transition = "stroke-dashoffset 1000ms linear";
+            arcCircle.style.transition = "stroke-dashoffset 800ms linear";
             arcCircle.style.strokeDashoffset = "0";
           }
         });
       });
 
-      // Exactly at 1.0s after arc start: arc finishes full circle -> transition to confirmed active state (white background disc with dark thermometer icon)
+      // Exactly at 0.8s after arc start: arc finishes full circle -> transition to confirmed active state (white background disc with dark thermometer icon)
       t.arc = setTimeout(() => {
         t.arc = null;
         if (currentT3BurnerLevels[index] !== "prc") return;
@@ -2231,7 +2231,7 @@
             transitionToT3Temperature();
           }, 800);
         }
-      }, 1000);
+      }, 800);
     }, 1000);
   }
 
