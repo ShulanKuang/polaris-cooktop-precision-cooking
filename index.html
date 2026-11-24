@@ -9,7 +9,7 @@
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
   <title>Polaris Cooktop Precision Cooking Prototype</title>
-  <link rel="stylesheet" href="./styles.css?v=20261124-161733">
+  <link rel="stylesheet" href="./styles.css?v=20261124-163752">
 </head>
 <body>
   <div class="test-environment">
@@ -706,52 +706,49 @@
 
                 <!-- START Button (Figma Node 3198:27479) -->
                 <button type="button" class="t3-temp-start-btn" id="t3BtnStartTemp" aria-label="Start Temperature">START</button>
-                <!-- Keypad Switcher Button (hidden to match Figma 3198:27479) -->
-                <button type="button" class="t3-temp-keypad-btn" id="t3BtnKeypadFromTemp" aria-label="Switch to Keypad" style="display:none;"></button>
+                <!-- Keypad Switcher Button (Figma 3516:27566 / 3516:27551) -> opens digipad input -->
+                <button type="button" class="t3-temp-keypad-btn t3-pc-round-icon-btn" id="t3BtnKeypadFromTemp" aria-label="Switch to Keypad"><img src="./assets/digipad/icon-dialpad.svg" alt="" aria-hidden="true"></button>
               </div>
             </div>
 
-            <!-- 4B. SCREEN: 3B-DIGIPAD (PC TEMPERATURE DIGIPAD - FIGMA 3017:25641) -->
+            <!-- 4B. SCREEN: 3B-DIGIPAD (PC TEMPERATURE DIGIPAD - FIGMA 3012:21663) -->
             <div class="t3-screen" id="t3ScreenDigipad" hidden>
-              <img class="t3-screen-bg" src="./assets/task3b-temp-digipad.png" alt="Precision Cooking Temperature Keypad">
-              <!-- Back button (< Burners) -->
+              <img class="t3-screen-bg" src="./assets/task3-pc-bg-digipad.png" alt="Precision Cooking Temperature Keypad">
+              <!-- Back button (< Precision Cooking) -->
               <button type="button" class="t3-back-btn" id="t3BtnBackFromDigipad" aria-label="Back to Burners"></button>
 
-              <!-- TAB GROUP: Temperature / Food / Technique / Favorite / Recent used -->
-              <nav class="t3-tab-group" id="t3TabGroupDigipad">
-                <button type="button" class="t3-tab-btn is-active" data-t3tab="temperature" id="t3TabBtnTempFromDigi" aria-label="Temperature Tab"></button>
-                <button type="button" class="t3-tab-btn" data-t3tab="food" id="t3TabBtnFoodFromDigi" aria-label="Food Tab"></button>
-                <button type="button" class="t3-tab-btn" data-t3tab="technique" id="t3TabBtnTechFromDigi" aria-label="Technique Tab"></button>
-                <button type="button" class="t3-tab-btn" data-t3tab="favorite" id="t3TabBtnFavFromDigi" aria-label="Favorite Tab"></button>
-                <button type="button" class="t3-tab-btn" data-t3tab="recent" id="t3TabBtnRecentFromDigi" aria-label="Recent used Tab"></button>
+              <!-- SIDE DRAWER NAVIGATION: Temperature / Food / Technique / Recent Used -->
+              <nav class="pc-side-drawer-nav" id="t3SideDrawerDigipad">
+                <button type="button" class="pc-drawer-item is-active" data-t3tab="temperature" id="t3TabDigipadToTemp">Temperature</button>
+                <button type="button" class="pc-drawer-item" data-t3tab="food" id="t3TabDigipadToFood">Food</button>
+                <button type="button" class="pc-drawer-item" data-t3tab="technique" id="t3TabDigipadToTech">Technique</button>
+                <button type="button" class="pc-drawer-item" data-t3tab="recent" id="t3TabDigipadToRecent">Recent Used</button>
               </nav>
 
-              <!-- Dynamic Temperature Display on Digipad Screen -->
+              <!-- Typed temperature (Figma 3513:27258) -->
               <div class="t3-digipad-temp-display" id="t3DigipadTempDisplay">
                 <span class="t3-digipad-temp-num" id="t3DigipadTempNum">350</span>
                 <span class="t3-digipad-temp-unit">°F</span>
               </div>
 
-              <!-- START Button on Digipad Screen -->
-              <button type="button" class="t3-digipad-start-btn" id="t3BtnStartDigipad" aria-label="Start Temperature"></button>
+              <!-- START + switch back to horizontal picker (Figma 3012:21694) -->
+              <button type="button" class="t3-digipad-start-btn" id="t3BtnStartDigipad" aria-label="Start Temperature">START</button>
+              <button type="button" class="t3-digipad-picker-btn t3-pc-round-icon-btn" id="t3BtnPickerFromDigipad" aria-label="Switch to Temperature Picker"><img src="./assets/digipad/icon-picker.svg" alt="" aria-hidden="true"></button>
 
-              <!-- Switcher button: Switch back to Carousel Picker (< [] > icon) -->
-              <button type="button" class="t3-digipad-picker-btn" id="t3BtnPickerFromDigipad" aria-label="Switch to Temperature Picker"></button>
-
-              <!-- 3x4 Keypad interactive buttons -->
+              <!-- 3x4 Keypad (Figma 3513:27341) -->
               <div class="t3-digipad-key-grid" id="t3DigipadKeyGrid">
-                <button type="button" class="t3-digi-key" data-key="1" aria-label="1"></button>
-                <button type="button" class="t3-digi-key" data-key="2" aria-label="2"></button>
-                <button type="button" class="t3-digi-key" data-key="3" aria-label="3"></button>
-                <button type="button" class="t3-digi-key" data-key="4" aria-label="4"></button>
-                <button type="button" class="t3-digi-key" data-key="5" aria-label="5"></button>
-                <button type="button" class="t3-digi-key" data-key="6" aria-label="6"></button>
-                <button type="button" class="t3-digi-key" data-key="7" aria-label="7"></button>
-                <button type="button" class="t3-digi-key" data-key="8" aria-label="8"></button>
-                <button type="button" class="t3-digi-key" data-key="9" aria-label="9"></button>
-                <button type="button" class="t3-digi-key" data-key="clear" aria-label="Clear"></button>
-                <button type="button" class="t3-digi-key" data-key="0" aria-label="0"></button>
-                <button type="button" class="t3-digi-key" data-key="backspace" aria-label="Backspace"></button>
+                <button type="button" class="t3-digi-key" data-key="1" aria-label="1">1</button>
+                <button type="button" class="t3-digi-key" data-key="2" aria-label="2">2</button>
+                <button type="button" class="t3-digi-key" data-key="3" aria-label="3">3</button>
+                <button type="button" class="t3-digi-key" data-key="4" aria-label="4">4</button>
+                <button type="button" class="t3-digi-key" data-key="5" aria-label="5">5</button>
+                <button type="button" class="t3-digi-key" data-key="6" aria-label="6">6</button>
+                <button type="button" class="t3-digi-key" data-key="7" aria-label="7">7</button>
+                <button type="button" class="t3-digi-key" data-key="8" aria-label="8">8</button>
+                <button type="button" class="t3-digi-key" data-key="9" aria-label="9">9</button>
+                <button type="button" class="t3-digi-key t3-digi-key-text" data-key="clear" aria-label="Clear">Clear</button>
+                <button type="button" class="t3-digi-key" data-key="0" aria-label="0">0</button>
+                <button type="button" class="t3-digi-key t3-digi-key-text" data-key="backspace" aria-label="Backspace"><img src="./assets/digipad/icon-delete.svg" alt="" aria-hidden="true"></button>
               </div>
             </div>
 
@@ -2217,6 +2214,6 @@
     <div class="test-mode-hint" id="testModeHint" aria-live="polite"></div>
   </div>
 
-  <script src="./app.js?v=20261124-161733"></script>
+  <script src="./app.js?v=20261124-163752"></script>
 </body>
 </html>

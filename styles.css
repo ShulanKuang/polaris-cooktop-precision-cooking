@@ -3519,102 +3519,162 @@ input,
 /* ======================================================== */
 .t3-digipad-temp-display {
   position: absolute;
-  left: 95px;
-  top: 152px;
-  width: 270px;
-  height: 105px;
-  background: #22242A;
+  left: 356px;
+  top: 149px;
+  height: 90px;
   display: flex;
-  align-items: baseline;
-  justify-content: center;
+  align-items: flex-start;
   z-index: 20;
 }
 
 .t3-digipad-temp-num {
   font-family: var(--font-display), "Profile Display", system-ui, sans-serif;
-  font-size: 80px;
-  font-weight: 700;
+  font-size: 90px;
+  font-weight: 500;
+  line-height: 90px;
+  letter-spacing: 1.8px;
   color: #ffffff;
-  letter-spacing: -1px;
-  line-height: 1;
+  min-width: 193px;
+  text-align: right;
 }
 
 .t3-digipad-temp-unit {
   font-family: var(--font-display), "Profile Display", system-ui, sans-serif;
-  font-size: 32px;
-  font-weight: 600;
+  font-size: 44px;
+  font-weight: 700;
+  line-height: 52.8px;
+  letter-spacing: 0.88px;
   color: #ffffff;
-  margin-left: 4px;
-  margin-top: -28px;
-  line-height: 1;
 }
 
 .t3-digipad-start-btn {
   position: absolute;
-  left: 167px;
-  top: 282px;
-  width: 135px;
-  height: 64px;
-  background: transparent;
+  left: 396px;
+  top: 288px;
+  width: 127px;
+  height: 48px;
+  background: #f4f4f2;
+  color: #1f2024;
   border: none;
   cursor: pointer;
   outline: none;
-  border-radius: 32px;
+  border-radius: 999px;
+  font-family: var(--roux-typography-subtitle-small-font-family);
+  font-size: 26px;
+  font-weight: 600;
+  letter-spacing: 0.52px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.35);
   z-index: 25;
-  transition: transform 0.12s ease;
-  font-size: 0;
+  transition: transform 0.12s ease, background-color 0.15s ease;
 }
 
 .t3-digipad-start-btn:active {
   transform: scale(0.95);
+  background-color: #e5e5e5;
 }
 
-.t3-digipad-picker-btn {
+/* Round 48px icon buttons: digipad switch on Temperature, picker switch on Digipad (Figma 3516:27566) */
+.t3-pc-round-icon-btn {
   position: absolute;
-  left: 334px;
-  top: 282px;
-  width: 64px;
-  height: 64px;
-  background: transparent;
+  width: 48px;
+  height: 48px;
+  padding: 0;
+  background: rgba(75, 76, 82, 0.8);
   border: none;
-  cursor: pointer;
   outline: none;
   border-radius: 50%;
-  z-index: 25;
-  transition: transform 0.12s ease;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 55;
+  -webkit-tap-highlight-color: transparent;
+  transition: transform 0.12s ease, background-color 0.15s ease;
 }
-
-.t3-digipad-picker-btn:active {
-  transform: scale(0.95);
+.t3-pc-round-icon-btn img {
+  width: 32px;
+  height: 32px;
+  display: block;
+  pointer-events: none;
+}
+.t3-pc-round-icon-btn:active {
+  transform: scale(0.94);
+  background: rgba(100, 102, 108, 0.9);
+}
+#t3BtnKeypadFromTemp {
+  left: 709px;
+  top: 288px;
+  width: 48px;
+  height: 48px;
+  background: rgba(75, 76, 82, 0.8);
+  z-index: 55;
+}
+#t3BtnKeypadFromTemp:active {
+  background: rgba(100, 102, 108, 0.9);
+}
+#t3BtnPickerFromDigipad {
+  left: 555px;
+  top: 288px;
 }
 
 .t3-digipad-key-grid {
   position: absolute;
-  left: 486px;
-  top: 150px;
-  width: 394px;
-  height: 192px;
+  left: 661px;
+  top: 56px;
+  width: 220px;
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  grid-template-rows: repeat(4, 36px);
+  grid-template-columns: repeat(3, 64px);
+  grid-auto-rows: 64px;
   column-gap: 12px;
-  row-gap: 16px;
+  row-gap: 12px;
+  padding-left: 4px;
   z-index: 25;
 }
 
 .t3-digi-key {
-  background: transparent;
+  width: 64px;
+  height: 64px;
+  padding: 0;
+  background: rgba(75, 76, 82, 0.8);
+  color: #ffffff;
   border: none;
   outline: none;
-  border-radius: 18px;
+  border-radius: 50%;
+  font-family: var(--font-display), "Profile Display", system-ui, sans-serif;
+  font-size: 32px;
+  font-weight: 600;
+  line-height: 32px;
+  letter-spacing: 0.64px;
   cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   transition: background 0.12s ease, transform 0.08s ease;
   -webkit-tap-highlight-color: transparent;
 }
 
+.t3-digi-key.t3-digi-key-text {
+  background: transparent;
+  font-size: 22px;
+  line-height: 22px;
+  letter-spacing: 0.44px;
+}
+.t3-digi-key[data-key="clear"] {
+  width: 73px;
+  margin-left: -4px;
+}
+.t3-digi-key img {
+  width: 32px;
+  height: 32px;
+  pointer-events: none;
+}
+
 .t3-digi-key:active {
-  background: rgba(255, 255, 255, 0.15);
-  transform: scale(0.96);
+  background: rgba(255, 255, 255, 0.25);
+  transform: scale(0.94);
 }
 
 /* Temp Expand Preheat Live Readouts (Pixel-perfect match to Figma) */

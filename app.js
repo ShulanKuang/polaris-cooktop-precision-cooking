@@ -2841,7 +2841,7 @@
     ["t3ScreenRecentUsed", true, 330, 64],
     ["t3ScreenSelectCookware", true, null, null],
     ["t3ScreenSpotlight", false, 30, 59],
-    ["t3ScreenDigipad", false, 30, 68]
+    ["t3ScreenDigipad", true, 330, 64]
   ];
 
   function isT3BurnerRunning(index) {
@@ -5306,6 +5306,7 @@
         lastStartTimeDigi = now;
         let temp = parseInt(digipadInput, 10);
         if (isNaN(temp) || temp < 100) temp = 350;
+        temp = Math.min(T3_TEMP_MAX, Math.max(T3_TEMP_MIN, temp));
         state.task3TargetTemp = temp;
         t3BurnerTargetTemps[activePrcKnobIndex || 1] = temp;
         startT3Preheat();
@@ -6023,6 +6024,10 @@
         showT3Screen("foodOptions");
         if (els.t3FoodScroll) els.t3FoodScroll.scrollTop = 0;
       } else if (tabName === "temperature") {
+        if (t3Stage === "digipad") {
+          closeT3DigipadToPicker();
+          return;
+        }
         if (state.task3IsRunning) {
           if (t3Stage === "tempRun") {
             scrollToT3RunTemp(state.task3TargetTemp || 350, true);
