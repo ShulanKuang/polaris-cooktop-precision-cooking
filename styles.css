@@ -7615,3 +7615,12 @@ body.is-test-mode .test-mode-exit-hotspot {
 .start-over-btn:active {
   background: rgba(255, 255, 255, 0.3);
 }
+
+/* Smart animate (picker <-> digipad): picker neighbours fade in around the gliding number */
+.t3-smart-fading .t3-picker-item:not(.t3-smart-keep) {
+  transition: opacity 300ms ease 80ms !important;
+}
+.t3-smart-hide-neighbors .t3-picker-item:not(.t3-smart-keep) {
+  opacity: 0 !important;
+  transition: none !important;
+}

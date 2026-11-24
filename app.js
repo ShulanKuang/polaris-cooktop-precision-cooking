@@ -4073,6 +4073,133 @@
     return digipadSourceScreen === "tempRun" ? 2 : (activePrcKnobIndex || 1);
   }
 
+  // ---- Smart animate between the temperature picker and the digipad (Figma "Smart animate") ----
+  // Shared elements (START/UPDATE, switch button, temperature number and °F) glide from their old
+  // spot to the new one; the new screen's background cross-fades in over the old screen, and
+  // the parts only the new screen has (keypad, or picker neighbours + cookware chip) fade in.
+  const T3_SMART_MS = 380;
+  const T3_SMART_EASE = "cubic-bezier(0.2, 0.8, 0.2, 1)";
+  let t3SmartCleanup = null;
+
+  function getT3PickerParts(stage) {
+    const isRun = stage === "tempRun";
+    const track = isRun ? els.t3RunPickerTrack : els.t3PickerTrack;
+    const active = track ? track.querySelector(".t3-picker-item.is-active") : null;
+    return {
+      screen: isRun ? els.t3ScreenTempRun : els.t3ScreenTemperature,
+      start: isRun ? els.t3BtnUpdateTemp : els.t3BtnStartTemp,
+      toggle: isRun ? els.t3BtnKeypadTemp : els.t3BtnKeypadFromTemp,
+      chip: isRun ? document.getElementById("t3BtnCookwareEditRun") : els.t3BtnCookwareEdit,
+      container: isRun ? document.getElementById("t3RunPickerWheelContainer") : els.t3PickerWheelContainer,
+      num: active ? active.querySelector(".t3-item-num") : null,
+      unit: active ? active.querySelector(".t3-item-unit") : null
+    };
+  }
+
+  function getT3DigipadParts() {
+    return {
+      screen: els.t3ScreenDigipad,
+      start: els.t3BtnStartDigipad,
+      toggle: els.t3BtnPickerFromDigipad,
+      num: els.t3DigipadTempNum,
+      unit: els.t3ScreenDigipad ? els.t3ScreenDigipad.querySelector(".t3-digipad-temp-unit") : null,
+      keys: els.t3DigipadKeyGrid
+    };
+  }
+
+  function smartPairs(from, to) {
+    // [fromEl, toEl, horizontal anchor]
+    return [
+      [from.start, to.start, "center"],
+      [from.toggle, to.toggle, "center"],
+      [from.num, to.num, "right"],
+      [from.unit, to.unit, "left"]
+    ].filter(([f, t]) => f && t);
+  }
+
+  function runT3SmartAnimate(fromScreen, toScreen, pairs, fromRects, fadeIns, pickerContainer) {
+    if (!fromScreen || !toScreen || fromScreen === toScreen) return;
+    if (t3SmartCleanup) t3SmartCleanup();
+    const toStage = t3Stage;
+    const bg = toScreen.querySelector(".t3-screen-bg");
+
+    fromScreen.hidden = false;
+    fromScreen.style.zIndex = "1";
+    toScreen.style.zIndex = "2";
+    fromScreen.style.pointerEvents = "none";
+
+    pairs.forEach(([fromEl, toEl, anchor], i) => {
+      const fr = fromRects[i];
+      const tr = toEl.getBoundingClientRect();
+      const k = toEl.offsetWidth ? tr.width / toEl.offsetWidth : 1; // app scale
+      let dx;
+      if (anchor === "right") dx = fr.right - tr.right;
+      else if (anchor === "left") dx = fr.left - tr.left;
+      else dx = (fr.left + fr.width / 2) - (tr.left + tr.width / 2);
+      const dy = (fr.top + fr.height / 2) - (tr.top + tr.height / 2);
+      fromEl.style.transition = "none";
+      fromEl.style.opacity = "0";
+      toEl.style.transition = "none";
+      toEl.style.transform = `translate(${dx / k}px, ${dy / k}px)`;
+    });
+    if (bg) {
+      bg.style.transition = "none";
+      bg.style.opacity = "0";
+    }
+    fadeIns.forEach(el => {
+      el.style.transition = "none";
+      el.style.opacity = "0";
+    });
+    // Keep the picker item that glides (the one holding the number) out of the neighbour fade
+    const keepItems = pairs.map(([, toEl]) => toEl.closest && toEl.closest(".t3-picker-item")).filter(Boolean);
+    keepItems.forEach(item => item.classList.add("t3-smart-keep"));
+    if (pickerContainer) pickerContainer.classList.add("t3-smart-hide-neighbors", "t3-smart-fading");
+
+    void toScreen.offsetWidth; // commit the start state
+
+    requestAnimationFrame(() => {
+      pairs.forEach(([, toEl]) => {
+        toEl.style.transition = `transform ${T3_SMART_MS}ms ${T3_SMART_EASE}`;
+        toEl.style.transform = "";
+      });
+      if (bg) {
+        bg.style.transition = `opacity ${T3_SMART_MS}ms ease`;
+        bg.style.opacity = "1";
+      }
+      fadeIns.forEach(el => {
+        el.style.transition = `opacity ${T3_SMART_MS - 80}ms ease 80ms`;
+        el.style.opacity = "1";
+      });
+      if (pickerContainer) pickerContainer.classList.remove("t3-smart-hide-neighbors");
+    });
+
+    const timer = setTimeout(() => t3SmartCleanup && t3SmartCleanup(), T3_SMART_MS + 60);
+    t3SmartCleanup = () => {
+      clearTimeout(timer);
+      t3SmartCleanup = null;
+      if (t3Stage === toStage) fromScreen.hidden = true;
+      fromScreen.style.zIndex = "";
+      toScreen.style.zIndex = "";
+      fromScreen.style.pointerEvents = "";
+      pairs.forEach(([fromEl, toEl]) => {
+        fromEl.style.opacity = "";
+        fromEl.style.transition = "";
+        toEl.style.transition = "";
+        toEl.style.transform = "";
+      });
+      if (bg) {
+        bg.style.transition = "";
+        bg.style.opacity = "";
+      }
+      fadeIns.forEach(el => {
+        el.style.transition = "";
+        el.style.opacity = "";
+      });
+      if (pickerContainer) pickerContainer.classList.remove("t3-smart-hide-neighbors", "t3-smart-fading");
+      keepItems.forEach(item => item.classList.remove("t3-smart-keep"));
+    };
+  }
+
   function openT3Digipad(source = "temperature") {
     digipadSourceScreen = source;
     if (els.t3BtnStartDigipad) {
@@ -4083,7 +4210,18 @@
     if (els.t3DigipadTempNum) {
       els.t3DigipadTempNum.textContent = digipadInput;
     }
+
+    const canAnimate = t3Stage === source;
+    const from = getT3PickerParts(source);
+    const to = getT3DigipadParts();
+    const pairs = canAnimate ? smartPairs(from, to) : [];
+    const fromRects = pairs.map(([f]) => f.getBoundingClientRect());
+
     showT3Screen("digipad");
+
+    if (canAnimate) {
+      runT3SmartAnimate(from.screen, to.screen, pairs, fromRects, [to.keys].filter(Boolean), null);
+    }
   }
 
   function closeT3DigipadToPicker() {
@@ -4093,16 +4231,36 @@
     temp = Math.round(temp / T3_TEMP_STEP) * T3_TEMP_STEP;
     state.task3TargetTemp = temp;
     t3BurnerTargetTemps[digipadSourceScreen === "tempRun" ? 2 : (activePrcKnobIndex || 1)] = temp;
-    if (digipadSourceScreen === "tempRun") {
-      showT3Screen("tempRun");
-      requestAnimationFrame(() => {
-        scrollToT3RunTemp(temp, false);
-      });
-    } else {
-      showT3Screen("temperature");
-      requestAnimationFrame(() => {
-        scrollToT3Temp(temp, false);
-      });
+
+    const targetStage = digipadSourceScreen === "tempRun" ? "tempRun" : "temperature";
+    const canAnimate = t3Stage === "digipad";
+    const from = getT3DigipadParts();
+    const fromEls = [from.start, from.toggle, from.num, from.unit];
+    const fromRects = fromEls.map(el => (el ? el.getBoundingClientRect() : null));
+
+    showT3Screen(targetStage);
+    if (targetStage === "tempRun") scrollToT3RunTemp(temp, false);
+    else scrollToT3Temp(temp, false);
+    requestAnimationFrame(() => {
+      if (targetStage === "tempRun") scrollToT3RunTemp(temp, false);
+      else scrollToT3Temp(temp, false);
+    });
+
+    if (canAnimate) {
+      const to = getT3PickerParts(targetStage);
+      const all = [
+        [from.start, to.start, "center"],
+        [from.toggle, to.toggle, "center"],
+        [from.num, to.num, "right"],
+        [from.unit, to.unit, "left"]
+      ];
+      const keep = all.map((p, i) => [p, fromRects[i]]).filter(([[f, t], r]) => f && t && r);
+      runT3SmartAnimate(
+        from.screen, to.screen,
+        keep.map(([p]) => p), keep.map(([, r]) => r),
+        [to.chip].filter(Boolean),
+        to.container
+      );
     }
   }
 
