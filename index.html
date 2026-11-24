@@ -9,7 +9,7 @@
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
   <title>Polaris Cooktop Precision Cooking Prototype</title>
-  <link rel="stylesheet" href="./styles.css?v=20261124-164534">
+  <link rel="stylesheet" href="./styles.css?v=20261124-165001">
 </head>
 <body>
   <div class="test-environment">
@@ -990,7 +990,7 @@
               </nav>
 
               <!-- Cookware Tabs (Stainless Steel / Cast Iron / Other / Info - Figma 3298:17543) -->
-              <div class="pc-cookware-tabs" id="t3RunCookwareTabs">
+              <div class="pc-cookware-tabs" id="t3RunCookwareTabs" hidden>
                 <button type="button" class="pc-cookware-tab is-active" data-cookware="stainless" aria-label="Stainless Steel"></button>
                 <button type="button" class="pc-cookware-tab" data-cookware="castiron" aria-label="Cast Iron"></button>
                 <button type="button" class="pc-cookware-tab" data-cookware="other" aria-label="Other"></button>
@@ -1005,8 +1005,12 @@
               <!-- UPDATE Button (Figma 3298:17543) -->
               <button type="button" class="t3-temp-update-btn" id="t3BtnUpdateTemp" aria-label="Update Temperature">UPDATE</button>
 
-              <!-- Keypad Switch Button (hidden to match Figma 3298:17543) -->
-              <button type="button" class="t3-temp-keypad-btn" id="t3BtnKeypadTemp" aria-label="Keypad" style="display:none;"></button>
+              <!-- Stainless cookware chip + digipad switch: same spots as on the Temperature screen -->
+              <button type="button" class="t3-cookware-edit-btn" id="t3BtnCookwareEditRun" aria-label="Cookware Selection: Stainless">
+                <span class="t3-cookware-edit-label">Stainless</span>
+                <img class="t3-cookware-edit-icon" src="./assets/icon-pencil-edit.png" alt="" aria-hidden="true">
+              </button>
+              <button type="button" class="t3-temp-keypad-btn t3-pc-round-icon-btn" id="t3BtnKeypadTemp" aria-label="Switch to Keypad"><img src="./assets/digipad/icon-dialpad.svg" alt="" aria-hidden="true"></button>
             </div>
 
             <!-- 9. SCREEN: 3C-FOOD-OPTIONS (PRECISION COOKING FOOD GRID - FIGMA 3198:23239 & 3365:21042) -->
@@ -2214,6 +2218,6 @@
     <div class="test-mode-hint" id="testModeHint" aria-live="polite"></div>
   </div>
 
-  <script src="./app.js?v=20261124-164534"></script>
+  <script src="./app.js?v=20261124-165001"></script>
 </body>
 </html>

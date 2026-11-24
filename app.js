@@ -3102,6 +3102,7 @@
         screen: els.t3ScreenTempRun,
         getContent: () => [
           document.getElementById("t3RunPickerWheelContainer"),
+          document.getElementById("t3BtnCookwareEditRun"),
           document.getElementById("t3BtnUpdateTemp"),
           document.getElementById("t3BtnKeypadTemp")
         ].filter(Boolean)
@@ -4067,8 +4068,16 @@
   let digipadIsFresh = true;
   let digipadSourceScreen = "temperature";
 
+  // Burner the digipad edits: the edit (UPDATE) screen always edits Rear Left (2)
+  function getT3DigipadBurner() {
+    return digipadSourceScreen === "tempRun" ? 2 : (activePrcKnobIndex || 1);
+  }
+
   function openT3Digipad(source = "temperature") {
     digipadSourceScreen = source;
+    if (els.t3BtnStartDigipad) {
+      els.t3BtnStartDigipad.textContent = source === "tempRun" ? "UPDATE" : "START";
+    }
     digipadInput = String(state.task3TargetTemp || 350);
     digipadIsFresh = true;
     if (els.t3DigipadTempNum) {
@@ -4115,7 +4124,7 @@
       }
       if (digipadInput) {
         state.task3TargetTemp = parseInt(digipadInput, 10);
-        t3BurnerTargetTemps[activePrcKnobIndex || 1] = state.task3TargetTemp;
+        t3BurnerTargetTemps[getT3DigipadBurner()] = state.task3TargetTemp;
       }
       return;
     }
@@ -4134,7 +4143,7 @@
     const val = parseInt(digipadInput, 10);
     if (!isNaN(val)) {
       state.task3TargetTemp = val;
-      t3BurnerTargetTemps[activePrcKnobIndex || 1] = val;
+      t3BurnerTargetTemps[getT3DigipadBurner()] = val;
     }
   }
 
@@ -5308,7 +5317,12 @@
         if (isNaN(temp) || temp < 100) temp = 350;
         temp = Math.min(T3_TEMP_MAX, Math.max(T3_TEMP_MIN, temp));
         state.task3TargetTemp = temp;
-        t3BurnerTargetTemps[activePrcKnobIndex || 1] = temp;
+        t3BurnerTargetTemps[getT3DigipadBurner()] = temp;
+        if (digipadSourceScreen === "tempRun" && tempRunReturnStage === "pancakesPreheat") {
+          // Opened from the Pancakes screen's Rear Left tag: UPDATE goes back there
+          returnFromTempRunToPancakes(true);
+          return;
+        }
         startT3Preheat();
       };
       els.t3BtnStartDigipad.addEventListener("click", handleStartDigi);
@@ -5545,11 +5559,20 @@
     });
 
     let isCookwareTransitioning = false;
+    // Which screen opened Select Cookware: "temperature" (START) or "tempRun" (UPDATE)
+    let cookwareSourceStage = "temperature";
+    const cookwareSrcScreen = () => (cookwareSourceStage === "tempRun" ? els.t3ScreenTempRun : els.t3ScreenTemperature);
+    const cookwareSrcContent = () => (cookwareSourceStage === "tempRun" ? null : els.t3TempMainContent);
+    const scrollCookwareSrcPicker = () => {
+      if (cookwareSourceStage === "tempRun") scrollToT3RunTemp(state.task3TargetTemp || 350, false);
+      else scrollToT3Temp(state.task3TargetTemp || 350, false);
+    };
 
-    transitionTemperatureToCookware = function() {
+    transitionTemperatureToCookware = function(source) {
       if (isCookwareTransitioning) return;
       isCookwareTransitioning = true;
       playSound("touch");
+      cookwareSourceStage = source === "tempRun" ? "tempRun" : "temperature";
 
       t3Stage = "selectCookware";
       updateScreenBadge("selectCookware");
@@ -5559,13 +5582,13 @@
       else if (state.selectedCookware === "Other") targetIdx = 2;
 
       // Both screens remain strictly static at translate3d(0, 0, 0) - NO whole-screen slide!
-      if (els.t3ScreenTemperature) {
-        els.t3ScreenTemperature.style.transition = "none";
-        els.t3ScreenTemperature.style.webkitTransition = "none";
-        els.t3ScreenTemperature.style.transform = "translate3d(0, 0, 0)";
-        els.t3ScreenTemperature.style.webkitTransform = "translate3d(0, 0, 0)";
-        els.t3ScreenTemperature.hidden = false;
-        els.t3ScreenTemperature.style.zIndex = "100";
+      if (cookwareSrcScreen()) {
+        cookwareSrcScreen().style.transition = "none";
+        cookwareSrcScreen().style.webkitTransition = "none";
+        cookwareSrcScreen().style.transform = "translate3d(0, 0, 0)";
+        cookwareSrcScreen().style.webkitTransform = "translate3d(0, 0, 0)";
+        cookwareSrcScreen().hidden = false;
+        cookwareSrcScreen().style.zIndex = "100";
       }
       if (els.t3ScreenSelectCookware) {
         els.t3ScreenSelectCookware.style.transition = "none";
@@ -5579,9 +5602,9 @@
       scrollToCookwareIndex(targetIdx, false);
 
       // Animate ONLY the right side content container
-      if (els.t3TempMainContent) {
-        els.t3TempMainContent.classList.remove("is-entering");
-        els.t3TempMainContent.classList.add("is-leaving");
+      if (cookwareSrcContent()) {
+        cookwareSrcContent().classList.remove("is-entering");
+        cookwareSrcContent().classList.add("is-leaving");
       }
       if (els.t3CookwareMainContent) {
         els.t3CookwareMainContent.classList.remove("is-leaving");
@@ -5589,11 +5612,11 @@
       }
 
       setTimeout(() => {
-        if (els.t3ScreenTemperature && t3Stage === "selectCookware") {
-          els.t3ScreenTemperature.hidden = true;
+        if (cookwareSrcScreen() && t3Stage === "selectCookware") {
+          cookwareSrcScreen().hidden = true;
         }
-        if (els.t3TempMainContent) {
-          els.t3TempMainContent.classList.remove("is-leaving");
+        if (cookwareSrcContent()) {
+          cookwareSrcContent().classList.remove("is-leaving");
         }
         if (els.t3CookwareMainContent) {
           els.t3CookwareMainContent.classList.remove("is-entering");
@@ -5609,24 +5632,24 @@
       playSound("touch");
 
       const selected = state.selectedCookware || "Cast Iron";
-      if (els.t3BtnCookwareEdit) {
-        const label = els.t3BtnCookwareEdit.querySelector(".t3-cookware-edit-label");
+      [els.t3BtnCookwareEdit, document.getElementById("t3BtnCookwareEditRun")].forEach(btn => {
+        const label = btn && btn.querySelector(".t3-cookware-edit-label");
         if (label) {
           label.textContent = selected === "Stainless Steel" ? "Stainless" : selected;
         }
-      }
+      });
 
-      t3Stage = "temperature";
-      updateScreenBadge("temperature");
+      t3Stage = cookwareSourceStage;
+      updateScreenBadge(cookwareSourceStage);
 
       // Both screens remain strictly static at translate3d(0, 0, 0) - NO whole-screen slide!
-      if (els.t3ScreenTemperature) {
-        els.t3ScreenTemperature.style.transition = "none";
-        els.t3ScreenTemperature.style.webkitTransition = "none";
-        els.t3ScreenTemperature.style.transform = "translate3d(0, 0, 0)";
-        els.t3ScreenTemperature.style.webkitTransform = "translate3d(0, 0, 0)";
-        els.t3ScreenTemperature.hidden = false;
-        els.t3ScreenTemperature.style.zIndex = "101";
+      if (cookwareSrcScreen()) {
+        cookwareSrcScreen().style.transition = "none";
+        cookwareSrcScreen().style.webkitTransition = "none";
+        cookwareSrcScreen().style.transform = "translate3d(0, 0, 0)";
+        cookwareSrcScreen().style.webkitTransform = "translate3d(0, 0, 0)";
+        cookwareSrcScreen().hidden = false;
+        cookwareSrcScreen().style.zIndex = "101";
       }
       if (els.t3ScreenSelectCookware) {
         els.t3ScreenSelectCookware.style.transition = "none";
@@ -5637,29 +5660,29 @@
         els.t3ScreenSelectCookware.style.zIndex = "100";
       }
 
-      scrollToT3Temp(state.task3TargetTemp || 350, false);
+      scrollCookwareSrcPicker();
 
       // Animate ONLY the right side content container
       if (els.t3CookwareMainContent) {
         els.t3CookwareMainContent.classList.remove("is-entering");
         els.t3CookwareMainContent.classList.add("is-leaving");
       }
-      if (els.t3TempMainContent) {
-        els.t3TempMainContent.classList.remove("is-leaving");
-        els.t3TempMainContent.classList.add("is-entering");
+      if (cookwareSrcContent()) {
+        cookwareSrcContent().classList.remove("is-leaving");
+        cookwareSrcContent().classList.add("is-entering");
       }
 
       setTimeout(() => {
-        if (els.t3ScreenSelectCookware && t3Stage === "temperature") {
+        if (els.t3ScreenSelectCookware && t3Stage === cookwareSourceStage) {
           els.t3ScreenSelectCookware.hidden = true;
         }
         if (els.t3CookwareMainContent) {
           els.t3CookwareMainContent.classList.remove("is-leaving");
         }
-        if (els.t3TempMainContent) {
-          els.t3TempMainContent.classList.remove("is-entering");
+        if (cookwareSrcContent()) {
+          cookwareSrcContent().classList.remove("is-entering");
         }
-        scrollToT3Temp(state.task3TargetTemp || 350, false);
+        scrollCookwareSrcPicker();
         isCookwareTransitioning = false;
       }, 260);
     };
@@ -5675,6 +5698,23 @@
       };
       els.t3BtnCookwareEdit.addEventListener("click", handleCookwareEdit);
       els.t3BtnCookwareEdit.addEventListener("touchstart", handleCookwareEdit, { passive: false });
+    }
+    // Same cookware chip on the edit (UPDATE) screen -> Select Cookware -> back to the edit screen
+    const btnCookwareEditRun = document.getElementById("t3BtnCookwareEditRun");
+    if (btnCookwareEditRun) {
+      let lastRunCookwareTap = 0;
+      const handleRunCookwareEdit = (e) => {
+        if (e) {
+          e.preventDefault();
+          e.stopPropagation();
+        }
+        const now = Date.now();
+        if (now - lastRunCookwareTap < 400) return;
+        lastRunCookwareTap = now;
+        transitionTemperatureToCookware("tempRun");
+      };
+      btnCookwareEditRun.addEventListener("click", handleRunCookwareEdit);
+      btnCookwareEditRun.addEventListener("touchstart", handleRunCookwareEdit, { passive: false });
     }
 
     // Select Cookware Screen Handlers (Figma 3407:25065 / 3409:25243)

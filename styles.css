@@ -3553,7 +3553,9 @@ input,
   position: absolute;
   left: 396px;
   top: 288px;
-  width: 127px;
+  min-width: 127px;
+  padding: 0 16px;
+  box-sizing: border-box;
   height: 48px;
   background: #f4f4f2;
   color: #1f2024;
@@ -3606,7 +3608,8 @@ input,
   transform: scale(0.94);
   background: rgba(100, 102, 108, 0.9);
 }
-#t3BtnKeypadFromTemp {
+#t3BtnKeypadFromTemp,
+#t3BtnKeypadTemp {
   left: 709px;
   top: 288px;
   width: 48px;
@@ -3614,7 +3617,8 @@ input,
   background: rgba(75, 76, 82, 0.8);
   z-index: 55;
 }
-#t3BtnKeypadFromTemp:active {
+#t3BtnKeypadFromTemp:active,
+#t3BtnKeypadTemp:active {
   background: rgba(100, 102, 108, 0.9);
 }
 #t3BtnPickerFromDigipad {
