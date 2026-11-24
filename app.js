@@ -1961,6 +1961,7 @@
     updateCooktopActiveState();
     updateScreenBadge(stage);
     updatePancakesLockState();
+    updateT3PcBurnerIdentity();
   }
 
   // Once the Pancakes burner has started preheating (pancakesPreheat overview, incl. after guided
@@ -2815,10 +2816,122 @@
 
   // Bumped whenever the user navigates back; a slide animation that finishes after that must not
   // hide its outgoing screen (it may be the screen the user just went back to).
+  // ---------------------------------------------------------------------------------------------
+  // Live burner identity on the Precision Cooking screens (Figma 3198:23274 title, 3198:23242 icon).
+  // The PC backgrounds have "Rear Left Burner" and a rear-left-highlighted mini cooktop baked in, so
+  // we cover them with a label + icon that follow the knob actually in use:
+  //   selected burner = solid white, other running burners = solid grey, burners that are off = outline.
+  // The Pancakes burner picker likewise only shows the rear-left burner as running when its knob is on.
+  // ---------------------------------------------------------------------------------------------
+  const T3_BURNER_LABELS = { 1: "Front Left Burner", 2: "Rear Left Burner", 3: "Warming Zone", 4: "Front Right Burner", 5: "Rear Right Burner" };
+  // Circles in the 66.4 x 48 Figma icon (cx, cy, r), keyed by knob/burner index
+  const T3_BURNER_ICON_CIRCLES = {
+    2: [13.145, 13.146, 9.145],   // rear left
+    1: [13.145, 34.486, 9.145],   // front left
+    3: [33.571, 11.356, 7.356],   // warming zone (rear center)
+    5: [54.597, 11.325, 7.324],   // rear right
+    4: [44.243, 31.709, 12.29]    // front right (main)
+  };
+  // [screen id, show label?, icon left, icon top] in screen coordinates (screen starts at x 90)
+  const T3_PC_BURNER_ID_SCREENS = [
+    ["t3ScreenTemperature", true, 330, 64],
+    ["t3ScreenTempRun", true, 330, 64],
+    ["t3ScreenFoodOptions", true, 330, 64],
+    ["t3ScreenTechnique", true, 330, 64],
+    ["t3ScreenRecentUsed", true, 330, 64],
+    ["t3ScreenSelectCookware", true, null, null],
+    ["t3ScreenSpotlight", false, 30, 59],
+    ["t3ScreenDigipad", false, 30, 68]
+  ];
+
+  function isT3BurnerRunning(index) {
+    const level = currentT3BurnerLevels[index];
+    return !(level === undefined || level === null || level === "off" || level === 0);
+  }
+
+  function getT3SelectedPcBurner() {
+    let fromTempRun = t3Stage === "tempRun";
+    if (t3Stage === "digipad") {
+      try { fromTempRun = digipadSourceScreen === "tempRun"; } catch (e) {}
+    }
+    return fromTempRun ? 2 : (activePrcKnobIndex || 1);
+  }
+
+  function buildT3BurnerIconSvg() {
+    const ns = "http://www.w3.org/2000/svg";
+    const svg = document.createElementNS(ns, "svg");
+    svg.setAttribute("class", "t3-pc-burner-icon");
+    svg.setAttribute("viewBox", "0 0 66.435 48");
+    svg.setAttribute("aria-hidden", "true");
+    const bg = document.createElementNS(ns, "rect");
+    bg.setAttribute("class", "t3-pc-burner-icon-bg");
+    bg.setAttribute("width", "66.435");
+    bg.setAttribute("height", "48");
+    bg.setAttribute("rx", "8");
+    svg.appendChild(bg);
+    Object.keys(T3_BURNER_ICON_CIRCLES).forEach(idx => {
+      const [cx, cy, r] = T3_BURNER_ICON_CIRCLES[idx];
+      const c = document.createElementNS(ns, "circle");
+      c.setAttribute("cx", cx);
+      c.setAttribute("cy", cy);
+      c.setAttribute("r", (r - 0.8).toFixed(3)); // stroke drawn inside the Figma bounds
+      c.setAttribute("data-burner", idx);
+      svg.appendChild(c);
+    });
+    return svg;
+  }
+
+  function setupT3PcBurnerIdentity() {
+    T3_PC_BURNER_ID_SCREENS.forEach(([id, withLabel, iconLeft, iconTop]) => {
+      const screen = document.getElementById(id);
+      if (!screen || screen.querySelector(".t3-pc-burner-id")) return;
+      const bgImg = screen.querySelector(".t3-screen-bg");
+      const insertAfter = node => {
+        if (bgImg && bgImg.nextSibling) screen.insertBefore(node, bgImg.nextSibling);
+        else screen.appendChild(node);
+      };
+      if (iconLeft !== null) {
+        const icon = buildT3BurnerIconSvg();
+        icon.classList.add("t3-pc-burner-id");
+        icon.style.left = iconLeft + "px";
+        icon.style.top = iconTop + "px";
+        insertAfter(icon);
+      }
+      if (withLabel) {
+        const label = document.createElement("div");
+        label.className = "t3-pc-burner-label t3-pc-burner-id";
+        insertAfter(label);
+      }
+    });
+    updateT3PcBurnerIdentity();
+  }
+
+  function updateT3PcBurnerIdentity() {
+    const selected = getT3SelectedPcBurner();
+    document.querySelectorAll(".t3-pc-burner-label").forEach(el => {
+      el.textContent = T3_BURNER_LABELS[selected] || "";
+    });
+    document.querySelectorAll(".t3-pc-burner-icon circle[data-burner]").forEach(c => {
+      const idx = Number(c.getAttribute("data-burner"));
+      c.classList.toggle("is-selected", idx === selected);
+      c.classList.toggle("is-running", idx !== selected && isT3BurnerRunning(idx));
+    });
+    // Pancakes burner picker: rear left is drawn as running (grey + thermometer) only when its knob is on
+    const picker = document.querySelector("#t3PancakesViewBurner .t3-pancakes-burner-svg");
+    if (picker) {
+      const src = isT3BurnerRunning(2)
+        ? "./assets/task3c/pancakes/pancakes_burner_group.svg"
+        : "./assets/task3c/pancakes/pancakes_burner_group_fl_only.svg";
+      if (picker.getAttribute("src") !== src) picker.setAttribute("src", src);
+    }
+  }
+  window.updateT3PcBurnerIdentity = updateT3PcBurnerIdentity;
+
   let t3NavSeq = 0;
 
   function slideTransition(outgoingScreen, incomingScreen, direction = "left", onComplete) {
     const navSeq = ++t3NavSeq;
+    updateT3PcBurnerIdentity();
     ensureNavbarVisible();
     if (!outgoingScreen || !incomingScreen) {
       if (incomingScreen) incomingScreen.hidden = false;
@@ -2928,7 +3041,7 @@
         scrollToT3Temp(state.task3TargetTemp || 350, false);
       });
     }
-    if (stage === "selectCookware") {
+    if (t3Stage === "selectCookware") {
       const drawer = document.getElementById("t3SideDrawerCookware");
       if (drawer) {
         drawer.querySelectorAll(".pc-drawer-item").forEach(item => {
@@ -3216,6 +3329,7 @@
     // 2. Switch right pane views
     if (els.t3PancakesViewDoneness) els.t3PancakesViewDoneness.hidden = (viewName !== "doneness");
     if (els.t3PancakesViewBurner) els.t3PancakesViewBurner.hidden = (viewName !== "burner");
+    updateT3PcBurnerIdentity();
     if (els.t3PancakesViewTips) els.t3PancakesViewTips.hidden = (viewName !== "tips" && viewName !== "ingredients");
     if (els.t3PancakesViewCookware) els.t3PancakesViewCookware.hidden = (viewName !== "cookware");
 
@@ -4713,6 +4827,7 @@
     if (updateBurner && (state.currentTask === 3 || state.currentTask === 2)) {
       updateT3BurnerFromKnob(index, angle, animate);
       updateCooktopActiveState();
+      updateT3PcBurnerIdentity();
     }
 
     if (target) {
@@ -7841,6 +7956,7 @@
   initGestureLockdown();
   initRunningActivityBar();
   initScreenObserver();
+  setupT3PcBurnerIdentity();
 
   // Focus exclusively on Task 3 (Task 1 & Task 2 hidden from display)
   const urlParams = new URLSearchParams(window.location.search);

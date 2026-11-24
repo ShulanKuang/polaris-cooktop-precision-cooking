@@ -7468,3 +7468,54 @@ body.is-test-mode .test-mode-exit-hotspot {
 .t3-mini-icon-food-preheat { left: 54.5px; top: 218px; width: 76px; height: 76px; }
 .t3-mini-icon-food-done    { left: 51.5px; top: 218px; width: 76px; height: 76px; }
 .t3-mini-icon-tech         { left: 181.5px; top: 182.5px; width: 111px; height: 111px; }
+
+/* ------------------------------------------------------------------------------------------ */
+/* Live burner identity on Precision Cooking screens (Figma 3198:23274 title, 3198:23242 icon) */
+/* Covers the "Rear Left Burner" + rear-left mini cooktop baked into the PC backgrounds.       */
+/* ------------------------------------------------------------------------------------------ */
+.t3-pc-burner-label {
+  position: absolute;
+  left: 28px;               /* Figma x 120 in the 1024 frame */
+  top: 49px;
+  min-width: 190px;
+  height: 27px;
+  padding-left: 2px;
+  background: #191a1d;      /* side panel colour, hides the baked subtitle */
+  color: #fff;
+  font-family: var(--font-text);
+  font-size: 22px;
+  font-weight: 600;
+  letter-spacing: 0.44px;
+  line-height: 26.4px;
+  white-space: nowrap;
+  pointer-events: none;
+  z-index: 6;
+}
+
+.t3-pc-burner-icon {
+  position: absolute;
+  width: 66.435px;
+  height: 48px;
+  pointer-events: none;
+  z-index: 6;
+}
+
+.t3-pc-burner-icon-bg {
+  fill: #3c3d42;            /* opaque match of rgba(75,76,82,0.8) over the dark panel */
+}
+
+.t3-pc-burner-icon circle {
+  fill: none;
+  stroke: #fff;
+  stroke-width: 1.6px;
+}
+
+.t3-pc-burner-icon circle.is-running {
+  fill: #7f828a;
+  stroke: none;
+}
+
+.t3-pc-burner-icon circle.is-selected {
+  fill: #fff;
+  stroke: #fff;
+}
